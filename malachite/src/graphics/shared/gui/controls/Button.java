@@ -104,8 +104,11 @@ public class Button extends Control {
   
   public void setBackColour(float[] c) {
     super.setBackColour(c);
-    _background.setColour(c);
-    _background.updateVertices();
+    
+    if(!_hover) {
+      _background.setColour(c);
+      _background.updateVertices();
+    }
   }
   
   public void setForeColour(float[] c) {

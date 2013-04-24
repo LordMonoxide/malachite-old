@@ -18,8 +18,8 @@ public class Textbox extends Control {
   private Fonts _fonts = Context.getFonts();
   private Font _font = _fonts.getDefault();
   
-  private Scalable _background = Context.newScalable();
-  private Drawable _caret = Context.newDrawable();
+  private Scalable _background;
+  private Drawable _caret;
   private String _text;
   private int _textY = 0;
   
@@ -32,6 +32,7 @@ public class Textbox extends Control {
   public Textbox(GUI gui) {
     super(gui, true);
     
+    _background = Context.newScalable();
     _background.setTexture(_textures.getTexture("gui/textbox.png"));
     _background.setSize(
         new float[] {12, 12, 12, 12},
@@ -42,6 +43,7 @@ public class Textbox extends Control {
     _background.updateVertices();
     _background.setXY(-5, -5);
     
+    _caret = Context.newDrawable();
     _caret.setColour(new float[] {0, 0, 0, 0.5f});
     _caret.setWH(1, _font.getH());
     _caret.createQuad();

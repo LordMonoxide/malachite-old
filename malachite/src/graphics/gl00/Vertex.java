@@ -28,9 +28,9 @@ public class Vertex {
     Vertex[] v = newVertices(5);
     v[0].set(new float[] {loc[0]         , loc[1] + 1     }, new float[] {0, 0}, col);
     v[1].set(new float[] {loc[0] + loc[2], loc[1] + 1     }, new float[] {0, 0}, col);
-    v[2].set(new float[] {loc[0] + loc[2], loc[1] + loc[3]}, new float[] {0, 0}, col);
-    v[3].set(new float[] {loc[0] + 1     , loc[1] + loc[3]}, new float[] {0, 0}, col);
-    v[4].set(new float[] {loc[0] + 1     , loc[1]         }, new float[] {0, 0}, col);
+    v[2].set(new float[] {loc[0] + loc[2], loc[1] + loc[3] - 1}, new float[] {0, 0}, col);
+    v[3].set(new float[] {loc[0] + 1     , loc[1] + loc[3] - 1}, new float[] {0, 0}, col);
+    v[4].set(new float[] {loc[0] + 1     , loc[1] + 1     }, new float[] {0, 0}, col);
     return v;
   }
   
