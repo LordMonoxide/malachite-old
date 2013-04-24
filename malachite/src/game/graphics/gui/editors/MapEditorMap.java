@@ -1,4 +1,4 @@
-package game.gui.editors;
+package game.graphics.gui.editors;
 
 import game.data.Map;
 import game.data.util.Buffer;

@@ -20,6 +20,7 @@ public abstract class GUI {
   private Control _selectControl;
   private Control _selectControlMove;
   private     int _selectButton = -1;
+  private     int _mouseX, _mouseY;
   
   private boolean _forceSelect;
   
@@ -69,11 +70,14 @@ public abstract class GUI {
   public abstract void destroy();
   public abstract void resize();
   
-  public boolean logic() {
-    return true;
-  }
+  public boolean logic() { return true;  }  
+  public boolean draw()  { return false; }
   
-  public boolean draw() { return false; }
+  public final boolean logicGUI() {
+    Boolean b = logic();
+    _control.logicControl();
+    return b;
+  }
   
   public final boolean drawGUI() {
     Boolean b = draw();
@@ -144,12 +148,9 @@ public abstract class GUI {
     int[] pixel = _context.getPixel(x, y);
     
     if(pixel[0] != 0 || pixel[1] != 0  || pixel[2] != 0) {
-      //System.out.println("Colour at (" + x + ", " + y + "): (" + pixel[0] + ", " + pixel[1] + ", " + pixel[2] + ")");
       _selectControl = getSelectControl(pixel);
       
       if(_selectControl != null) {
-        //System.out.println("Found control " + _selectControl);
-        
         if(_selectControl.getAcceptsFocus()) {
           _selectControl.setFocus(true);
         }
@@ -176,6 +177,9 @@ public abstract class GUI {
   }
   
   public final boolean mouseMove(int x, int y) {
+    _mouseX = x;
+    _mouseY = y;
+    
     if(_selectControl != null) {
       _selectControl.handleMouseMove(x - getAllX(_selectControl), y - getAllY(_selectControl), _selectButton);
     } else {
@@ -208,8 +212,17 @@ public abstract class GUI {
   }
   
   public final boolean mouseWheel(int delta) {
-    if(_focus != null) {
-      _focus.handleMouseWheel(delta);
+    drawSelect();
+    
+    int[] pixel = _context.getPixel(_mouseX, _mouseY);
+    
+    if(pixel[0] != 0 || pixel[1] != 0  || pixel[2] != 0) {
+      _selectControl = getSelectControl(pixel);
+      
+      if(_selectControl != null) {
+        _selectControl.handleMouseWheel(delta);
+        _selectControl = null;
+      }
     }
     
     return handleMouseWheel(delta);

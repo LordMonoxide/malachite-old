@@ -13,9 +13,7 @@ public class Scalable extends Drawable implements graphics.gl00.Scalable {
   private float _borderB2;
   private float _borderH2;
   private float _borderV2;
-  
-  private float[][] _border;
-  private float[][] _borderS;
+  private float _tw, _th, _ts;
   
   private Drawable[] _d = new Drawable[9];
   
@@ -24,13 +22,11 @@ public class Scalable extends Drawable implements graphics.gl00.Scalable {
       _d[i] = new Drawable();
     }
     
-    setSize1(new float[] {32, 32, 32, 32});
-    setSize2(new float[] {21, 21, 21, 21});
-    setBorderS(new float[][] {
-        { 0,  0, 32, 32}, {32,  0,  1, 32}, {64,  0, 32, 32},
-        { 0, 32, 32,  1}, {32, 32,  1,  1}, {64, 32, 32,  1},
-        { 0, 64, 32, 32}, {32, 64,  1, 32}, {64, 64, 32, 32}
-    });
+    setSize(
+        new float[] {32, 32, 32, 32},
+        new float[] {21, 21, 21, 21},
+        96, 96, 1
+    );
   }
   
   public void setW(float w) {
@@ -84,28 +80,21 @@ public class Scalable extends Drawable implements graphics.gl00.Scalable {
     updateVertices();
   }
   
-  public void setSize1(float[] s) {
-    _borderL = s[0];
-    _borderT = s[1];
-    _borderR = s[2];
-    _borderB = s[3];
-  }
-  
-  public void setSize2(float[] s) {
-    _borderL2 = s[0];
-    _borderT2 = s[1];
-    _borderR2 = s[2];
-    _borderB2 = s[3];
+  public void setSize(float[] s1, float[] s2, float tw, float th, float ts) {
+    _borderL = s1[0];
+    _borderT = s1[1];
+    _borderR = s1[2];
+    _borderB = s1[3];
+    _borderL2 = s2[0];
+    _borderT2 = s2[1];
+    _borderR2 = s2[2];
+    _borderB2 = s2[3];
     _borderH2 = _borderL2 + _borderR2;
     _borderV2 = _borderT2 + _borderB2;
   }
   
-  public void setBorderS(float[][] b) {
-    _borderS = b;
-  }
-  
   public void updateVertices() {
-    _border = new float[][] {
+    float[][] border = new float[][] {
         {0, 0, _borderL, _borderT},
          {_borderL2, 0, _loc[2] - _borderH2, _borderT},
          {_loc[2] - _borderR2, 0, _borderR, _borderT},
@@ -117,9 +106,15 @@ public class Scalable extends Drawable implements graphics.gl00.Scalable {
          {_loc[2] - _borderR2, _loc[3] - _borderB2, _borderR, _borderB}
     };
     
+    float[][] borderS = new float[][] {
+        { 0,  0, _borderL, _borderT}, {_borderL,  0, _ts, _borderT}, {_tw - _borderR,  0, _borderR, _borderT},
+        { 0, _borderT, _borderL, _ts}, {_borderL, _borderT, _ts, _ts}, {_tw - _borderR, _borderT, _borderR, _ts},
+        { 0, _th - _borderB, _borderL, _borderB}, {_borderL, _th - _borderB, _ts, _borderB}, {_tw - _borderR, _th - _borderB, _borderR, _borderB}
+    };
+    
     for(int i = 0; i < _d.length; i++) {
-      _d[i].setXYWH(_border[i][0] + _loc[0], _border[i][1] + _loc[1], _border[i][2], _border[i][3]);
-      _d[i].setTXYWH(_borderS[i][0], _borderS[i][1], _borderS[i][2], _borderS[i][3]);
+      _d[i].setXYWH(border[i][0] + _loc[0], border[i][1] + _loc[1], border[i][2], border[i][3]);
+      _d[i].setTXYWH(borderS[i][0], borderS[i][1], borderS[i][2], borderS[i][3]);
       _d[i].createQuad();
     }
   }

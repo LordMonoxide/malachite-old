@@ -90,6 +90,12 @@ public class ControlList {
     }
   }
   
+  public void logic() {
+    if(_last != null) {
+      _last.logicControl();
+    }
+  }
+  
   public void drawSelect() {
     if(_last != null) {
       _last.drawSelect();

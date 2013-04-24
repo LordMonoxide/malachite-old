@@ -8,32 +8,63 @@ import graphics.shared.fonts.Font;
 import graphics.shared.fonts.Fonts;
 import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;
+import graphics.themes.Theme;
 
 public class Button extends Control {
   private Fonts _fonts = Context.getFonts();
   private Font _font = _fonts.getDefault();
   private Scalable _background = Context.newScalable();
-  private String _text = "Button";
+  private String _text;
   private int[] _textLoc = {0, 0, 0, 0};
   
+  private float[] _glowColour = {0, 0, 0, 0};
+  private float _fade;
+  private boolean _hover;
+  
   public Button(GUI gui) {
+    this(gui, Theme.getInstance());
+  }
+  
+  public Button(GUI gui, final Theme theme) {
     super(gui);
     
     _acceptsFocus = false;
     
-    _background.setTexture(_textures.getTexture("gui/button.png"));
-    _background.setSize1(new float[] {2, 2, 2, 2});
-    _background.setSize2(new float[] {2, 2, 2, 2});
-    _background.setBorderS(new float[][] {
-        {0, 0, 2, 2}, {2, 0, 1, 2}, {3, 0, 2, 2}, 
-        {0, 2, 2, 1}, {2, 2, 1, 1}, {3, 2, 2, 1},
-        {0, 3, 2, 2}, {2, 3, 1, 2}, {3, 3, 2, 2}
-    });
-
+    _background.setTexture(_textures.getTexture(theme.getButtonBackgroundTexture()));
+    _background.setSize(
+        theme.getButtonBackgroundSize1(),
+        theme.getButtonBackgroundSize2(),
+        theme.getButtonBackgroundTW(),
+        theme.getButtonBackgroundTH(),
+        theme.getButtonBackgroundTS()
+    );
     _background.updateVertices();
-    setBackColour(new float[] {0x3F / 255f, 0xCF / 255f, 0, 1});
-    setForeColour(new float[] {1, 1, 1, 1});
-    setWH(90, 20);
+    
+    setBackColour(theme.getButtonBackColour());
+    setForeColour(theme.getButtonForeColour());
+    setGlowColour(theme.getButtonGlowColour());
+    setWH(theme.getButtonWidth(), theme.getButtonHeight());
+    setText(theme.getButtonText());
+    
+    addEventMouseEnterHandler(new ControlEventHover() {
+      public void event() {
+        _hover = true;
+      }
+    });
+    
+    addEventMouseLeaveHandler(new ControlEventHover() {
+      public void event() {
+        _hover = false;
+      }
+    });
+  }
+  
+  public float[] getGlowColour() {
+    return _glowColour;
+  }
+  
+  public void setGlowColour(float[] c) {
+    _glowColour = c;
   }
   
   public void setW(float w) {
@@ -104,6 +135,30 @@ public class Button extends Control {
     }
     
     drawEnd();
+  }
+  
+  public void logic() {
+    if(_hover) {
+      if(_fade < 1) {
+        _fade += 0.1f;
+        float[] c = new float[4];
+        for(int i = 0; i < c.length; i++) {
+          c[i] = (_glowColour[i] - _backColour[i]) * _fade + _backColour[i];
+        }
+        _background.setColour(c);
+        _background.updateVertices();
+      }
+    } else {
+      if(_fade > 0) {
+        _fade -= 0.05f;
+        float[] c = new float[4];
+        for(int i = 0; i < c.length; i++) {
+          c[i] = (_glowColour[i] - _backColour[i]) * _fade + _backColour[i];
+        }
+        _background.setColour(c);
+        _background.updateVertices();
+      }
+    }
   }
   
   public void handleKeyDown(int key) {

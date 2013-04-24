@@ -274,9 +274,9 @@ public class Sprite extends Serializable implements Data {
   }
   
   public static class Anim {
-    protected String _name;
-    protected int _default;
-    protected ArrayList<List> _list = new ArrayList<List>();
+    public String _name;
+    public int _default;
+    public ArrayList<List> _list = new ArrayList<List>();
     
     public Anim() { }
     public Anim(Anim anim) {
@@ -302,8 +302,8 @@ public class Sprite extends Serializable implements Data {
   }
   
   public static class List {
-    protected int _frame;
-    protected int _time;
+    public int _frame;
+    public int _time;
     
     public List() { }
     public List(List list) {

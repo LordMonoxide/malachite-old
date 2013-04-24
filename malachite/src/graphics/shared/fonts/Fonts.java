@@ -12,6 +12,7 @@ import java.util.HashMap;
 import graphics.gl00.Context;
 import graphics.shared.textures.Texture;
 import graphics.shared.textures.Textures;
+import graphics.themes.Theme;
 
 public class Fonts {
   private static Fonts _instance = new Fonts();
@@ -23,7 +24,7 @@ public class Fonts {
   private Textures _textures = Context.getTextures();
   private HashMap<String, Font> _fonts = new HashMap<String, Font>();
   
-  private Font _default = getFont("Tahoma", 11);
+  private Font _default = getFont(Theme.getInstance().getFontName(), Theme.getInstance().getFontSize());
   
   private Fonts() { }
   

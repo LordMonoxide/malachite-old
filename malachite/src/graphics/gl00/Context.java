@@ -26,7 +26,7 @@ public abstract class Context {
   protected static Drawable _drawable;
   protected static Scalable _scalable;
   
-  private static Game _game;
+  private static Game  _game;
   
   public static final Context  getContext()  { return _context;  }
   public static final Matrix   getMatrix()   { return _matrix;   }
@@ -192,8 +192,15 @@ public abstract class Context {
     }
     
     _logic.stop();
-    _gui.destroy();
     _game.destroy();
+    
+    while(!_logic._finished) {
+      try {
+        Thread.sleep(1);
+      } catch(InterruptedException e) { }
+    }
+    
+    _gui.destroy();
     _textures.destroy();
     
     cleanup();

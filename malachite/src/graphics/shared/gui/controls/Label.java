@@ -5,19 +5,26 @@ import graphics.shared.fonts.Font;
 import graphics.shared.fonts.Fonts;
 import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;
+import graphics.themes.Theme;
 
 public class Label extends Control {
   private Fonts _fonts = Context.getFonts();
   private Font _font = _fonts.getDefault();
   
-  private boolean _autoSize = true;
+  private boolean _autoSize;
   private String _text;
   private int _textY;
   
   public Label(GUI gui) {
+    this(gui, Theme.getInstance());
+  }
+  
+  public Label(GUI gui, Theme theme) {
     super(gui, false);
     setAcceptsFocus(false);
-    setForeColour(new float[] {0, 0, 0, 1});
+    setForeColour(theme.getLabelForeColour());
+    setAutoSize(theme.getLabelAutoSize());
+    setText(theme.getLabelText());
   }
   
   public Font getFont() {

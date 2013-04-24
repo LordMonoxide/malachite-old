@@ -1,4 +1,4 @@
-package game.gui.editors;
+package game.graphics.gui.editors;
 
 import java.util.ArrayList;
 
@@ -9,6 +9,7 @@ public class SpriteEditorSprite extends Sprite {
   private Sprite _sprite;
   private int _spriteCRC;
   protected ArrayList<Frame> _frame = super._frame;
+  protected ArrayList<Anim>  _anim  = super._anim;
   
   public SpriteEditorSprite(Sprite sprite) {
     super();

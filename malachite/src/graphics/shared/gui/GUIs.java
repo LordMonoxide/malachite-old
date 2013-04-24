@@ -45,7 +45,7 @@ public class GUIs {
   
   public void logic() {
     for(GUI gui : _gui) {
-      if(!gui.logic()) break;
+      if(!gui.logicGUI()) break;
     }
   }
   

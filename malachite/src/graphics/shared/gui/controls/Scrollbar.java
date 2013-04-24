@@ -8,35 +8,52 @@ import graphics.shared.gui.GUI;
 public class Scrollbar extends Control {
   private Button _up, _down;
   private int _min, _max = 99, _val;
+  private Orientation _orientation = Orientation.VERTICAL;
   
   private LinkedList<ControlEventScroll> _eventScroll = new LinkedList<ControlEventScroll>();
 
-  public void addEventScrollHandler (ControlEventScroll e) { _eventScroll.add(e); }
+  public void addEventScrollHandler(ControlEventScroll e) { _eventScroll.add(e); }
   
   public Scrollbar(GUI gui) {
     super(gui);
     
     ControlEventClick up = new ControlEventClick() {
       public void event() {
-        if(_val < _max) setVal(_val + 1);
+        if(_val > _min) setVal(_val - 1);
       }
     };
     
     ControlEventClick down = new ControlEventClick() {
       public void event() {
-        if(_val > _min) setVal(_val - 1);
+        if(_val < _max) setVal(_val + 1);
+      }
+    };
+    
+    ControlEventWheel wheel = new ControlEventWheel() {
+      public void event(int delta) {
+        while(delta > 0) {
+          delta -= 120;
+          setVal(getVal() - 1);
+        }
+        
+        while(delta < 0) {
+          delta += 120;
+          setVal(getVal() + 1);
+        }
       }
     };
     
     _up = new Button(gui);
-    _up.setText(null);
+    _up.setText("<");
     _up.addEventClickHandler(up);
     _up.addEventDoubleClickHandler(up);
+    _up.addEventMouseWheelHandler(wheel);
     
     _down = new Button(gui);
-    _down.setText(null);
+    _down.setText(">");
     _down.addEventClickHandler(down);
     _down.addEventDoubleClickHandler(down);
+    _down.addEventMouseWheelHandler(wheel);
     
     Controls().add(_up);
     Controls().add(_down);
@@ -61,11 +78,22 @@ public class Scrollbar extends Control {
   }
   
   public void setVal(int val) {
+    if(val > _max) val = _max;
+    if(val < _min) val = _min;
     if(_val != val) {
       int delta = val - _val;
       _val = val;
       raiseScroll(delta);
     }
+  }
+  
+  public Orientation getOrientation() {
+    return _orientation;
+  }
+  
+  public void setOrientation(Orientation orientation) {
+    _orientation = orientation;
+    updateSize();
   }
   
   public void setW(float w) {
@@ -94,9 +122,18 @@ public class Scrollbar extends Control {
   }
   
   private void updateSize() {
-    _up.setWH(_loc[2], _loc[3] / 2);
-    _down.setWH(_loc[2], _loc[3] / 2);
-    _down.setY(_up.getH());
+    switch(_orientation) {
+      case VERTICAL:
+        _up.setWH(_loc[2], _loc[3] / 2);
+        _down.setWH(_loc[2], _loc[3] / 2);
+        _down.setXY(0, _up.getH());
+        break;
+        
+      case HORIZONTAL:
+        _up.setWH(_loc[2] / 2, _loc[3]);
+        _down.setWH(_loc[2] / 2, _loc[3]);
+        _down.setXY(_up.getW(), 0);
+    }
   }
   
   protected void raiseScroll(int delta) {
@@ -108,5 +145,9 @@ public class Scrollbar extends Control {
   
   public static abstract class ControlEventScroll extends ControlEvent {
     public abstract void event(int delta);
+  }
+  
+  public static enum Orientation {
+    HORIZONTAL, VERTICAL;
   }
 }

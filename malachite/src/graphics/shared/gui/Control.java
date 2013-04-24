@@ -8,6 +8,7 @@ import graphics.gl00.Context;
 import graphics.gl00.Drawable;
 import graphics.gl00.Matrix;
 import graphics.shared.textures.Textures;
+import graphics.themes.Theme;
 import graphics.util.Time;
 
 public class Control {
@@ -72,10 +73,18 @@ public class Control {
   public void addEventLostFocusHandler  (ControlEventFocus  e) { _eventLostFocus  .add(e); }
   
   public Control(GUI gui) {
-    this(gui, true);
+    this(gui, Theme.getInstance(), true);
+  }
+  
+  public Control(GUI gui, Theme theme) {
+    this(gui, theme, true);
   }
   
   public Control(GUI gui, boolean register) {
+    this(gui, Theme.getInstance(), true);
+  }
+  
+  public Control(GUI gui, Theme theme, boolean register) {
     _gui = gui;
     
     if(register) {
@@ -493,6 +502,16 @@ public class Control {
     }
     
     drawEnd();
+  }
+  
+  public void logic() { }
+  public void logicControl() {
+    logic();
+    _controlList.logic();
+    
+    if(_controlNext != null) {
+      _controlNext.logicControl();
+    }
   }
   
   public void drawSelect() {

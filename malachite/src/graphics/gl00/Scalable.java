@@ -33,9 +33,7 @@ public interface Scalable {
   public void setTexture(Texture texture);
   public void setVertices(Vertex[] vertex);
   
-  public void setSize1(float[] s);
-  public void setSize2(float[] s);
-  public void setBorderS(float[][] b);
+  public void setSize(float[] st, float[] sl, float tw, float th, float ts);
   public void updateVertices();
   public void draw();
 }

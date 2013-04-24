@@ -1,4 +1,4 @@
-package game.gui.editors;
+package game.graphics.gui.editors;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -14,7 +14,6 @@ import game.world.Region;
 import graphics.gl00.Context;
 import graphics.gl00.Drawable;
 import graphics.shared.gui.Control.ControlEventClick;
-import graphics.shared.gui.Control.ControlEventHover;
 import graphics.shared.gui.Control.ControlEventMouse;
 import graphics.shared.gui.GUI;
 import graphics.shared.gui.controls.Button;
@@ -25,14 +24,12 @@ public class MapEditor extends GUI {
   
   private Picture _picWindow;
   private Button[] _btnTab;
-  private Button   _btnTabSel;
   private Picture[] _picTab;
   private Picture _picTileset;
   private Picture _picSelected;
   
   private Picture _picLayers;
   private Button[] _btnLayer;
-  private Button   _btnLayerSel;
   
   private Picture _picTilesetList;
   private Picture _picTilesetBack;
@@ -86,29 +83,11 @@ public class MapEditor extends GUI {
       }
     };
     
-    ControlEventHover btnTabEnter = new ControlEventHover() {
-      public void event() {
-        if(getControl() != _btnTabSel) {
-          getControl().setBackColour(new float[] {0.3f, 0.3f, 0.3f, 1});
-        }
-      }
-    };
-    
-    ControlEventHover btnTabLeave = new ControlEventHover() {
-      public void event() {
-        if(getControl() != _btnTabSel) {
-          getControl().setBackColour(new float[] {0.2f, 0.2f, 0.2f, 1});
-        }
-      }
-    };
-    
     for(int i = 0; i < _btnTab.length; i++) {
       _btnTab[i] = new Button(this);
       _btnTab[i].setBackColour(new float[] {0.2f, 0.2f, 0.2f, 1});
       _btnTab[i].setXYWH(8 + i * 49, 8, 50, 20);
       _btnTab[i].addEventClickHandler(btnTabClick);
-      _btnTab[i].addEventMouseEnterHandler(btnTabEnter);
-      _btnTab[i].addEventMouseLeaveHandler(btnTabLeave);
       _picWindow.Controls().add(_btnTab[i]);
     }
 
@@ -163,30 +142,12 @@ public class MapEditor extends GUI {
       }
     };
     
-    ControlEventHover btnLayerEnter = new ControlEventHover() {
-      public void event() {
-        if(getControl() != _btnLayerSel) {
-          getControl().setBackColour(new float[] {0.3f, 0.3f, 0.3f, 1});
-        }
-      }
-    };
-    
-    ControlEventHover btnLayerLeave = new ControlEventHover() {
-      public void event() {
-        if(getControl() != _btnLayerSel) {
-          getControl().setBackColour(new float[] {0.2f, 0.2f, 0.2f, 1});
-        }
-      }
-    };
-    
     for(int i = 0; i < Settings.Map.Depth; i++) {
       _btnLayer[i] = new Button(this);
       _btnLayer[i].setBackColour(new float[] {0.2f, 0.2f, 0.2f, 1});
       _btnLayer[i].setXYWH(2, 2 + i * 16, 96, 16);
       _btnLayer[i].setText("Layer " + i);
       _btnLayer[i].addEventClickHandler(btnLayerClick);
-      _btnLayer[i].addEventMouseEnterHandler(btnLayerEnter);
-      _btnLayer[i].addEventMouseLeaveHandler(btnLayerLeave);
       _picLayers.Controls().add(_btnLayer[i]);
     }
     
@@ -282,7 +243,6 @@ public class MapEditor extends GUI {
   }
   
   private void setTab(int index) {
-    _btnTabSel = _btnTab[index];
     _btnTab[_tab].setBackColour(new float[] {0.2f, 0.2f, 0.2f, 1});
     _picTab[_tab].setVisible(false);
     _btnTab[index].setBackColour(new float[] {0, 0, 0.8f, 1});
@@ -291,7 +251,6 @@ public class MapEditor extends GUI {
   }
   
   private void setLayer(int index) {
-    _btnLayerSel = _btnLayer[index];
     _btnLayer[_layer].setBackColour(new float[] {0.2f, 0.2f, 0.2f, 1});
     _btnLayer[index].setBackColour(new float[] {0, 0, 0.8f, 1});
     _layer = index;

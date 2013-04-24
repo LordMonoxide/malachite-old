@@ -1,4 +1,4 @@
-package game.gui;
+package game.graphics.gui;
 
 import graphics.shared.gui.GUI;
 import graphics.shared.gui.controls.List;

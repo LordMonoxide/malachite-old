@@ -34,6 +34,7 @@ public class Drawable extends graphics.gl00.Drawable {
     GL11.glBegin(_renderMode);
     
     for(int i = 0; i < _vertex.length; i++) {
+      if(_vertex[i] == null) continue;
       _vertex[i].use();
     }
     

@@ -25,13 +25,11 @@ public class List extends Control {
     
     _background.setTexture(_textures.getTexture("gui/textbox.png"));
     _background.setXY(-5, -5);
-    _background.setSize1(new float[] {12, 12, 12, 12});
-    _background.setSize2(new float[] {12, 12, 12, 12});
-    _background.setBorderS(new float[][] {
-        { 0,  0, 12, 12}, {12,  0,  1, 12}, {13,  0, 12, 12},
-        { 0, 12, 12,  1}, {12, 12,  1,  1}, {13, 12, 12,  1},
-        { 0, 13, 12, 12}, {12, 13,  1, 12}, {13, 13, 12, 12}
-    });
+    _background.setSize(
+        new float[] {12, 12, 12, 12},
+        new float[] {12, 12, 12, 12},
+        25, 25, 1
+    );
     
     _scroll = new Scrollbar(gui);
     _scroll.addEventScrollHandler(new ControlEventScroll() {

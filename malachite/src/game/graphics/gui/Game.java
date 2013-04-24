@@ -1,12 +1,12 @@
-package game.gui;
+package game.graphics.gui;
 
 import javax.swing.JOptionPane;
 
 import org.lwjgl.input.Keyboard;
 
-import game.gui.editors.DataSelection;
-import game.gui.editors.MapEditor;
-import game.gui.editors.SpriteEditor;
+import game.graphics.gui.editors.DataSelection;
+import game.graphics.gui.editors.MapEditor;
+import game.graphics.gui.editors.SpriteEditor;
 import game.settings.Settings;
 import game.world.Entity;
 import game.world.Region;
@@ -18,7 +18,6 @@ import graphics.gl00.Drawable;
 import graphics.shared.fonts.Font;
 import graphics.shared.gui.GUI;
 import graphics.shared.gui.Control.ControlEventClick;
-import graphics.shared.gui.Control.ControlEventHover;
 import graphics.shared.gui.Control.ControlEventKey;
 import graphics.shared.gui.controls.Button;
 import graphics.shared.gui.controls.Label;
@@ -66,31 +65,15 @@ public class Game extends GUI {
     _picAdmin.setVisible(false);
     
     _lblAdmin = new Label(this);
-    _lblAdmin.setForeColour(new float[] {1, 1, 1, 1});
     _lblAdmin.setText("Administration");
     _lblAdmin.setXY((_picAdmin.getW() - _lblAdmin.getW()) / 2, 8);
     
     _picAdmin.Controls().add(_lblAdmin);
     
-    ControlEventHover btnEditEnter = new ControlEventHover() {
-      public void event() {
-        getControl().setBackColour(new float[] {0.3f, 0.3f, 0.3f, 1});
-      }
-    };
-    
-    ControlEventHover btnEditLeave = new ControlEventHover() {
-      public void event() {
-        getControl().setBackColour(new float[] {0.2f, 0.2f, 0.2f, 1});
-      }
-    };
-    
     _btnEdit = new Button[6];
     for(int i = 0; i < _btnEdit.length; i++) {
       _btnEdit[i] = new Button(this);
-      _btnEdit[i].setBackColour(new float[] {0.2f, 0.2f, 0.2f, 1});
       _btnEdit[i].setXYWH(8, 30 + i * 19, 90, 20);
-      _btnEdit[i].addEventMouseEnterHandler(btnEditEnter);
-      _btnEdit[i].addEventMouseLeaveHandler(btnEditLeave);
       _picAdmin.Controls().add(_btnEdit[i]);
     }
     
@@ -109,12 +92,6 @@ public class Game extends GUI {
     _btnEdit[1].setText("Edit Sprites");
     _btnEdit[1].addEventClickHandler(new ControlEventClick() {
       public void event() {
-        /*if(_editSprite == null) {
-          _editSprite = new SpriteEditor();
-          _editSprite.load();
-          _editSprite.push();
-          _picAdmin.setVisible(false);
-        }*/
         SpriteEditor editor = new SpriteEditor();
         editor.load();
         DataSelection dataSel = new DataSelection(editor, "sprites");

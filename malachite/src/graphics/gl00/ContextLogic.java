@@ -17,6 +17,7 @@ public class ContextLogic implements Runnable {
   
   protected boolean _running;
   protected boolean _paused;
+  protected boolean _finished;
   
   protected boolean[] _keyDown = new boolean[256];
   protected boolean[] _buttonDown = new boolean[256];
@@ -102,10 +103,10 @@ public class ContextLogic implements Runnable {
       
       try {
         Thread.sleep(1);
-      } catch(InterruptedException e) {
-        e.printStackTrace();
-      }
+      } catch(InterruptedException e) { }
     }
+    
+    _finished = true;
     
     System.out.println("Logic thread finished.");
   }

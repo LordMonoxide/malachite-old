@@ -56,7 +56,7 @@ public class Game implements graphics.gl00.Game {
     _world.addEntity(_entity);
     
     //Menu g = new Menu();
-    game.gui.Game g = new game.gui.Game();
+    game.graphics.gui.Game g = new game.graphics.gui.Game();
     g.load();
     g.push();
   }

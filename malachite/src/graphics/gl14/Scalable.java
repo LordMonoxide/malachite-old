@@ -16,19 +16,14 @@ public class Scalable extends Drawable implements graphics.gl00.Scalable {
   private float _borderB2;
   private float _borderH2;
   private float _borderV2;
-  
-  private float[][] _border;
-  private float[][] _borderS;
+  private float _tw, _th, _ts;
   
   public Scalable() {
     _renderMode = GL11.GL_TRIANGLE_STRIP;
-    setSize1(new float[] {32, 32, 32, 32});
-    setSize2(new float[] {21, 21, 21, 21});
-    setBorderS(new float[][] {
-        { 0,  0, 32, 32}, {32,  0,  1, 32}, {64,  0, 32, 32},
-        { 0, 32, 32,  1}, {32, 32,  1,  1}, {64, 32, 32,  1},
-        { 0, 64, 32, 32}, {32, 64,  1, 32}, {64, 64, 32, 32}
-    });
+    setSize(new float[] {32, 32, 32, 32},
+            new float[] {21, 21, 21, 21},
+            96, 96, 1
+    );
   }
   
   public void setW(float w) {
@@ -68,31 +63,28 @@ public class Scalable extends Drawable implements graphics.gl00.Scalable {
     }
   }
   
-  public void setSize1(float[] s) {
-    _borderL = s[0];
-    _borderT = s[1];
-    _borderR = s[2];
-    _borderB = s[3];
-  }
-  
-  public void setSize2(float[] s) {
-    _borderL2 = s[0];
-    _borderT2 = s[1];
-    _borderR2 = s[2];
-    _borderB2 = s[3];
+  public void setSize(float[] s1, float[] s2, float tw, float th, float ts) {
+    _borderL = s1[0];
+    _borderT = s1[1];
+    _borderR = s1[2];
+    _borderB = s1[3];
+    _borderL2 = s2[0];
+    _borderT2 = s2[1];
+    _borderR2 = s2[2];
+    _borderB2 = s2[3];
     _borderH2 = _borderL2 + _borderR2;
     _borderV2 = _borderT2 + _borderB2;
-  }
-  
-  public void setBorderS(float[][] b) {
-    _borderS = b;
+    _tw = tw;
+    _th = th;
+    _ts = ts;
   }
   
   public void updateVertices() {
     if(_texture == null) return;
     
     _vertex = new Vertex[36];
-    _border = new float[][] {
+    
+    float[][] border = new float[][] {
         {0, 0, _borderL, _borderT},
          {_borderL2, 0, _loc[2] - _borderH2, _borderT},
          {_loc[2] - _borderR2, 0, _borderR, _borderT},
@@ -104,19 +96,22 @@ public class Scalable extends Drawable implements graphics.gl00.Scalable {
          {_loc[2] - _borderR2, _loc[3] - _borderB2, _borderR, _borderB}
     };
     
-    float[][] b = new float[_borderS.length][];
+    float[][] borderS = new float[][] {
+        { 0,  0, _borderL, _borderT}, {_borderL,  0, _ts, _borderT}, {_tw - _borderR,  0, _borderR, _borderT},
+        { 0, _borderT, _borderL, _ts}, {_borderL, _borderT, _ts, _ts}, {_tw - _borderR, _borderT, _borderR, _ts},
+        { 0, _th - _borderB, _borderL, _borderB}, {_borderL, _th - _borderB, _ts, _borderB}, {_tw - _borderR, _th - _borderB, _borderR, _borderB}
+    };
     
-    for(int i = 0; i < _borderS.length; i++) {
-      b[i] = new float[_borderS[i].length];
-      b[i][0] = _borderS[i][0] / _texture.getW();
-      b[i][2] = _borderS[i][2] / _texture.getW();
-      b[i][1] = _borderS[i][1] / _texture.getH();
-      b[i][3] = _borderS[i][3] / _texture.getH();
+    for(int i = 0; i < borderS.length; i++) {
+      borderS[i][0] /= _texture.getW();
+      borderS[i][2] /= _texture.getW();
+      borderS[i][1] /= _texture.getH();
+      borderS[i][3] /= _texture.getH();
     }
     
     int i = 0;
-    for(int n = 0; n < _border.length; n++) {
-      Vertex[] v = Vertex.createQuad(_border[n], b[n], _col);
+    for(int n = 0; n < border.length; n++) {
+      Vertex[] v = Vertex.createQuad(border[n], borderS[n], _col);
       _vertex[i++] = v[0];
       _vertex[i++] = v[1];
       _vertex[i++] = v[2];
