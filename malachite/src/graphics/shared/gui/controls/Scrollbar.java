@@ -4,17 +4,22 @@ import java.util.LinkedList;
 
 import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;
+import graphics.themes.Theme;
 
 public class Scrollbar extends Control {
   private Button _up, _down;
-  private int _min, _max = 99, _val;
-  private Orientation _orientation = Orientation.VERTICAL;
+  private int _min, _max, _val;
+  private Orientation _orientation;
   
   private LinkedList<ControlEventScroll> _eventScroll = new LinkedList<ControlEventScroll>();
 
   public void addEventScrollHandler(ControlEventScroll e) { _eventScroll.add(e); }
   
   public Scrollbar(GUI gui) {
+    this(gui, Theme.getInstance());
+  }
+  
+  public Scrollbar(GUI gui, Theme theme) {
     super(gui);
     
     ControlEventClick up = new ControlEventClick() {
@@ -43,14 +48,12 @@ public class Scrollbar extends Control {
       }
     };
     
-    _up = new Button(gui);
-    _up.setText("<");
+    _up = new Button(gui, theme);
     _up.addEventClickHandler(up);
     _up.addEventDoubleClickHandler(up);
     _up.addEventMouseWheelHandler(wheel);
     
-    _down = new Button(gui);
-    _down.setText(">");
+    _down = new Button(gui, theme);
     _down.addEventClickHandler(down);
     _down.addEventDoubleClickHandler(down);
     _down.addEventMouseWheelHandler(wheel);
@@ -58,7 +61,11 @@ public class Scrollbar extends Control {
     Controls().add(_up);
     Controls().add(_down);
     
-    setWH(16, 100);
+    setMin(theme.getScrollbarMin());
+    setMax(theme.getScrollbarMax());
+    setVal(theme.getScrollbarVal());
+    setOrientation(theme.getScrollbarOrientation());
+    setWH(theme.getScrollbarWidth(), theme.getScrollbarHeight());
   }
   
   public int getMin() { return _min; }

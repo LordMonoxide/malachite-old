@@ -39,7 +39,6 @@ public class List extends Control {
     });
     
     _scroll.setMax(0);
-    _scroll.setVal(_scroll.getMax());
     
     Controls().add(_scroll);
     

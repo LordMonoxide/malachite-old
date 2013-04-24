@@ -1,5 +1,7 @@
 package graphics.themes;
 
+import graphics.shared.gui.controls.Scrollbar.Orientation;
+
 public class Theme {
   private static Theme _instance = new Theme();
   public static Theme getInstance() { return _instance; }
@@ -7,19 +9,25 @@ public class Theme {
   protected String _fontName = "Arial";
   protected    int _fontSize = 11;
   
-  protected String   _buttonBackgroundTexture = "gui/button.png";
-  protected  float[] _buttonBackgroundSize1  = {2, 2, 2, 2};
-  protected  float[] _buttonBackgroundSize2  = {2, 2, 2, 2};
-  protected  float[] _buttonBackgroundSize3  = {5, 5, 1};
-  protected  float[] _buttonBackColour       = {0.2f, 0.2f, 0.2f, 1};
-  protected  float[] _buttonGlowColour       = {0.3f, 0.3f, 0.3f, 1};
-  protected  float[] _buttonForeColour       = {1, 1, 1, 1};
-  protected  float[] _buttonSize             = {90, 20};
-  protected String   _buttonText             = "Button";
+  protected      String   _buttonBackgroundTexture = "gui/button.png";
+  protected       float[] _buttonBackgroundSize1   = {2, 2, 2, 2};
+  protected       float[] _buttonBackgroundSize2   = {2, 2, 2, 2};
+  protected       float[] _buttonBackgroundSize3   = {5, 5, 1};
+  protected       float[] _buttonBackColour        = {0.2f, 0.2f, 0.2f, 1};
+  protected       float[] _buttonGlowColour        = {0.3f, 0.3f, 0.3f, 1};
+  protected       float[] _buttonForeColour        = {1, 1, 1, 1};
+  protected       float[] _buttonSize              = {90, 20};
+  protected      String   _buttonText              = "Button";
   
-  protected  float[] _labelForeColour        = {1, 1, 1, 1};
-  protected boolean  _labelAutoSize          = true;
-  protected String   _labelText              = "Label";
+  protected       float[] _labelForeColour         = {1, 1, 1, 1};
+  protected     boolean   _labelAutoSize           = true;
+  protected      String   _labelText               = "Label";
+  
+  protected         int   _scrollbarMin            = 0;
+  protected         int   _scrollbarMax            = 99;
+  protected         int   _scrollbarVal            = 0;
+  protected Orientation   _scrollbarOrientation    = Orientation.VERTICAL;
+  protected       float[] _scrollbarSize           = {16, 100};
   
   protected Theme() { };
   
@@ -42,4 +50,11 @@ public class Theme {
   public  float[] getLabelForeColour()         { return _labelForeColour; }
   public boolean  getLabelAutoSize()           { return _labelAutoSize; }
   public String   getLabelText()               { return _labelText; }
+  
+  public int getScrollbarMin() { return _scrollbarMin; }
+  public int getScrollbarMax() { return _scrollbarMax; }
+  public int getScrollbarVal() { return _scrollbarVal; }
+  public Orientation getScrollbarOrientation() { return _scrollbarOrientation; }
+  public float getScrollbarWidth() { return _scrollbarSize[0]; }
+  public float getScrollbarHeight() { return _scrollbarSize[1]; }
 }
