@@ -124,12 +124,16 @@ public class Scrollbar extends Control {
   private void updateSize() {
     switch(_orientation) {
       case VERTICAL:
+        _up  .setText("\u25B2");
+        _down.setText("\u25BC");
         _up.setWH(_loc[2], _loc[3] / 2);
         _down.setWH(_loc[2], _loc[3] / 2);
         _down.setXY(0, _up.getH());
         break;
         
       case HORIZONTAL:
+        _up  .setText("\u25C4");
+        _down.setText("\u25BA");
         _up.setWH(_loc[2] / 2, _loc[3]);
         _down.setWH(_loc[2] / 2, _loc[3]);
         _down.setXY(_up.getW(), 0);

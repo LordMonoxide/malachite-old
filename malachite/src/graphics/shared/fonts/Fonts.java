@@ -36,10 +36,11 @@ public class Fonts {
   private java.awt.Font _font;
   
   private ArrayList<GlyphMetrics> _metrics;
-  private ArrayList<Glyph> _glyph;
+  private Glyph[] _glyph;
   
   private int _w,  _h;
   private int _w2, _h2;
+  private int _highIndex;
   
   public Font getFont(String name, int size) {
     String fullName = name + "." + size;
@@ -59,18 +60,15 @@ public class Fonts {
     _w2 = 0; _h2 = 0;
     
     _metrics = new ArrayList<GlyphMetrics>();
-    _glyph = new ArrayList<Glyph>();
-    _metrics.ensureCapacity(end - start);
-    
-    // Add enough null elements so that the code
-    // points will sync up with the array location
-    for(int i = 0; i < start; i++) {
-      _glyph.add(null);
-    }
     
     for(int i = start; i <= end; i++) {
       addGlyph(i);
     }
+    
+    addGlyph(0x25B2); // Triangle up
+    addGlyph(0x25BA); // Triangle right
+    addGlyph(0x25BC); // Triangle down
+    addGlyph(0x25C4); // Triangle left
     
     _w2 = graphics.util.Math.nextPowerOfTwo(_w);
     byte[] b = new byte[(_w2 - _w) * 4];
@@ -88,14 +86,13 @@ public class Fonts {
     buffer.position(0);
     
     Texture texture = _textures.getTexture("Font." + _font.getFontName() + "." + _font.getSize(), _w2, _h, buffer);
-    _glyph.ensureCapacity(end);
     
     int x = 0;
     int y = 0;
     
+    _glyph = new Glyph[_highIndex + 1];
     for(GlyphMetrics glyph : _metrics) {
-      // Specify array location to ensure code points sync up
-      _glyph.add(glyph.getCode(), new Glyph(x, y, fm.charWidth(glyph.getCode()), glyph.getH(), glyph.getW2(), glyph.getH2(), texture));
+      _glyph[glyph.getCode()] = new Glyph(x, y, fm.charWidth(glyph.getCode()), glyph.getH(), glyph.getW2(), glyph.getH2(), texture);
       x += glyph.getW2();
     }
     
@@ -116,8 +113,6 @@ public class Fonts {
     Rectangle2D bounds = _font.getStringBounds(character, 0, character.length, _rendCont);
     
     if(bounds.getWidth() == 0) {
-      //System.out.println("Zero width character ignored: " + Integer.toHexString(i));
-      _glyph.add(null);
       return;
     }
     
@@ -138,6 +133,8 @@ public class Fonts {
     
     GlyphMetrics glyphMetric = new GlyphMetrics(i, (int)bounds.getWidth(), (int)bounds.getHeight(), argbByte);
     _metrics.add(glyphMetric);
+    
+    if(i > _highIndex) _highIndex = i;
     
     _w += glyphMetric.getW2();
     if(glyphMetric.getH() > _h2) {

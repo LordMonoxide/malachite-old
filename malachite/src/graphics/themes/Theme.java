@@ -4,7 +4,7 @@ public class Theme {
   private static Theme _instance = new Theme();
   public static Theme getInstance() { return _instance; }
   
-  protected String _fontName = "Tahoma";
+  protected String _fontName = "Arial";
   protected    int _fontSize = 11;
   
   protected String   _buttonBackgroundTexture = "gui/button.png";

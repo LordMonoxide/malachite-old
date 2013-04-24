@@ -1,7 +1,5 @@
 package graphics.shared.fonts;
 
-import java.util.ArrayList;
-
 import graphics.gl00.Context;
 import graphics.gl00.Matrix;
 import graphics.shared.textures.Texture;
@@ -12,9 +10,9 @@ public class Font {
   
   private int _h;
   
-  ArrayList<Glyph> _glyph = new ArrayList<Glyph>();
+  private Glyph[] _glyph;
   
-  protected Font(int h, ArrayList<Glyph> glyph) {
+  protected Font(int h, Glyph[] glyph) {
     _h = h;
     _glyph = glyph;
   }
@@ -32,7 +30,10 @@ public class Font {
     
     int w = 0;
     for(int i = 0; i < text.length(); i++) {
-      w += _glyph.get(text.codePointAt(i)).getW();
+      int n = text.codePointAt(i);
+      if(_glyph[n] != null) {
+        w += _glyph[text.codePointAt(i)].getW();
+      }
     }
     
     return w;
@@ -53,7 +54,7 @@ public class Font {
     _matrix.translate(x, y);
     
     for(int i = 0; i < text.length(); i++) {
-      Glyph glyph = _glyph.get(mask == 0 ? text.codePointAt(i) : mask);
+      Glyph glyph = _glyph[mask == 0 ? text.codePointAt(i) : mask];
       
       if(glyph != null) {
         //TODO: This is just a hack to temporarily get font colour working
