@@ -95,7 +95,6 @@ public class SpriteEditor extends GUI implements Editor {
     
     for(int i = 0; i < _btnTab.length; i++) {
       _btnTab[i] = new Button(this);
-      _btnTab[i].setBackColour(new float[] {0.2f, 0.2f, 0.2f, 1});
       _btnTab[i].setXYWH(8 + i * 59, 8, 60, 20);
       _btnTab[i].addEventClickHandler(btnTabClick);
       _picWindow.Controls().add(_btnTab[i]);
