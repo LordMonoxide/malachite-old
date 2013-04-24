@@ -7,6 +7,7 @@ import graphics.shared.gui.Control.ControlEventClick;
 import graphics.shared.gui.GUI;
 import graphics.shared.gui.controls.Button;
 import graphics.shared.gui.controls.List;
+import graphics.shared.gui.controls.List.ListItem.ControlEventSelect;
 import graphics.shared.gui.controls.Picture;
 
 public class DataSelection extends GUI {
@@ -27,7 +28,7 @@ public class DataSelection extends GUI {
       
       int i = 0;
       for(File f : d) {
-        _name[i++] = f.getName().substring(0, f.getName().lastIndexOf('.'));
+        _name[i++] = f.getName();
       }
     }
   }
@@ -39,6 +40,11 @@ public class DataSelection extends GUI {
     
     _data = new List(this);
     _data.setXYWH(8, 8, 400, 200);
+    _data.addEventSelectHandler(new ControlEventSelect() {
+      public void event() {
+        System.out.println(getControl());
+      }
+    });
     
     if(_name != null) {
       for(String n : _name) {
@@ -48,6 +54,9 @@ public class DataSelection extends GUI {
         }
       }
     }
+    
+    _data.addItem("Test", null);
+    _data.addItem("Test2", null);
     
     _new = new Button(this);
     _new.setText("New");

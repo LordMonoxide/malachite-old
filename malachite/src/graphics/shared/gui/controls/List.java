@@ -9,6 +9,7 @@ import graphics.gl00.Drawable;
 import graphics.gl00.Scalable;
 import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;
+import graphics.shared.gui.controls.List.ListItem.ControlEventSelect;
 import graphics.shared.gui.controls.Scrollbar.ControlEventScroll;
 import graphics.shared.textures.Texture;
 import graphics.shared.textures.Textures;
@@ -19,6 +20,10 @@ public class List extends Control {
   private ListItem _selected;
   private Scrollbar _scroll;
   private int _start, _length;
+  
+  private LinkedList<ControlEventSelect> _eventSelect = new LinkedList<ControlEventSelect>();
+  
+  public void addEventSelectHandler(ControlEventSelect e) { _eventSelect.add(e); }
   
   public List(GUI gui) {
     super(gui);
@@ -93,10 +98,16 @@ public class List extends Control {
   }
   
   public ListItem addItem(String text, Texture icon) {
-    ListItem l = new ListItem(_gui, _items.size());
+    final ListItem l = new ListItem(_gui, _items.size());
     l.setText(text);
     l.setIcon(icon);
     l.setXYWH(0, _items.size() * 41, _loc[2] - 16, 40);
+    l.addEventSelectHandler(new ControlEventSelect() {
+      public void event() {
+        handleSelect(l);
+      }
+    });
+    
     _items.add(l);
     _scroll.setMax(_items.size() - _length);
     _scroll.setVal(_scroll.getMax());
@@ -236,6 +247,17 @@ public class List extends Control {
     }
   }
   
+  public void handleSelect(ListItem l) {
+    raiseEventSelect(l);
+  }
+  
+  protected void raiseEventSelect(ListItem l) {
+    for(ControlEventSelect e : _eventSelect) {
+      e.setControl(l);
+      e.event();
+    }
+  }
+  
   public static class ListItem extends Control {
     private Textures _textures = Context.getTextures();
     private Drawable _borderT = Context.newDrawable();
@@ -248,7 +270,7 @@ public class List extends Control {
     
     private LinkedList<ControlEventSelect> _eventSelect = new LinkedList<ControlEventSelect>();
     
-    public void addEventSelectHandler (ControlEventSelect e) { _eventSelect.add(e); }
+    public void addEventSelectHandler(ControlEventSelect e) { _eventSelect.add(e); }
    
     private ListItem() { super(null); }
     protected ListItem(GUI gui, int index) {

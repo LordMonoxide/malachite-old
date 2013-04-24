@@ -1,5 +1,7 @@
 package game.graphics.gui.editors;
 
+import javax.swing.JOptionPane;
+
 import game.data.Sprite;
 import game.data.Sprite.Anim;
 import game.data.Sprite.Frame;
@@ -24,6 +26,9 @@ public class SpriteEditor extends GUI implements Editor {
   private Picture   _picWindow;
   private Button[]  _btnTab;
   private Picture[] _picTab;
+  
+  private Button    _btnClose;
+  private Button    _btnSave;
   
   private Picture   _picFrameLoc;
   private Label     _lblFrameNum;
@@ -112,6 +117,22 @@ public class SpriteEditor extends GUI implements Editor {
       _picTab[i].setVisible(false);
       _picWindow.Controls().add(_picTab[i]);
     }
+    
+    _btnClose = new Button(this);
+    _btnClose.setText("Close");
+    _btnClose.setY((_picTab[0].getY() - _btnClose.getH()) / 2);
+    _btnClose.addEventClickHandler(new ControlEventClick() {
+      public void event() {
+        unload();
+      }
+    });
+    
+    _btnSave = new Button(this);
+    _btnSave.setText("Save");
+    _btnSave.setY(_btnClose.getY());
+    
+    _picWindow.Controls().add(_btnClose);
+    _picWindow.Controls().add(_btnSave);
     
     _lblFrameLoc = new Label(this);
     _lblFrameLoc.setText("Location");
@@ -386,12 +407,19 @@ public class SpriteEditor extends GUI implements Editor {
     _picTab[1].Controls().add(_scrAnim);
     _picTab[1].Controls().add(_picAnim);
     
+    ControlEventChange change = new ControlEventChange() {
+      public void event() {
+        update();
+      }
+    };
+    
     _lblName = new Label(this);
     _lblName.setText("Name");
-    _lblName.setXY(4, 4);
+    _lblName.setXY(8, 4);
     
     _txtName = new Textbox(this);
     _txtName.setXY(_lblName.getX(), _lblName.getY() + _lblName.getH() + 4);
+    _txtName.addEventChangeHandler(change);
     
     _lblNote = new Label(this);
     _lblNote.setText("Notes");
@@ -399,6 +427,7 @@ public class SpriteEditor extends GUI implements Editor {
     
     _txtNote = new Textbox(this);
     _txtNote.setXY(_lblNote.getX(), _lblNote.getY() + _lblNote.getH() + 4);
+    _txtNote.addEventChangeHandler(change);
     
     _lblW = new Label(this);
     _lblW.setText("W");
@@ -407,6 +436,7 @@ public class SpriteEditor extends GUI implements Editor {
     _txtW = new Textbox(this);
     _txtW.setXY(_lblW.getX(), _lblW.getY() + _lblW.getH() + 4);
     _txtW.setW(40);
+    _txtW.addEventChangeHandler(change);
     
     _lblH = new Label(this);
     _lblH.setText("H");
@@ -415,6 +445,7 @@ public class SpriteEditor extends GUI implements Editor {
     _txtH = new Textbox(this);
     _txtH.setXY(_lblH.getX(), _txtW.getY());
     _txtH.setW(40);
+    _txtH.addEventChangeHandler(change);
     
     _picTab[2].Controls().add(_lblName);
     _picTab[2].Controls().add(_txtName);
@@ -449,9 +480,36 @@ public class SpriteEditor extends GUI implements Editor {
     _picWindow.setWH(_picTab[_tab].getW() + 16, _btnTab[_tab].getH() + _picTab[_tab].getH() + 16);
     _picWindow.setXY((_context.getW() - _picWindow.getW()) / 2, (_context.getH() - _picWindow.getH()) / 2);
     
-    _picTab[1].setWH(_picTab[0].getW(), _picTab[0].getH());
+    _btnClose.setX(_picWindow.getW() - _btnClose.getW() - 4);
+    _btnSave.setX(_btnClose.getX() - _btnSave.getW() - 4);
+    
+    for(int i = 1; i < _picTab.length; i++) {
+      _picTab[i].setWH(_picTab[0].getW(), _picTab[0].getH());
+    }
+    
     _picAnim.setWH(_picTab[1].getW() - _picAnim.getX() - 4, _picTab[1].getH() - _picAnim.getY() - 4);
     _picList.setWH(_picAnim.getW() - _picList.getX() - 4, _picAnim.getH() - _picList.getY() - 4);
+  }
+  
+  public boolean unload() {
+    if(_sprite.isChanged()) {
+      switch(JOptionPane.showConfirmDialog(null, "Would you like to save your changes?")) {
+        case JOptionPane.CANCEL_OPTION:
+        case JOptionPane.CLOSED_OPTION:
+          return false;
+          
+        case JOptionPane.YES_OPTION:
+          System.out.println("Updating sprite " + _sprite.getName());
+          _sprite.update();
+          _sprite.save();
+          return true;
+          
+        case JOptionPane.NO_OPTION:
+          return true;
+      }
+    }
+    
+    return true;
   }
   
   public void newData() {
@@ -572,6 +630,13 @@ public class SpriteEditor extends GUI implements Editor {
     _scrListFrame.setVal(l._frame);
     _suspendUpdateList = false;
     _scrListTime.setVal(l._time / 10);
+  }
+  
+  private void update() {
+    _sprite.setName(_txtName.getText());
+    _sprite.setNote(_txtNote.getText());
+    _sprite.setW(Integer.parseInt(_txtW.getText()));
+    _sprite.setH(Integer.parseInt(_txtH.getText()));
   }
   
   private void updateFrame() {

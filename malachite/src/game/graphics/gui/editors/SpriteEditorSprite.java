@@ -35,6 +35,22 @@ public class SpriteEditorSprite extends Sprite {
     return _sprite;
   }
   
+  public void setName(String name) {
+    _name = name;
+  }
+  
+  public void setNote(String note) {
+    _note = note;
+  }
+  
+  public void setW(int w) {
+    _w = w;
+  }
+  
+  public void setH(int h) {
+    _h = h;
+  }
+  
   public String getTexture() {
     return _texture;
   }

@@ -176,6 +176,14 @@ public class Sprite extends Serializable implements Data {
     return a;
   }
   
+  public boolean load() {
+    return super.load(_name);
+  }
+  
+  public void save() {
+    super.save(_name);
+  }
+  
   public Buffer serialize() {
     Buffer b = new Buffer();
     b.put(VERSION);
