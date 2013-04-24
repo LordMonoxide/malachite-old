@@ -130,6 +130,11 @@ public class SpriteEditor extends GUI implements Editor {
     _btnSave = new Button(this);
     _btnSave.setText("Save");
     _btnSave.setY(_btnClose.getY());
+    _btnSave.addEventClickHandler(new ControlEventClick() {
+      public void event() {
+        save();
+      }
+    });
     
     _picWindow.Controls().add(_btnClose);
     _picWindow.Controls().add(_btnSave);
@@ -491,34 +496,34 @@ public class SpriteEditor extends GUI implements Editor {
     _picList.setWH(_picAnim.getW() - _picList.getX() - 4, _picAnim.getH() - _picList.getY() - 4);
   }
   
-  public boolean unload() {
+  public void unload() {
     if(_sprite.isChanged()) {
       switch(JOptionPane.showConfirmDialog(null, "Would you like to save your changes?")) {
         case JOptionPane.CANCEL_OPTION:
         case JOptionPane.CLOSED_OPTION:
-          return false;
+          return;
           
         case JOptionPane.YES_OPTION:
-          System.out.println("Updating sprite " + _sprite.getName());
-          _sprite.update();
-          _sprite.save();
-          return true;
-          
-        case JOptionPane.NO_OPTION:
-          return true;
+          save();
       }
     }
     
-    return true;
+    pop();
+  }
+  
+  private void save() {
+    System.out.println("Updating sprite " + _sprite.getName());
+    _sprite.update();
+    _sprite.save();
   }
   
   public void newData() {
-    push();
-    
     editData(new Sprite());
   }
   
   public void editData(Data data) {
+    push();
+    
     _sprite = new SpriteEditorSprite((Sprite)data);
     if(_sprite._frame.size() == 0) addFrame();
     if(_sprite._anim .size() == 0) addAnim();

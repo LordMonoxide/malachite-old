@@ -98,9 +98,14 @@ public class List extends Control {
   }
   
   public ListItem addItem(String text, Texture icon) {
-    final ListItem l = new ListItem(_gui, _items.size());
+    ListItem l = new ListItem(_gui);
     l.setText(text);
     l.setIcon(icon);
+    return addItem(l);
+  }
+  
+  public ListItem addItem(final ListItem l) {
+    l._index = _items.size();
     l.setXYWH(0, _items.size() * 41, _loc[2] - 16, 40);
     l.addEventSelectHandler(new ControlEventSelect() {
       public void event() {
@@ -266,17 +271,15 @@ public class List extends Control {
     
     private Picture _icon;
     private Label _text;
-    private int _index;
+    protected int _index;
     
     private LinkedList<ControlEventSelect> _eventSelect = new LinkedList<ControlEventSelect>();
     
     public void addEventSelectHandler(ControlEventSelect e) { _eventSelect.add(e); }
     
     private ListItem() { super(null); }
-    protected ListItem(GUI gui, int index) {
+    protected ListItem(GUI gui) {
       super(gui);
-      
-      _index = index;
       
       _borderT.setTexture(_textures.getTexture("gui/textbox.png"));
       _borderT.setH(1);

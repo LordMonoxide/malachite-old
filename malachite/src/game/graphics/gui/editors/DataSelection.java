@@ -3,11 +3,12 @@ package game.graphics.gui.editors;
 import java.io.File;
 
 import game.data.Sprite;
+import game.data.util.Data;
+import game.data.util.Serializable;
 import graphics.shared.gui.Control.ControlEventClick;
 import graphics.shared.gui.GUI;
 import graphics.shared.gui.controls.Button;
 import graphics.shared.gui.controls.List;
-import graphics.shared.gui.controls.List.ListItem.ControlEventSelect;
 import graphics.shared.gui.controls.Picture;
 
 public class DataSelection extends GUI {
@@ -40,23 +41,23 @@ public class DataSelection extends GUI {
     
     _data = new List(this);
     _data.setXYWH(8, 8, 400, 200);
-    _data.addEventSelectHandler(new ControlEventSelect() {
+    
+    ControlEventClick accept = new ControlEventClick() {
       public void event() {
-        System.out.println(getControl());
+        editData((Data)((ListItem)getControl()).getData());
       }
-    });
+    };
     
     if(_name != null) {
       for(String n : _name) {
         Sprite s = new Sprite();
         if(s.load(n)) {
-          _data.addItem(n + ": " + s.getName() + " - " + s.getNote(), null);
+          ListItem l = (ListItem)_data.addItem(new ListItem(this, s));
+          l.setText(n + ": " + s.getName() + " - " + s.getNote());
+          l.addEventDoubleClickHandler(accept);
         }
       }
     }
-    
-    _data.addItem("Test", null);
-    _data.addItem("Test2", null);
     
     _new = new Button(this);
     _new.setText("New");
@@ -88,7 +89,21 @@ public class DataSelection extends GUI {
     pop();
   }
   
-  private void editData() {
+  private void editData(Data data) {
+    _editor.editData(data);
+    pop();
+  }
+  
+  public static class ListItem extends graphics.shared.gui.controls.List.ListItem {
+    private Serializable _data;
     
+    protected ListItem(GUI gui, Serializable data) {
+      super(gui);
+      _data = data;
+    }
+    
+    public Serializable getData() {
+      return _data;
+    }
   }
 }
