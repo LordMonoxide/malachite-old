@@ -138,7 +138,7 @@ public class List extends Control {
         default:
           _matrix.push();
           _matrix.translate(0, -_start * 41);
-          for(int i = _start; i < _start + _length; i++) {
+          for(int i = _start; i < _start + (_length > _items.size() ? _items.size() : _length); i++) {
             _items.get(i).draw();
           }
           _matrix.pop();
@@ -179,7 +179,7 @@ public class List extends Control {
         default:
           _matrix.push();
           _matrix.translate(0, -_start * 41);
-          for(int i = _start; i < _start + _length; i++) {
+          for(int i = _start; i < _start + (_length > _items.size() ? _items.size() : _length); i++) {
             _items.get(i).drawSelect();
           }
           _matrix.pop();
@@ -219,7 +219,7 @@ public class List extends Control {
             break;
             
           default:
-            for(int i = _start; i < _start + _length; i++) {
+            for(int i = _start; i < _start + (_length > _items.size() ? _items.size() : _length); i++) {
               if((control = _items.get(i).getSelectControl(colour)) != null) {
                 break;
               }
@@ -271,7 +271,7 @@ public class List extends Control {
     private LinkedList<ControlEventSelect> _eventSelect = new LinkedList<ControlEventSelect>();
     
     public void addEventSelectHandler(ControlEventSelect e) { _eventSelect.add(e); }
-   
+    
     private ListItem() { super(null); }
     protected ListItem(GUI gui, int index) {
       super(gui);
@@ -295,9 +295,6 @@ public class List extends Control {
       _text = new Label(gui);
       _text.setAutoSize(false);
       _text.setX(56);
-      
-      _controlList.add(_icon);
-      _controlList.add(_text);
       
       setWH(120, 40);
     }
@@ -384,6 +381,8 @@ public class List extends Control {
     
     public void draw() {
       if(drawBegin()) {
+        _icon.draw();
+        _text.draw();
         _background.draw();
         _borderT.draw();
         _borderB.draw();
