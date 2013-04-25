@@ -38,15 +38,17 @@ public class Scrollbar extends Control {
       public void event(int delta) {
         while(delta > 0) {
           delta -= 120;
-          setVal(getVal() - 1);
+          _up.handleMouseUp(0, 0, 0);
         }
         
         while(delta < 0) {
           delta += 120;
-          setVal(getVal() + 1);
+          _down.handleMouseUp(0, 0, 0);
         }
       }
     };
+    
+    addEventMouseWheelHandler(wheel);
     
     _up = new Button(gui, theme);
     _up.addEventClickHandler(up);

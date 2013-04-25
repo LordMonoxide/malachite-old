@@ -17,7 +17,9 @@ public class Button extends Control {
   
   private float[] _backColour = {0, 0, 0, 0};
   private float[] _glowColour = {0, 0, 0, 0};
+  private float[] _clickColour = {0, 0, 0, 0};
   private float _fade;
+  private float _click;
   private boolean _hover;
   
   public Button(GUI gui) {
@@ -41,6 +43,15 @@ public class Button extends Control {
       }
     });
     
+    ControlEventClick click = new ControlEventClick() {
+      public void event() {
+        _click = 1;
+      }
+    };
+    
+    addEventClickHandler(click);
+    addEventDoubleClickHandler(click);
+    
     theme.create(this);
   }
   
@@ -50,6 +61,14 @@ public class Button extends Control {
   
   public void setGlowColour(float[] c) {
     _glowColour = c;
+  }
+  
+  public float[] getClickColour() {
+    return _clickColour;
+  }
+  
+  public void setClickColour(float[] c) {
+    _clickColour = c;
   }
   
   public void setW(float w) {
@@ -80,7 +99,7 @@ public class Button extends Control {
   public void setBackColour(float[] c) {
     _backColour = c;
     
-    if(!_hover) {
+    if(!_hover && _click == 0) {
       _background.setColour(c);
       _background.createQuad();
     }
@@ -111,25 +130,39 @@ public class Button extends Control {
   }
   
   public void logic() {
-    if(_hover) {
-      if(_fade < 1) {
-        _fade += 0.1f;
-        float[] c = new float[4];
-        for(int i = 0; i < c.length; i++) {
-          c[i] = (_glowColour[i] - _backColour[i]) * _fade + _backColour[i];
+    if(_click == 0) {
+      if(_hover) {
+        if(_fade < 1) {
+          _fade += 0.1f;
+          float[] c = new float[4];
+          for(int i = 0; i < c.length; i++) {
+            c[i] = (_glowColour[i] - _backColour[i]) * _fade + _backColour[i];
+          }
+          _background.setColour(c);
+          _background.createQuad();
         }
-        _background.setColour(c);
-        _background.createQuad();
+      } else {
+        if(_fade > 0) {
+          _fade -= 0.05f;
+          float[] c = new float[4];
+          for(int i = 0; i < c.length; i++) {
+            c[i] = (_glowColour[i] - _backColour[i]) * _fade + _backColour[i];
+          }
+          _background.setColour(c);
+          _background.createQuad();
+        }
       }
     } else {
-      if(_fade > 0) {
-        _fade -= 0.05f;
-        float[] c = new float[4];
-        for(int i = 0; i < c.length; i++) {
-          c[i] = (_glowColour[i] - _backColour[i]) * _fade + _backColour[i];
-        }
-        _background.setColour(c);
-        _background.createQuad();
+      _click -= 0.05f;
+      float[] c = new float[4];
+      for(int i = 0; i < c.length; i++) {
+        c[i] = (_clickColour[i] - (_hover ? _glowColour[i] : _backColour[i])) * _click + (_hover ? _glowColour[i] : _backColour[i]);
+      }
+      _background.setColour(c);
+      _background.createQuad();
+      
+      if(_click < 0) {
+        _click = 0;
       }
     }
   }

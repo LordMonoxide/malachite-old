@@ -226,15 +226,7 @@ public class SpriteEditor extends GUI implements Editor {
     _picFrameLoc.Controls().add(_txtFrameFY);
     _picFrameLoc.addEventMouseWheelHandler(new ControlEventWheel() {
       public void event(int delta) {
-        while(delta > 0) {
-          delta -= 120;
-          _scrFrame.setVal(_scrFrame.getVal() - 1);
-        }
-        
-        while(delta < 0) {
-          delta += 120;
-          _scrFrame.setVal(_scrFrame.getVal() + 1);
-        }
+        _scrFrame.handleMouseWheel(delta);
       }
     });
     
@@ -334,15 +326,7 @@ public class SpriteEditor extends GUI implements Editor {
     _picList.setXY(_scrList.getX() + _scrList.getW(), _scrList.getY());
     _picList.addEventMouseWheelHandler(new ControlEventWheel() {
       public void event(int delta) {
-        while(delta > 0) {
-          delta -= 120;
-          _scrList.setVal(_scrList.getVal() - 1);
-        }
-        
-        while(delta < 0) {
-          delta += 120;
-          _scrList.setVal(_scrList.getVal() + 1);
-        }
+        _scrList.handleMouseWheel(delta);
       }
     });
     
@@ -386,15 +370,7 @@ public class SpriteEditor extends GUI implements Editor {
     _picAnim.setXY(_scrAnim.getX() + _scrAnim.getW(), _scrAnim.getY());
     _picAnim.addEventMouseWheelHandler(new ControlEventWheel() {
       public void event(int delta) {
-        while(delta > 0) {
-          delta -= 120;
-          _scrAnim.setVal(_scrAnim.getVal() - 1);
-        }
-        
-        while(delta < 0) {
-          delta += 120;
-          _scrAnim.setVal(_scrAnim.getVal() + 1);
-        }
+        _scrAnim.handleMouseWheel(delta);
       }
     });
     

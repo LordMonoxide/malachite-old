@@ -36,6 +36,7 @@ public class Theme {
     c.setBackground(s);
     c.setBackColour(new float[] {0.2f, 0.2f, 0.2f, 1});
     c.setGlowColour(new float[] {0.3f, 0.3f, 0.3f, 1});
+    c.setClickColour(new float[] {0x3F / 255f, 0xCF / 255f, 0, 1});
     c.setForeColour(new float[] {1, 1, 1, 1});
     c.setWH(90, 20);
     c.setText("Button");
