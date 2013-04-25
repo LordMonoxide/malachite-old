@@ -1,9 +1,7 @@
 package graphics.gl00;
 
-import graphics.shared.textures.Texture;
-
-public interface Scalable {
-  public   float   getX();
+public abstract class Scalable extends Drawable {
+  /*public   float   getX();
   public   float   getY();
   public   float   getW();
   public   float   getH();
@@ -31,9 +29,10 @@ public interface Scalable {
   public void setTXYWH(float x, float y, float w, float h);
   public void setColour(float[] c);
   public void setTexture(Texture texture);
-  public void setVertices(Vertex[] vertex);
+  public void setVertices(Vertex[] vertex);*/
   
-  public void setSize(float[] st, float[] sl, float tw, float th, float ts);
-  public void updateVertices();
-  public void draw();
+  public abstract void setSize(float[] st, float[] sl, float tw, float th, float ts);
+  //public void updateVertices();
+  /*public void createQuad();
+  public void draw();*/
 }

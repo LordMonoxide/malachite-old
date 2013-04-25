@@ -2,7 +2,7 @@ package graphics.gl32;
 
 import graphics.shared.textures.Texture;
 
-public class Scalable extends Drawable implements graphics.gl00.Scalable {
+public class Scalable extends graphics.gl00.Scalable {
   private float _borderL;
   private float _borderT;
   private float _borderR;
@@ -51,13 +51,13 @@ public class Scalable extends Drawable implements graphics.gl00.Scalable {
     _loc[2] = w;
     _loc[3] = h;
     updateVertices();
-    updateLoc();
+    //updateLoc();
   }
   
   public void setXYWH(float[] loc) {
     _loc = loc;
     updateVertices();
-    updateLoc();
+    //updateLoc();
   }
   
   public void setColour(float[] c) {
@@ -125,5 +125,23 @@ public class Scalable extends Drawable implements graphics.gl00.Scalable {
     for(int i = 0; i < _d.length; i++) {
       _d[i].draw();
     }
+  }
+
+  @Override
+  public void createQuad() {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void createBorder() {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void createLine() {
+    // TODO Auto-generated method stub
+    
   }
 }

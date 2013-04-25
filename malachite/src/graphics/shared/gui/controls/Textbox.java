@@ -40,7 +40,7 @@ public class Textbox extends Control {
         25, 25, 1
     );
     
-    _background.updateVertices();
+    _background.createQuad();
     _background.setXY(-5, -5);
     
     _caret = Context.newDrawable();
@@ -55,13 +55,13 @@ public class Textbox extends Control {
   public void setW(float w) {
     super.setW(w);
     _background.setW(w + 10);
-    _background.updateVertices();
+    _background.createQuad();
   }
   
   public void setH(float h) {
     super.setH(h);
     _background.setH(h + 10);
-    _background.updateVertices();
+    _background.createQuad();
     _caret.setY((_loc[3] - _caret.getH()) / 2);
     _textY = (int)_caret.getY();
   }
@@ -69,7 +69,7 @@ public class Textbox extends Control {
   public void setWH(float w, float h) {
     super.setWH(w, h);
     _background.setWH(w + 10, h + 10);
-    _background.updateVertices();
+    _background.createQuad();
     _caret.setY((_loc[3] - _caret.getH()) / 2);
     _textY = (int)_caret.getY();
   }
@@ -77,7 +77,7 @@ public class Textbox extends Control {
   public void setXYWH(float x, float y, float w, float h) {
     super.setXYWH(x, y, w, h);
     _background.setWH(w + 10, h + 10);
-    _background.updateVertices();
+    _background.createQuad();
     _caret.setY((_loc[3] - _caret.getH()) / 2);
     _textY = (int)_caret.getY();
   }
@@ -85,7 +85,7 @@ public class Textbox extends Control {
   public void setXYWH(float[] loc) {
     super.setXYWH(loc);
     _background.setWH(_loc[2] + 10, _loc[3] + 10);
-    _background.updateVertices();
+    _background.createQuad();
     _caret.setY((_loc[3] - _caret.getH()) / 2);
     _textY = (int)_caret.getY();
   }

@@ -5,7 +5,7 @@ import graphics.shared.textures.Texture;
 
 import org.lwjgl.opengl.GL11;
 
-public class Scalable extends Drawable implements graphics.gl00.Scalable {
+public class Scalable extends graphics.gl00.Scalable {
   private float _borderL;
   private float _borderT;
   private float _borderR;
@@ -28,18 +28,18 @@ public class Scalable extends Drawable implements graphics.gl00.Scalable {
   
   public void setW(float w) {
     _loc[2] = w;
-    updateVertices();
+    //updateVertices();
   }
   
   public void setH(float h) {
     _loc[3] = h;
-    updateVertices();
+    //updateVertices();
   }
   
   public void setWH(float w, float h) {
     _loc[2] = w;
     _loc[3] = h;
-    updateVertices();
+    //updateVertices();
   }
   
   public void setXYWH(float x, float y, float w, float h) {
@@ -47,12 +47,12 @@ public class Scalable extends Drawable implements graphics.gl00.Scalable {
     _loc[1] = y;
     _loc[2] = w;
     _loc[3] = h;
-    updateVertices();
+    //updateVertices();
   }
   
   public void setXYWH(float[] loc) {
     _loc = loc;
-    updateVertices();
+    //updateVertices();
   }
   
   public void setTexture(Texture texture) {
@@ -79,7 +79,7 @@ public class Scalable extends Drawable implements graphics.gl00.Scalable {
     _ts = ts;
   }
   
-  public void updateVertices() {
+  public void createQuad() {
     if(_texture == null) return;
     
     _vertex = new Vertex[36];
@@ -117,5 +117,38 @@ public class Scalable extends Drawable implements graphics.gl00.Scalable {
       _vertex[i++] = v[2];
       _vertex[i++] = v[3];
     }
+  }
+  
+  public void createBorder() {
+    
+  }
+  
+  public void createLine() {
+    
+  }
+  
+  public void draw() {
+    if(_vertex == null || !_visible) return;
+    
+    _matrix.push();
+    _matrix.translate(_loc[0], _loc[1]);
+    
+    if(_texture != null) {
+      GL11.glEnable(GL11.GL_TEXTURE_2D);
+      _texture.use();
+    } else {
+      GL11.glDisable(GL11.GL_TEXTURE_2D);
+    }
+    
+    GL11.glBegin(_renderMode);
+    
+    for(int i = 0; i < _vertex.length; i++) {
+      if(_vertex[i] == null) continue;
+      _vertex[i].use();
+    }
+    
+    GL11.glEnd();
+    
+    _matrix.pop();
   }
 }

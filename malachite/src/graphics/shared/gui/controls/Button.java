@@ -3,6 +3,7 @@ package graphics.shared.gui.controls;
 import org.lwjgl.input.Keyboard;
 
 import graphics.gl00.Context;
+import graphics.gl00.Drawable;
 import graphics.gl00.Scalable;
 import graphics.shared.fonts.Font;
 import graphics.shared.fonts.Fonts;
@@ -13,7 +14,7 @@ import graphics.themes.Theme;
 public class Button extends Control {
   private Fonts _fonts = Context.getFonts();
   private Font _font = _fonts.getDefault();
-  private Scalable _background = Context.newScalable();
+  private Drawable _background = Context.newScalable();
   private String _text;
   private int[] _textLoc = {0, 0, 0, 0};
   
@@ -31,14 +32,14 @@ public class Button extends Control {
     _acceptsFocus = false;
     
     _background.setTexture(_textures.getTexture(theme.getButtonBackgroundTexture()));
-    _background.setSize(
+    ((Scalable)_background).setSize(
         theme.getButtonBackgroundSize1(),
         theme.getButtonBackgroundSize2(),
         theme.getButtonBackgroundTW(),
         theme.getButtonBackgroundTH(),
         theme.getButtonBackgroundTS()
     );
-    _background.updateVertices();
+    _background.createQuad();
     
     setBackColour(theme.getButtonBackColour());
     setForeColour(theme.getButtonForeColour());
@@ -70,35 +71,35 @@ public class Button extends Control {
   public void setW(float w) {
     super.setW(w);
     _background.setW(w);
-    _background.updateVertices();
+    _background.createQuad();
     setTextLoc();
   }
   
   public void setH(float h) {
     super.setH(h);
     _background.setH(h);
-    _background.updateVertices();
+    _background.createQuad();
     setTextLoc();
   }
   
   public void setWH(float w, float h) {
     super.setWH(w, h);
     _background.setWH(w, h);
-    _background.updateVertices();
+    _background.createQuad();
     setTextLoc();
   }
   
   public void setXYWH(float x, float y, float w, float h) {
     super.setXYWH(x, y, w, h);
     _background.setWH(w, h);
-    _background.updateVertices();
+    _background.createQuad();
     setTextLoc();
   }
   
   public void setXYWH(float[] loc) {
     super.setXYWH(loc);
     _background.setWH(_loc[2], _loc[3]);
-    _background.updateVertices();
+    _background.createQuad();
     setTextLoc();
   }
   
@@ -107,7 +108,7 @@ public class Button extends Control {
     
     if(!_hover) {
       _background.setColour(c);
-      _background.updateVertices();
+      _background.createQuad();
     }
   }
   
@@ -149,7 +150,7 @@ public class Button extends Control {
           c[i] = (_glowColour[i] - _backColour[i]) * _fade + _backColour[i];
         }
         _background.setColour(c);
-        _background.updateVertices();
+        _background.createQuad();
       }
     } else {
       if(_fade > 0) {
@@ -159,7 +160,7 @@ public class Button extends Control {
           c[i] = (_glowColour[i] - _backColour[i]) * _fade + _backColour[i];
         }
         _background.setColour(c);
-        _background.updateVertices();
+        _background.createQuad();
       }
     }
   }

@@ -77,7 +77,7 @@ public class List extends Control {
   
   private void updateSize() {
     _background.setWH(_loc[2] + 10, _loc[3] + 10);
-    _background.updateVertices();
+    _background.createQuad();
     
     for(ListItem l : _items) {
       l.setW(_loc[2] - 16);
