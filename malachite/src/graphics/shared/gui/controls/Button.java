@@ -86,10 +86,6 @@ public class Button extends Control {
     }
   }
   
-  public void setForeColour(float[] c) {
-    super.setForeColour(c);
-  }
-  
   public String getText() {
     return _text;
   }

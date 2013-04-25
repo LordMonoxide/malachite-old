@@ -22,6 +22,11 @@ public class Textbox extends Control {
   
   private int _selStart = 0;
   
+  private float[] _backColour = {0, 0, 0, 0};
+  private float[] _glowColour = {0, 0, 0, 0};
+  private float _fade;
+  private boolean _hover;
+  
   private LinkedList<ControlEventChange> _eventChange = new LinkedList<ControlEventChange>();
   
   public void addEventChangeHandler (ControlEventChange e) { _eventChange.add(e); }
@@ -36,7 +41,36 @@ public class Textbox extends Control {
     _caret = Context.newDrawable();
     _caret.setWH(1, _font.getH());
     
+    addEventMouseEnterHandler(new ControlEventHover() {
+      public void event() {
+        _hover = true;
+      }
+    });
+    
+    addEventMouseLeaveHandler(new ControlEventHover() {
+      public void event() {
+        _hover = false;
+      }
+    });
+    
     theme.create(this);
+  }
+  
+  public void setBackColour(float[] c) {
+    _backColour = c;
+    
+    if(!_hover) {
+      _background.setColour(c);
+      _background.createQuad();
+    }
+  }
+  
+  public float[] getGlowColour() {
+    return _glowColour;
+  }
+  
+  public void setGlowColour(float[] c) {
+    _glowColour = c;
   }
   
   public void setForeColour(float[] c) {
@@ -160,6 +194,30 @@ public class Textbox extends Control {
     }
     
     drawEnd();
+  }
+  
+  public void logic() {
+    if(_hover) {
+      if(_fade < 1) {
+        _fade += 0.1f;
+        float[] c = new float[4];
+        for(int i = 0; i < c.length; i++) {
+          c[i] = (_glowColour[i] - _backColour[i]) * _fade + _backColour[i];
+        }
+        _background.setColour(c);
+        _background.createQuad();
+      }
+    } else {
+      if(_fade > 0) {
+        _fade -= 0.05f;
+        float[] c = new float[4];
+        for(int i = 0; i < c.length; i++) {
+          c[i] = (_glowColour[i] - _backColour[i]) * _fade + _backColour[i];
+        }
+        _background.setColour(c);
+        _background.createQuad();
+      }
+    }
   }
   
   private void raiseChange() {

@@ -457,12 +457,12 @@ public class Control {
       _matrix.push();
       _matrix.translate(_loc[0], _loc[1]);
       
-      if(_border.getColour() != null) {
-        _border.draw();
-      }
-      
       if(_background.getColour() != null) {
         _background.draw();
+      }
+      
+      if(_border.getColour() != null) {
+        _border.draw();
       }
       
       return true;
