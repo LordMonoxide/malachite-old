@@ -204,10 +204,10 @@ public class Control {
       _selBox.createQuad();
     }
     
-    _background.setWH(_loc[2] + _background.getX() * 2, _loc[3] + _background.getY() * 2);
+    _background.setWH(_loc[2] - _background.getX() * 2, _loc[3] - _background.getY() * 2);
     _background.createQuad();
     
-    _border.setWH(_loc[2] + _border.getX() * 2, _loc[3] + _border.getY() * 2);
+    _border.setWH(_loc[2] - _border.getX() * 2, _loc[3] - _border.getY() * 2);
     _border.createBorder();
   }
   
