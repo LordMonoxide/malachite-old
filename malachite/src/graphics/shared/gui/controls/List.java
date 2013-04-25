@@ -6,16 +6,15 @@ import org.lwjgl.input.Keyboard;
 
 import graphics.gl00.Context;
 import graphics.gl00.Drawable;
-import graphics.gl00.Scalable;
 import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;
 import graphics.shared.gui.controls.List.ListItem.ControlEventSelect;
 import graphics.shared.gui.controls.Scrollbar.ControlEventScroll;
 import graphics.shared.textures.Texture;
 import graphics.shared.textures.Textures;
+import graphics.themes.Theme;
 
 public class List extends Control {
-  private Scalable _background = Context.newScalable();
   private LinkedList<ListItem> _items = new LinkedList<ListItem>();
   private ListItem _selected;
   private Scrollbar _scroll;
@@ -26,15 +25,11 @@ public class List extends Control {
   public void addEventSelectHandler(ControlEventSelect e) { _eventSelect.add(e); }
   
   public List(GUI gui) {
+    this(gui, Theme.getInstance());
+  }
+  
+  public List(GUI gui, Theme theme) {
     super(gui);
-    
-    _background.setTexture(_textures.getTexture("gui/textbox.png"));
-    _background.setXY(-5, -5);
-    _background.setSize(
-        new float[] {12, 12, 12, 12},
-        new float[] {12, 12, 12, 12},
-        25, 25, 1
-    );
     
     _scroll = new Scrollbar(gui);
     _scroll.addEventScrollHandler(new ControlEventScroll() {
@@ -47,7 +42,7 @@ public class List extends Control {
     
     Controls().add(_scroll);
     
-    setWH(200, 80);
+    theme.create(this);
   }
   
   public void setW(float w) {
@@ -76,9 +71,6 @@ public class List extends Control {
   }
   
   private void updateSize() {
-    _background.setWH(_loc[2] + 10, _loc[3] + 10);
-    _background.createQuad();
-    
     for(ListItem l : _items) {
       l.setW(_loc[2] - 16);
     }
@@ -128,8 +120,6 @@ public class List extends Control {
   
   public void draw() {
     if(drawBegin()) {
-      _background.draw();
-      
       switch(_items.size()) {
         case 0:
           break;
@@ -277,7 +267,6 @@ public class List extends Control {
     
     public void addEventSelectHandler(ControlEventSelect e) { _eventSelect.add(e); }
     
-    private ListItem() { super(null); }
     protected ListItem(GUI gui) {
       super(gui);
       

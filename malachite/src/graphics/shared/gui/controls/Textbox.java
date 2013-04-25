@@ -6,19 +6,16 @@ import org.lwjgl.input.Keyboard;
 
 import graphics.gl00.Context;
 import graphics.gl00.Drawable;
-import graphics.gl00.Scalable;
 import graphics.shared.fonts.Font;
 import graphics.shared.fonts.Fonts;
 import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;
-import graphics.shared.textures.Textures;
+import graphics.themes.Theme;
 
 public class Textbox extends Control {
-  private Textures _textures = Context.getTextures();
   private Fonts _fonts = Context.getFonts();
   private Font _font = _fonts.getDefault();
   
-  private Scalable _background;
   private Drawable _caret;
   private String _text;
   private int _textY = 0;
@@ -30,63 +27,47 @@ public class Textbox extends Control {
   public void addEventChangeHandler (ControlEventChange e) { _eventChange.add(e); }
   
   public Textbox(GUI gui) {
-    super(gui, true);
-    
-    _background = Context.newScalable();
-    _background.setTexture(_textures.getTexture("gui/textbox.png"));
-    _background.setSize(
-        new float[] {12, 12, 12, 12},
-        new float[] {12, 12, 12, 12},
-        25, 25, 1
-    );
-    
-    _background.createQuad();
-    _background.setXY(-5, -5);
-    
-    _caret = Context.newDrawable();
-    _caret.setColour(new float[] {0, 0, 0, 0.5f});
-    _caret.setWH(1, _font.getH());
-    _caret.createQuad();
-    
-    setForeColour(new float[] {0, 0, 0, 1});
-    setWH(200, 17);
+    this(gui, Theme.getInstance());
   }
   
-  public void setW(float w) {
-    super.setW(w);
-    _background.setW(w + 10);
-    _background.createQuad();
+  public Textbox(GUI gui, Theme theme) {
+    super(gui, true);
+    
+    _caret = Context.newDrawable();
+    _caret.setWH(1, _font.getH());
+    
+    theme.create(this);
+  }
+  
+  public void setForeColour(float[] c) {
+    super.setForeColour(c);
+    _caret.setColour(c);
+    _caret.createQuad();
   }
   
   public void setH(float h) {
     super.setH(h);
-    _background.setH(h + 10);
-    _background.createQuad();
-    _caret.setY((_loc[3] - _caret.getH()) / 2);
-    _textY = (int)_caret.getY();
+    updateSize();
   }
   
   public void setWH(float w, float h) {
     super.setWH(w, h);
-    _background.setWH(w + 10, h + 10);
-    _background.createQuad();
-    _caret.setY((_loc[3] - _caret.getH()) / 2);
-    _textY = (int)_caret.getY();
+    updateSize();
   }
   
   public void setXYWH(float x, float y, float w, float h) {
     super.setXYWH(x, y, w, h);
-    _background.setWH(w + 10, h + 10);
-    _background.createQuad();
-    _caret.setY((_loc[3] - _caret.getH()) / 2);
-    _textY = (int)_caret.getY();
+    updateSize();
   }
   
   public void setXYWH(float[] loc) {
     super.setXYWH(loc);
-    _background.setWH(_loc[2] + 10, _loc[3] + 10);
-    _background.createQuad();
+    updateSize();
+  }
+  
+  private void updateSize() {
     _caret.setY((_loc[3] - _caret.getH()) / 2);
+    _caret.createQuad();
     _textY = (int)_caret.getY();
   }
   
@@ -172,7 +153,6 @@ public class Textbox extends Control {
   
   public void draw() {
     if(drawBegin()) {
-      _background.draw();
       _font.draw(0, _textY, _text, _foreColour);
       
       if(_focus)

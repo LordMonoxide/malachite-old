@@ -3,8 +3,6 @@ package graphics.shared.gui.controls;
 import org.lwjgl.input.Keyboard;
 
 import graphics.gl00.Context;
-import graphics.gl00.Drawable;
-import graphics.gl00.Scalable;
 import graphics.shared.fonts.Font;
 import graphics.shared.fonts.Fonts;
 import graphics.shared.gui.Control;
@@ -14,10 +12,10 @@ import graphics.themes.Theme;
 public class Button extends Control {
   private Fonts _fonts = Context.getFonts();
   private Font _font = _fonts.getDefault();
-  private Drawable _background = Context.newScalable();
   private String _text;
   private int[] _textLoc = {0, 0, 0, 0};
   
+  private float[] _backColour = {0, 0, 0, 0};
   private float[] _glowColour = {0, 0, 0, 0};
   private float _fade;
   private boolean _hover;
@@ -31,22 +29,6 @@ public class Button extends Control {
     
     _acceptsFocus = false;
     
-    _background.setTexture(_textures.getTexture(theme.getButtonBackgroundTexture()));
-    ((Scalable)_background).setSize(
-        theme.getButtonBackgroundSize1(),
-        theme.getButtonBackgroundSize2(),
-        theme.getButtonBackgroundTW(),
-        theme.getButtonBackgroundTH(),
-        theme.getButtonBackgroundTS()
-    );
-    _background.createQuad();
-    
-    setBackColour(theme.getButtonBackColour());
-    setForeColour(theme.getButtonForeColour());
-    setGlowColour(theme.getButtonGlowColour());
-    setWH(theme.getButtonWidth(), theme.getButtonHeight());
-    setText(theme.getButtonText());
-    
     addEventMouseEnterHandler(new ControlEventHover() {
       public void event() {
         _hover = true;
@@ -58,6 +40,8 @@ public class Button extends Control {
         _hover = false;
       }
     });
+    
+    theme.create(this);
   }
   
   public float[] getGlowColour() {
@@ -70,41 +54,31 @@ public class Button extends Control {
   
   public void setW(float w) {
     super.setW(w);
-    _background.setW(w);
-    _background.createQuad();
     setTextLoc();
   }
   
   public void setH(float h) {
     super.setH(h);
-    _background.setH(h);
-    _background.createQuad();
     setTextLoc();
   }
   
   public void setWH(float w, float h) {
     super.setWH(w, h);
-    _background.setWH(w, h);
-    _background.createQuad();
     setTextLoc();
   }
   
   public void setXYWH(float x, float y, float w, float h) {
     super.setXYWH(x, y, w, h);
-    _background.setWH(w, h);
-    _background.createQuad();
     setTextLoc();
   }
   
   public void setXYWH(float[] loc) {
     super.setXYWH(loc);
-    _background.setWH(_loc[2], _loc[3]);
-    _background.createQuad();
     setTextLoc();
   }
   
   public void setBackColour(float[] c) {
-    super.setBackColour(c);
+    _backColour = c;
     
     if(!_hover) {
       _background.setColour(c);
@@ -134,7 +108,6 @@ public class Button extends Control {
   
   public void draw() {
     if(drawBegin()) {
-      _background.draw();
       _font.draw(_textLoc[0], _textLoc[1], _text, _foreColour);
     }
     

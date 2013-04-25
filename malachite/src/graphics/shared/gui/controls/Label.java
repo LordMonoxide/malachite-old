@@ -22,9 +22,7 @@ public class Label extends Control {
   public Label(GUI gui, Theme theme) {
     super(gui, false);
     setAcceptsFocus(false);
-    setForeColour(theme.getLabelForeColour());
-    setAutoSize(theme.getLabelAutoSize());
-    setText(theme.getLabelText());
+    theme.create(this);
   }
   
   public Font getFont() {

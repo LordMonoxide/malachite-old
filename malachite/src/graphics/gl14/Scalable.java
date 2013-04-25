@@ -26,35 +26,6 @@ public class Scalable extends graphics.gl00.Scalable {
     );
   }
   
-  public void setW(float w) {
-    _loc[2] = w;
-    //updateVertices();
-  }
-  
-  public void setH(float h) {
-    _loc[3] = h;
-    //updateVertices();
-  }
-  
-  public void setWH(float w, float h) {
-    _loc[2] = w;
-    _loc[3] = h;
-    //updateVertices();
-  }
-  
-  public void setXYWH(float x, float y, float w, float h) {
-    _loc[0] = x;
-    _loc[1] = y;
-    _loc[2] = w;
-    _loc[3] = h;
-    //updateVertices();
-  }
-  
-  public void setXYWH(float[] loc) {
-    _loc = loc;
-    //updateVertices();
-  }
-  
   public void setTexture(Texture texture) {
     _texture = texture;
     

@@ -61,11 +61,7 @@ public class Scrollbar extends Control {
     Controls().add(_up);
     Controls().add(_down);
     
-    setMin(theme.getScrollbarMin());
-    setMax(theme.getScrollbarMax());
-    setVal(theme.getScrollbarVal());
-    setOrientation(theme.getScrollbarOrientation());
-    setWH(theme.getScrollbarWidth(), theme.getScrollbarHeight());
+    theme.create(this);
   }
   
   public int getMin() { return _min; }

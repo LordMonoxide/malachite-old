@@ -21,13 +21,13 @@ public class Control {
   protected Control     _controlNext;
   protected Control     _controlPrev;
   
-  private Drawable  _border       = Context.newDrawable();
-  protected float[] _loc          = {0, 0, 0, 0};
-  protected float[] _backColour   = {0, 0, 0, 0};
-  protected float[] _foreColour   = {1, 1, 1, 1};
-  protected boolean _visible      = true;
-  protected boolean _acceptsFocus = true;
-  protected boolean _focus        = false;
+  protected Drawable _border;
+  protected Drawable _background;
+  protected float[]  _loc          = {0, 0, 0, 0};
+  protected float[]  _foreColour   = {1, 1, 1, 1};
+  protected boolean  _visible      = true;
+  protected boolean  _acceptsFocus = true;
+  protected boolean  _focus        = false;
   
   protected Drawable _selBox;
   protected int[] _selColour;
@@ -101,6 +101,10 @@ public class Control {
       _selBox.createQuad();
     }
     
+    _background = Context.newDrawable();
+    _background.setColour(null);
+    
+    _border = Context.newDrawable();
     _border.setColour(null);
     _border.setXY(-1, -1);
   }
@@ -141,19 +145,21 @@ public class Control {
     _controlPrev = control;
   }
   
+  public Drawable getBackground()  { return _background; }
   public float getX()              { return _loc[0]; }
   public float getY()              { return _loc[1]; }
   public float getW()              { return _loc[2]; }
   public float getH()              { return _loc[3]; }
   public boolean getVisible()      { return _visible; }
-  public float[] getBackColour()   { return _backColour; }
+  public float[] getBackColour()   { return _background.getColour(); }
   public float[] getForeColour()   { return _foreColour; }
   public float[] getBorderColour() { return _border.getColour(); }
   public boolean getAcceptsFocus() { return _acceptsFocus; }
   
+  public void setBackground(Drawable d)             { _background = d; }
   public void setX(float x)                         { _loc[0] = x; }
   public void setY(float y)                         { _loc[1] = y; }
-  public void setBackColour(float[] c)              { _backColour = c; }
+  public void setBackColour(float[] c)              { _background.setColour(c); }
   public void setForeColour(float[] c)              { _foreColour = c; }
   public void setBorderColour(float[] c)            { _border.setColour(c); }
   public void setAcceptsFocus(boolean acceptsFocus) { _acceptsFocus = acceptsFocus; }
@@ -165,39 +171,18 @@ public class Control {
   
   public void setW(float w) {
     _loc[2] = w;
-    
-    if(_selBox != null) {
-      _selBox.setW(w);
-      _selBox.createQuad();
-    }
-    
-    _border.setW(w + 2);
-    _border.createBorder();
+    updateSize();
   }
   
   public void setH(float h) {
     _loc[3] = h;
-    
-    if(_selBox != null) {
-      _selBox.setH(h);
-      _selBox.createQuad();
-    }
-    
-    _border.setH(h + 2);
-    _border.createBorder();
+    updateSize();
   }
   
   public void setWH(float w, float h) {
     _loc[2] = w;
     _loc[3] = h;
-    
-    if(_selBox != null) {
-      _selBox.setWH(w, h);
-      _selBox.createQuad();
-    }
-    
-    _border.setWH(w + 2, h + 2);
-    _border.createBorder();
+    updateSize();
   }
   
   public void setXYWH(float x, float y, float w, float h) {
@@ -205,25 +190,24 @@ public class Control {
     _loc[1] = y;
     _loc[2] = w;
     _loc[3] = h;
-    
-    if(_selBox != null) {
-      _selBox.setWH(w, h);
-      _selBox.createQuad();
-    }
-    
-    _border.setWH(w + 2, h + 2);
-    _border.createBorder();
+    updateSize();
   }
   
   public void setXYWH(float[] loc) {
     _loc = loc;
-    
+    updateSize();
+  }
+  
+  private void updateSize() {
     if(_selBox != null) {
       _selBox.setWH(_loc[2], _loc[3]);
       _selBox.createQuad();
     }
     
-    _border.setWH(_loc[2] + 2, _loc[3] + 2);
+    _background.setWH(_loc[2] + _background.getX() * 2, _loc[3] + _background.getY() * 2);
+    _background.createQuad();
+    
+    _border.setWH(_loc[2] + _border.getX() * 2, _loc[3] + _border.getY() * 2);
     _border.createBorder();
   }
   
@@ -475,6 +459,10 @@ public class Control {
       
       if(_border.getColour() != null) {
         _border.draw();
+      }
+      
+      if(_background.getColour() != null) {
+        _background.draw();
       }
       
       return true;

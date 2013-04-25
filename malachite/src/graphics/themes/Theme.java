@@ -1,60 +1,70 @@
 package graphics.themes;
 
+import graphics.gl00.Context;
+import graphics.gl00.Scalable;
+import graphics.shared.gui.controls.Button;
+import graphics.shared.gui.controls.Label;
+import graphics.shared.gui.controls.List;
+import graphics.shared.gui.controls.Scrollbar;
+import graphics.shared.gui.controls.Textbox;
 import graphics.shared.gui.controls.Scrollbar.Orientation;
+import graphics.shared.textures.Textures;
 
 public class Theme {
   private static Theme _instance = new Theme();
   public static Theme getInstance() { return _instance; }
   
+  protected Textures _textures = Context.getTextures();
+  
   protected String _fontName = "Arial";
   protected    int _fontSize = 11;
-  
-  protected      String   _buttonBackgroundTexture = "gui/button.png";
-  protected       float[] _buttonBackgroundSize1   = {2, 2, 2, 2};
-  protected       float[] _buttonBackgroundSize2   = {2, 2, 2, 2};
-  protected       float[] _buttonBackgroundSize3   = {5, 5, 1};
-  protected       float[] _buttonBackColour        = {0.2f, 0.2f, 0.2f, 1};
-  protected       float[] _buttonGlowColour        = {0.3f, 0.3f, 0.3f, 1};
-  protected       float[] _buttonForeColour        = {1, 1, 1, 1};
-  protected       float[] _buttonSize              = {90, 20};
-  protected      String   _buttonText              = "Button";
-  
-  protected       float[] _labelForeColour         = {1, 1, 1, 1};
-  protected     boolean   _labelAutoSize           = true;
-  protected      String   _labelText               = "Label";
-  
-  protected         int   _scrollbarMin            = 0;
-  protected         int   _scrollbarMax            = 99;
-  protected         int   _scrollbarVal            = 0;
-  protected Orientation   _scrollbarOrientation    = Orientation.VERTICAL;
-  protected       float[] _scrollbarSize           = {16, 100};
   
   protected Theme() { };
   
   public String   getFontName() { return _fontName; }
   public    int   getFontSize() { return _fontSize; }
   
-  public String   getButtonBackgroundTexture() { return _buttonBackgroundTexture; }
-  public  float[] getButtonBackgroundSize1()   { return _buttonBackgroundSize1; }
-  public  float[] getButtonBackgroundSize2()   { return _buttonBackgroundSize2; }
-  public  float   getButtonBackgroundTW()      { return _buttonBackgroundSize3[0]; }
-  public  float   getButtonBackgroundTH()      { return _buttonBackgroundSize3[1]; }
-  public  float   getButtonBackgroundTS()      { return _buttonBackgroundSize3[2]; }
-  public  float[] getButtonBackColour()        { return _buttonBackColour; }
-  public  float[] getButtonGlowColour()        { return _buttonGlowColour; }
-  public  float[] getButtonForeColour()        { return _buttonForeColour; }
-  public  float   getButtonWidth()             { return _buttonSize[0]; }
-  public  float   getButtonHeight()            { return _buttonSize[1]; }
-  public String   getButtonText()              { return _buttonText; }
+  public void create(Button c) {
+    Scalable s = Context.newScalable();
+    s.setTexture(_textures.getTexture("gui/button.png"));
+    s.setSize(
+        new float[] {2, 2, 2, 2},
+        new float[] {2, 2, 2, 2},
+        5, 5, 1
+    );
+    
+    c.setBackground(s);
+    c.setBackColour(new float[] {0.2f, 0.2f, 0.2f, 1});
+    c.setGlowColour(new float[] {0.3f, 0.3f, 0.3f, 1});
+    c.setForeColour(new float[] {1, 1, 1, 1});
+    c.setWH(90, 20);
+    c.setText("Button");
+  }
   
-  public  float[] getLabelForeColour()         { return _labelForeColour; }
-  public boolean  getLabelAutoSize()           { return _labelAutoSize; }
-  public String   getLabelText()               { return _labelText; }
+  public void create(Label c) {
+    c.setBackColour(null);
+    c.setForeColour(new float[] {1, 1, 1, 1});
+    c.setAutoSize(true);
+    c.setText("Label");
+  }
   
-  public int getScrollbarMin() { return _scrollbarMin; }
-  public int getScrollbarMax() { return _scrollbarMax; }
-  public int getScrollbarVal() { return _scrollbarVal; }
-  public Orientation getScrollbarOrientation() { return _scrollbarOrientation; }
-  public float getScrollbarWidth() { return _scrollbarSize[0]; }
-  public float getScrollbarHeight() { return _scrollbarSize[1]; }
+  public void create(List c) {
+    c.setBackColour(new float[] {0.2f, 0.2f, 0.2f, 1});
+    c.setWH(200, 80);
+  }
+  
+  public void create(Scrollbar c) {
+    c.setBackColour(null);
+    c.setMin(0);
+    c.setMax(99);
+    c.setVal(0);
+    c.setOrientation(Orientation.VERTICAL);
+    c.setWH(16, 100);
+  }
+  
+  public void create(Textbox c) {
+    c.setBackColour(new float[] {0.2f, 0.2f, 0.2f, 1});
+    c.setBorderColour(new float[] {0, 0, 0, 1});
+    c.setWH(200, 19);
+  }
 }
