@@ -26,10 +26,11 @@ public class Textbox extends Control {
   private float[] _glowColour = {0, 0, 0, 0};
   private float _fade;
   private boolean _hover;
+  private float _caretAlpha;
   
   private LinkedList<ControlEventChange> _eventChange = new LinkedList<ControlEventChange>();
   
-  public void addEventChangeHandler (ControlEventChange e) { _eventChange.add(e); }
+  public void addEventChangeHandler(ControlEventChange e) { _eventChange.add(e); }
   
   public Textbox(GUI gui) {
     this(gui, Theme.getInstance());
@@ -50,6 +51,12 @@ public class Textbox extends Control {
     addEventMouseLeaveHandler(new ControlEventHover() {
       public void event() {
         _hover = false;
+      }
+    });
+    
+    addEventGotFocusHandler(new ControlEventFocus() {
+      public void event() {
+        _caretAlpha = 1;
       }
     });
     
@@ -75,7 +82,8 @@ public class Textbox extends Control {
   
   public void setForeColour(float[] c) {
     super.setForeColour(c);
-    _caret.setColour(c);
+    float[] caret = {c[0], c[1], c[2], c[3]};
+    _caret.setColour(caret);
     _caret.createQuad();
   }
   
@@ -111,6 +119,7 @@ public class Textbox extends Control {
   
   public void setSelStart(int selStart) {
     _selStart = selStart;
+    _caretAlpha = 1;
     
     if(_text != null) {
       _caret.setX(_font.getW(_text.substring(0, _selStart)));
@@ -217,6 +226,18 @@ public class Textbox extends Control {
         _background.setColour(c);
         _background.createQuad();
       }
+    }
+    
+    if(_focus) {
+      _caretAlpha -= 0.01f;
+      if(_caretAlpha < 0) {
+        _caretAlpha = 1;
+      }
+      
+      float[] c = _caret.getColour();
+      c[3] = _caretAlpha;
+      _caret.setColour(c);
+      _caret.createQuad();
     }
   }
   
