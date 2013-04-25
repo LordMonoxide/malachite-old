@@ -1,15 +1,10 @@
 package graphics.shared.gui.controls;
 
-import graphics.gl00.Context;
-import graphics.gl00.Drawable;
 import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;
 import graphics.shared.textures.Texture;
 
 public class Picture extends Control {
-  private Drawable _background = Context.newDrawable();
-  private Drawable _override;
-
   public Picture(GUI gui) {
     this(gui, false);
   }
@@ -21,30 +16,30 @@ public class Picture extends Control {
   
   public void setW(float w) {
     super.setW(w);
-    _background.setW(w);
-    _background.createQuad();
+    updateSize();
   }
   
   public void setH(float h) {
     super.setH(h);
-    _background.setH(h);
-    _background.createQuad();
+    updateSize();
   }
   
   public void setWH(float w, float h) {
     super.setWH(w, h);
-    _background.setWH(w, h);
-    _background.createQuad();
+    updateSize();
   }
   
   public void setXYWH(float x, float y, float w, float h) {
     super.setXYWH(x, y, w, h);
-    _background.setWH(w, h);
-    _background.createQuad();
+    updateSize();
   }
   
   public void setXYWH(float[] loc) {
     super.setXYWH(loc);
+    updateSize();
+  }
+  
+  public void updateSize() {
     _background.setWH(_loc[2], _loc[3]);
     _background.createQuad();
   }
@@ -61,26 +56,13 @@ public class Picture extends Control {
   
   public void setTexture(Texture texture) {
     _background.setTexture(texture);
-    setWH(_background.getW(), _background.getH());
-  }
-  
-  public Drawable getDrawableOverride() {
-    return _override;
-  }
-  
-  public void setDrawableOverride(Drawable drawable) {
-    _override = drawable;
-  }
-  
-  public void draw() {
-    if(drawBegin()) {
-      if(_override == null) {
-        _background.draw();
-      } else { 
-        _override.draw();
-      }
-    }
     
-    drawEnd();
+    if(texture != null) {
+      _background.setColour(new float[] {1, 1, 1, 1});
+      setWH(_background.getW(), _background.getH());
+    } else {
+      _background.setColour(null);
+      _background.createQuad();
+    }
   }
 }
