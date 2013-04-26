@@ -34,6 +34,7 @@ public class SpriteEditor extends GUI implements Editor {
   private Label     _lblFrameNum;
   private Button    _btnFrameAdd;
   private Button    _btnFrameDel;
+  private Button    _btnFrameClone;
   private Scrollbar _scrFrame;
   private Label     _lblFrameLoc, _lblFrameFoot;
   private Textbox   _txtFrameX, _txtFrameY;
@@ -207,6 +208,15 @@ public class SpriteEditor extends GUI implements Editor {
       }
     });
     
+    _btnFrameClone = new Button(this);
+    _btnFrameClone.setXY(_btnFrameDel.getX() + _btnFrameDel.getW() + 4, _btnFrameDel.getY());
+    _btnFrameClone.setText("Clone");
+    _btnFrameClone.addEventClickHandler(new ControlEventClick() {
+      public void event() {
+        cloneFrame();
+      }
+    });
+    
     _scrFrame = new Scrollbar(this);
     _scrFrame.setXYWH(4, _btnFrameAdd.getY() + _btnFrameAdd.getH(), 16, _txtFrameFX.getY() + _txtFrameFX.getH() + 8);
     _scrFrame.addEventScrollHandler(new ControlEventScroll() {
@@ -251,6 +261,7 @@ public class SpriteEditor extends GUI implements Editor {
     
     _picTab[0].Controls().add(_btnFrameAdd);
     _picTab[0].Controls().add(_btnFrameDel);
+    _picTab[0].Controls().add(_btnFrameClone);
     _picTab[0].Controls().add(_lblFrameNum);
     _picTab[0].Controls().add(_scrFrame);
     _picTab[0].Controls().add(_picFrameLoc);
@@ -536,6 +547,19 @@ public class SpriteEditor extends GUI implements Editor {
     _tab = index;
     
     resize();
+  }
+  
+  private void cloneFrame() {
+    Frame f2 = _sprite._frame.get(_frame);
+    addFrame();
+    Frame f = _sprite._frame.get(_frame);
+    f._x = f2._x;
+    f._y = f2._y;
+    f._w = f2._w;
+    f._h = f2._h;
+    f._fx = f2._fx;
+    f._fy = f2._fy;
+    setFrame(_scrFrame.getMax());
   }
   
   private void addFrame() {
