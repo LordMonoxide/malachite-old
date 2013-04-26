@@ -549,7 +549,7 @@ public class SpriteEditor extends GUI implements Editor {
     _sprite._frame.remove(_frame);
     _scrFrame.setMax(_sprite._frame.size() - 1);
     _scrListFrame.setMax(_scrFrame.getMax());
-    setFrame(_frame > 0 ? _frame - 1 : _frame);
+    setFrame(_frame);
   }
   
   private void setFrame(int frame) {
