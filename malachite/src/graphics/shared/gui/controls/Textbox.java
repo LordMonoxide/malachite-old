@@ -284,6 +284,8 @@ public class Textbox extends Control {
   }
   
   public int getCharAtX(float x) {
+    if(_text == null) return 0;
+    
     int w = 0, w2;
     
     for(int i = 0; i < _text.length(); i++) {

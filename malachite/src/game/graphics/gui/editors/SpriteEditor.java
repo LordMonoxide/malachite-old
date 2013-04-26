@@ -650,4 +650,8 @@ public class SpriteEditor extends GUI implements Editor {
     _lblListFrame.setText("Frame: " + l._frame);
     _lblListTime.setText("Time: " + l._time + " ms");
   }
+  
+  public boolean handleKeyDown ( int key) { return true; }
+  public boolean handleKeyUp   ( int key) { return true; }
+  public boolean handleCharDown(char key) { return true; }
 }
