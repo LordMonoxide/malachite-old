@@ -135,6 +135,8 @@ public class Game extends GUI {
   }
   
   public void resize() {
+    _picAdmin.setXY((_context.getW() - _picAdmin.getW()) / 2, (_context.getH() - _picAdmin.getH()) / 2);
+    
     updateCamera();
   }
   
