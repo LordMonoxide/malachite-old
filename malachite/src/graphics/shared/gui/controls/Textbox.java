@@ -60,6 +60,12 @@ public class Textbox extends Control {
       }
     });
     
+    addEventMouseDownHandler(new ControlEventMouse() {
+      public void event(int x, int y, int button) {
+        setSelStart(getCharAtX(x));
+      }
+    });
+    
     theme.create(this);
   }
   
@@ -140,6 +146,18 @@ public class Textbox extends Control {
     } else {
       setSelStart(0);
     }
+  }
+  
+  public int getCharAtX(float x) {
+    int w = 0, w2;
+    
+    for(int i = 0; i < _text.length(); i++) {
+      w2 = _font.getW(_text.substring(i, i + 1));
+      if(w + w2 / 2 > x) return i;
+      w += w2;
+    }
+    
+    return _text.length();
   }
   
   public void handleKeyDown(int key) {
