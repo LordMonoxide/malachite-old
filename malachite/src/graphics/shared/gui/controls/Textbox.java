@@ -60,6 +60,34 @@ public class Textbox extends Control {
       }
     });
     
+    addEventMouseMoveHandler(new ControlEventMouse() {
+      public void event(int x, int y, int button) {
+        if(button == 0) {
+          int end = getCharAtX(x);
+          
+          if(end != _caretPos) {
+            if(_selStart != _selEnd) {
+              if(_caretPos == _selStart) {
+                setCaretPos(end, false);
+                setSelStart(end);
+              } else {
+                setCaretPos(end, false);
+                setSelEnd(end);
+              }
+            } else {
+              if(end > _caretPos) {
+                setCaretPos(end, false);
+                setSelEnd(end);
+              } else {
+                setCaretPos(end, false);
+                setSelStart(end);
+              }
+            }
+          }
+        }
+      }
+    });
+    
     addEventMouseEnterHandler(new ControlEventHover() {
       public void event() {
         _hover = true;
