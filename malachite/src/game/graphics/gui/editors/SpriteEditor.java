@@ -153,21 +153,25 @@ public class SpriteEditor extends GUI implements Editor {
     _txtFrameX.setXY(_lblFrameLoc.getX(), _lblFrameLoc.getY() + _lblFrameLoc.getH() + 3);
     _txtFrameX.setW(40);
     _txtFrameX.addEventChangeHandler(textChange);
+    _txtFrameX.setNumeric(true);
     
     _txtFrameY = new Textbox(this);
     _txtFrameY.setXY(_txtFrameX.getX() + _txtFrameX.getW() + 8, _txtFrameX.getY());
     _txtFrameY.setW(40);
     _txtFrameY.addEventChangeHandler(textChange);
+    _txtFrameY.setNumeric(true);
     
     _txtFrameW = new Textbox(this);
     _txtFrameW.setXY(_txtFrameY.getX() + _txtFrameY.getW() + 8, _txtFrameY.getY());
     _txtFrameW.setW(40);
     _txtFrameW.addEventChangeHandler(textChange);
+    _txtFrameW.setNumeric(true);
     
     _txtFrameH = new Textbox(this);
     _txtFrameH.setXY(_txtFrameW.getX() + _txtFrameW.getW() + 8, _txtFrameW.getY());
     _txtFrameH.setW(40);
     _txtFrameH.addEventChangeHandler(textChange);
+    _txtFrameH.setNumeric(true);
     
     _lblFrameFoot = new Label(this);
     _lblFrameFoot.setText("Foot");
@@ -177,11 +181,13 @@ public class SpriteEditor extends GUI implements Editor {
     _txtFrameFX.setXY(_lblFrameFoot.getX(), _lblFrameFoot.getY() + _lblFrameFoot.getH() + 3);
     _txtFrameFX.setW(40);
     _txtFrameFX.addEventChangeHandler(textChange);
+    _txtFrameFX.setNumeric(true);
     
     _txtFrameFY = new Textbox(this);
     _txtFrameFY.setXY(_txtFrameFX.getX() + _txtFrameFX.getW() + 8, _txtFrameFX.getY());
     _txtFrameFY.setW(40);
     _txtFrameFY.addEventChangeHandler(textChange);
+    _txtFrameFY.setNumeric(true);
     
     _btnFrameAdd = new Button(this);
     _btnFrameAdd.setXY(20, 4);
@@ -418,6 +424,7 @@ public class SpriteEditor extends GUI implements Editor {
     _txtW.setXY(_lblW.getX(), _lblW.getY() + _lblW.getH() + 4);
     _txtW.setW(40);
     _txtW.addEventChangeHandler(change);
+    _txtW.setNumeric(true);
     
     _lblH = new Label(this);
     _lblH.setText("H");
@@ -427,6 +434,7 @@ public class SpriteEditor extends GUI implements Editor {
     _txtH.setXY(_lblH.getX(), _txtW.getY());
     _txtH.setW(40);
     _txtH.addEventChangeHandler(change);
+    _txtH.setNumeric(true);
     
     _picTab[2].Controls().add(_lblName);
     _picTab[2].Controls().add(_txtName);

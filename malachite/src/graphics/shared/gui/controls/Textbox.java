@@ -18,21 +18,23 @@ public class Textbox extends Control {
   
   private Drawable _caret;
   private Drawable _sel;
-  private String _text;
+  private String   _text;
   private String[] _textSel = new String[3];
-  private int _textY = 0;
+  private int      _textY = 0;
   
   private int _caretPos;
   private int _selStart;
   private int _selEnd;
   
+  private boolean _numeric;
+  
   private boolean _shiftDown;
+  private boolean _hover;
   
   private float[] _backColour = {0, 0, 0, 0};
   private float[] _glowColour = {0, 0, 0, 0};
-  private float _fade;
-  private boolean _hover;
-  private float _caretAlpha;
+  private float   _fade;
+  private float   _caretAlpha;
   
   private LinkedList<ControlEventChange> _eventChange = new LinkedList<ControlEventChange>();
   
@@ -143,12 +145,12 @@ public class Textbox extends Control {
           case Keyboard.KEY_BACK:
             if(_selStart == _selEnd) {
               if(_caretPos != 0) {
-                _text = _textSel[0].substring(0, _textSel[0].length() - 1) + _textSel[2];
+                setText(_textSel[0].substring(0, _textSel[0].length() - 1) + _textSel[2], false);
                 setCaretPos(_caretPos - 1);
                 raiseChange();
               }
             } else {
-              _text = _textSel[0] + _textSel[2];
+              setText(_textSel[0] + _textSel[2], false);
               setCaretPos(_textSel[0].length());
               raiseChange();
             }
@@ -157,12 +159,12 @@ public class Textbox extends Control {
           case Keyboard.KEY_DELETE:
             if(_selStart == _selEnd) {
               if(_caretPos != _text.length()) {
-                _text = _textSel[0] + _textSel[2].substring(1);
+                setText(_textSel[0] + _textSel[2].substring(1), false);
                 setCaretPos(_caretPos); // Force update
                 raiseChange();
               }
             } else {
-              _text = _textSel[0] + _textSel[2];
+              setText(_textSel[0] + _textSel[2], false);
               setCaretPos(_textSel[0].length());
               raiseChange();
             }
@@ -183,10 +185,16 @@ public class Textbox extends Control {
     
     addEventCharDownHandler(new ControlEventChar() {
       public void event(char key) {
+        if(_numeric) {
+          if(key < 0x30 || key > 0x39) {
+            return;
+          }
+        }
+        
         if(_text != null) {
-          _text = _textSel[0] + key + _textSel[2];
+          setText(_textSel[0] + key + _textSel[2], false);
         } else {
-          _text = Character.toString(key);
+          setText(Character.toString(key), false);
         }
         
         setCaretPos(_caretPos + 1);
@@ -245,6 +253,14 @@ public class Textbox extends Control {
   public void setXYWH(float[] loc) {
     super.setXYWH(loc);
     updateSize();
+  }
+  
+  public boolean getNumeric() {
+    return _numeric;
+  }
+  
+  public void setNumeric(boolean numeric) {
+    _numeric = numeric;
   }
   
   private void updateSize() {
@@ -315,12 +331,24 @@ public class Textbox extends Control {
   }
   
   public void setText(String text) {
+    setText(text, true);
+  }
+  
+  private void setText(String text, boolean moveCursor) {
+    if(_numeric) {
+      if(text == null || text.length() == 0) {
+        text = "0";
+      }
+    }
+    
     _text = text;
     
-    if(_text != null) {
-      setCaretPos(_text.length());
-    } else {
-      setCaretPos(0);
+    if(moveCursor) {
+      if(_text != null) {
+        setCaretPos(_text.length());
+      } else {
+        setCaretPos(0);
+      }
     }
   }
   
