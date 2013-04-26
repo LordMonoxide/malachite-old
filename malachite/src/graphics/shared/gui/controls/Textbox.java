@@ -153,6 +153,19 @@ public class Textbox extends Control {
       }
     });
     
+    addEventCharDownHandler(new ControlEventChar() {
+      public void event(char key) {
+        if(_text != null) {
+          _text = _textSel[0] + key + _textSel[2];
+        } else {
+          _text = Character.toString(key);
+        }
+        
+        setCaretPos(_caretPos + 1);
+        raiseChange();
+      }
+    });
+    
     addEventGotFocusHandler(new ControlEventFocus() {
       public void event() {
         _caretAlpha = 1;
@@ -295,21 +308,6 @@ public class Textbox extends Control {
     }
     
     return _text.length();
-  }
-  
-  public void handleCharDown(char key) {
-    if(_text != null) {
-      String temp = _text.substring(0, _caretPos) + key + _text.substring(_caretPos);
-      _text = temp;
-    } else {
-      _text = Character.toString(key);
-    }
-    
-    raiseChange();
-    
-    setCaretPos(_caretPos + 1);
-    
-    super.handleCharDown(key);
   }
   
   public void draw() {
