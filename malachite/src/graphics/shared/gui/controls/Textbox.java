@@ -19,9 +19,11 @@ public class Textbox extends Control {
   private Drawable _caret;
   private Drawable _sel;
   private String _text;
+  private String[] _textSel = new String[3];
   private int _textY = 0;
   
-  private int _selStart = 0;
+  private int _caretPos;
+  private int _selStart;
   private int _selEnd;
   
   private boolean _shiftDown;
@@ -54,7 +56,7 @@ public class Textbox extends Control {
     
     addEventMouseDownHandler(new ControlEventMouse() {
       public void event(int x, int y, int button) {
-        setSelStart(getCharAtX(x));
+        setCaretPos(getCharAtX(x));
       }
     });
     
@@ -79,46 +81,61 @@ public class Textbox extends Control {
             break;
             
           case Keyboard.KEY_LEFT:
-            if(_selStart != 0) {
+            if(_caretPos != 0) {
               if(!_shiftDown) {
-                setSelStart(_selStart - 1);
+                setCaretPos(_caretPos - 1);
               } else {
-                if(_selEnd != 0) {
-                  setSelEnd(_selEnd - 1);
+                if(_caretPos == _selStart) {
+                  setCaretPos(_caretPos - 1, false);
+                  setSelStart(_caretPos);
+                } else {
+                  setCaretPos(_caretPos - 1, false);
+                  setSelEnd(_caretPos);
                 }
               }
             }
             break;
             
           case Keyboard.KEY_RIGHT:
-            if(_selStart != _text.length()) {
+            if(_caretPos != _text.length()) {
               if(!_shiftDown) {
-                setSelStart(_selStart + 1);
+                setCaretPos(_caretPos + 1);
               } else {
-                if(_selEnd == _selStart) {
-                  // TOO DRUNK TO DO SELECTION RIGHT
-                  // WILL FIX WHEN NOT DRUNK
-                  int end = _selEnd;
-                  setSelStart(_selStart + 1);
-                  setSelEnd(end - 1);
+                if(_caretPos == _selEnd) {
+                  setCaretPos(_caretPos + 1, false);
+                  setSelEnd(_caretPos);
+                } else {
+                  setCaretPos(_caretPos + 1, false);
+                  setSelStart(_caretPos);
                 }
               }
             }
             break;
             
           case Keyboard.KEY_BACK:
-            if(_selStart != 0) {
-              String temp = _text.substring(0, _selStart - 1) + _text.substring(_selStart, _text.length());
-              _text = temp;
-              setSelStart(_selStart - 1);
+            if(_selStart == _selEnd) {
+              if(_caretPos != 0) {
+                _text = _textSel[0].substring(0, _textSel[0].length() - 1) + _textSel[2];
+                setCaretPos(_caretPos - 1);
+                raiseChange();
+              }
+            } else {
+              _text = _textSel[0] + _textSel[2];
+              setCaretPos(_textSel[0].length());
               raiseChange();
             }
             break;
             
           case Keyboard.KEY_DELETE:
-            if(_selStart != _text.length()) {
-              String temp = _text.substring(0, _selStart) + _text.substring(_selStart + 1, _text.length());
-              _text = temp;
+            if(_selStart == _selEnd) {
+              if(_caretPos != _text.length()) {
+                _text = _textSel[0] + _textSel[2].substring(1);
+                setCaretPos(_caretPos); // Force update
+                raiseChange();
+              }
+            } else {
+              _text = _textSel[0] + _textSel[2];
+              setCaretPos(_textSel[0].length());
               raiseChange();
             }
             break;
@@ -196,21 +213,33 @@ public class Textbox extends Control {
     _textY = (int)_caret.getY();
   }
   
-  public int getSelStart() {
-    return _selStart;
+  public int getCaretPos() {
+    return _caretPos;
   }
   
-  public void setSelStart(int selStart) {
-    _selStart = selStart;
-    _selEnd = _selStart;
+  public void setCaretPos(int caretPos) {
+    setCaretPos(caretPos, true);
+  }
+  
+  private void setCaretPos(int caretPos, boolean cancelSelection) {
+    _caretPos = caretPos;
     _caretAlpha = 1;
     
     if(_text != null) {
-      _caret.setX(_font.getW(_text.substring(0, _selStart)));
+      _caret.setX(_font.getW(_text.substring(0, _caretPos)));
     } else {
       _caret.setX(0);
     }
     
+    if(cancelSelection) {
+      _selStart = _caretPos;
+      _selEnd = _caretPos;
+      updateSel();
+    }
+  }
+  
+  private void setSelStart(int selStart) {
+    _selStart = selStart;
     updateSel();
   }
   
@@ -220,18 +249,19 @@ public class Textbox extends Control {
   }
   
   private void updateSel() {
-    System.out.println(_selStart + "\t" + _selEnd);
+    if(_text != null) {
+      _textSel[0] = _text.substring(0, _selStart);
+      _textSel[1] = _text.substring(_selStart, _selEnd);
+      _textSel[2] = _text.substring(_selEnd);
+    } else {
+      _textSel[0] = null;
+      _textSel[1] = null;
+      _textSel[2] = null;
+    }
     
     if(_selStart != _selEnd) {
-      if(_selStart < _selEnd) {
-        _sel.setX(_font.getW(_text.substring(0, _selStart)));
-        _sel.setW(_font.getW(_text.substring(_selStart, _selEnd)));
-        
-        System.out.println(_sel.getX() + "\t" + _sel.getW());
-      } else {
-        
-      }
-      
+      _sel.setX(_font.getW(_textSel[0]));
+      _sel.setW(_font.getW(_textSel[1]));
       _sel.createQuad();
       _sel.setVisible(true);
     } else {
@@ -247,9 +277,9 @@ public class Textbox extends Control {
     _text = text;
     
     if(_text != null) {
-      setSelStart(_text.length());
+      setCaretPos(_text.length());
     } else {
-      setSelStart(0);
+      setCaretPos(0);
     }
   }
   
@@ -267,7 +297,7 @@ public class Textbox extends Control {
   
   public void handleCharDown(char key) {
     if(_text != null) {
-      String temp = _text.substring(0, _selStart) + key + _text.substring(_selStart);
+      String temp = _text.substring(0, _caretPos) + key + _text.substring(_caretPos);
       _text = temp;
     } else {
       _text = Character.toString(key);
@@ -275,7 +305,7 @@ public class Textbox extends Control {
     
     raiseChange();
     
-    setSelStart(_selStart + 1);
+    setCaretPos(_caretPos + 1);
     
     super.handleCharDown(key);
   }
