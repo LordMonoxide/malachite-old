@@ -139,19 +139,19 @@ public class Sprite extends Serializable implements Data {
     
     _script = "function setBearing(bearing) {\n" +
     		        "if(bearing > 22.5 && bearing < 67.5) {\n" +
-    		          //"sprite.setAnim" +
+    		          "sprite.setAnim(\"[walkDownRight]\");\n" +
     		        "} else if(bearing > 67.5 && bearing < 112.5) {\n" +
     		          "sprite.setAnim(\"[walkDown]\");\n" +
     		        "} else if(bearing > 112.5 && bearing < 157.5) {\n" +
-    		          //
+    		          "sprite.setAnim(\"[walkDownLeft]\");\n" +
     		        "} else if(bearing > 157.5 && bearing < 202.5) {\n" +
     		          "sprite.setAnim(\"[walkLeft]\");\n" +
     		        "} else if(bearing > 202.5 && bearing < 247.5) {\n" +
-    		          //
+    		          "sprite.setAnim(\"[walkUpLeft]\");\n" +
     		        "} else if(bearing > 247.5 && bearing < 292.5) {\n" +
     		          "sprite.setAnim(\"[walkUp]\");\n" +
     		        "} else if(bearing > 292.5 && bearing < 337.5) {\n" +
-    		          //
+    		          "sprite.setAnim(\"[walkUpRight]\");\n" +
     		        "} else {\n" +
     		          "sprite.setAnim(\"[walkRight]\");\n" +
     		        "}\n" +
