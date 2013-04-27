@@ -18,6 +18,7 @@ public class Sprite extends Serializable implements Data {
   protected int _default;
   protected ArrayList<Frame> _frame = new ArrayList<Frame>();
   protected ArrayList<Anim> _anim = new ArrayList<Anim>();
+  protected String _script;
   
   public Sprite() {
     super("sprites");
@@ -135,16 +136,34 @@ public class Sprite extends Serializable implements Data {
     a._list.add(l);
     
     _anim.add(a);
+    
+    _script = "function setBearing(bearing) {\n" +
+    		        "if(bearing > 22.5 && bearing < 67.5) {\n" +
+    		          //"sprite.setAnim" +
+    		        "} else if(bearing > 67.5 && bearing < 112.5) {\n" +
+    		          "sprite.setAnim(\"[walkDown]\");\n" +
+    		        "} else if(bearing > 112.5 && bearing < 157.5) {\n" +
+    		          //
+    		        "} else if(bearing > 157.5 && bearing < 202.5) {\n" +
+    		          "sprite.setAnim(\"[walkLeft]\");\n" +
+    		        "} else if(bearing > 202.5 && bearing < 247.5) {\n" +
+    		          //
+    		        "} else if(bearing > 247.5 && bearing < 292.5) {\n" +
+    		          "sprite.setAnim(\"[walkUp]\");\n" +
+    		        "} else if(bearing > 292.5 && bearing < 337.5) {\n" +
+    		          //
+    		        "} else {\n" +
+    		          "sprite.setAnim(\"[walkRight]\");\n" +
+    		        "}\n" +
+    		      "}";
   }
   
-  public String getName() { return _name; }
-  public String getNote() { return _note; }
-  public    int getW()    { return _w; }
-  public    int getH()    { return _h; }
-  
-  public int getDefault() {
-    return _default;
-  }
+  public String getName()    { return _name; }
+  public String getNote()    { return _note; }
+  public    int getW()       { return _w; }
+  public    int getH()       { return _h; }
+  public    int getDefault() { return _default; }
+  public String getScript()  { return _script; }
   
   public Drawable[] createDrawables() {
     Drawable[] d = new Drawable[_frame.size()];

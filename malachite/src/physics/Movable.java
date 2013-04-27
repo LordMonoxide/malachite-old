@@ -66,11 +66,11 @@ public abstract class Movable {
     _velTarget = velTarget;
   }
   
-  public final float getBear() {
+  public float getBear() {
     return _bear;
   }
   
-  public final void setBear(float bear) {
+  public void setBear(float bear) {
     _bear = bear;
   }
   

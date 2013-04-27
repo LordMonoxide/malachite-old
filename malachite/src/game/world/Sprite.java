@@ -8,6 +8,11 @@ import graphics.util.Time;
 
 import java.util.ArrayList;
 
+import javax.script.Invocable;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+
 public class Sprite {
   private static ArrayList<Sprite> _sprite = new ArrayList<Sprite>();
   private static Matrix _matrix = Context.getMatrix();
@@ -30,6 +35,10 @@ public class Sprite {
     }
   }
   
+  private ScriptEngineManager _manager = new ScriptEngineManager();
+  private ScriptEngine _engine = _manager.getEngineByName("JavaScript");
+  private Invocable _script;
+  
   private int _w, _h;
   private Drawable[] _frame;
   private Anim[] _anim;
@@ -47,6 +56,14 @@ public class Sprite {
     _frame = sprite.createDrawables();
     _anim = sprite.createAnimList();
     setAnim(sprite.getDefault());
+    
+    try {
+      _engine.put("sprite", this);
+      _engine.eval(sprite.getScript());
+      _script = (Invocable)_engine;
+    } catch(ScriptException e) {
+      e.printStackTrace();
+    }
   }
   
   public float getX() {
@@ -81,11 +98,30 @@ public class Sprite {
     return _h;
   }
   
+  public void setBear(float bear) {
+    if(_script != null) {
+      try {
+        _script.invokeFunction("setBearing", bear);
+      } catch(NoSuchMethodException | ScriptException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+  
   public void remove() {
     remove(this);
   }
   
-  private void setAnim(int anim) {
+  public void setAnim(String anim) {
+    for(int i = 0; i < _anim.length; i++) {
+      if(_anim[i]._name.equals(anim)) {
+        setAnim(i);
+        break;
+      }
+    }
+  }
+  
+  public void setAnim(int anim) {
     _animNum = anim;
     setList(_anim[_animNum].getDefault());
   }

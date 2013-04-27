@@ -100,6 +100,11 @@ public class Entity extends Movable {
     return _my;
   }
   
+  public void setBear(float bear) {
+    _bear = bear;
+    _sprite.setBear(bear);
+  }
+  
   public Region getRegion() {
     return _region;
   }
