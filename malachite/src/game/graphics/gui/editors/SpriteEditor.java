@@ -47,6 +47,7 @@ public class SpriteEditor extends GUI implements Editor {
   private Label     _lblAnimNum;
   private Button    _btnAnimAdd;
   private Button    _btnAnimDel;
+  private Button    _btnAnimClone;
   private Scrollbar _scrAnim;
   private Label     _lblAnimName;
   private Textbox   _txtAnimName;
@@ -370,6 +371,15 @@ public class SpriteEditor extends GUI implements Editor {
       }
     });
     
+    _btnAnimClone = new Button(this);
+    _btnAnimClone.setXY(_btnAnimDel.getX() + _btnAnimDel.getW() + 4, _btnAnimDel.getY());
+    _btnAnimClone.setText("Clone");
+    _btnAnimClone.addEventClickHandler(new ControlEventClick() {
+      public void event() {
+        cloneAnim();
+      }
+    });
+    
     _scrAnim = new Scrollbar(this);
     _scrAnim.setXYWH(4, _btnAnimAdd.getY() + _btnAnimAdd.getH(), 16, 64);
     _scrAnim.addEventScrollHandler(new ControlEventScroll() {
@@ -401,6 +411,7 @@ public class SpriteEditor extends GUI implements Editor {
     
     _picTab[1].Controls().add(_btnAnimAdd);
     _picTab[1].Controls().add(_btnAnimDel);
+    _picTab[1].Controls().add(_btnAnimClone);
     _picTab[1].Controls().add(_lblAnimNum);
     _picTab[1].Controls().add(_scrAnim);
     _picTab[1].Controls().add(_picAnim);
@@ -550,20 +561,13 @@ public class SpriteEditor extends GUI implements Editor {
   }
   
   private void cloneFrame() {
-    Frame f2 = _sprite._frame.get(_frame);
-    addFrame();
-    Frame f = _sprite._frame.get(_frame);
-    f._x = f2._x;
-    f._y = f2._y;
-    f._w = f2._w;
-    f._h = f2._h;
-    f._fx = f2._fx;
-    f._fy = f2._fy;
-    setFrame(_scrFrame.getMax());
+    addFrame(_sprite._frame.get(_frame));
   }
   
-  private void addFrame() {
-    _sprite._frame.add(new Frame());
+  private void addFrame() { addFrame(null); }
+  private void addFrame(Frame f) {
+    f = f == null ? new Frame() : new Frame(f);
+    _sprite._frame.add(f);
     _scrFrame.setMax(_sprite._frame.size() - 1);
     _scrListFrame.setMax(_scrFrame.getMax());
     setFrame(_scrFrame.getMax());
@@ -593,8 +597,14 @@ public class SpriteEditor extends GUI implements Editor {
     updateFrame();
   }
   
-  private void addAnim() {
-    _sprite._anim.add(new Anim());
+  private void cloneAnim() {
+    addAnim(_sprite._anim.get(_anim));
+  }
+  
+  private void addAnim() { addAnim(null); }
+  private void addAnim(Anim a) {
+    a = a == null ? new Anim() : new Anim(a);
+    _sprite._anim.add(a);
     _scrAnim.setMax(_sprite._anim.size() - 1);
     setAnim(_scrAnim.getMax());
   }

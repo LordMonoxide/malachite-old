@@ -279,6 +279,16 @@ public class Sprite extends Serializable implements Data {
     public int _fx, _fy;
     public int _x, _y;
     public int _w, _h;
+    
+    public Frame() { }
+    public Frame(Frame f) {
+      _x = f._x;
+      _y = f._y;
+      _w = f._w;
+      _h = f._h;
+      _fx = f._fx;
+      _fy = f._fy;
+    }
   }
   
   public static class Anim {
