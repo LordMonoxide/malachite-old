@@ -1,5 +1,8 @@
 package game;
 
+import java.util.HashMap;
+
+import game.data.Sprite;
 import game.settings.Settings;
 import game.world.Entity;
 import game.world.World;
@@ -10,8 +13,26 @@ public class Game implements graphics.gl00.Game {
   private World _world;
   private Entity _entity;
   
+  private HashMap<String, Sprite> _sprite = new HashMap<String, Sprite>();
+  
   public World  getWorld()  { return _world;  }
   public Entity getEntity() { return _entity; }
+  
+  public Sprite getSprite(String name) {
+    Sprite s = _sprite.get(name);
+    
+    if(s == null) {
+      if((s = new Sprite()).load(name)) {
+        System.out.println("Sprite " + name + " loaded.");
+      } else {
+        System.err.println("Couldn't load sprite " + name);
+      }
+      
+      _sprite.put(name, s);
+    }
+    
+    return s;
+  }
   
   public void start() {
     Settings.load();

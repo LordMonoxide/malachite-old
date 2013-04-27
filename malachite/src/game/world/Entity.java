@@ -1,6 +1,8 @@
 package game.world;
 
+import game.Game;
 import game.settings.Settings;
+import graphics.gl00.Context;
 import physics.Movable;
 
 public class Entity extends Movable {
@@ -20,9 +22,7 @@ public class Entity extends Movable {
     setDec(0.361f);
     setVelTerm(1.75f);
     
-    game.data.Sprite s = new game.data.Sprite();
-    
-    _sprite = Sprite.add(s);
+    _sprite = Sprite.add(((Game)Context.getGame()).getSprite("Isaac"));
   }
   
   public void setEntityCallback(EntityCallback callback) {
