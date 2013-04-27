@@ -139,6 +139,9 @@ public class Sprite extends Serializable implements Data {
     
     _script = "var vel = 0;" +
     		      "var bear = 0;" +
+    		      "function init() {\n" +
+    		        "sprite.setAnim(\"standDown\");\n" +
+    		      "}\n" +
               "function setVelocity(velocity) {\n" +
                 "vel = velocity;\n" +
                 "update();\n" +
