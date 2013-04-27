@@ -30,7 +30,7 @@ public abstract class Movable {
     return _vel;
   }
   
-  public final void setVel(float vel) {
+  public void setVel(float vel) {
     _vel = vel;
   }
   

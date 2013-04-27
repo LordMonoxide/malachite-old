@@ -137,24 +137,40 @@ public class Sprite extends Serializable implements Data {
     
     _anim.add(a);
     
-    _script = "function setBearing(bearing) {\n" +
-    		        "if(bearing > 22.5 && bearing < 67.5) {\n" +
-    		          "sprite.setAnim(\"[walkDownRight]\");\n" +
-    		        "} else if(bearing > 67.5 && bearing < 112.5) {\n" +
-    		          "sprite.setAnim(\"[walkDown]\");\n" +
-    		        "} else if(bearing > 112.5 && bearing < 157.5) {\n" +
-    		          "sprite.setAnim(\"[walkDownLeft]\");\n" +
-    		        "} else if(bearing > 157.5 && bearing < 202.5) {\n" +
-    		          "sprite.setAnim(\"[walkLeft]\");\n" +
-    		        "} else if(bearing > 202.5 && bearing < 247.5) {\n" +
-    		          "sprite.setAnim(\"[walkUpLeft]\");\n" +
-    		        "} else if(bearing > 247.5 && bearing < 292.5) {\n" +
-    		          "sprite.setAnim(\"[walkUp]\");\n" +
-    		        "} else if(bearing > 292.5 && bearing < 337.5) {\n" +
-    		          "sprite.setAnim(\"[walkUpRight]\");\n" +
+    _script = "var vel = 0;" +
+    		      "var bear = 0;" +
+              "function setVelocity(velocity) {\n" +
+                "vel = velocity;\n" +
+                "update();\n" +
+              "}\n" +
+    		      "function setBearing(bearing) {\n" +
+    		        "bear = bearing;\n" +
+    		        "update();\n" +
+    		      "}\n" +
+    		      "function update() {\n" +
+    		        "var anim;\n" +
+    		        "if(vel == 0) {\n" +
+    		          "anim = \"stand\";\n" +
     		        "} else {\n" +
-    		          "sprite.setAnim(\"[walkRight]\");\n" +
+    		          "anim = \"walk\";\n" +
     		        "}\n" +
+                "if(bear > 22.5 && bear < 67.5) {\n" +
+                  "sprite.setAnim(\"\" + anim + \"DownRight\");\n" +
+                "} else if(bear > 67.5 && bear < 112.5) {\n" +
+                  "sprite.setAnim(\"\" + anim + \"Down\");\n" +
+                "} else if(bear > 112.5 && bear < 157.5) {\n" +
+                  "sprite.setAnim(\"\" + anim + \"DownLeft\");\n" +
+                "} else if(bear > 157.5 && bear < 202.5) {\n" +
+                  "sprite.setAnim(\"\" + anim + \"Left\");\n" +
+                "} else if(bear > 202.5 && bear < 247.5) {\n" +
+                  "sprite.setAnim(\"\" + anim + \"UpLeft\");\n" +
+                "} else if(bear > 247.5 && bear < 292.5) {\n" +
+                  "sprite.setAnim(\"\" + anim + \"Up\");\n" +
+                "} else if(bear > 292.5 && bear < 337.5) {\n" +
+                  "sprite.setAnim(\"\" + anim + \"UpRight\");\n" +
+                "} else {\n" +
+                  "sprite.setAnim(\"\" + anim + \"Right\");\n" +
+                "}\n" +
     		      "}";
   }
   

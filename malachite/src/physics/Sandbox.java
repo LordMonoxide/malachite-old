@@ -40,13 +40,13 @@ public class Sandbox implements Runnable {
         for(Movable m : _obj) {
           if(m._velTarget != 0) {
             if(m._vel < m._velTerm) {
-              m._vel += m._acc;
-              if(m._vel > m._velTerm) m._vel = m._velTerm;
+              m.setVel(m._vel + m._acc);
+              if(m._vel > m._velTerm) m.setVel(m._velTerm);
             }
           } else {
             if(m._vel > 0) {
-              m._vel -= m._dec;
-              if(m._vel < 0) m._vel = 0;
+              m.setVel(m._vel - m._dec);
+              if(m._vel < 0) m.setVel(0);
             }
           }
           

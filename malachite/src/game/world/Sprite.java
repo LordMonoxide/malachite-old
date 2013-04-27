@@ -98,6 +98,16 @@ public class Sprite {
     return _h;
   }
   
+  public void setVel(float vel) {
+    if(_script != null) {
+      try {
+        _script.invokeFunction("setVelocity", vel);
+      } catch(NoSuchMethodException | ScriptException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+  
   public void setBear(float bear) {
     if(_script != null) {
       try {
