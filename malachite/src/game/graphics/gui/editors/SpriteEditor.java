@@ -641,8 +641,9 @@ public class SpriteEditor extends GUI implements Editor {
     
     _suspendUpdateList = true;
     _scrListFrame.setVal(l._frame);
-    _suspendUpdateList = false;
     _scrListTime.setVal(l._time / 10);
+    _suspendUpdateList = false;
+    updateList();
   }
   
   private void update() {
