@@ -197,7 +197,7 @@ public class Textbox extends Control {
           setText(Character.toString(key), false);
         }
         
-        setCaretPos(_caretPos + 1);
+        setCaretPos(_selStart + 1);
         raiseChange();
       }
     });
