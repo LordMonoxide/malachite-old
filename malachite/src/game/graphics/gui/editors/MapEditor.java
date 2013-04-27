@@ -127,7 +127,7 @@ public class MapEditor extends GUI {
     
     _picLayers = new Picture(this);
     _picLayers.setBackColour(new float[] {0.1f, 0.1f, 0.1f, 1});
-    _picLayers.setXYWH(272, 24, 100, 256);
+    _picLayers.setXYWH(_picTab[0].getX() + _picTab[0].getW() + 4, _picTab[0].getY(), 100, 256);
     
     _btnLayer = new Button[Settings.Map.Depth];
     
@@ -259,7 +259,7 @@ public class MapEditor extends GUI {
   private void setTileset(int tileset) {
     _tileset = tileset;
     _picTileset.setTexture(_picTilesets[_tileset].getTexture());
-    _picWindow.setWH(_picTileset.getW() + 124, _picTileset.getH() + 32);
+    _picWindow.setWH(_picTileset.getW() + 124, _picTileset.getH() + _btnTab[0].getH() + _btnTab[0].getY() * 2);
     _picLayers.setX(_picTab[0].getX() + _picTab[0].getW() + 8);
     _selected.setTexture(_picTileset.getTexture());
     _selected.setWH(_w * Settings.Map.Tile.Size, _h * Settings.Map.Tile.Size);
