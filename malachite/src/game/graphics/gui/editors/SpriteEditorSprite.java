@@ -16,8 +16,8 @@ public class SpriteEditorSprite extends Sprite {
     
     _sprite = sprite;
     
-    // Deep-copy source Map into
-    // this MapEditorMap's structure
+    // Deep-copy source Sprite into
+    // this SpriteEditorSprite's structure
     Buffer b = _sprite.serialize();
     deserialize(b);
     _spriteCRC = b.crc();
