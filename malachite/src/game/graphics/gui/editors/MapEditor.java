@@ -35,7 +35,7 @@ public class MapEditor extends GUI {
   private Picture _picTilesetBack;
   private Picture[] _picTilesets;
   
-  private Drawable _selected = Context.newDrawable();
+  private Drawable _selected;
   
   private int _tab;
   private boolean _shift;
@@ -177,6 +177,7 @@ public class MapEditor extends GUI {
     Controls().add(_picWindow);
     Controls().add(_picTilesetList);
     
+    _selected = Context.newDrawable();
     _selected.setColour(new float[] {1, 1, 1, 0.5f});
     
     setTab(_tab);
