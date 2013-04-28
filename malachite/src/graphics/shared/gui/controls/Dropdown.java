@@ -60,9 +60,11 @@ public class Dropdown extends Control {
     _btnDrop.setText("\u25BC");
     _btnDrop.addEventClickHandler(new ControlEventClick() {
       public void event() {
-        _selectedIndex = _textIndex;
-        _selected.setY(_selectedIndex * _font.getH());
-        _picDrop.setVisible(!_picDrop.getVisible());
+        if(_text.size() != 0) {
+          _selectedIndex = _textIndex;
+          _selected.setY(_selectedIndex * _font.getH());
+          _picDrop.setVisible(!_picDrop.getVisible());
+        }
       }
     });
     
