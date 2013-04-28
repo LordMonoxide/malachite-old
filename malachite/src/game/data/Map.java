@@ -1,5 +1,7 @@
 package game.data;
 
+import java.util.LinkedList;
+
 import game.data.util.Buffer;
 import game.data.util.Serializable;
 import game.settings.Settings;
@@ -10,14 +12,15 @@ import graphics.shared.textures.Texture;
 import graphics.shared.textures.Textures;
 
 public class Map extends Serializable {
-  private static final int VERSION = 1;
+  private static final int VERSION = 2;
   
   protected String _world;
   protected int _x, _y;
   protected Layer[] _layer = new Layer[Settings.Map.Depth];
+  protected LinkedList<Sprite> _sprite = new LinkedList<Sprite>();
   
   public Map(String world, int x, int y) {
-    super("worlds/" + world);
+    super("worlds/" + world, x + "x" + y);
     _world = world;
     _x = x;
     _y = y;
@@ -83,14 +86,6 @@ public class Map extends Serializable {
     }
   }
   
-  public boolean load() {
-    return super.load(_x + "x" + _y);
-  }
-  
-  public void save() {
-    super.save(_x + "x" + _y);
-  }
-  
   public Buffer serialize() {
     Buffer b = new Buffer((_layer[0]._tile.length * _layer[0]._tile[0].length * 7 + _layer[0]._attrib.length * _layer[0]._attrib[0].length) * _layer.length + 28);
     b.put(VERSION);
@@ -103,6 +98,8 @@ public class Map extends Serializable {
     b.put(_layer[0]._tile[0].length);
     b.put(_layer[0]._attrib.length);
     b.put(_layer[0]._attrib[0].length);
+    
+    b.put(_sprite.size());
     
     for(int z = 0; z < _layer.length; z++) {
       for(int x = 0; x < _layer[z]._tile.length; x++) {
@@ -121,12 +118,19 @@ public class Map extends Serializable {
       }
     }
     
+    for(Sprite s : _sprite) {
+      b.put(s._file);
+      b.put(s._x);
+      b.put(s._y);
+    }
+    
     return b;
   }
   
   public void deserialize(Buffer b) {
     switch(b.getInt()) {
-      case 1: deserialize01(b);
+      case 1: deserialize01(b); break;
+      case 2: deserialize02(b); break;
     }
   }
   
@@ -169,6 +173,59 @@ public class Map extends Serializable {
           _layer[z]._attrib[x][y]._type = b.getByte();
         }
       }
+    }
+  }
+  
+  private void deserialize02(Buffer b) {
+    _sprite.clear();
+    
+    _x = b.getInt();
+    _y = b.getInt();
+    
+    int sizeZ = b.getInt();
+    int sizeX = b.getInt();
+    int sizeY = b.getInt();
+    int sizeXA = b.getInt();
+    int sizeYA = b.getInt();
+    
+    int maxX = sizeX > Settings.Map.Tile.Count ? Settings.Map.Tile.Count : sizeX;
+    int maxY = sizeY > Settings.Map.Tile.Count ? Settings.Map.Tile.Count : sizeY;
+    int maxZ = sizeZ > Settings.Map.Depth ? Settings.Map.Depth : sizeZ;
+    int maxXA = sizeXA > (Settings.Map.Attrib.Count) ? (Settings.Map.Attrib.Count) : sizeXA;
+    int maxYA = sizeYA > (Settings.Map.Attrib.Count) ? (Settings.Map.Attrib.Count) : sizeYA;
+    
+    _layer = new Layer[Settings.Map.Depth];
+    
+    for(int z = 0; z < maxZ; z++) {
+      _layer[z] = new Layer();
+      _layer[z]._tile = new Tile[Settings.Map.Tile.Count][Settings.Map.Tile.Count];
+      _layer[z]._attrib = new Attrib[Settings.Map.Attrib.Count][Settings.Map.Attrib.Count];
+      
+      for(int x = 0; x < maxX; x++) {
+        for(int y = 0; y < maxY; y++) {
+          _layer[z]._tile[x][y] = new Tile();
+          _layer[z]._tile[x][y]._x = b.getByte();
+          _layer[z]._tile[x][y]._y = b.getByte();
+          _layer[z]._tile[x][y]._tileset = b.getByte();
+          _layer[z]._tile[x][y]._a = b.getByte();
+        }
+      }
+      
+      for(int x = 0; x < maxXA; x++) {
+        for(int y = 0; y < maxYA; y++) {
+          _layer[z]._attrib[x][y] = new Attrib();
+          _layer[z]._attrib[x][y]._type = b.getByte();
+        }
+      }
+    }
+    
+    int size = b.getInt();
+    for(int i = 0; i < size; i++) {
+      Sprite s = new Sprite();
+      s._file = b.getString();
+      s._x = b.getInt();
+      s._y = b.getInt();
+      _sprite.add(s);
     }
   }
   
@@ -235,5 +292,10 @@ public class Map extends Serializable {
   
   public class Attrib {
     protected byte _type;
+  }
+  
+  public class Sprite {
+    protected String _file;
+    protected int _x, _y;
   }
 }

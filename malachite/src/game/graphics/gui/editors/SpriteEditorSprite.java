@@ -12,7 +12,7 @@ public class SpriteEditorSprite extends Sprite {
   protected ArrayList<Anim>  _anim  = super._anim;
   
   public SpriteEditorSprite(Sprite sprite) {
-    super();
+    super(sprite.getFile());
     
     _sprite = sprite;
     

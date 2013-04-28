@@ -207,7 +207,7 @@ public class MapEditor extends GUI {
             MapEditorMap m = (MapEditorMap)r.getMap();
             
             if(m.isChanged()) {
-              System.out.println("Updating map " + m.getX() + ", " + m.getY());
+              System.out.println("Updating map " + m.getFile());
               m.update();
               
               r.setMap(m.getMap());

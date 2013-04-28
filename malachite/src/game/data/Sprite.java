@@ -20,8 +20,8 @@ public class Sprite extends Serializable implements Data {
   protected ArrayList<Anim> _anim = new ArrayList<Anim>();
   protected String _script;
   
-  public Sprite() {
-    super("sprites");
+  public Sprite(String file) {
+    super("sprites", file);
     
     _texture = "isaac.png";
     _w = 64;
@@ -212,14 +212,6 @@ public class Sprite extends Serializable implements Data {
     }
     
     return a;
-  }
-  
-  public boolean load() {
-    return super.load(_name);
-  }
-  
-  public void save() {
-    super.save(_name);
   }
   
   public Buffer serialize() {

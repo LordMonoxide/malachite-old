@@ -2,6 +2,8 @@ package game.graphics.gui.editors;
 
 import java.io.File;
 
+import javax.swing.JOptionPane;
+
 import game.data.Sprite;
 import game.data.util.Data;
 import game.data.util.Serializable;
@@ -17,12 +19,14 @@ public class DataSelection extends GUI {
   private Button _new;
   
   private Editor _editor;
+  private String _dir;
   private String[] _name;
   
   public DataSelection(Editor editor, String dir) {
     _editor = editor;
+    _dir = dir;
     
-    File[] d = new File("../data/" + dir).listFiles();
+    File[] d = new File("../data/" + _dir).listFiles();
     
     if(d != null) {
       _name = new String[d.length];
@@ -50,8 +54,8 @@ public class DataSelection extends GUI {
     
     if(_name != null) {
       for(String n : _name) {
-        Sprite s = new Sprite();
-        if(s.load(n)) {
+        Sprite s = new Sprite(n);
+        if(s.load()) {
           ListItem l = (ListItem)_data.addItem(new ListItem(this, s));
           l.setText(n + ": " + s.getName() + " - " + s.getNote());
           l.addEventDoubleClickHandler(accept);
@@ -85,7 +89,24 @@ public class DataSelection extends GUI {
   }
   
   private void newData() {
-    _editor.newData();
+    String s;
+    
+    for(;;) {
+      s = JOptionPane.showInputDialog("Please enter the file name:");
+      if(s == null || s.length() == 0) return;
+      
+      File f = new File("../data/" + _dir + "/" + s);
+      if(f.exists()) {
+        switch(JOptionPane.showConfirmDialog(null, s + " already exists.  Would you like to overwrite it?", null, JOptionPane.YES_NO_CANCEL_OPTION)) {
+          case JOptionPane.CANCEL_OPTION: return;
+          case JOptionPane.NO_OPTION:     continue;
+        }
+      }
+      
+      break;
+    }
+    
+    _editor.newData(s);
     pop();
   }
   

@@ -18,17 +18,17 @@ public class Game implements graphics.gl00.Game {
   public World  getWorld()  { return _world;  }
   public Entity getEntity() { return _entity; }
   
-  public Sprite getSprite(String name) {
-    Sprite s = _sprite.get(name);
+  public Sprite getSprite(String file) {
+    Sprite s = _sprite.get(file);
     
     if(s == null) {
-      if((s = new Sprite()).load(name)) {
-        System.out.println("Sprite " + name + " loaded.");
+      if((s = new Sprite(file)).load()) {
+        System.out.println("Sprite " + file + " loaded.");
       } else {
-        System.err.println("Couldn't load sprite " + name);
+        System.err.println("Couldn't load sprite " + file);
       }
       
-      _sprite.put(name, s);
+      _sprite.put(file, s);
     }
     
     return s;

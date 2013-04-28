@@ -6,24 +6,30 @@ import java.io.IOException;
 
 public abstract class Serializable {
   protected String _path;
+  protected String _file;
   
-  protected Serializable(String path) {
+  protected Serializable(String path, String file) {
     _path = path;
+    _file = file;
   }
   
-  public void save(String name) {
+  public String getFile() {
+    return _file;
+  }
+  
+  public void save() {
     Buffer b = serialize();
     
     try {
-      b.save(new File("../data/" + _path + "/" + name));
+      b.save(new File("../data/" + _path + "/" + _file));
     } catch(IOException e) {
       e.printStackTrace();
     }
   }
   
-  public boolean load(String name) {
+  public boolean load() {
     try {
-      Buffer b = new Buffer(new File("../data/" + _path + "/" + name));
+      Buffer b = new Buffer(new File("../data/" + _path + "/" + _file));
       deserialize(b);
       return true;
     } catch(FileNotFoundException e) {

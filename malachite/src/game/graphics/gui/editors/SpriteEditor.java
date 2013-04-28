@@ -518,13 +518,13 @@ public class SpriteEditor extends GUI implements Editor {
   }
   
   private void save() {
-    System.out.println("Updating sprite " + _sprite.getName());
+    System.out.println("Updating sprite " + _sprite.getFile());
     _sprite.update();
     _sprite.save();
   }
   
-  public void newData() {
-    editData(new Sprite());
+  public void newData(String file) {
+    editData(new Sprite(file));
   }
   
   public void editData(Data data) {
