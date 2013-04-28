@@ -3,6 +3,7 @@ package graphics.themes;
 import graphics.gl00.Context;
 import graphics.gl00.Scalable;
 import graphics.shared.gui.controls.Button;
+import graphics.shared.gui.controls.Dropdown;
 import graphics.shared.gui.controls.Label;
 import graphics.shared.gui.controls.List;
 import graphics.shared.gui.controls.Scrollbar;
@@ -40,6 +41,14 @@ public class Theme {
     c.setForeColour(new float[] {1, 1, 1, 1});
     c.setWH(90, 20);
     c.setText("Button");
+  }
+  
+  public void create(Dropdown c) {
+    c.setBackColour(new float[] {0.2f, 0.2f, 0.2f, 1});
+    c.setGlowColour(new float[] {0.3f, 0.3f, 0.3f, 1});
+    c.setForeColour(new float[] {1, 1, 1, 1});
+    c.setBorderColour(new float[] {0, 0, 0, 1});
+    c.setWH(200, 19);
   }
   
   public void create(Label c) {
