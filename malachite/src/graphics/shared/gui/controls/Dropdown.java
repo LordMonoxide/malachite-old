@@ -75,7 +75,9 @@ public class Dropdown extends Control {
     _picDrop.setVisible(false);
     _picDrop.addEventDrawHandler(new ControlEventDraw() {
       public void event() {
-        _selected.draw();
+        if(_selectedIndex != -1) {
+          _selected.draw();
+        }
         
         int y = 0;
         for(String s : _text) {
