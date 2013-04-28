@@ -49,12 +49,15 @@ public class Dropdown extends Control {
       }
     });
     
-    addEventClickHandler(new ControlEventClick() {
+    ControlEventClick click = new ControlEventClick() {
       public void event() {
         _btnDrop.handleMouseDown(0, 0, 0);
         _btnDrop.handleMouseUp(0, 0, 0);
       }
-    });
+    };
+    
+    addEventClickHandler(click);
+    addEventDoubleClickHandler(click);
     
     _btnDrop = new Button(gui, theme);
     _btnDrop.setText("\u25BC");
