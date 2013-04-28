@@ -238,26 +238,6 @@ public class Textbox extends Control {
     _caret.createQuad();
   }
   
-  public void setH(float h) {
-    super.setH(h);
-    updateSize();
-  }
-  
-  public void setWH(float w, float h) {
-    super.setWH(w, h);
-    updateSize();
-  }
-  
-  public void setXYWH(float x, float y, float w, float h) {
-    super.setXYWH(x, y, w, h);
-    updateSize();
-  }
-  
-  public void setXYWH(float[] loc) {
-    super.setXYWH(loc);
-    updateSize();
-  }
-  
   public boolean getEditable() {
     return _editable;
   }
@@ -274,7 +254,7 @@ public class Textbox extends Control {
     _numeric = numeric;
   }
   
-  private void updateSize() {
+  protected void resize() {
     _caret.setY((_loc[3] - _caret.getH()) / 2);
     _sel.setY((_loc[3] - _sel.getH()) / 2);
     

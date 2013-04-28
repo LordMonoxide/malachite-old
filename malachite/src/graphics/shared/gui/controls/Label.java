@@ -33,23 +33,7 @@ public class Label extends Control {
     _font = font;
   }
   
-  public void setH(float h) {
-    super.setH(h);
-    _textY = (int)(_loc[3] - _font.getH()) / 2;
-  }
-  
-  public void setWH(float w, float h) {
-    super.setWH(w, h);
-    _textY = (int)(_loc[3] - _font.getH()) / 2;
-  }
-  
-  public void setXYWH(float x, float y, float w, float h) {
-    super.setXYWH(x, y, w, h);
-    _textY = (int)(_loc[3] - _font.getH()) / 2;
-  }
-  
-  public void setXYWH(float[] loc) {
-    super.setXYWH(loc);
+  protected void resize() {
     _textY = (int)(_loc[3] - _font.getH()) / 2;
   }
   

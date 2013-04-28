@@ -154,32 +154,7 @@ public class Dropdown extends Control {
     _picDrop.setBorderColour(c);
   }
   
-  public void setW(float w) {
-    super.setW(w);
-    updateSize();
-  }
-  
-  public void setH(float h) {
-    super.setH(h);
-    updateSize();
-  }
-  
-  public void setWH(float w, float h) {
-    super.setWH(w, h);
-    updateSize();
-  }
-  
-  public void setXYWH(float x, float y, float w, float h) {
-    super.setXYWH(x, y, w, h);
-    updateSize();
-  }
-  
-  public void setXYWH(float[] loc) {
-    super.setXYWH(loc);
-    updateSize();
-  }
-  
-  private void updateSize() {
+  protected void resize() {
     _btnDrop.setWH(_loc[3], _loc[3]);
     _btnDrop.setX(_loc[2] - _btnDrop.getW());
     

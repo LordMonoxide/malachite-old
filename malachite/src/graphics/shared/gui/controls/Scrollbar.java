@@ -98,35 +98,10 @@ public class Scrollbar extends Control {
   
   public void setOrientation(Orientation orientation) {
     _orientation = orientation;
-    updateSize();
+    resize();
   }
   
-  public void setW(float w) {
-    super.setW(w);
-    updateSize();
-  }
-  
-  public void setH(float h) {
-    super.setH(h);
-    updateSize();
-  }
-  
-  public void setWH(float w, float h) {
-    super.setWH(w, h);
-    updateSize();
-  }
-  
-  public void setXYWH(float x, float y, float w, float h) {
-    super.setXYWH(x, y, w, h);
-    updateSize();
-  }
-  
-  public void setXYWH(float[] loc) {
-    super.setXYWH(loc);
-    updateSize();
-  }
-  
-  private void updateSize() {
+  protected void resize() {
     switch(_orientation) {
       case VERTICAL:
         _up  .setText("\u25B2");

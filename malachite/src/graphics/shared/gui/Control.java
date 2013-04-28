@@ -209,7 +209,11 @@ public class Control {
     
     _border.setWH(_loc[2] - _border.getX() * 2, _loc[3] - _border.getY() * 2);
     _border.createBorder();
+    
+    resize();
   }
+  
+  protected void resize() { };
   
   public void setVisible(boolean visible) {
     _visible = visible;

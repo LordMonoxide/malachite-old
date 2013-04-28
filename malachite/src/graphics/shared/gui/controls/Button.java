@@ -71,31 +71,6 @@ public class Button extends Control {
     _clickColour = c;
   }
   
-  public void setW(float w) {
-    super.setW(w);
-    setTextLoc();
-  }
-  
-  public void setH(float h) {
-    super.setH(h);
-    setTextLoc();
-  }
-  
-  public void setWH(float w, float h) {
-    super.setWH(w, h);
-    setTextLoc();
-  }
-  
-  public void setXYWH(float x, float y, float w, float h) {
-    super.setXYWH(x, y, w, h);
-    setTextLoc();
-  }
-  
-  public void setXYWH(float[] loc) {
-    super.setXYWH(loc);
-    setTextLoc();
-  }
-  
   public void setBackColour(float[] c) {
     _backColour = c;
     
@@ -111,10 +86,10 @@ public class Button extends Control {
   
   public void setText(String text) {
     _text = text;
-    setTextLoc();
+    resize();
   }
   
-  private void setTextLoc() {
+  protected void resize() {
     _textLoc[2] = _font.getW(_text);
     _textLoc[3] = _font.getH();
     _textLoc[0] = (int)(_loc[2] - _textLoc[2]) / 2;

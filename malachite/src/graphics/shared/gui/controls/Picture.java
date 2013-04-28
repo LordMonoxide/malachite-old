@@ -14,32 +14,7 @@ public class Picture extends Control {
     _acceptsFocus = false;
   }
   
-  public void setW(float w) {
-    super.setW(w);
-    updateSize();
-  }
-  
-  public void setH(float h) {
-    super.setH(h);
-    updateSize();
-  }
-  
-  public void setWH(float w, float h) {
-    super.setWH(w, h);
-    updateSize();
-  }
-  
-  public void setXYWH(float x, float y, float w, float h) {
-    super.setXYWH(x, y, w, h);
-    updateSize();
-  }
-  
-  public void setXYWH(float[] loc) {
-    super.setXYWH(loc);
-    updateSize();
-  }
-  
-  public void updateSize() {
+  protected void resize() {
     _background.setWH(_loc[2], _loc[3]);
     _background.createQuad();
   }
