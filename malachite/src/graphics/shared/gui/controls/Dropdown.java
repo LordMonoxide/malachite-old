@@ -91,7 +91,7 @@ public class Dropdown extends Control {
     });
     _picDrop.addEventMouseMoveHandler(new ControlEventMouse() {
       public void event(int x, int y, int button) {
-        _selectedIndex = y / _font.getH();
+        _selectedIndex = (y - 1) / _font.getH();
         _selected.setY(_selectedIndex * _font.getH());
       }
     });
@@ -116,6 +116,10 @@ public class Dropdown extends Control {
   public void add(String text) {
     _text.add(text);
     _picDrop.setH(_text.size() * _font.getH());
+  }
+  
+  public int getSize() {
+    return _text.size();
   }
   
   public int getSelected() {
