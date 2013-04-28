@@ -26,6 +26,7 @@ public class Textbox extends Control {
   private int _selStart;
   private int _selEnd;
   
+  private boolean _editable = true;
   private boolean _numeric;
   
   private boolean _shiftDown;
@@ -33,8 +34,8 @@ public class Textbox extends Control {
   
   private float[] _backColour = {0, 0, 0, 0};
   private float[] _glowColour = {0, 0, 0, 0};
-  private float   _fade;
   private float   _caretAlpha;
+  private float   _fade;
   
   private LinkedList<ControlEventChange> _eventChange = new LinkedList<ControlEventChange>();
   
@@ -185,20 +186,22 @@ public class Textbox extends Control {
     
     addEventCharDownHandler(new ControlEventChar() {
       public void event(char key) {
-        if(_numeric) {
-          if(key < 0x30 || key > 0x39) {
-            return;
+        if(_editable) {
+          if(_numeric) {
+            if(key < 0x30 || key > 0x39) {
+              return;
+            }
           }
+          
+          if(_text != null) {
+            setText(_textSel[0] + key + _textSel[2], false);
+          } else {
+            setText(Character.toString(key), false);
+          }
+          
+          setCaretPos(_selStart + 1);
+          raiseChange();
         }
-        
-        if(_text != null) {
-          setText(_textSel[0] + key + _textSel[2], false);
-        } else {
-          setText(Character.toString(key), false);
-        }
-        
-        setCaretPos(_selStart + 1);
-        raiseChange();
       }
     });
     
@@ -253,6 +256,14 @@ public class Textbox extends Control {
   public void setXYWH(float[] loc) {
     super.setXYWH(loc);
     updateSize();
+  }
+  
+  public boolean getEditable() {
+    return _editable;
+  }
+  
+  public void setEditable(boolean editable) {
+    _editable = editable;
   }
   
   public boolean getNumeric() {
