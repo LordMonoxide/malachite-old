@@ -1,14 +1,13 @@
 package game.graphics.gui;
 
 import graphics.shared.gui.GUI;
-import graphics.shared.gui.controls.List;
+import graphics.shared.gui.controls.Dropdown;
 import graphics.shared.gui.controls.Picture;
-import graphics.shared.gui.controls.List.ListItem.ControlEventSelect;
 import graphics.shared.textures.Texture;
 
 public class Menu extends GUI {
-  private Picture picTest;
-  private List    lstTest;
+  private Picture  picTest;
+  private Dropdown drpTest;
   
   public void load() {
     _context.setBackColour(new float[] {1, 1, 1, 1});
@@ -18,20 +17,14 @@ public class Menu extends GUI {
     picTest = new Picture(this);
     picTest.setTexture(t);
     
-    ControlEventSelect eventSelect = new ControlEventSelect() {
-      public void event() {
-        System.out.println(getControl());
-      }
-    };
-    
-    lstTest = new List(this);
-    lstTest.addItem("Item 1", t).addEventSelectHandler(eventSelect);
-    lstTest.addItem("Item 2", t).addEventSelectHandler(eventSelect);
-    lstTest.addItem("Item 3", t).addEventSelectHandler(eventSelect);
-    lstTest.addItem("Item 4", t).addEventSelectHandler(eventSelect);
+    drpTest = new Dropdown(this);
+    drpTest.setXY(400, 400);
+    drpTest.add("Test");
+    drpTest.add("Test 2");
+    drpTest.setSeletected(0);
     
     Controls().add(picTest);
-    Controls().add(lstTest);
+    Controls().add(drpTest);
   }
   
   public void destroy() {
