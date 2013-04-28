@@ -59,9 +59,7 @@ public class Dropdown extends Control {
     addEventClickHandler(click);
     addEventDoubleClickHandler(click);
     
-    _btnDrop = new Button(gui, theme);
-    _btnDrop.setText("\u25BC");
-    _btnDrop.addEventClickHandler(new ControlEventClick() {
+    ControlEventClick btnDropClick = new ControlEventClick() {
       public void event() {
         if(_text.size() != 0) {
           _selectedIndex = _textIndex;
@@ -69,7 +67,12 @@ public class Dropdown extends Control {
           _picDrop.setVisible(!_picDrop.getVisible());
         }
       }
-    });
+    };
+    
+    _btnDrop = new Button(gui, theme);
+    _btnDrop.setText("\u25BC");
+    _btnDrop.addEventClickHandler(btnDropClick);
+    _btnDrop.addEventDoubleClickHandler(btnDropClick);
     
     _picDrop = new Picture(gui);
     _picDrop.setVisible(false);
