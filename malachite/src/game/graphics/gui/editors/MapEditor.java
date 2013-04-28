@@ -17,6 +17,8 @@ import graphics.shared.gui.Control.ControlEventClick;
 import graphics.shared.gui.Control.ControlEventMouse;
 import graphics.shared.gui.GUI;
 import graphics.shared.gui.controls.Button;
+import graphics.shared.gui.controls.Dropdown;
+import graphics.shared.gui.controls.Label;
 import graphics.shared.gui.controls.Picture;
 
 public class MapEditor extends GUI {
@@ -34,6 +36,9 @@ public class MapEditor extends GUI {
   private Picture _picTilesetList;
   private Picture _picTilesetBack;
   private Picture[] _picTilesets;
+  
+  private Label _lblSprite;
+  private Dropdown _drpSprite;
   
   private Drawable _selected;
   
@@ -173,6 +178,17 @@ public class MapEditor extends GUI {
       _picTilesetBack.Controls().add(_picTilesets[i]);
       i++;
     }
+    
+    // Sprites tab
+    _lblSprite = new Label(this);
+    _lblSprite.setXY(4, 4);
+    _lblSprite.setText("Sprite");
+    
+    _drpSprite = new Dropdown(this);
+    _drpSprite.setXY(_lblSprite.getX(), _lblSprite.getY() + _lblSprite.getH());
+    
+    _picTab[2].Controls().add(_lblSprite);
+    _picTab[2].Controls().add(_drpSprite);
     
     Controls().add(_picWindow);
     Controls().add(_picTilesetList);
