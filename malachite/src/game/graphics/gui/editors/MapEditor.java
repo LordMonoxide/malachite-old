@@ -9,6 +9,7 @@ import org.lwjgl.input.Keyboard;
 
 import game.Game;
 import game.data.Map.Tile;
+import game.data.Sprite;
 import game.settings.Settings;
 import game.world.Region;
 import graphics.gl00.Context;
@@ -195,6 +196,20 @@ public class MapEditor extends GUI {
     
     _selected = Context.newDrawable();
     _selected.setColour(new float[] {1, 1, 1, 0.5f});
+    
+    File d = new File("../data/sprites/");
+    if(d.isDirectory()) {
+      for(File f : d.listFiles()) {
+        Sprite s = new Sprite(f.getName());
+        if(s.load()) {
+          _drpSprite.add(s.getFile());
+        }
+      }
+    }
+    
+    if(_drpSprite.getSize() != 0) {
+      _drpSprite.setSeletected(0);
+    }
     
     setTab(_tab);
     setLayer(_layer);
