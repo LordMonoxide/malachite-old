@@ -19,8 +19,6 @@ public class ScrollPanel extends Control {
   
   private Button    _add;
   private Button    _del;
-  
-  private int _index;
 
   private LinkedList<ControlEventButton> _eventButtonAdd = new LinkedList<ControlEventButton>();
   private LinkedList<ControlEventButton> _eventButtonDel = new LinkedList<ControlEventButton>();
@@ -61,7 +59,7 @@ public class ScrollPanel extends Control {
     
     _panel = new Picture(gui);
     _panel.setY(_tabs.getH());
-    _panel.setBackColour(new float[] {0.2f, 0.2f, 0.2f, 1});
+    _panel.setBackColour(new float[] {0.33f, 0.33f, 0.33f, 0.66f});
     _panel.addEventMouseWheelHandler(wheel);
     
     _scroll = new Scrollbar(gui);
@@ -69,9 +67,8 @@ public class ScrollPanel extends Control {
     _scroll.setH(88);
     _scroll.addEventScrollHandler(new ControlEventScroll() {
       public void event(int delta) {
-        _index += delta;
-        _num.setText(String.valueOf(_index));
-        raiseSelect(_index);
+        _num.setText(String.valueOf(_scroll.getVal()));
+        raiseSelect(_scroll.getVal());
       }
     });
     
@@ -104,10 +101,34 @@ public class ScrollPanel extends Control {
     return _panel.Controls();
   }
   
+  public int getMax() {
+    return _scroll.getMax();
+  }
+  
+  public void setMax(int max) {
+    _scroll.setMax(max);
+  }
+  
+  public int getMin() {
+    return _scroll.getMin();
+  }
+  
+  public void setMin(int min) {
+    _scroll.setMin(min);
+  }
+  
+  public int getIndex() {
+    return _scroll.getVal();
+  }
+  
+  public void setIndex(int index) {
+    _scroll.setVal(index);
+  }
+  
   protected void resize() {
     _tabs.setW(getW() - _tabs.getX());
     _panel.setWH(getW() - _panel.getX(), getH() - _tabs.getY());
-    _num.setWH(_tabs.getX(), _scroll.getY());
+    _num.setWH(_add.getX(), _scroll.getY());
   }
   
   protected void raiseButtonAdd() {
