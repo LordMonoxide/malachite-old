@@ -74,7 +74,7 @@ public class ScrollPanel extends Control {
     
     _num = new Label(gui);
     _num.setAutoSize(false);
-    _num.setText(null);
+    _num.setText("0");
     
     _add.setX(_scroll.getW());
     _del.setX(_add.getX() + _add.getW());
