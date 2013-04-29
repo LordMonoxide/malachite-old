@@ -2,6 +2,7 @@ package game.graphics.gui;
 
 import graphics.shared.gui.GUI;
 import graphics.shared.gui.controls.Dropdown;
+import graphics.shared.gui.controls.Dropdown.DropdownItem;
 import graphics.shared.gui.controls.Picture;
 import graphics.shared.gui.controls.compound.ScrollPanel;
 import graphics.shared.textures.Texture;
@@ -21,8 +22,8 @@ public class Menu extends GUI {
     
     drpTest = new Dropdown(this);
     drpTest.setXY(400, 400);
-    drpTest.add("Test");
-    drpTest.add("Test 2");
+    drpTest.add(new DropdownItem("Test"));
+    drpTest.add(new DropdownItem("Test 2"));
     drpTest.setSeletected(0);
     
     splTest = new ScrollPanel(this);
