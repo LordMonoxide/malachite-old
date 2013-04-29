@@ -86,7 +86,7 @@ public abstract class GUI {
   }
   
   protected final void drawSelect() {
-    _context.clear();
+    _context.clear(new float[] {0, 0, 0, 1});
     _control.drawSelect();
   }
   
