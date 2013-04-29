@@ -21,6 +21,7 @@ import graphics.shared.gui.controls.Button;
 import graphics.shared.gui.controls.Dropdown;
 import graphics.shared.gui.controls.Label;
 import graphics.shared.gui.controls.Picture;
+import graphics.shared.gui.controls.compound.ScrollPanel;
 
 public class MapEditor extends GUI {
   private Game _game = (Game)Context.getGame();
@@ -38,8 +39,7 @@ public class MapEditor extends GUI {
   private Picture   _picTilesetBack;
   private Picture[] _picTilesets;
   
-  private Label     _lblSprite;
-  private Dropdown  _drpSprite;
+  private ScrollPanel _splSprite;
   private Label     _lblSpriteFile;
   private Dropdown  _drpSpriteFile;
   
@@ -183,24 +183,20 @@ public class MapEditor extends GUI {
     }
     
     // Sprites tab
-    _lblSprite = new Label(this);
-    _lblSprite.setXY(4, 4);
-    _lblSprite.setText("Sprite");
-    
-    _drpSprite = new Dropdown(this);
-    _drpSprite.setXY(_lblSprite.getX(), _lblSprite.getY() + _lblSprite.getH());
+    _splSprite = new ScrollPanel(this);
+    _splSprite.setXY(4, 4);
     
     _lblSpriteFile = new Label(this);
-    _lblSpriteFile.setXY(_lblSprite.getX(), _drpSprite.getY() + _drpSprite.getH() + 8);
+    _lblSpriteFile.setXY(4, 4);
     _lblSpriteFile.setText("File");
     
     _drpSpriteFile = new Dropdown(this);
     _drpSpriteFile.setXY(_lblSpriteFile.getX(), _lblSpriteFile.getY() + _lblSpriteFile.getH());
     
-    _picTab[2].Controls().add(_lblSprite);
-    _picTab[2].Controls().add(_drpSprite);
-    _picTab[2].Controls().add(_lblSpriteFile);
-    _picTab[2].Controls().add(_drpSpriteFile);
+    _splSprite.Controls().add(_lblSpriteFile);
+    _splSprite.Controls().add(_drpSpriteFile);
+    
+    _picTab[2].Controls().add(_splSprite);
     
     Controls().add(_picWindow);
     Controls().add(_picTilesetList);
@@ -218,10 +214,6 @@ public class MapEditor extends GUI {
       }
     }
     
-    if(_drpSpriteFile.getSize() != 0) {
-      _drpSpriteFile.setSeletected(0);
-    }
-    
     setTab(_tab);
     setLayer(_layer);
     setTileset(_tileset);
@@ -236,6 +228,8 @@ public class MapEditor extends GUI {
     _picTilesetList.setY((_context.getH() - (_picWindow.getY() + _picWindow.getH()) - _picTilesetList.getH()) / 2 + _picWindow.getY() + _picWindow.getH());
     _picTilesetList.setW(_context.getW());
     _picTilesetBack.setX((_picTilesetList.getW() - _picTilesets[_tileset].getW()) / 2 - _tileset * 136 - 54);
+    
+    _splSprite.setWH(_picTab[2].getW() - _splSprite.getX() * 2, _picTab[2].getH() - _splSprite.getY() * 2);
   }
   
   public boolean unload() {
@@ -282,6 +276,9 @@ public class MapEditor extends GUI {
         System.out.println("Adding region " + region.getMap().getX() + ", " + region.getMap().getY());
         _regions.add(_region);
       }
+      
+      _splSprite.setMax(_map._sprite.size() - 1);
+      _splSprite.setIndex(0);
     }
   }
   
