@@ -272,7 +272,8 @@ public abstract class Context {
   public int[] getPixel(int x, int y) {
     ByteBuffer pixels = BufferUtils.createByteBuffer(3);
     GL11.glReadPixels(x, _h - y, 1, 1, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, pixels);
-    return new int[] {pixels.get(0), pixels.get(1), pixels.get(2)};
+    byte[] b = new byte[] {pixels.get(0), pixels.get(1), pixels.get(2)};
+    return new int[] {b[0] >= 0 ? b[0] : 256 + b[0], b[1] >= 0 ? b[1] : 256 + b[1], b[2] >= 0 ? b[2] : 256 + b[2]};
   }
   
   public int[] getNextSelectColour() {
