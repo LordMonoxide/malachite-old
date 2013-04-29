@@ -19,8 +19,10 @@ import graphics.shared.gui.Control.ControlEventMouse;
 import graphics.shared.gui.GUI;
 import graphics.shared.gui.controls.Button;
 import graphics.shared.gui.controls.Dropdown;
+import graphics.shared.gui.controls.Dropdown.ControlEventSelect;
 import graphics.shared.gui.controls.Label;
 import graphics.shared.gui.controls.Picture;
+import graphics.shared.gui.controls.Dropdown.DropdownItem;
 import graphics.shared.gui.controls.compound.ScrollPanel;
 
 public class MapEditor extends GUI {
@@ -192,6 +194,11 @@ public class MapEditor extends GUI {
     
     _drpSpriteFile = new Dropdown(this);
     _drpSpriteFile.setXY(_lblSpriteFile.getX(), _lblSpriteFile.getY() + _lblSpriteFile.getH());
+    _drpSpriteFile.addEventSelectHandler(new ControlEventSelect() {
+      public void event(DropdownItem item) {
+        updateSprite();
+      }
+    });
     
     _splSprite.Controls().add(_lblSpriteFile);
     _splSprite.Controls().add(_drpSpriteFile);
@@ -306,6 +313,10 @@ public class MapEditor extends GUI {
     _selected.setTWH(_w * Settings.Map.Tile.Size, _h * Settings.Map.Tile.Size);
     _selected.createQuad();
     resize();
+  }
+  
+  private void updateSprite() {
+    System.out.println(((DropdownSprite)_drpSpriteFile.get())._sprite.getName());
   }
   
   public boolean draw() {
@@ -503,7 +514,7 @@ public class MapEditor extends GUI {
     return false;
   }
   
-  public void handleTilesetMouseDown(int x, int y, int button) {
+  private void handleTilesetMouseDown(int x, int y, int button) {
     _x = (int)(x / Settings.Map.Tile.Size);
     _y = (int)(y / Settings.Map.Tile.Size);
     _w = 1;
@@ -515,7 +526,7 @@ public class MapEditor extends GUI {
     _selected.createQuad();
   }
   
-  public void handleTilesetMouseMove(int x, int y, int button) {
+  private void handleTilesetMouseMove(int x, int y, int button) {
     if(button == 0) {
       if(x < 0) x = 0;
       if(y < 0) y = 0;
