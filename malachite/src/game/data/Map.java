@@ -295,7 +295,7 @@ public class Map extends Serializable {
   }
   
   public class Sprite {
-    protected String _file;
-    protected int _x, _y;
+    public String _file;
+    public int _x, _y;
   }
 }
