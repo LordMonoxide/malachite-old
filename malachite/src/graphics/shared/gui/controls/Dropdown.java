@@ -118,6 +118,14 @@ public class Dropdown extends Control {
     _picDrop.setH(_text.size() * _font.getH());
   }
   
+  public DropdownItem get() {
+    return get(_textIndex);
+  }
+  
+  public DropdownItem get(int index) {
+    return index != -1 ? _text.get(index) : null;
+  }
+  
   public int getSize() {
     return _text.size();
   }
