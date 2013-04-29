@@ -209,7 +209,7 @@ public class MapEditor extends GUI {
       for(File f : d.listFiles()) {
         Sprite s = new Sprite(f.getName());
         if(s.load()) {
-          _drpSpriteFile.add(s.getFile());
+          _drpSpriteFile.add(new DropdownSprite(s));
         }
       }
     }
@@ -534,6 +534,19 @@ public class MapEditor extends GUI {
       _selected.setWH(_w * Settings.Map.Tile.Size, _h * Settings.Map.Tile.Size);
       _selected.setTWH(_w * Settings.Map.Tile.Size, _h * Settings.Map.Tile.Size);
       _selected.createQuad();
+    }
+  }
+  
+  public static class DropdownSprite extends Dropdown.DropdownItem {
+    private Sprite _sprite;
+    
+    public DropdownSprite(Sprite sprite) {
+      super(sprite.getName() + " - " + sprite.getNote());
+      _sprite = sprite;
+    }
+    
+    public Sprite getSprite() {
+      return _sprite;
     }
   }
 }
