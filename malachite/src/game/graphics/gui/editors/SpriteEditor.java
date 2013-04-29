@@ -21,6 +21,9 @@ import graphics.shared.gui.controls.Scrollbar.ControlEventScroll;
 import graphics.shared.gui.controls.Scrollbar.Orientation;
 import graphics.shared.gui.controls.Textbox;
 import graphics.shared.gui.controls.Textbox.ControlEventChange;
+import graphics.shared.gui.controls.compound.ScrollPanel;
+import graphics.shared.gui.controls.compound.ScrollPanel.ControlEventButton;
+import graphics.shared.gui.controls.compound.ScrollPanel.ControlEventSelect;
 
 public class SpriteEditor extends GUI implements Editor {
   private Picture   _picWindow;
@@ -30,12 +33,8 @@ public class SpriteEditor extends GUI implements Editor {
   private Button    _btnClose;
   private Button    _btnSave;
   
-  private Picture   _picFrameLoc;
-  private Label     _lblFrameNum;
-  private Button    _btnFrameAdd;
-  private Button    _btnFrameDel;
-  private Button    _btnFrameClone;
-  private Scrollbar _scrFrame;
+  private ScrollPanel _splFrame;
+  private Button      _btnFrameClone;
   private Label     _lblFrameLoc, _lblFrameFoot;
   private Textbox   _txtFrameX, _txtFrameY;
   private Textbox   _txtFrameW, _txtFrameH;
@@ -191,26 +190,7 @@ public class SpriteEditor extends GUI implements Editor {
     _txtFrameFY.addEventChangeHandler(textChange);
     _txtFrameFY.setNumeric(true);
     
-    _btnFrameAdd = new Button(this);
-    _btnFrameAdd.setXY(20, 4);
-    _btnFrameAdd.setText("Add");
-    _btnFrameAdd.addEventClickHandler(new ControlEventClick() {
-      public void event() {
-        addFrame();
-      }
-    });
-    
-    _btnFrameDel = new Button(this);
-    _btnFrameDel.setXY(_btnFrameAdd.getX() + _btnFrameAdd.getW(), _btnFrameAdd.getY());
-    _btnFrameDel.setText("Del");
-    _btnFrameDel.addEventClickHandler(new ControlEventClick() {
-      public void event() {
-        delFrame();
-      }
-    });
-    
     _btnFrameClone = new Button(this);
-    _btnFrameClone.setXY(_btnFrameDel.getX() + _btnFrameDel.getW() + 4, _btnFrameDel.getY());
     _btnFrameClone.setText("Clone");
     _btnFrameClone.addEventClickHandler(new ControlEventClick() {
       public void event() {
@@ -218,32 +198,30 @@ public class SpriteEditor extends GUI implements Editor {
       }
     });
     
-    _scrFrame = new Scrollbar(this);
-    _scrFrame.setXYWH(4, _btnFrameAdd.getY() + _btnFrameAdd.getH(), 16, _txtFrameFX.getY() + _txtFrameFX.getH() + 8);
-    _scrFrame.addEventScrollHandler(new ControlEventScroll() {
-      public void event(int delta) {
-        setFrame(_frame + delta);
+    _splFrame = new ScrollPanel(this);
+    _splFrame.setXYWH(4, 4, _txtFrameH.getX() + _txtFrameH.getW() + 8, 107);
+    _splFrame.Buttons().add(_btnFrameClone);
+    _splFrame.Controls().add(_lblFrameLoc);
+    _splFrame.Controls().add(_lblFrameFoot);
+    _splFrame.Controls().add(_txtFrameX);
+    _splFrame.Controls().add(_txtFrameY);
+    _splFrame.Controls().add(_txtFrameW);
+    _splFrame.Controls().add(_txtFrameH);
+    _splFrame.Controls().add(_txtFrameFX);
+    _splFrame.Controls().add(_txtFrameFY);
+    _splFrame.addEventButtonAddHandler(new ControlEventButton() {
+      public void event() {
+        addFrame();
       }
     });
-    
-    _lblFrameNum = new Label(this);
-    _lblFrameNum.setXY(_scrFrame.getX(), _btnFrameAdd.getY());
-    _lblFrameNum.setText("0");
-    
-    _picFrameLoc = new Picture(this);
-    _picFrameLoc.setBackColour(new float[] {0.33f, 0.33f, 0.33f, 0.66f});
-    _picFrameLoc.setXYWH(_scrFrame.getX() + _scrFrame.getW(), _scrFrame.getY(), _txtFrameH.getX() + _txtFrameH.getW() + 8, _scrFrame.getH());
-    _picFrameLoc.Controls().add(_lblFrameLoc);
-    _picFrameLoc.Controls().add(_lblFrameFoot);
-    _picFrameLoc.Controls().add(_txtFrameX);
-    _picFrameLoc.Controls().add(_txtFrameY);
-    _picFrameLoc.Controls().add(_txtFrameW);
-    _picFrameLoc.Controls().add(_txtFrameH);
-    _picFrameLoc.Controls().add(_txtFrameFX);
-    _picFrameLoc.Controls().add(_txtFrameFY);
-    _picFrameLoc.addEventMouseWheelHandler(new ControlEventWheel() {
-      public void event(int delta) {
-        _scrFrame.handleMouseWheel(delta);
+    _splFrame.addEventButtonDelHandler(new ControlEventButton() {
+      public void event() {
+        delFrame();
+      }
+    });
+    _splFrame.addEventSelect(new ControlEventSelect() {
+      public void event(int index) {
+        setFrame(index);
       }
     });
     
@@ -257,15 +235,10 @@ public class SpriteEditor extends GUI implements Editor {
     
     _picFrameSpriteBack = new Picture(this);
     _picFrameSpriteBack.setBackColour(new float[] {0.33f, 0.33f, 0.33f, 0.66f});
-    _picFrameSpriteBack.setXY(_scrFrame.getX(), _picFrameLoc.getY() + _picFrameLoc.getH() + 4);
+    _picFrameSpriteBack.setXY(_splFrame.getX(), _splFrame.getY() + _splFrame.getH() + 4);
     _picFrameSpriteBack.Controls().add(_picFrameSprite);
     
-    _picTab[0].Controls().add(_btnFrameAdd);
-    _picTab[0].Controls().add(_btnFrameDel);
-    _picTab[0].Controls().add(_btnFrameClone);
-    _picTab[0].Controls().add(_lblFrameNum);
-    _picTab[0].Controls().add(_scrFrame);
-    _picTab[0].Controls().add(_picFrameLoc);
+    _picTab[0].Controls().add(_splFrame);
     _picTab[0].Controls().add(_picFrameSpriteBack);
     
     _lblAnimName = new Label(this);
@@ -486,7 +459,7 @@ public class SpriteEditor extends GUI implements Editor {
   
   public void resize() {
     _picFrameSpriteBack.setWH(_picFrameSprite.getW(), _picFrameSprite.getH());
-    _picFrameLoc.setW(_picFrameSpriteBack.getW() - _scrFrame.getW());
+    _splFrame.setW(_picFrameSpriteBack.getW());
     _picTab[0].setWH(_picFrameSpriteBack.getX() + _picFrameSpriteBack.getW() + 4, _picFrameSpriteBack.getY() + _picFrameSpriteBack.getH() + 4);
     _picWindow.setWH(_picTab[_tab].getW() + 16, _btnTab[_tab].getH() + _picTab[_tab].getH() + 16);
     _picWindow.setXY((_context.getW() - _picWindow.getW()) / 2, (_context.getH() - _picWindow.getH()) / 2);
@@ -534,9 +507,9 @@ public class SpriteEditor extends GUI implements Editor {
     if(_sprite._frame.size() == 0) addFrame();
     if(_sprite._anim .size() == 0) addAnim();
     
-    _scrFrame.setMax(_sprite._frame.size() - 1);
+    _splFrame.setMax(_sprite._frame.size() - 1);
     _scrAnim .setMax(_sprite._anim .size() - 1);
-    _scrListFrame.setMax(_scrFrame.getMax());
+    _scrListFrame.setMax(_splFrame.getMax());
     _picFrameSprite.setTexture(_textures.getTexture("sprites/" + _sprite.getTexture()));
     
     _txtName.setText(_sprite.getName());
@@ -568,25 +541,25 @@ public class SpriteEditor extends GUI implements Editor {
   private void addFrame(Frame f) {
     f = f == null ? new Frame() : new Frame(f);
     _sprite._frame.add(f);
-    _scrFrame.setMax(_sprite._frame.size() - 1);
-    _scrListFrame.setMax(_scrFrame.getMax());
-    setFrame(_scrFrame.getMax());
+    _splFrame.setMax(_sprite._frame.size() - 1);
+    _scrListFrame.setMax(_splFrame.getMax());
+    setFrame(_splFrame.getMax());
   }
   
   private void delFrame() {
     _sprite._frame.remove(_frame);
-    _scrFrame.setMax(_sprite._frame.size() - 1);
-    _scrListFrame.setMax(_scrFrame.getMax());
+    _splFrame.setMax(_sprite._frame.size() - 1);
+    _scrListFrame.setMax(_splFrame.getMax());
     setFrame(_frame);
   }
   
   private void setFrame(int frame) {
-    _scrFrame.setVal(frame);
+    _splFrame.setIndex(frame);
     _frame = frame;
     
     Frame f = _sprite._frame.get(_frame);
     
-    _lblFrameNum.setText(String.valueOf(_frame));
+    //_lblFrameNum.setText(String.valueOf(_frame));
     _txtFrameX.setText(String.valueOf(f._x));
     _txtFrameY.setText(String.valueOf(f._y));
     _txtFrameW.setText(String.valueOf(f._w));
