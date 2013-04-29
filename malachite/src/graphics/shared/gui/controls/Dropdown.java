@@ -1,6 +1,7 @@
 package graphics.shared.gui.controls;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import graphics.gl00.Context;
 import graphics.gl00.Drawable;
@@ -29,6 +30,10 @@ public class Dropdown extends Control {
   private float[] _backColour = {0, 0, 0, 0};
   private float[] _glowColour = {0, 0, 0, 0};
   private float   _fade;
+  
+  private LinkedList<ControlEventSelect> _eventSelect = new LinkedList<ControlEventSelect>();
+  
+  public void addEventSelectHandler(ControlEventSelect e) { _eventSelect.add(e); }
   
   public Dropdown(GUI gui) {
     this(gui, Theme.getInstance());
@@ -61,10 +66,14 @@ public class Dropdown extends Control {
     
     ControlEventClick btnDropClick = new ControlEventClick() {
       public void event() {
-        if(_text.size() != 0) {
-          _selectedIndex = _textIndex;
-          _selected.setY(_selectedIndex * _font.getH());
-          _picDrop.setVisible(!_picDrop.getVisible());
+        if(!_picDrop.getVisible()) {
+          if(_text.size() != 0) {
+            _selectedIndex = _textIndex;
+            _selected.setY(_selectedIndex * _font.getH());
+            _picDrop.setVisible(true);
+          }
+        } else {
+          _picDrop.setVisible(false);
         }
       }
     };
@@ -97,9 +106,9 @@ public class Dropdown extends Control {
     });
     _picDrop.addEventClickHandler(new ControlEventClick() {
       public void event() {
-        _textIndex = _selectedIndex;
         _btnDrop.handleMouseDown(0, 0, 0);
         _btnDrop.handleMouseUp(0, 0, 0);
+        setSeletected(_selectedIndex);
       }
     });
     
@@ -136,6 +145,7 @@ public class Dropdown extends Control {
   
   public void setSeletected(int index) {
     _textIndex = index;
+    raiseEventSelect(_text.get(_textIndex));
   }
   
   public void setBackColour(float[] c) {
@@ -209,6 +219,13 @@ public class Dropdown extends Control {
     }
   }
   
+  protected void raiseEventSelect(DropdownItem l) {
+    for(ControlEventSelect e : _eventSelect) {
+      e.setControl(this);
+      e.event(l);
+    }
+  }
+  
   public static class DropdownItem {
     private String _text;
     
@@ -223,5 +240,9 @@ public class Dropdown extends Control {
     public void setText(String text) {
       _text = text;
     }
+  }
+  
+  public static abstract class ControlEventSelect extends ControlEvent {
+    public abstract void event(DropdownItem item);
   }
 }
