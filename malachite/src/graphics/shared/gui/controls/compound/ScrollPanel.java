@@ -127,7 +127,7 @@ public class ScrollPanel extends Control {
   
   protected void resize() {
     _tabs.setW(getW() - _tabs.getX());
-    _panel.setWH(getW() - _panel.getX(), getH() - _tabs.getY());
+    _panel.setWH(getW() - _panel.getX(), getH() - _panel.getY());
     _num.setWH(_add.getX(), _scroll.getY());
   }
   
