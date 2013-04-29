@@ -25,6 +25,7 @@ public class Control {
   protected Drawable _background;
   protected float[]  _loc          = {0, 0, 0, 0};
   protected float[]  _foreColour   = {1, 1, 1, 1};
+  protected boolean  _enabled      = true;
   protected boolean  _visible      = true;
   protected boolean  _acceptsFocus = true;
   protected boolean  _focus        = false;
@@ -150,6 +151,7 @@ public class Control {
   public float getY()              { return _loc[1]; }
   public float getW()              { return _loc[2]; }
   public float getH()              { return _loc[3]; }
+  public boolean getEnabled()      { return _enabled; }
   public boolean getVisible()      { return _visible; }
   public float[] getBackColour()   { return _background.getColour(); }
   public float[] getForeColour()   { return _foreColour; }
@@ -159,6 +161,7 @@ public class Control {
   public void setBackground(Drawable d)             { _background = d; }
   public void setX(float x)                         { _loc[0] = x; }
   public void setY(float y)                         { _loc[1] = y; }
+  public void setEnabled(boolean enabled)           { _enabled = enabled; }
   public void setBackColour(float[] c)              { _background.setColour(c); }
   public void setForeColour(float[] c)              { _foreColour = c; }
   public void setBorderColour(float[] c)            { _border.setColour(c); }
@@ -498,8 +501,10 @@ public class Control {
   
   public void logic() { }
   public void logicControl() {
-    logic();
-    _controlList.logic();
+    if(_enabled) {
+      logic();
+      _controlList.logic();
+    }
     
     if(_controlNext != null) {
       _controlNext.logicControl();
@@ -508,10 +513,12 @@ public class Control {
   
   public void drawSelect() {
     if(drawBegin()) {
-      if(_selBox != null)
-        _selBox.draw();
-      
-      _controlList.drawSelect();
+      if(_enabled) {
+        if(_selBox != null)
+          _selBox.draw();
+        
+        _controlList.drawSelect();
+      }
       
       _matrix.pop();
     }
