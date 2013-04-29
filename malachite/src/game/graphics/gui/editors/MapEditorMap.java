@@ -1,11 +1,14 @@
 package game.graphics.gui.editors;
 
+import java.util.LinkedList;
+
 import game.data.Map;
 import game.data.util.Buffer;
 
 public class MapEditorMap extends Map {
   private Map _map;
   private int _mapCRC;
+  protected LinkedList<Sprite> _sprite = super._sprite;
   
   public MapEditorMap(Map map) {
     super(map.getWorld(), map.getX(), map.getY());
