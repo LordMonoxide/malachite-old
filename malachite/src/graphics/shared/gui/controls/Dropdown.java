@@ -17,7 +17,7 @@ public class Dropdown extends Control {
   private Button _btnDrop;
   private Picture _picDrop;
   
-  private ArrayList<String> _text = new ArrayList<String>();
+  private ArrayList<DropdownItem> _text = new ArrayList<DropdownItem>();
   private int _textIndex = -1;
   private int _textY = 0;
   
@@ -83,8 +83,8 @@ public class Dropdown extends Control {
         }
         
         int y = 0;
-        for(String s : _text) {
-          _font.draw(0, y, s, _foreColour);
+        for(DropdownItem d : _text) {
+          _font.draw(0, y, d._text, _foreColour);
           y += _font.getH();
         }
       }
@@ -113,8 +113,8 @@ public class Dropdown extends Control {
     theme.create(this);
   }
   
-  public void add(String text) {
-    _text.add(text);
+  public void add(DropdownItem item) {
+    _text.add(item);
     _picDrop.setH(_text.size() * _font.getH());
   }
   
@@ -170,7 +170,7 @@ public class Dropdown extends Control {
   public void draw() {
     if(drawBegin()) {
       if(_textIndex != -1) {
-        _font.draw(0, _textY, _text.get(_textIndex), _foreColour);
+        _font.draw(0, _textY, _text.get(_textIndex)._text, _foreColour);
       }
     }
     
@@ -198,6 +198,22 @@ public class Dropdown extends Control {
         _background.setColour(c);
         _background.createQuad();
       }
+    }
+  }
+  
+  public static class DropdownItem {
+    private String _text;
+    
+    public DropdownItem(String text) {
+      _text = text;
+    }
+    
+    public String getText() {
+      return _text;
+    }
+    
+    public void setText(String text) {
+      _text = text;
     }
   }
 }
