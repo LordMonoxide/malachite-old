@@ -25,21 +25,23 @@ import graphics.shared.gui.controls.Picture;
 public class MapEditor extends GUI {
   private Game _game = (Game)Context.getGame();
   
-  private Picture _picWindow;
-  private Button[] _btnTab;
+  private Picture   _picWindow;
+  private Button[]  _btnTab;
   private Picture[] _picTab;
-  private Picture _picTileset;
-  private Picture _picSelected;
+  private Picture   _picTileset;
+  private Picture   _picSelected;
   
-  private Picture _picLayers;
-  private Button[] _btnLayer;
+  private Picture   _picLayers;
+  private Button[]  _btnLayer;
   
-  private Picture _picTilesetList;
-  private Picture _picTilesetBack;
+  private Picture   _picTilesetList;
+  private Picture   _picTilesetBack;
   private Picture[] _picTilesets;
   
-  private Label _lblSprite;
-  private Dropdown _drpSprite;
+  private Label     _lblSprite;
+  private Dropdown  _drpSprite;
+  private Label     _lblSpriteFile;
+  private Dropdown  _drpSpriteFile;
   
   private Drawable _selected;
   
@@ -188,8 +190,17 @@ public class MapEditor extends GUI {
     _drpSprite = new Dropdown(this);
     _drpSprite.setXY(_lblSprite.getX(), _lblSprite.getY() + _lblSprite.getH());
     
+    _lblSpriteFile = new Label(this);
+    _lblSpriteFile.setXY(_lblSprite.getX(), _drpSprite.getY() + _drpSprite.getH() + 8);
+    _lblSpriteFile.setText("File");
+    
+    _drpSpriteFile = new Dropdown(this);
+    _drpSpriteFile.setXY(_lblSpriteFile.getX(), _lblSpriteFile.getY() + _lblSpriteFile.getH());
+    
     _picTab[2].Controls().add(_lblSprite);
     _picTab[2].Controls().add(_drpSprite);
+    _picTab[2].Controls().add(_lblSpriteFile);
+    _picTab[2].Controls().add(_drpSpriteFile);
     
     Controls().add(_picWindow);
     Controls().add(_picTilesetList);
@@ -202,13 +213,13 @@ public class MapEditor extends GUI {
       for(File f : d.listFiles()) {
         Sprite s = new Sprite(f.getName());
         if(s.load()) {
-          _drpSprite.add(s.getFile());
+          _drpSpriteFile.add(s.getFile());
         }
       }
     }
     
-    if(_drpSprite.getSize() != 0) {
-      _drpSprite.setSeletected(0);
+    if(_drpSpriteFile.getSize() != 0) {
+      _drpSpriteFile.setSeletected(0);
     }
     
     setTab(_tab);
