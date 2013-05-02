@@ -1,5 +1,6 @@
 package graphics.shared.gui.controls.compound;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import graphics.shared.gui.Control;
@@ -12,6 +13,8 @@ import graphics.shared.gui.controls.Scrollbar;
 import graphics.shared.gui.controls.Scrollbar.ControlEventScroll;
 
 public class ScrollPanel extends Control {
+  private ArrayList<ScrollPanelItem> _item = new ArrayList<ScrollPanelItem>();
+  
   private Picture   _tabs;
   private Picture   _panel;
   private Scrollbar _scroll;
@@ -68,13 +71,13 @@ public class ScrollPanel extends Control {
     _scroll.addEventScrollHandler(new ControlEventScroll() {
       public void event(int delta) {
         _num.setText(String.valueOf(_scroll.getVal()));
-        raiseSelect(_scroll.getVal());
+        raiseSelect(_item.get(_scroll.getVal()));
       }
     });
     
     _num = new Label(gui);
     _num.setAutoSize(false);
-    _num.setText("0");
+    _num.setText(null);
     
     _add.setX(_scroll.getW());
     _del.setX(_add.getX() + _add.getW());
@@ -91,6 +94,9 @@ public class ScrollPanel extends Control {
     addEventMouseWheelHandler(wheel);
     
     setWH(400, 100);
+    
+    _panel.setEnabled(false);
+    _scroll.setEnabled(false);
   }
   
   public ControlList Buttons() {
@@ -101,28 +107,13 @@ public class ScrollPanel extends Control {
     return _panel.Controls();
   }
   
-  public int getMax() {
-    return _scroll.getMax();
-  }
-  
-  public void setMax(int max) {
-    _scroll.setMax(max);
-  }
-  
-  public int getMin() {
-    return _scroll.getMin();
-  }
-  
-  public void setMin(int min) {
-    _scroll.setMin(min);
-  }
-  
-  public int getIndex() {
-    return _scroll.getVal();
-  }
-  
-  public void setIndex(int index) {
-    _scroll.setVal(index);
+  public void add(ScrollPanelItem item) {
+    item._index = _item.size();
+    _item.add(item);
+    _scroll.setMax(_item.size() - 1);
+    
+    _panel.setEnabled(true);
+    _scroll.setEnabled(true);
   }
   
   protected void resize() {
@@ -145,10 +136,22 @@ public class ScrollPanel extends Control {
     }
   }
   
-  protected void raiseSelect(int index) {
+  protected void raiseSelect(ScrollPanelItem item) {
     for(ControlEventSelect e : _eventSelect) {
       e.setControl(this);
-      e.event(index);
+      e.event(item);
+    }
+  }
+  
+  public static class ScrollPanelItem {
+    private int _index;
+    
+    public int getIndex() {
+      return _index;
+    }
+    
+    public void setIndex(int index) {
+      _index = index;
     }
   }
   
@@ -157,6 +160,6 @@ public class ScrollPanel extends Control {
   }
   
   public static abstract class ControlEventSelect extends ControlEvent {
-    public abstract void event(int index);
+    public abstract void event(ScrollPanelItem item);
   }
 }
