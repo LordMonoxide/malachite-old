@@ -40,22 +40,28 @@ public class ScrollPanel extends Control {
       }
     };
     
-    _add = new Button(gui);
-    _add.setText("Add");
-    _add.addEventClickHandler(new ControlEventClick() {
+    ControlEventClick addClick = new ControlEventClick() {
       public void event() {
         raiseButtonAdd();
       }
-    });
+    };
+    
+    ControlEventClick delClick = new ControlEventClick() {
+      public void event() {
+        raiseButtonDel();
+      }
+    };
+    
+    _add = new Button(gui);
+    _add.setText("Add");
+    _add.addEventClickHandler(addClick);
+    _add.addEventDoubleClickHandler(addClick);
     
     _del = new Button(gui);
     _del.setText("Delete");
     _del.setX(_add.getW());
-    _del.addEventClickHandler(new ControlEventClick() {
-      public void event() {
-        raiseButtonDel();
-      }
-    });
+    _del.addEventClickHandler(delClick);
+    _del.addEventDoubleClickHandler(delClick);
     
     _tabs = new Picture(gui);
     _tabs.setH(_add.getH());
@@ -70,8 +76,7 @@ public class ScrollPanel extends Control {
     _scroll.setH(88);
     _scroll.addEventScrollHandler(new ControlEventScroll() {
       public void event(int delta) {
-        _num.setText(String.valueOf(_scroll.getVal()));
-        raiseSelect(_item.get(_scroll.getVal()));
+        setItem(_scroll.getVal());
       }
     });
     
@@ -114,6 +119,42 @@ public class ScrollPanel extends Control {
     
     _panel.setEnabled(true);
     _scroll.setEnabled(true);
+    
+    setItem(item);
+  }
+  
+  public void remove() {
+    remove(_item.get(_scroll.getVal()));
+  }
+  
+  public void remove(ScrollPanelItem item) {
+    remove(item._index);
+  }
+  
+  public void remove(int index) {
+    _item.remove(index);
+    
+    if(_item.size() != 0) {
+      if(_scroll.getVal() != _scroll.getMax()) {
+        _scroll.setMax(_item.size() - 1);
+        setItem(_scroll.getVal());
+      } else {
+        _scroll.setMax(_item.size() - 1);
+      }
+    } else {
+      _panel.setEnabled(false);
+      _scroll.setEnabled(false);
+    }
+  }
+  
+  public void setItem(ScrollPanelItem item) {
+    setItem(item._index);
+  }
+  
+  public void setItem(int index) {
+    _scroll.setVal(index);
+    _num.setText(String.valueOf(_item.get(index)._index));
+    raiseSelect(_item.get(_scroll.getVal()));
   }
   
   protected void resize() {
