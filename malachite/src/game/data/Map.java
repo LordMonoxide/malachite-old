@@ -294,7 +294,7 @@ public class Map extends Serializable {
     protected byte _type;
   }
   
-  public class Sprite {
+  public static class Sprite {
     public String _file;
     public int _x, _y;
   }
