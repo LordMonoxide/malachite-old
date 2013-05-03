@@ -9,6 +9,7 @@ import org.lwjgl.input.Keyboard;
 
 import game.Game;
 import game.data.Map.Tile;
+import game.data.Map;
 import game.data.Sprite;
 import game.settings.Settings;
 import game.world.Region;
@@ -24,6 +25,8 @@ import graphics.shared.gui.controls.Label;
 import graphics.shared.gui.controls.Picture;
 import graphics.shared.gui.controls.Dropdown.DropdownItem;
 import graphics.shared.gui.controls.compound.ScrollPanel;
+import graphics.shared.gui.controls.compound.ScrollPanel.ControlEventButton;
+import graphics.shared.gui.controls.compound.ScrollPanel.ScrollPanelItem;
 
 public class MapEditor extends GUI {
   private Game _game = (Game)Context.getGame();
@@ -187,6 +190,16 @@ public class MapEditor extends GUI {
     // Sprites tab
     _splSprite = new ScrollPanel(this);
     _splSprite.setXY(4, 4);
+    _splSprite.addEventButtonAddHandler(new ControlEventButton() {
+      public void event() {
+        addSprite();
+      }
+    });
+    _splSprite.addEventButtonDelHandler(new ControlEventButton() {
+      public void event() {
+        delSprite();
+      }
+    });
     
     _lblSpriteFile = new Label(this);
     _lblSpriteFile.setXY(4, 4);
@@ -284,8 +297,9 @@ public class MapEditor extends GUI {
         _regions.add(_region);
       }
       
-      _splSprite.setMax(_map._sprite.size() - 1);
-      _splSprite.setIndex(0);
+      for(Map.Sprite s : _map._sprite) {
+        _splSprite.add(new ScrollPanelSprite(s));
+      }
     }
   }
   
@@ -315,8 +329,19 @@ public class MapEditor extends GUI {
     resize();
   }
   
+  private void addSprite() {
+    Map.Sprite s = new Map.Sprite();
+    _map._sprite.add(s);
+    _splSprite.add(new ScrollPanelSprite(s));
+  }
+  
+  private void delSprite() {
+    _splSprite.remove();
+  }
+  
   private void updateSprite() {
-    System.out.println(((DropdownSprite)_drpSpriteFile.get())._sprite.getName());
+    DropdownSprite s = (DropdownSprite)_drpSpriteFile.get();
+    
   }
   
   public boolean draw() {
@@ -557,6 +582,18 @@ public class MapEditor extends GUI {
     }
     
     public Sprite getSprite() {
+      return _sprite;
+    }
+  }
+  
+  public static class ScrollPanelSprite extends ScrollPanelItem {
+    Map.Sprite _sprite;
+    
+    public ScrollPanelSprite(Map.Sprite sprite) {
+      _sprite = sprite;
+    }
+    
+    public Map.Sprite getSprite() {
       return _sprite;
     }
   }
