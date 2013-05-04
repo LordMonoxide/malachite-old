@@ -164,6 +164,10 @@ public class ScrollPanel extends Control {
     raiseSelect(_sel);
   }
   
+  public int size() {
+    return _item.size();
+  }
+  
   protected void resize() {
     _tabs.setW(getW() - _tabs.getX());
     _panel.setWH(getW() - _panel.getX(), getH() - _panel.getY());
