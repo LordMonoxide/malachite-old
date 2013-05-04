@@ -110,6 +110,7 @@ public class Dropdown extends Control implements Iterable<Dropdown.DropdownItem>
         _btnDrop.handleMouseDown(0, 0, 0);
         _btnDrop.handleMouseUp(0, 0, 0);
         setSeletected(_selectedIndex);
+        raiseEventSelect(_textIndex != -1 ? _text.get(_textIndex) : null);
       }
     });
     
@@ -146,7 +147,6 @@ public class Dropdown extends Control implements Iterable<Dropdown.DropdownItem>
   
   public void setSeletected(int index) {
     _textIndex = index;
-    raiseEventSelect(index != -1 ? _text.get(_textIndex) : null);
   }
   
   public void setBackColour(float[] c) {
