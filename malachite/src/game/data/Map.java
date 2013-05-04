@@ -12,7 +12,7 @@ import graphics.shared.textures.Texture;
 import graphics.shared.textures.Textures;
 
 public class Map extends Serializable {
-  private static final int VERSION = 2;
+  private static final int VERSION = 3;
   
   protected String _world;
   protected int _x, _y;
@@ -122,6 +122,7 @@ public class Map extends Serializable {
       b.put(s._file);
       b.put(s._x);
       b.put(s._y);
+      b.put(s._z);
     }
     
     return b;
@@ -131,6 +132,7 @@ public class Map extends Serializable {
     switch(b.getInt()) {
       case 1: deserialize01(b); break;
       case 2: deserialize02(b); break;
+      case 3: deserialize03(b); break;
     }
   }
   
@@ -230,6 +232,61 @@ public class Map extends Serializable {
     }
   }
   
+  private void deserialize03(Buffer b) {
+    _sprite.clear();
+    
+    _x = b.getInt();
+    _y = b.getInt();
+    
+    int sizeZ = b.getInt();
+    int sizeX = b.getInt();
+    int sizeY = b.getInt();
+    int sizeXA = b.getInt();
+    int sizeYA = b.getInt();
+    
+    int spriteSize = b.getInt();
+    
+    int maxX = sizeX > Settings.Map.Tile.Count ? Settings.Map.Tile.Count : sizeX;
+    int maxY = sizeY > Settings.Map.Tile.Count ? Settings.Map.Tile.Count : sizeY;
+    int maxZ = sizeZ > Settings.Map.Depth ? Settings.Map.Depth : sizeZ;
+    int maxXA = sizeXA > (Settings.Map.Attrib.Count) ? (Settings.Map.Attrib.Count) : sizeXA;
+    int maxYA = sizeYA > (Settings.Map.Attrib.Count) ? (Settings.Map.Attrib.Count) : sizeYA;
+    
+    _layer = new Layer[Settings.Map.Depth];
+    
+    for(int z = 0; z < maxZ; z++) {
+      _layer[z] = new Layer();
+      _layer[z]._tile = new Tile[Settings.Map.Tile.Count][Settings.Map.Tile.Count];
+      _layer[z]._attrib = new Attrib[Settings.Map.Attrib.Count][Settings.Map.Attrib.Count];
+      
+      for(int x = 0; x < maxX; x++) {
+        for(int y = 0; y < maxY; y++) {
+          _layer[z]._tile[x][y] = new Tile();
+          _layer[z]._tile[x][y]._x = b.getByte();
+          _layer[z]._tile[x][y]._y = b.getByte();
+          _layer[z]._tile[x][y]._tileset = b.getByte();
+          _layer[z]._tile[x][y]._a = b.getByte();
+        }
+      }
+      
+      for(int x = 0; x < maxXA; x++) {
+        for(int y = 0; y < maxYA; y++) {
+          _layer[z]._attrib[x][y] = new Attrib();
+          _layer[z]._attrib[x][y]._type = b.getByte();
+        }
+      }
+    }
+    
+    for(int i = 0; i < spriteSize; i++) {
+      Sprite s = new Sprite();
+      s._file = b.getString();
+      s._x = b.getInt();
+      s._y = b.getInt();
+      s._z = b.getByte();
+      _sprite.add(s);
+    }
+  }
+  
   public class Layer {
     protected Tile[][] _tile = new Tile[Settings.Map.Tile.Count][Settings.Map.Tile.Count];
     protected Attrib[][] _attrib = new Attrib[Settings.Map.Attrib.Count][Settings.Map.Attrib.Count];
@@ -298,5 +355,6 @@ public class Map extends Serializable {
   public static class Sprite {
     public String _file;
     public int _x, _y;
+    public byte _z;
   }
 }
