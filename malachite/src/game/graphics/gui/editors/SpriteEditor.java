@@ -24,6 +24,7 @@ import graphics.shared.gui.controls.Textbox.ControlEventChange;
 import graphics.shared.gui.controls.compound.ScrollPanel;
 import graphics.shared.gui.controls.compound.ScrollPanel.ControlEventButton;
 import graphics.shared.gui.controls.compound.ScrollPanel.ControlEventSelect;
+import graphics.shared.gui.controls.compound.ScrollPanel.ScrollPanelItem;
 
 public class SpriteEditor extends GUI implements Editor {
   private Picture   _picWindow;
@@ -76,7 +77,7 @@ public class SpriteEditor extends GUI implements Editor {
   private boolean _suspendUpdateList;
   
   private int _tab;
-  private int _frame;
+  private Sprite.Frame _frame;
   private int _anim;
   private int _list;
   
@@ -220,8 +221,8 @@ public class SpriteEditor extends GUI implements Editor {
       }
     });
     _splFrame.addEventSelect(new ControlEventSelect() {
-      public void event(int index) {
-        setFrame(index);
+      public void event(ScrollPanelItem item) {
+        setFrame(((ScrollPanelFrame)item)._frame);
       }
     });
     
@@ -507,9 +508,12 @@ public class SpriteEditor extends GUI implements Editor {
     if(_sprite._frame.size() == 0) addFrame();
     if(_sprite._anim .size() == 0) addAnim();
     
-    _splFrame.setMax(_sprite._frame.size() - 1);
+    for(Sprite.Frame f : _sprite._frame) {
+      _splFrame.add(new ScrollPanelFrame(f));
+    }
+    
     _scrAnim .setMax(_sprite._anim .size() - 1);
-    _scrListFrame.setMax(_splFrame.getMax());
+    _scrListFrame.setMax(_splFrame.size());
     _picFrameSprite.setTexture(_textures.getTexture("sprites/" + _sprite.getTexture()));
     
     _txtName.setText(_sprite.getName());
@@ -517,7 +521,6 @@ public class SpriteEditor extends GUI implements Editor {
     _txtW.setText(String.valueOf(_sprite.getW()));
     _txtH.setText(String.valueOf(_sprite.getH()));
     
-    setFrame(0);
     setAnim(0);
     
     resize();
@@ -534,38 +537,30 @@ public class SpriteEditor extends GUI implements Editor {
   }
   
   private void cloneFrame() {
-    addFrame(_sprite._frame.get(_frame));
+    addFrame(_frame);
   }
   
   private void addFrame() { addFrame(null); }
   private void addFrame(Frame f) {
     f = f == null ? new Frame() : new Frame(f);
     _sprite._frame.add(f);
-    _splFrame.setMax(_sprite._frame.size() - 1);
-    _scrListFrame.setMax(_splFrame.getMax());
-    setFrame(_splFrame.getMax());
+    _splFrame.add(new ScrollPanelFrame(f));
   }
   
   private void delFrame() {
-    _sprite._frame.remove(_frame);
-    _splFrame.setMax(_sprite._frame.size() - 1);
-    _scrListFrame.setMax(_splFrame.getMax());
-    setFrame(_frame);
+    _sprite._frame.remove(((ScrollPanelFrame)_splFrame.getItem())._frame);
+    _splFrame.remove();
   }
   
-  private void setFrame(int frame) {
-    _splFrame.setIndex(frame);
+  private void setFrame(Sprite.Frame frame) {
     _frame = frame;
     
-    Frame f = _sprite._frame.get(_frame);
-    
-    //_lblFrameNum.setText(String.valueOf(_frame));
-    _txtFrameX.setText(String.valueOf(f._x));
-    _txtFrameY.setText(String.valueOf(f._y));
-    _txtFrameW.setText(String.valueOf(f._w));
-    _txtFrameH.setText(String.valueOf(f._h));
-    _txtFrameFX.setText(String.valueOf(f._fx));
-    _txtFrameFY.setText(String.valueOf(f._fy));
+    _txtFrameX.setText(String.valueOf(_frame._x));
+    _txtFrameY.setText(String.valueOf(_frame._y));
+    _txtFrameW.setText(String.valueOf(_frame._w));
+    _txtFrameH.setText(String.valueOf(_frame._h));
+    _txtFrameFX.setText(String.valueOf(_frame._fx));
+    _txtFrameFY.setText(String.valueOf(_frame._fy));
     
     updateFrame();
   }
@@ -637,18 +632,17 @@ public class SpriteEditor extends GUI implements Editor {
   }
   
   private void updateFrame() {
-    Frame f = _sprite._frame.get(_frame);
-    f._x  = Integer.parseInt(_txtFrameX.getText());
-    f._y  = Integer.parseInt(_txtFrameY.getText());
-    f._w  = Integer.parseInt(_txtFrameW.getText());
-    f._h  = Integer.parseInt(_txtFrameH.getText());
-    f._fx = Integer.parseInt(_txtFrameFX.getText());
-    f._fy = Integer.parseInt(_txtFrameFY.getText());
+    _frame._x  = Integer.parseInt(_txtFrameX.getText());
+    _frame._y  = Integer.parseInt(_txtFrameY.getText());
+    _frame._w  = Integer.parseInt(_txtFrameW.getText());
+    _frame._h  = Integer.parseInt(_txtFrameH.getText());
+    _frame._fx = Integer.parseInt(_txtFrameFX.getText());
+    _frame._fy = Integer.parseInt(_txtFrameFY.getText());
     
-    _frameLoc.setWH(f._w, f._h);
+    _frameLoc.setWH(_frame._w, _frame._h);
     _frameLoc.createBorder();
-    _frameLoc.setXY(f._x, f._y);
-    _frameFoot.setXY(f._x + f._fx - 8, f._y + f._h - f._fy - 8);
+    _frameLoc.setXY(_frame._x, _frame._y);
+    _frameFoot.setXY(_frame._x + _frame._fx - 8, _frame._y + _frame._h - _frame._fy - 8);
   }
   
   private void updateAnim() {
@@ -670,4 +664,16 @@ public class SpriteEditor extends GUI implements Editor {
   public boolean handleKeyDown ( int key) { return true; }
   public boolean handleKeyUp   ( int key) { return true; }
   public boolean handleCharDown(char key) { return true; }
+  
+  public static class ScrollPanelFrame extends ScrollPanelItem {
+    Sprite.Frame _frame;
+    
+    public ScrollPanelFrame(Sprite.Frame frame) {
+      _frame = frame;
+    }
+    
+    public Sprite.Frame getFrame() {
+      return _frame;
+    }
+  }
 }
