@@ -188,6 +188,8 @@ public class Map extends Serializable {
     int sizeXA = b.getInt();
     int sizeYA = b.getInt();
     
+    int spriteSize = b.getInt();
+    
     int maxX = sizeX > Settings.Map.Tile.Count ? Settings.Map.Tile.Count : sizeX;
     int maxY = sizeY > Settings.Map.Tile.Count ? Settings.Map.Tile.Count : sizeY;
     int maxZ = sizeZ > Settings.Map.Depth ? Settings.Map.Depth : sizeZ;
@@ -219,8 +221,7 @@ public class Map extends Serializable {
       }
     }
     
-    int size = b.getInt();
-    for(int i = 0; i < size; i++) {
+    for(int i = 0; i < spriteSize; i++) {
       Sprite s = new Sprite();
       s._file = b.getString();
       s._x = b.getInt();
