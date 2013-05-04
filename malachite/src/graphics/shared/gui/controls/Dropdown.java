@@ -1,6 +1,7 @@
 package graphics.shared.gui.controls;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import graphics.gl00.Context;
@@ -11,7 +12,7 @@ import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;
 import graphics.themes.Theme;
 
-public class Dropdown extends Control {
+public class Dropdown extends Control implements Iterable<Dropdown.DropdownItem> {
   private Fonts _fonts = Context.getFonts();
   private Font _font = _fonts.getDefault();
   
@@ -224,6 +225,10 @@ public class Dropdown extends Control {
       e.setControl(this);
       e.event(l);
     }
+  }
+  
+  public Iterator<DropdownItem> iterator() {
+    return _text.iterator();
   }
   
   public static class DropdownItem {
