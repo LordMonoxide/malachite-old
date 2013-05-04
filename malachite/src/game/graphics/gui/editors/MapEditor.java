@@ -200,6 +200,11 @@ public class MapEditor extends GUI {
         delSprite();
       }
     });
+    _splSprite.addEventSelect(new ScrollPanel.ControlEventSelect() {
+      public void event(ScrollPanelItem item) {
+        selSprite((ScrollPanelSprite)item);
+      }
+    });
     
     _lblSpriteFile = new Label(this);
     _lblSpriteFile.setXY(4, 4);
@@ -339,9 +344,29 @@ public class MapEditor extends GUI {
     _splSprite.remove();
   }
   
+  private void selSprite(ScrollPanelSprite sprite) {
+    if(sprite._sprite._file != null) {
+      int i = 0;
+      for(DropdownItem item : _drpSpriteFile) {
+        DropdownSprite s = (DropdownSprite)item;
+        if(s._sprite.getFile().equals(sprite._sprite._file)) {
+          _drpSpriteFile.setSeletected(i);
+        }
+        i++;
+      }
+    } else {
+      _drpSpriteFile.setSeletected(-1);
+    }
+  }
+  
   private void updateSprite() {
     DropdownSprite s = (DropdownSprite)_drpSpriteFile.get();
     
+    if(s != null) {
+      ((ScrollPanelSprite)_splSprite.getItem())._sprite._file = s._sprite.getFile();
+    } else {
+      ((ScrollPanelSprite)_splSprite.getItem())._sprite._file = null;
+    }
   }
   
   public boolean draw() {
