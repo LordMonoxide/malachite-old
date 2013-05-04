@@ -25,6 +25,7 @@ import graphics.shared.gui.controls.Label;
 import graphics.shared.gui.controls.Picture;
 import graphics.shared.gui.controls.Dropdown.DropdownItem;
 import graphics.shared.gui.controls.Textbox;
+import graphics.shared.gui.controls.Textbox.ControlEventChange;
 import graphics.shared.gui.controls.compound.ScrollPanel;
 import graphics.shared.gui.controls.compound.ScrollPanel.ControlEventButton;
 import graphics.shared.gui.controls.compound.ScrollPanel.ScrollPanelItem;
@@ -64,6 +65,8 @@ public class MapEditor extends GUI {
   private int _w = 1;
   private int _h = 1;
   private byte _a = (byte)255;
+  
+  private Map.Sprite _sprite;
   
   private int _mx, _my;
   private MapEditorMap _map;
@@ -229,11 +232,21 @@ public class MapEditor extends GUI {
     _txtSpriteX.setXY(_lblSpriteLoc.getX(), _lblSpriteLoc.getY() + _lblSpriteLoc.getH());
     _txtSpriteX.setW(40);
     _txtSpriteX.setNumeric(true);
+    _txtSpriteX.addEventChangeHandler(new ControlEventChange() {
+      public void event() {
+        _sprite._x = Integer.parseInt(_txtSpriteX.getText());
+      }
+    });
     
     _txtSpriteY = new Textbox(this);
     _txtSpriteY.setXY(_txtSpriteX.getX() + _txtSpriteX.getW() + 4, _txtSpriteX.getY());
     _txtSpriteY.setW(40);
     _txtSpriteY.setNumeric(true);
+    _txtSpriteY.addEventChangeHandler(new ControlEventChange() {
+      public void event() {
+        _sprite._y = Integer.parseInt(_txtSpriteY.getText());
+      }
+    });
     
     _splSprite.Controls().add(_lblSpriteFile);
     _splSprite.Controls().add(_drpSpriteFile);
@@ -368,11 +381,13 @@ public class MapEditor extends GUI {
   }
   
   private void selSprite(Map.Sprite sprite) {
-    if(sprite._file != null) {
+    _sprite = sprite;
+    
+    if(_sprite._file != null) {
       int i = 0;
       for(DropdownItem item : _drpSpriteFile) {
         DropdownSprite s = (DropdownSprite)item;
-        if(s._sprite.getFile().equals(sprite._file)) {
+        if(s._sprite.getFile().equals(_sprite._file)) {
           _drpSpriteFile.setSeletected(i);
         }
         i++;
@@ -381,8 +396,8 @@ public class MapEditor extends GUI {
       _drpSpriteFile.setSeletected(-1);
     }
     
-    _txtSpriteX.setText(String.valueOf(sprite._x));
-    _txtSpriteY.setText(String.valueOf(sprite._y));
+    _txtSpriteX.setText(String.valueOf(_sprite._x));
+    _txtSpriteY.setText(String.valueOf(_sprite._y));
   }
   
   private void updateSprite() {
@@ -523,7 +538,7 @@ public class MapEditor extends GUI {
   }
   
   public boolean handleMouseWheel(int delta) {
-    if(_picWindow.getVisible()) {
+    if(_picTilesetList.getVisible()) {
       _mouseDelta += delta;
       
       while(_mouseDelta < 0) {
