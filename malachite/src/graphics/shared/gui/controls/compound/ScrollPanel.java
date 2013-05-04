@@ -22,6 +22,8 @@ public class ScrollPanel extends Control {
   
   private Button    _add;
   private Button    _del;
+  
+  private ScrollPanelItem _sel;
 
   private LinkedList<ControlEventButton> _eventButtonAdd = new LinkedList<ControlEventButton>();
   private LinkedList<ControlEventButton> _eventButtonDel = new LinkedList<ControlEventButton>();
@@ -147,14 +149,19 @@ public class ScrollPanel extends Control {
     }
   }
   
+  public ScrollPanelItem getItem() {
+    return _sel;
+  }
+  
   public void setItem(ScrollPanelItem item) {
     setItem(item._index);
   }
   
   public void setItem(int index) {
+    _sel = _item.get(index);
     _scroll.setVal(index);
-    _num.setText(String.valueOf(_item.get(index)._index));
-    raiseSelect(_item.get(_scroll.getVal()));
+    _num.setText(String.valueOf(_sel._index));
+    raiseSelect(_sel);
   }
   
   protected void resize() {
