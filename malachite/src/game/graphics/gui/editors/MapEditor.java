@@ -24,6 +24,7 @@ import graphics.shared.gui.controls.Dropdown.ControlEventSelect;
 import graphics.shared.gui.controls.Label;
 import graphics.shared.gui.controls.Picture;
 import graphics.shared.gui.controls.Dropdown.DropdownItem;
+import graphics.shared.gui.controls.Textbox;
 import graphics.shared.gui.controls.compound.ScrollPanel;
 import graphics.shared.gui.controls.compound.ScrollPanel.ControlEventButton;
 import graphics.shared.gui.controls.compound.ScrollPanel.ScrollPanelItem;
@@ -47,6 +48,8 @@ public class MapEditor extends GUI {
   private ScrollPanel _splSprite;
   private Label     _lblSpriteFile;
   private Dropdown  _drpSpriteFile;
+  private Label     _lblSpriteLoc;
+  private Textbox   _txtSpriteX, _txtSpriteY;
   
   private Drawable _selected;
   
@@ -202,7 +205,7 @@ public class MapEditor extends GUI {
     });
     _splSprite.addEventSelect(new ScrollPanel.ControlEventSelect() {
       public void event(ScrollPanelItem item) {
-        selSprite((ScrollPanelSprite)item);
+        selSprite(((ScrollPanelSprite)item)._sprite);
       }
     });
     
@@ -218,8 +221,25 @@ public class MapEditor extends GUI {
       }
     });
     
+    _lblSpriteLoc = new Label(this);
+    _lblSpriteLoc.setXY(_drpSpriteFile.getX(), _drpSpriteFile.getY() + _drpSpriteFile.getH() + 8);
+    _lblSpriteLoc.setText("Location");
+    
+    _txtSpriteX = new Textbox(this);
+    _txtSpriteX.setXY(_lblSpriteLoc.getX(), _lblSpriteLoc.getY() + _lblSpriteLoc.getH());
+    _txtSpriteX.setW(40);
+    _txtSpriteX.setNumeric(true);
+    
+    _txtSpriteY = new Textbox(this);
+    _txtSpriteY.setXY(_txtSpriteX.getX() + _txtSpriteX.getW() + 4, _txtSpriteX.getY());
+    _txtSpriteY.setW(40);
+    _txtSpriteY.setNumeric(true);
+    
     _splSprite.Controls().add(_lblSpriteFile);
     _splSprite.Controls().add(_drpSpriteFile);
+    _splSprite.Controls().add(_lblSpriteLoc);
+    _splSprite.Controls().add(_txtSpriteX);
+    _splSprite.Controls().add(_txtSpriteY);
     
     _picTab[2].Controls().add(_splSprite);
     
@@ -314,6 +334,8 @@ public class MapEditor extends GUI {
     _btnTab[index].setBackColour(new float[] {0, 0, 0.8f, 1});
     _picTab[index].setVisible(true);
     _tab = index;
+    
+    _picTilesetList.setVisible(_tab == 0 && _picWindow.getVisible() ? true : false);
   }
   
   private void setLayer(int index) {
@@ -341,15 +363,16 @@ public class MapEditor extends GUI {
   }
   
   private void delSprite() {
+    _map._sprite.remove(((ScrollPanelSprite)_splSprite.getItem())._sprite);
     _splSprite.remove();
   }
   
-  private void selSprite(ScrollPanelSprite sprite) {
-    if(sprite._sprite._file != null) {
+  private void selSprite(Map.Sprite sprite) {
+    if(sprite._file != null) {
       int i = 0;
       for(DropdownItem item : _drpSpriteFile) {
         DropdownSprite s = (DropdownSprite)item;
-        if(s._sprite.getFile().equals(sprite._sprite._file)) {
+        if(s._sprite.getFile().equals(sprite._file)) {
           _drpSpriteFile.setSeletected(i);
         }
         i++;
@@ -357,6 +380,9 @@ public class MapEditor extends GUI {
     } else {
       _drpSpriteFile.setSeletected(-1);
     }
+    
+    _txtSpriteX.setText(String.valueOf(sprite._x));
+    _txtSpriteY.setText(String.valueOf(sprite._y));
   }
   
   private void updateSprite() {
@@ -444,7 +470,7 @@ public class MapEditor extends GUI {
       
       case Keyboard.KEY_TAB:
         _picWindow.setVisible(true);
-        _picTilesetList.setVisible(true);
+        _picTilesetList.setVisible(_tab == 0);
         _lock = _shift;
         return true;
         
