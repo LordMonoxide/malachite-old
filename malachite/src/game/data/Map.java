@@ -2,6 +2,7 @@ package game.data;
 
 import java.util.LinkedList;
 
+import game.Game;
 import game.data.util.Buffer;
 import game.data.util.Serializable;
 import game.settings.Settings;
@@ -84,6 +85,21 @@ public class Map extends Serializable {
     } else {
       return null;
     }
+  }
+  
+  public game.world.Sprite[] spawn() {
+    Game g = (Game)Context.getGame();
+    game.world.Sprite[] s = new game.world.Sprite[_sprite.size()];
+    int i = 0;
+    
+    for(Map.Sprite sprite : _sprite) {
+      s[i] = game.world.Sprite.add(g.getSprite(sprite._file));
+      s[i].setX(sprite._x);
+      s[i].setY(sprite._y);
+      s[i].setZ(sprite._z);
+    }
+    
+    return s;
   }
   
   public Buffer serialize() {
