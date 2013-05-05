@@ -17,6 +17,8 @@ public class Sprite {
   private static ArrayList<Sprite> _sprite = new ArrayList<Sprite>();
   private static Matrix _matrix = Context.getMatrix();
   
+  private static Context _context = Context.getContext();
+  
   public static Sprite add(game.data.Sprite sprite) {
     Sprite s = new Sprite(sprite);
     _sprite.add(s);
@@ -28,9 +30,14 @@ public class Sprite {
   }
   
   public static void draw(int z) {
-    for(Sprite sprite : _sprite) {
-      if(sprite._z == z) {
-        sprite.draw();
+    int y1 = (int)_context.getCameraY();
+    int y2 = _context.getH() - y1;
+    
+    for(int y = -y1; y <= y2; y++) {
+      for(Sprite sprite : _sprite) {
+        if((int)sprite._y == y && sprite._z == z) {
+          sprite.draw();
+        }
       }
     }
   }
