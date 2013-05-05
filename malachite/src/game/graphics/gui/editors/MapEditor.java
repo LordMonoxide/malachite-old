@@ -46,13 +46,19 @@ public class MapEditor extends GUI {
   private Picture   _picTilesetBack;
   private Picture[] _picTilesets;
   
+  private Drawable _selected;
+  
   private ScrollPanel _splSprite;
   private Label     _lblSpriteFile;
   private Dropdown  _drpSpriteFile;
   private Label     _lblSpriteLoc;
-  private Textbox   _txtSpriteX, _txtSpriteY;
+  private Textbox   _txtSpriteX;
+  private Textbox   _txtSpriteY;
+  private Textbox   _txtSpriteZ;
+  private Button    _btnSpriteLoc;
   
-  private Drawable _selected;
+  private game.world.Sprite _pickSprite;
+  private boolean   _pickLoc;
   
   private int _tab;
   private boolean _shift;
@@ -248,11 +254,31 @@ public class MapEditor extends GUI {
       }
     });
     
+    _txtSpriteZ = new Textbox(this);
+    _txtSpriteZ.setXY(_txtSpriteY.getX() + _txtSpriteY.getW() + 4, _txtSpriteY.getY());
+    _txtSpriteZ.setW(40);
+    _txtSpriteZ.setNumeric(true);
+    _txtSpriteZ.addEventChangeHandler(new ControlEventChange() {
+      public void event() {
+        _sprite._z = Byte.parseByte(_txtSpriteZ.getText());
+      }
+    });
+    
+    _btnSpriteLoc = new Button(this);
+    _btnSpriteLoc.setXY(_txtSpriteZ.getX() + _txtSpriteZ.getW() + 4, _txtSpriteZ.getY());
+    _btnSpriteLoc.addEventClickHandler(new ControlEventClick() {
+      public void event() {
+        startSpriteLoc();
+      }
+    });
+    
     _splSprite.Controls().add(_lblSpriteFile);
     _splSprite.Controls().add(_drpSpriteFile);
     _splSprite.Controls().add(_lblSpriteLoc);
     _splSprite.Controls().add(_txtSpriteX);
     _splSprite.Controls().add(_txtSpriteY);
+    _splSprite.Controls().add(_txtSpriteZ);
+    _splSprite.Controls().add(_btnSpriteLoc);
     
     _picTab[2].Controls().add(_splSprite);
     
@@ -371,12 +397,16 @@ public class MapEditor extends GUI {
   
   private void addSprite() {
     Map.Sprite s = new Map.Sprite();
+    
+    s._file = _drpSpriteFile.get(0).getText();
+    s._z = (byte)_layer;
+    
     _map._sprite.add(s);
     _splSprite.add(new ScrollPanelSprite(s));
   }
   
   private void delSprite() {
-    _map._sprite.remove(((ScrollPanelSprite)_splSprite.getItem())._sprite);
+    _map._sprite.remove(_sprite);
     _splSprite.remove();
   }
   
@@ -398,20 +428,32 @@ public class MapEditor extends GUI {
     
     _txtSpriteX.setText(String.valueOf(_sprite._x));
     _txtSpriteY.setText(String.valueOf(_sprite._y));
+    _txtSpriteZ.setText(String.valueOf(_sprite._z));
+    _btnSpriteLoc.setText("(" + _sprite._x + ", " + _sprite._y + ", " + _sprite._z + ")");
   }
   
   private void updateSprite() {
-    DropdownSprite s = (DropdownSprite)_drpSpriteFile.get();
-    
-    if(s != null) {
-      ((ScrollPanelSprite)_splSprite.getItem())._sprite._file = s._sprite.getFile();
-    } else {
-      ((ScrollPanelSprite)_splSprite.getItem())._sprite._file = null;
-    }
+    DropdownSprite sprite = (DropdownSprite)_drpSpriteFile.get();
+    _sprite._file = sprite != null ? sprite._sprite.getFile() : null;
+    _sprite._x = Integer.parseInt(_txtSpriteX.getText());
+    _sprite._y = Integer.parseInt(_txtSpriteY.getText());
+    _sprite._z = Byte.parseByte(_txtSpriteZ.getText());
+    selSprite(_sprite);
+  }
+  
+  private void startSpriteLoc() {
+    _pickLoc = true;
+    _picWindow.setVisible(false);
+    _pickSprite = game.world.Sprite.add(((DropdownSprite)_drpSpriteFile.get())._sprite);
+    _pickSprite.setX(_sprite._x);
+    _pickSprite.setY(_sprite._y);
+    _pickSprite.setZ(_layer);
   }
   
   public boolean draw() {
-    _selected.draw();
+    if(_tab == 0) {
+      _selected.draw();
+    }
     
     return false;
   }
@@ -433,13 +475,13 @@ public class MapEditor extends GUI {
       }
     }
     
-    x %= Settings.Map.Size;
-    y %= Settings.Map.Size;
-    if(x < 0) x += Settings.Map.Size;
-    if(y < 0) y += Settings.Map.Size;
-    
     switch(_tab) {
       case 0:
+        x %= Settings.Map.Size;
+        y %= Settings.Map.Size;
+        if(x < 0) x += Settings.Map.Size;
+        if(y < 0) y += Settings.Map.Size;
+        
         int x1 = (int)x / Settings.Map.Tile.Size;
         int y1 = (int)y / Settings.Map.Tile.Size;
         
@@ -468,6 +510,17 @@ public class MapEditor extends GUI {
             t.setA((byte)0);
             _region.calc();
             return true;
+        }
+        
+        break;
+        
+      case 2:
+        if(_pickLoc) {
+          _sprite._x = x;
+          _sprite._y = y;
+          _sprite._z = (byte)_layer;
+          _splSprite.setItem(_splSprite.getItem());
+          _pickSprite.remove();
         }
         
         break;
@@ -525,10 +578,22 @@ public class MapEditor extends GUI {
   
   public boolean handleMouseMove(int x, int y, int button) {
     if(!_picWindow.getVisible()) {
-      _selected.setXY((int)((x - _context.getCameraX()) / Settings.Map.Tile.Size) * Settings.Map.Tile.Size, (int)((y - _context.getCameraY()) / Settings.Map.Tile.Size) * Settings.Map.Tile.Size);
+      x -= _context.getCameraX();
+      y -= _context.getCameraY();
       
-      if(button != -1) {
-        return mapEditorClick(x, y, button);
+      switch(_tab) {
+        case 0:
+          _selected.setXY((int)(x / Settings.Map.Tile.Size) * Settings.Map.Tile.Size, (int)(y / Settings.Map.Tile.Size) * Settings.Map.Tile.Size);
+          
+          if(button != -1) {
+            return mapEditorClick(x, y, button);
+          }
+          
+          break;
+          
+        case 2:
+          _pickSprite.setX(x);
+          _pickSprite.setY(y);
       }
     } else {
       
