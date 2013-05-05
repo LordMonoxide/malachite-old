@@ -13,6 +13,7 @@ public class Region {
   private Drawable[] _layer;
   private Map _map;
   private int _x, _y;
+  private Sprite[] _sprite;
   
   public Region(World world) {
     _world = world;
@@ -52,6 +53,8 @@ public class Region {
       
       _layer[z].createQuad();
     }
+    
+    _sprite = _map.spawn();
   }
   
   public void draw(int z) {
