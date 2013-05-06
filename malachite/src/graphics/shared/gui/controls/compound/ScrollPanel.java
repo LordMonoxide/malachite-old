@@ -24,11 +24,11 @@ public class ScrollPanel extends Control {
   private Button    _del;
   
   private ScrollPanelItem _sel;
-
+  
   private LinkedList<ControlEventButton> _eventButtonAdd = new LinkedList<ControlEventButton>();
   private LinkedList<ControlEventButton> _eventButtonDel = new LinkedList<ControlEventButton>();
   private LinkedList<ControlEventSelect> _eventSelect    = new LinkedList<ControlEventSelect>();
-
+  
   public void addEventButtonAddHandler(ControlEventButton e) { _eventButtonAdd.add(e); }
   public void addEventButtonDelHandler(ControlEventButton e) { _eventButtonDel.add(e); }
   public void addEventSelect          (ControlEventSelect e) { _eventSelect   .add(e); }
