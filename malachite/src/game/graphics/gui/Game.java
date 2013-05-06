@@ -20,9 +20,9 @@ import graphics.shared.gui.GUI;
 import graphics.shared.gui.Control.ControlEventClick;
 import graphics.shared.gui.Control.ControlEventKey;
 import graphics.shared.gui.controls.Button;
-import graphics.shared.gui.controls.Label;
-import graphics.shared.gui.controls.Picture;
 import graphics.shared.gui.controls.Textbox;
+import graphics.shared.gui.controls.compound.Window;
+import graphics.shared.gui.controls.compound.Window.ControlEventClose;
 
 public class Game extends GUI {
   private game.Game _game = (game.Game)Context.getGame();
@@ -35,8 +35,7 @@ public class Game extends GUI {
   private MapEditor _editMap;
   
   private Textbox _txtChat;
-  private Picture _picAdmin;
-  private Label   _lblAdmin;
+  private Window  _wndAdmin;
   private Button  _btnEdit[];
   
   private boolean[] _key = new boolean[4];
@@ -57,24 +56,23 @@ public class Game extends GUI {
       }
     });
     
-    _picAdmin = new Picture(this, true);
-    _picAdmin.setBackColour(new float[] {0.33f, 0.33f, 0.33f, 0.66f});
-    _picAdmin.setBorderColour(new float[] {0, 0, 0, 1});
-    _picAdmin.setWH(250, 300);
-    _picAdmin.setXY((_context.getW() - _picAdmin.getW()) / 2, (_context.getH() - _picAdmin.getH()) / 2);
-    _picAdmin.setVisible(false);
-    
-    _lblAdmin = new Label(this);
-    _lblAdmin.setText("Administration");
-    _lblAdmin.setXY((_picAdmin.getW() - _lblAdmin.getW()) / 2, 8);
-    
-    _picAdmin.Controls().add(_lblAdmin);
+    _wndAdmin = new Window(this);
+    _wndAdmin.setWH(250, 300);
+    _wndAdmin.setXY((_context.getW() - _wndAdmin.getW()) / 2, (_context.getH() - _wndAdmin.getH()) / 2);
+    _wndAdmin.addTab("Editors");
+    _wndAdmin.setText("Administration");
+    _wndAdmin.setVisible(false);
+    _wndAdmin.addEventCloseHandler(new ControlEventClose() {
+      public void event() {
+        _wndAdmin.setVisible(false);
+      }
+    });
     
     _btnEdit = new Button[6];
     for(int i = 0; i < _btnEdit.length; i++) {
       _btnEdit[i] = new Button(this);
-      _btnEdit[i].setXYWH(8, 30 + i * 19, 90, 20);
-      _picAdmin.Controls().add(_btnEdit[i]);
+      _btnEdit[i].setXYWH(8, 8 + i * 19, 90, 20);
+      _wndAdmin.Controls().add(_btnEdit[i]);
     }
     
     _btnEdit[0].setText("Edit Maps");
@@ -85,7 +83,7 @@ public class Game extends GUI {
           _editMap.load();
           _editMap.setRegion(_entity.getRegion());
           _editMap.push();
-          _picAdmin.setVisible(false);
+          _wndAdmin.setVisible(false);
         }
       }
     });
@@ -97,7 +95,7 @@ public class Game extends GUI {
         DataSelection dataSel = new DataSelection(editor, "sprites");
         dataSel.load();
         dataSel.push();
-        _picAdmin.setVisible(false);
+        _wndAdmin.setVisible(false);
       }
     });
     _btnEdit[2].setText("Edit NPCs");
@@ -106,7 +104,7 @@ public class Game extends GUI {
     _btnEdit[5].setText("Edit Effects");
     
     Controls().add(_txtChat);
-    Controls().add(_picAdmin);
+    Controls().add(_wndAdmin);
     
     _font.getTexture().load();
     Canvas c = new Canvas("Debug text", 256, 256);
@@ -135,7 +133,7 @@ public class Game extends GUI {
   }
   
   public void resize() {
-    _picAdmin.setXY((_context.getW() - _picAdmin.getW()) / 2, (_context.getH() - _picAdmin.getH()) / 2);
+    _wndAdmin.setXY((_context.getW() - _wndAdmin.getW()) / 2, (_context.getH() - _wndAdmin.getH()) / 2);
     
     updateCamera();
   }
@@ -258,7 +256,7 @@ public class Game extends GUI {
           return true;
         
         case Keyboard.KEY_F1:
-          _picAdmin.setVisible(!_picAdmin.getVisible());
+          _wndAdmin.setVisible(!_wndAdmin.getVisible());
           return true;
           
         case Keyboard.KEY_ESCAPE:
