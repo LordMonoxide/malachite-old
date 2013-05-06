@@ -82,7 +82,7 @@ public class Control {
   }
   
   public Control(GUI gui, boolean register) {
-    this(gui, Theme.getInstance(), true);
+    this(gui, Theme.getInstance(), register);
   }
   
   public Control(GUI gui, Theme theme, boolean register) {
@@ -512,13 +512,14 @@ public class Control {
   }
   
   public void drawSelect() {
-    if(drawBegin()) {
-      if(_enabled) {
-        if(_selBox != null)
-          _selBox.draw();
-        
-        _controlList.drawSelect();
-      }
+    if(_visible && _enabled) {
+      _matrix.push();
+      _matrix.translate(_loc[0], _loc[1]);
+      
+      if(_selBox != null)
+        _selBox.draw();
+      
+      _controlList.drawSelect();
       
       _matrix.pop();
     }
