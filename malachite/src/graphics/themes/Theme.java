@@ -82,7 +82,7 @@ public class Theme {
     c.setWH(200, 19);
   }
   
-  public void create(Window c, Picture title, Label text, Button close, Picture panel) {
+  public void create(Window c, Picture title, Label text, Button close) {
     title.setBorderColour(new float[] {0, 0, 0, 1});
     title.setH(20);
     
@@ -95,10 +95,16 @@ public class Theme {
     close.setWH(title.getH(), title.getH());
     close.setText("\u00D7");
     
-    panel.setY(title.getH());
-    
     c.setBackColour(new float[] {0.33f, 0.33f, 0.33f, 0.66f});
     c.setBorderColour(new float[] {0, 0, 0, 1});
     c.setWH(250, 300);
+  }
+  
+  public void createWindowTab(Button tab, Picture panel) {
+    create(tab);
+    tab.setWH(50, 20);
+    
+    panel.setY(20);
+    panel.setBackColour(new float[] {1, 0, 1, 0.5f});
   }
 }
