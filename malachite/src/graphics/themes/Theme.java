@@ -6,9 +6,11 @@ import graphics.shared.gui.controls.Button;
 import graphics.shared.gui.controls.Dropdown;
 import graphics.shared.gui.controls.Label;
 import graphics.shared.gui.controls.List;
+import graphics.shared.gui.controls.Picture;
 import graphics.shared.gui.controls.Scrollbar;
 import graphics.shared.gui.controls.Textbox;
 import graphics.shared.gui.controls.Scrollbar.Orientation;
+import graphics.shared.gui.controls.compound.Window;
 import graphics.shared.textures.Textures;
 
 public class Theme {
@@ -78,5 +80,25 @@ public class Theme {
     c.setForeColour(new float[] {1, 1, 1, 1});
     c.setBorderColour(new float[] {0, 0, 0, 1});
     c.setWH(200, 19);
+  }
+  
+  public void create(Window c, Picture title, Label text, Button close, Picture panel) {
+    title.setBorderColour(new float[] {0, 0, 0, 1});
+    title.setH(20);
+    
+    text.setAutoSize(false);
+    text.setH(title.getH());
+    text.setText("Window");
+    
+    close.setBackColour(new float[] {0.75f, 0, 0, 1});
+    close.setGlowColour(new float[] {1, 0, 0, 1});
+    close.setWH(title.getH(), title.getH());
+    close.setText("\u00D7");
+    
+    panel.setY(title.getH());
+    
+    c.setBackColour(new float[] {0.33f, 0.33f, 0.33f, 0.66f});
+    c.setBorderColour(new float[] {0, 0, 0, 1});
+    c.setWH(250, 300);
   }
 }
