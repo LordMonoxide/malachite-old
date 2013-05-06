@@ -86,8 +86,6 @@ public class Theme {
     title.setBorderColour(new float[] {0, 0, 0, 1});
     title.setH(20);
     
-    text.setAutoSize(false);
-    text.setH(title.getH());
     text.setText("Window");
     
     close.setBackColour(new float[] {0.75f, 0, 0, 1});
@@ -105,6 +103,5 @@ public class Theme {
     tab.setWH(50, 20);
     
     panel.setY(20);
-    panel.setBackColour(new float[] {1, 0, 1, 0.5f});
   }
 }

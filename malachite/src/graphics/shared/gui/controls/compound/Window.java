@@ -16,6 +16,7 @@ public class Window extends Control {
   private Picture _title;
   private Label   _text;
   private Button  _close;
+  private Picture _panelBack;
   
   private LinkedList<Button>  _tab   = new LinkedList<Button>();
   private LinkedList<Picture> _panel = new LinkedList<Picture>();
@@ -68,7 +69,10 @@ public class Window extends Control {
     _title.Controls().add(_text);
     _title.Controls().add(_close);
     
+    _panelBack = new Picture(gui);
+    
     super.Controls().add(_title);
+    super.Controls().add(_panelBack);
     
     _theme = theme;
     _theme.create(this, _title, _text, _close);
@@ -83,17 +87,15 @@ public class Window extends Control {
         }
       }
     };
-    
-    addTab("Test");
-    setTab(0);
   }
   
-  public String getTitle() {
+  public String getText() {
     return _text.getText();
   }
   
-  public void setTitle(String title) {
-    _text.setText(title);
+  public void setText(String text) {
+    _text.setText(text);
+    resize();
   }
   
   public ControlList Controls() {
@@ -101,7 +103,11 @@ public class Window extends Control {
   }
   
   public ControlList Controls(int index) {
-    return _panel.get(index).Controls();
+    if(_panel.size() != 0) {
+      return _panel.get(index).Controls();
+    } else {
+      return super._controlList;
+    }
   }
   
   public void addTab(String text) {
@@ -114,16 +120,19 @@ public class Window extends Control {
     tab.setText(text);
     tab.addEventClickHandler(_tabClick);
     
-    //panel.setWH(_loc[2], _loc[3] - _title.getH());
     panel.setVisible(false);
     
     _tab.add(tab);
     _panel.add(panel);
     
     _title.Controls().add(tab);
-    super.Controls().add(panel);
+    _panelBack.Controls().add(panel);
     
     resize();
+    
+    if(_panel.size() == 1) {
+      setTab(0);
+    }
   }
   
   public void setTab(int index) {
@@ -144,10 +153,12 @@ public class Window extends Control {
     }
     
     int w = (int)(_title.getW() - _close.getW()) - x;
-    _text.setX((w - _text.getW()) / 2 + x);
+    _text.setXY((w - _text.getW()) / 2 + x, (_title.getH() - _text.getH()) / 2);
+    
+    _panelBack.setWH(_loc[2], _loc[3] - _title.getH());
     
     for(Picture p : _panel) {
-      p.setWH(_loc[2], _loc[3] - _title.getH());
+      p.setWH(_panelBack.getW(), _panelBack.getH());
     }
   }
   
