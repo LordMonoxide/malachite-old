@@ -251,7 +251,6 @@ public class Game extends GUI {
           
         case Keyboard.KEY_SLASH:
           _txtChat.setVisible(true);
-          _txtChat.setText("/");
           _txtChat.setFocus(true);
           return true;
         
