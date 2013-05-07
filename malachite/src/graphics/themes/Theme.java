@@ -90,7 +90,7 @@ public class Theme {
     
     close.setBackColour(new float[] {0.75f, 0, 0, 1});
     close.setGlowColour(new float[] {1, 0, 0, 1});
-    close.setWH(title.getH(), title.getH());
+    close.setWH(title.getH() + 1, title.getH() + 1);
     close.setText("\u00D7");
     
     c.setBackColour(new float[] {0.33f, 0.33f, 0.33f, 0.66f});
@@ -101,7 +101,5 @@ public class Theme {
   public void createWindowTab(Button tab, Picture panel) {
     create(tab);
     tab.setWH(50, 20);
-    
-    panel.setY(20);
   }
 }

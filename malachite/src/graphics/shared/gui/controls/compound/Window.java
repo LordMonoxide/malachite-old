@@ -77,6 +77,8 @@ public class Window extends Control {
     _theme = theme;
     _theme.create(this, _title, _text, _close);
     
+    _panelBack.setY(_title.getH());
+    
     _tabClick = new ControlEventClick() {
       public void event() {
         for(int i = 0; i < _tab.size(); i++) {
@@ -106,7 +108,7 @@ public class Window extends Control {
     if(_panel.size() != 0) {
       return _panel.get(index).Controls();
     } else {
-      return super._controlList;
+      return _panelBack.Controls();
     }
   }
   
@@ -145,7 +147,7 @@ public class Window extends Control {
   
   protected void resize() {
     _title.setW(_loc[2]);
-    _close.setX(_title.getW() - _close.getW());
+    _close.setX(_title.getW() - _close.getW() + 1);
     
     int x = 0;
     if(_tab.size() != 0) {
