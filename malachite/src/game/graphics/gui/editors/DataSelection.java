@@ -11,11 +11,12 @@ import graphics.shared.gui.Control.ControlEventClick;
 import graphics.shared.gui.GUI;
 import graphics.shared.gui.controls.Button;
 import graphics.shared.gui.controls.List;
-import graphics.shared.gui.controls.Picture;
+import graphics.shared.gui.controls.compound.Window;
+import graphics.shared.gui.controls.compound.Window.ControlEventClose;
 
 public class DataSelection extends GUI {
-  private Picture _picWindow;
-  private List _data;
+  private Window _window;
+  private List   _data;
   private Button _new;
   
   private Editor _editor;
@@ -39,9 +40,8 @@ public class DataSelection extends GUI {
   }
   
   public void load() {
-    _picWindow = new Picture(this, true);
-    _picWindow.setBackColour(new float[] {0.33f, 0.33f, 0.33f, 0.66f});
-    _picWindow.setBorderColour(new float[] {0, 0, 0, 1});
+    _window = new Window(this);
+    _window.setText("Choose What to Edit");
     
     _data = new List(this);
     _data.setXYWH(8, 8, 400, 200);
@@ -72,11 +72,16 @@ public class DataSelection extends GUI {
       }
     });
     
-    _picWindow.setWH(_new.getX() + _new.getW() + 8, _new.getY() + _new.getH() + 4);
-    _picWindow.Controls().add(_data);
-    _picWindow.Controls().add(_new);
+    _window.setWH(_new.getX() + _new.getW() + 8, _new.getY() + _new.getH() + 28);
+    _window.addEventCloseHandler(new ControlEventClose() {
+      public void event() {
+        pop();
+      }
+    });
+    _window.Controls().add(_data);
+    _window.Controls().add(_new);
     
-    Controls().add(_picWindow);
+    Controls().add(_window);
     resize();
   }
   
@@ -85,7 +90,7 @@ public class DataSelection extends GUI {
   }
   
   public void resize() {
-    _picWindow.setXY((_context.getW() - _picWindow.getW()) / 2, (_context.getH() - _picWindow.getH()) / 2);
+    _window.setXY((_context.getW() - _window.getW()) / 2, (_context.getH() - _window.getH()) / 2);
   }
   
   private void newData() {
