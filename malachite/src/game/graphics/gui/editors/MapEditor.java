@@ -583,7 +583,14 @@ public class MapEditor extends GUI {
       
       switch(_tab) {
         case 0:
-          _selected.setXY((int)(x / Settings.Map.Tile.Size) * Settings.Map.Tile.Size, (int)(y / Settings.Map.Tile.Size) * Settings.Map.Tile.Size);
+          int x1 = x;
+          int y1 = y;
+          if(x1 < 0) x1 -= Settings.Map.Tile.Size;
+          if(y1 < 0) y1 -= Settings.Map.Tile.Size;
+          x1 /= Settings.Map.Tile.Size;
+          y1 /= Settings.Map.Tile.Size;
+          
+          _selected.setXY(x1 * Settings.Map.Tile.Size, y1 * Settings.Map.Tile.Size);
           
           if(button != -1) {
             return mapEditorClick(x, y, button);
