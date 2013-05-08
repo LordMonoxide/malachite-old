@@ -16,8 +16,10 @@ public class Dropdown extends Control implements Iterable<Dropdown.DropdownItem>
   private Fonts _fonts = Context.getFonts();
   private Font _font = _fonts.getDefault();
   
-  private Button _btnDrop;
+  private DropdownGUI _drop;
+  
   private Picture _picDrop;
+  private Button _btnDrop;
   
   private ArrayList<DropdownItem> _text = new ArrayList<DropdownItem>();
   private int _textIndex = -1;
@@ -72,9 +74,12 @@ public class Dropdown extends Control implements Iterable<Dropdown.DropdownItem>
             _selectedIndex = _textIndex;
             _selected.setY(_selectedIndex * _font.getH());
             _picDrop.setVisible(true);
+            _picDrop.setXY(getAllX(), getAllY() + getH());
+            _drop.push();
           }
         } else {
           _picDrop.setVisible(false);
+          _drop.pop();
         }
       }
     };
@@ -84,7 +89,7 @@ public class Dropdown extends Control implements Iterable<Dropdown.DropdownItem>
     _btnDrop.addEventClickHandler(btnDropClick);
     _btnDrop.addEventDoubleClickHandler(btnDropClick);
     
-    _picDrop = new Picture(gui);
+    _picDrop = new Picture(gui, true);
     _picDrop.setVisible(false);
     _picDrop.addEventDrawHandler(new ControlEventDraw() {
       public void event() {
@@ -115,11 +120,15 @@ public class Dropdown extends Control implements Iterable<Dropdown.DropdownItem>
     });
     
     Controls().add(_btnDrop);
-    Controls().add(_picDrop);
+    //Controls().add(_picDrop);
     
     _selected = Context.newDrawable();
     _selected.setColour(new float[] {1, 1, 1, 0.33f});
     _selected.setH(_font.getH());
+    
+    _drop = new DropdownGUI(_picDrop);
+    _drop.load();
+    _drop.Controls().add(_picDrop);
     
     theme.create(this);
   }
@@ -249,5 +258,39 @@ public class Dropdown extends Control implements Iterable<Dropdown.DropdownItem>
   
   public static abstract class ControlEventSelect extends ControlEvent {
     public abstract void event(DropdownItem item);
+  }
+  
+  private class DropdownGUI extends GUI {
+    private Picture _drop;
+    
+    public DropdownGUI(Picture p) {
+      _drop = p;
+    }
+    
+    public void load() {
+      
+    }
+    
+    public void destroy() {
+      
+    }
+    
+    public void resize() {
+      
+    }
+    
+    public boolean handleMouseDown(int x, int y, int button) {
+      return true;
+    }
+    
+    public boolean handleMouseUp(int x, int y, int button) {
+      _drop.setVisible(false);
+      pop();
+      return true;
+    }
+    
+    public boolean handleMouseMove(int x, int y, int button) {
+      return true;
+    }
   }
 }
