@@ -1,31 +1,26 @@
 package game.graphics.gui;
 
 import graphics.shared.gui.GUI;
-import graphics.shared.gui.controls.Button;
-import graphics.shared.gui.controls.Picture;
-import graphics.shared.gui.controls.Textbox;
-import graphics.shared.gui.controls.compound.Window;
-import graphics.shared.textures.Texture;
+import graphics.shared.gui.controls.Dropdown;
+import graphics.shared.gui.controls.Dropdown.DropdownItem;
 
 public class Menu extends GUI {
-  private Picture picTest;
-  private Window  wndTest;
+  private Dropdown drpTest;
+  private Dropdown drpTest2;
   
   public void load() {
     _context.setBackColour(new float[] {1, 1, 1, 1});
     
-    Texture t = _textures.getTexture("mal.png");
+    drpTest = new Dropdown(this);
+    drpTest.add(new DropdownItem("Test"));
+    drpTest.add(new DropdownItem("Test 2"));
+    drpTest.add(new DropdownItem("Test 3"));
     
-    picTest = new Picture(this);
-    picTest.setTexture(t);
+    drpTest2 = new Dropdown(this);
+    drpTest2.setY(10);
     
-    wndTest = new Window(this);
-    wndTest.addTab("Asdf");
-    wndTest.Controls(0).add(new Button(this));
-    wndTest.Controls(1).add(new Textbox(this));
-    
-    Controls().add(picTest);
-    Controls().add(wndTest);
+    Controls().add(drpTest);
+    Controls().add(drpTest2);
   }
   
   public void destroy() {
