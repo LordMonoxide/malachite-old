@@ -1,5 +1,7 @@
 package game.graphics.gui.editors;
 
+import java.io.File;
+
 import javax.swing.JOptionPane;
 
 import game.data.Sprite;
@@ -14,6 +16,8 @@ import graphics.shared.gui.Control.ControlEventWheel;
 import graphics.shared.gui.GUI;
 import graphics.shared.gui.Control.ControlEventClick;
 import graphics.shared.gui.controls.Button;
+import graphics.shared.gui.controls.Dropdown;
+import graphics.shared.gui.controls.Dropdown.DropdownItem;
 import graphics.shared.gui.controls.Label;
 import graphics.shared.gui.controls.Picture;
 import graphics.shared.gui.controls.Scrollbar;
@@ -40,6 +44,7 @@ public class SpriteEditor extends GUI implements Editor {
   private Textbox   _txtFrameX, _txtFrameY;
   private Textbox   _txtFrameW, _txtFrameH;
   private Textbox   _txtFrameFX, _txtFrameFY;
+  private Dropdown  _drpSprite;
   private Picture   _picFrameSprite;
   private Picture   _picFrameSpriteBack;
   
@@ -226,6 +231,14 @@ public class SpriteEditor extends GUI implements Editor {
       }
     });
     
+    _drpSprite = new Dropdown(this);
+    _drpSprite.setXY(_splFrame.getX(), _splFrame.getY() + _splFrame.getH() + 4);
+    _drpSprite.addEventSelectHandler(new Dropdown.ControlEventSelect() {
+      public void event(DropdownItem item) {
+        setSprite(item.getText());
+      }
+    });
+    
     _picFrameSprite = new Picture(this);
     _picFrameSprite.addEventDrawHandler(new ControlEventDraw() {
       public void event() {
@@ -236,10 +249,11 @@ public class SpriteEditor extends GUI implements Editor {
     
     _picFrameSpriteBack = new Picture(this);
     _picFrameSpriteBack.setBackColour(new float[] {0.33f, 0.33f, 0.33f, 0.66f});
-    _picFrameSpriteBack.setXY(_splFrame.getX(), _splFrame.getY() + _splFrame.getH() + 4);
+    _picFrameSpriteBack.setXY(_drpSprite.getX(), _drpSprite.getY() + _drpSprite.getH());
     _picFrameSpriteBack.Controls().add(_picFrameSprite);
     
     _picTab[0].Controls().add(_splFrame);
+    _picTab[0].Controls().add(_drpSprite);
     _picTab[0].Controls().add(_picFrameSpriteBack);
     
     _lblAnimName = new Label(this);
@@ -452,6 +466,7 @@ public class SpriteEditor extends GUI implements Editor {
     _frameFoot.createBorder();
     
     setTab(_tab);
+    listSprites(new File("../gfx/textures/sprites/"), "../gfx/textures/sprites/");
   }
   
   public void destroy() {
@@ -497,6 +512,21 @@ public class SpriteEditor extends GUI implements Editor {
     _sprite.save();
   }
   
+  private void listSprites(File dir, String path) {
+    for(File f : dir.listFiles()) {
+      if(f.isFile()) {
+        String name = f.getPath().substring(f.getPath().indexOf(path) + path.length() + 1).replace('\\', '/');
+        _drpSprite.add(new DropdownItem(name));
+      }
+    }
+    
+    for(File f : dir.listFiles()) {
+      if(f.isDirectory()) {
+        listSprites(f, path);
+      }
+    }
+  }
+  
   public void newData(String file) {
     editData(new Sprite(file));
   }
@@ -507,6 +537,15 @@ public class SpriteEditor extends GUI implements Editor {
     _sprite = new SpriteEditorSprite((Sprite)data);
     if(_sprite._frame.size() == 0) addFrame();
     if(_sprite._anim .size() == 0) addAnim();
+    
+    int i = 0;
+    for(DropdownItem item : _drpSprite) {
+      if(item.getText().equals(_sprite.getTexture())) {
+        _drpSprite.setSeletected(i);
+        break;
+      }
+      i++;
+    }
     
     for(Sprite.Frame f : _sprite._frame) {
       _splFrame.add(new ScrollPanelFrame(f));
@@ -536,6 +575,12 @@ public class SpriteEditor extends GUI implements Editor {
     resize();
   }
   
+  private void setSprite(String sprite) {
+    _sprite.setTexture(sprite);
+    _picFrameSprite.setTexture(_textures.getTexture("sprites/" + _sprite.getTexture()));
+    resize();
+  }
+  
   private void cloneFrame() {
     addFrame(_frame);
   }
@@ -548,8 +593,10 @@ public class SpriteEditor extends GUI implements Editor {
   }
   
   private void delFrame() {
-    _sprite._frame.remove(((ScrollPanelFrame)_splFrame.getItem())._frame);
-    _splFrame.remove();
+    if(_sprite._frame.size() != 0) {
+      _sprite._frame.remove(((ScrollPanelFrame)_splFrame.getItem())._frame);
+      _splFrame.remove();
+    }
   }
   
   private void setFrame(Sprite.Frame frame) {
