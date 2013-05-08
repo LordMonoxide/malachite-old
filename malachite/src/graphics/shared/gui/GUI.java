@@ -120,7 +120,7 @@ public abstract class GUI {
       return null;
   }
   
-  private final int getAllX(Control control) {
+  protected final int getAllX(Control control) {
     int x = (int)control.getX();
     
     if(control.getParent() != null) {
@@ -130,7 +130,7 @@ public abstract class GUI {
     return x;
   }
   
-  private final int getAllY(Control control) {
+  protected final int getAllY(Control control) {
     int y = (int)control.getY();
     
     if(control.getParent() != null) {

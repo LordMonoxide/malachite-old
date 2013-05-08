@@ -147,6 +147,8 @@ public class Control {
   }
   
   public Drawable getBackground()  { return _background; }
+  public float getAllX()           { return _gui.getAllX(this); }
+  public float getAllY()           { return _gui.getAllY(this); }
   public float getX()              { return _loc[0]; }
   public float getY()              { return _loc[1]; }
   public float getW()              { return _loc[2]; }
