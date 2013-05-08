@@ -54,4 +54,8 @@ public class SpriteEditorSprite extends Sprite {
   public String getTexture() {
     return _texture;
   }
+  
+  public void setTexture(String texture) {
+    _texture = texture;
+  }
 }
