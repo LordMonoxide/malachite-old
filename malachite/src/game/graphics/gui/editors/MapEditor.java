@@ -266,6 +266,7 @@ public class MapEditor extends GUI {
     
     _btnSpriteLoc = new Button(this);
     _btnSpriteLoc.setXY(_txtSpriteZ.getX() + _txtSpriteZ.getW() + 4, _txtSpriteZ.getY());
+    _btnSpriteLoc.setText("Choose...");
     _btnSpriteLoc.addEventClickHandler(new ControlEventClick() {
       public void event() {
         startSpriteLoc();
@@ -429,7 +430,6 @@ public class MapEditor extends GUI {
     _txtSpriteX.setText(String.valueOf(_sprite._x));
     _txtSpriteY.setText(String.valueOf(_sprite._y));
     _txtSpriteZ.setText(String.valueOf(_sprite._z));
-    _btnSpriteLoc.setText("(" + _sprite._x + ", " + _sprite._y + ", " + _sprite._z + ")");
   }
   
   private void updateSprite() {
@@ -599,8 +599,10 @@ public class MapEditor extends GUI {
           break;
           
         case 2:
-          _pickSprite.setX(x);
-          _pickSprite.setY(y);
+          if(_pickLoc) {
+            _pickSprite.setX(x);
+            _pickSprite.setY(y);
+          }
       }
     } else {
       
