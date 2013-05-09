@@ -503,10 +503,8 @@ public class Control {
   
   public void logic() { }
   public void logicControl() {
-    if(_enabled) {
-      logic();
-      _controlList.logic();
-    }
+    logic();
+    _controlList.logic();
     
     if(_controlNext != null) {
       _controlNext.logicControl();
