@@ -121,6 +121,7 @@ public class ScrollPanel extends Control {
     
     _panel.setEnabled(true);
     _scroll.setEnabled(true);
+    _del.setEnabled(true);
     
     setItem(item);
   }
@@ -146,6 +147,7 @@ public class ScrollPanel extends Control {
     } else {
       _panel.setEnabled(false);
       _scroll.setEnabled(false);
+      _del.setEnabled(false);
     }
   }
   
