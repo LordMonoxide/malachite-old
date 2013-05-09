@@ -126,7 +126,7 @@ public class ScrollPanel extends Control {
   }
   
   public void remove() {
-    remove(_item.get(_scroll.getVal()));
+    remove(_sel);
   }
   
   public void remove(ScrollPanelItem item) {
@@ -153,14 +153,20 @@ public class ScrollPanel extends Control {
     return _sel;
   }
   
-  public void setItem(ScrollPanelItem item) {
-    setItem(item._index);
+  public void setItem(int index) {
+    setItem(_item.get(index));
   }
   
-  public void setItem(int index) {
-    _sel = _item.get(index);
-    _scroll.setVal(index);
-    _num.setText(String.valueOf(_sel._index));
+  public void setItem(ScrollPanelItem item) {
+    _sel = item;
+    
+    if(_sel != null) {
+      _scroll.setVal(_sel._index);
+      _num.setText(String.valueOf(_sel._index));
+    } else {
+      _num.setText(null);
+    }
+    
     raiseSelect(_sel);
   }
   
