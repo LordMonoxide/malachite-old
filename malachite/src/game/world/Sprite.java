@@ -64,14 +64,16 @@ public class Sprite {
     _anim = sprite.createAnimList();
     setAnim(sprite.getDefault());
     
-    try {
-      _engine.put("sprite", this);
-      _engine.eval(sprite.getScript());
-      _script = (Invocable)_engine;
-      _script.invokeFunction("init");
-    } catch(ScriptException e) {
-      e.printStackTrace();
-    } catch(NoSuchMethodException e) {
+    if(sprite.getScript() != null) {
+      try {
+        _engine.put("sprite", this);
+        _engine.eval(sprite.getScript());
+        _script = (Invocable)_engine;
+        _script.invokeFunction("init");
+      } catch(ScriptException e) {
+        e.printStackTrace();
+      } catch(NoSuchMethodException e) {
+      }
     }
   }
   
