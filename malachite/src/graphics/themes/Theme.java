@@ -100,6 +100,6 @@ public class Theme {
   
   public void createWindowTab(Button tab, Picture panel) {
     create(tab);
-    tab.setWH(50, 20);
+    tab.setWH(50, 21);
   }
 }
