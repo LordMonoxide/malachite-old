@@ -227,7 +227,8 @@ public class SpriteEditor extends GUI implements Editor {
     });
     _splFrame.addEventSelect(new ControlEventSelect() {
       public void event(ScrollPanelItem item) {
-        setFrame(((ScrollPanelFrame)item)._frame);
+        setFrame(item != null ? ((ScrollPanelFrame)item)._frame : null);
+        _btnFrameClone.setEnabled(_splFrame.size() != 0);
       }
     });
     
@@ -600,14 +601,16 @@ public class SpriteEditor extends GUI implements Editor {
   private void setFrame(Sprite.Frame frame) {
     _frame = frame;
     
-    _txtFrameX.setText(String.valueOf(_frame._x));
-    _txtFrameY.setText(String.valueOf(_frame._y));
-    _txtFrameW.setText(String.valueOf(_frame._w));
-    _txtFrameH.setText(String.valueOf(_frame._h));
-    _txtFrameFX.setText(String.valueOf(_frame._fx));
-    _txtFrameFY.setText(String.valueOf(_frame._fy));
-    
-    updateFrame();
+    if(_frame != null) {
+      _txtFrameX.setText(String.valueOf(_frame._x));
+      _txtFrameY.setText(String.valueOf(_frame._y));
+      _txtFrameW.setText(String.valueOf(_frame._w));
+      _txtFrameH.setText(String.valueOf(_frame._h));
+      _txtFrameFX.setText(String.valueOf(_frame._fx));
+      _txtFrameFY.setText(String.valueOf(_frame._fy));
+      
+      updateFrame();
+    }
   }
   
   private void cloneAnim() {
