@@ -142,9 +142,18 @@ public class Window extends Control {
     
     _theme.createWindowTab(tab, panel);
     
-    tab.setX(_tab.size() * tab.getW());
     tab.setText(text);
     tab.addEventClickHandler(_tabClick);
+    
+    if(_tab.size() != 0) {
+      tab.setX(_tab.getLast().getX() + _tab.getLast().getW() - 1);
+    } else {
+      tab.setX(-1);
+    }
+    
+    if(_font.getW(text) + 12 > tab.getW()) {
+      tab.setW(_font.getW(text) + 12);
+    }
     
     panel.setVisible(false);
     
