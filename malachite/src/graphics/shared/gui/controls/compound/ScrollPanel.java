@@ -38,7 +38,9 @@ public class ScrollPanel extends Control {
     
     ControlEventWheel wheel = new ControlEventWheel() {
       public void event(int delta) {
-        _scroll.handleMouseWheel(delta);
+        if(_scroll.getEnabled()) {
+          _scroll.handleMouseWheel(delta);
+        }
       }
     };
     
