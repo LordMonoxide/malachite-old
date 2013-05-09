@@ -2,6 +2,8 @@ package graphics.shared.gui.controls.compound;
 
 import java.util.LinkedList;
 
+import graphics.gl00.Context;
+import graphics.shared.fonts.Font;
 import graphics.shared.gui.Control;
 import graphics.shared.gui.ControlList;
 import graphics.shared.gui.GUI;
@@ -11,15 +13,19 @@ import graphics.shared.gui.controls.Picture;
 import graphics.themes.Theme;
 
 public class Window extends Control {
+  private Font _font = Context.getFonts().getDefault();
+  
   private Theme _theme;
   
   private Picture _title;
   private Label   _text;
   private Button  _close;
-  private Picture _panelBack;
+  private Picture _buttons;
+  private Picture _panels;
   
-  private LinkedList<Button>  _tab   = new LinkedList<Button>();
-  private LinkedList<Picture> _panel = new LinkedList<Picture>();
+  private LinkedList<Button>  _button = new LinkedList<Button>();
+  private LinkedList<Button>  _tab    = new LinkedList<Button>();
+  private LinkedList<Picture> _panel  = new LinkedList<Picture>();
   
   private int _index;
   
@@ -66,18 +72,22 @@ public class Window extends Control {
     _close.addEventClickHandler(closeClick);
     _close.addEventDoubleClickHandler(closeClick);
     
+    _buttons = new Picture(gui);
+    
     _title.Controls().add(_text);
+    _title.Controls().add(_buttons);
     _title.Controls().add(_close);
     
-    _panelBack = new Picture(gui);
+    _panels = new Picture(gui);
     
     super.Controls().add(_title);
-    super.Controls().add(_panelBack);
+    super.Controls().add(_panels);
     
     _theme = theme;
     _theme.create(this, _title, _text, _close);
     
-    _panelBack.setY(_title.getH());
+    _buttons.setH(_close.getH());
+    _panels.setY(_title.getH());
     
     _tabClick = new ControlEventClick() {
       public void event() {
@@ -108,8 +118,22 @@ public class Window extends Control {
     if(_panel.size() != 0) {
       return _panel.get(index).Controls();
     } else {
-      return _panelBack.Controls();
+      return _panels.Controls();
     }
+  }
+  
+  public Button addButton(String text) {
+    Button button = new Button(_gui);
+    button.setText(text);
+    button.setWH(_font.getW(text) + 8, _close.getH());
+    
+    for(Button b : _button) {
+      b.setX(b.getX() + button.getW());
+    }
+    
+    _buttons.setW(_buttons.getW() + button.getW());
+    _buttons.Controls().add(button);
+    return button;
   }
   
   public void addTab(String text) {
@@ -128,7 +152,7 @@ public class Window extends Control {
     _panel.add(panel);
     
     _title.Controls().add(tab);
-    _panelBack.Controls().add(panel);
+    _panels.Controls().add(panel);
     
     resize();
     
@@ -148,6 +172,7 @@ public class Window extends Control {
   protected void resize() {
     _title.setW(_loc[2]);
     _close.setX(_title.getW() - _close.getW() + 1);
+    _buttons.setX(_close.getX() - _buttons.getW());
     
     int x = 0;
     if(_tab.size() != 0) {
@@ -157,10 +182,10 @@ public class Window extends Control {
     int w = (int)(_title.getW() - _close.getW()) - x;
     _text.setXY((w - _text.getW()) / 2 + x, (_title.getH() - _text.getH()) / 2);
     
-    _panelBack.setWH(_loc[2], _loc[3] - _title.getH());
+    _panels.setWH(_loc[2], _loc[3] - _title.getH());
     
     for(Picture p : _panel) {
-      p.setWH(_panelBack.getW(), _panelBack.getH());
+      p.setWH(_panels.getW(), _panels.getH());
     }
   }
   
