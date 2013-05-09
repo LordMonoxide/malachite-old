@@ -10,7 +10,7 @@ import graphics.gl00.Drawable;
 import graphics.shared.textures.Texture;
 
 public class Sprite extends Serializable implements Data {
-  private static final int VERSION = 1;
+  private static final int VERSION = 2;
   
   protected String _name, _note;
   protected String _texture;
@@ -22,159 +22,6 @@ public class Sprite extends Serializable implements Data {
   
   public Sprite(String file) {
     super("sprites", file);
-    
-    _texture = "isaac.png";
-    _w = 64;
-    _h = 64;
-    
-    Frame f = new Frame();
-    f._fx = 32;
-    f._fy = 4;
-    f._x = 0;
-    f._y = 64;
-    f._w = 64;
-    f._h = 64;
-    _frame.add(f);
-    
-    f = new Frame();
-    f._fx = 32;
-    f._fy = 4;
-    f._x = 64;
-    f._y = 64;
-    f._w = 64;
-    f._h = 64;
-    _frame.add(f);
-    
-    f = new Frame();
-    f._fx = 32;
-    f._fy = 4;
-    f._x = 128;
-    f._y = 64;
-    f._w = 64;
-    f._h = 64;
-    _frame.add(f);
-    
-    f = new Frame();
-    f._fx = 32;
-    f._fy = 4;
-    f._x = 192;
-    f._y = 64;
-    f._w = 64;
-    f._h = 64;
-    _frame.add(f);
-    
-    f = new Frame();
-    f._fx = 32;
-    f._fy = 4;
-    f._x = 256;
-    f._y = 64;
-    f._w = 64;
-    f._h = 64;
-    _frame.add(f);
-    
-    f = new Frame();
-    f._fx = 32;
-    f._fy = 4;
-    f._x = 320;
-    f._y = 64;
-    f._w = 64;
-    f._h = 64;
-    _frame.add(f);
-    
-    Anim a = new Anim();
-    a._name = "[walk1]";
-    a._default = 0;
-    
-    List l = new List();
-    l._frame = 0;
-    l._time = 10000;
-    a._list.add(l);
-    
-    l = new List();
-    l._frame = 1;
-    l._time = 500;
-    a._list.add(l);
-    
-    l = new List();
-    l._frame = 2;
-    l._time = 3000;
-    a._list.add(l);
-    
-    l = new List();
-    l._frame = 3;
-    l._time = 3000;
-    a._list.add(l);
-    
-    l = new List();
-    l._frame = 2;
-    l._time = 500;
-    a._list.add(l);
-    
-    l = new List();
-    l._frame = 4;
-    l._time = 3000;
-    a._list.add(l);
-    
-    l = new List();
-    l._frame = 2;
-    l._time = 2000;
-    a._list.add(l);
-    
-    l = new List();
-    l._frame = 5;
-    l._time = 1000;
-    a._list.add(l);
-    
-    l = new List();
-    l._frame = 2;
-    l._time = 2000;
-    a._list.add(l);
-    
-    l = new List();
-    l._frame = 1;
-    l._time = 500;
-    a._list.add(l);
-    
-    _anim.add(a);
-    
-    _script = "var vel = 0;" +
-    		      "var bear = 0;" +
-    		      "function init() {\n" +
-    		        "sprite.setAnim(\"standDown\");\n" +
-    		      "}\n" +
-              "function setVelocity(velocity) {\n" +
-                "vel = velocity;\n" +
-                "update();\n" +
-              "}\n" +
-    		      "function setBearing(bearing) {\n" +
-    		        "bear = bearing;\n" +
-    		        "update();\n" +
-    		      "}\n" +
-    		      "function update() {\n" +
-    		        "var anim;\n" +
-    		        "if(vel == 0) {\n" +
-    		          "anim = \"stand\";\n" +
-    		        "} else {\n" +
-    		          "anim = \"walk\";\n" +
-    		        "}\n" +
-                "if(bear > 22.5 && bear < 67.5) {\n" +
-                  "sprite.setAnim(\"\" + anim + \"DownRight\");\n" +
-                "} else if(bear > 67.5 && bear < 112.5) {\n" +
-                  "sprite.setAnim(\"\" + anim + \"Down\");\n" +
-                "} else if(bear > 112.5 && bear < 157.5) {\n" +
-                  "sprite.setAnim(\"\" + anim + \"DownLeft\");\n" +
-                "} else if(bear > 157.5 && bear < 202.5) {\n" +
-                  "sprite.setAnim(\"\" + anim + \"Left\");\n" +
-                "} else if(bear > 202.5 && bear < 247.5) {\n" +
-                  "sprite.setAnim(\"\" + anim + \"UpLeft\");\n" +
-                "} else if(bear > 247.5 && bear < 292.5) {\n" +
-                  "sprite.setAnim(\"\" + anim + \"Up\");\n" +
-                "} else if(bear > 292.5 && bear < 337.5) {\n" +
-                  "sprite.setAnim(\"\" + anim + \"UpRight\");\n" +
-                "} else {\n" +
-                  "sprite.setAnim(\"\" + anim + \"Right\");\n" +
-                "}\n" +
-    		      "}";
   }
   
   public String getName()    { return _name; }
@@ -248,12 +95,15 @@ public class Sprite extends Serializable implements Data {
       }
     }
     
+    b.put(_script);
+    
     return b;
   }
   
   public void deserialize(Buffer b) {
     switch(b.getInt()) {
-      case 1: deserialize01(b);
+      case 1: deserialize01(b); break;
+      case 2: deserialize02(b);
     }
   }
   
@@ -303,6 +153,56 @@ public class Sprite extends Serializable implements Data {
       
       _anim.add(a);
     }
+  }
+  
+  private void deserialize02(Buffer b) {
+    _frame.clear();
+    _anim.clear();
+    
+    _name = b.getString();
+    _note = b.getString();
+    _texture = b.getString();
+    _w = b.getInt();
+    _h = b.getInt();
+    _default = b.getInt();
+    
+    int frames = b.getInt();
+    int anims = b.getInt();
+    
+    _frame.ensureCapacity(frames);
+    _anim.ensureCapacity(anims);
+    
+    for(int i = 0; i < frames; i++) {
+      Frame f = new Frame();
+      f._fx = b.getInt();
+      f._fy = b.getInt();
+      f._x = b.getInt();
+      f._y = b.getInt();
+      f._w = b.getInt();
+      f._h = b.getInt();
+      _frame.add(f);
+    }
+    
+    for(int i = 0; i < anims; i++) {
+      Anim a = new Anim();
+      a._name = b.getString();
+      a._default = b.getInt();
+      
+      int lists = b.getInt();
+      
+      a._list.ensureCapacity(lists);
+      
+      for(int n = 0; n < lists; n++) {
+        List l = new List();
+        l._frame = b.getInt();
+        l._time = b.getInt();
+        a._list.add(l);
+      }
+      
+      _anim.add(a);
+    }
+    
+    _script = b.getString();
   }
   
   public static class Frame {
