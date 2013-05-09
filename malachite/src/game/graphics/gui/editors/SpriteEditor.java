@@ -29,14 +29,11 @@ import graphics.shared.gui.controls.compound.ScrollPanel;
 import graphics.shared.gui.controls.compound.ScrollPanel.ControlEventButton;
 import graphics.shared.gui.controls.compound.ScrollPanel.ControlEventSelect;
 import graphics.shared.gui.controls.compound.ScrollPanel.ScrollPanelItem;
+import graphics.shared.gui.controls.compound.Window;
+import graphics.shared.gui.controls.compound.Window.ControlEventClose;
 
 public class SpriteEditor extends GUI implements Editor {
-  private Picture   _picWindow;
-  private Button[]  _btnTab;
-  private Picture[] _picTab;
-  
-  private Button    _btnClose;
-  private Button    _btnSave;
+  private Window    _wndEditor;
   
   private ScrollPanel _splFrame;
   private Button      _btnFrameClone;
@@ -81,70 +78,28 @@ public class SpriteEditor extends GUI implements Editor {
   
   private boolean _suspendUpdateList;
   
-  private int _tab;
   private Sprite.Frame _frame;
   private int _anim;
   private int _list;
   
   public void load() {
-    _picWindow = new Picture(this, true);
-    _picWindow.setBackColour(new float[] {0.33f, 0.33f, 0.33f, 0.66f});
-    _picWindow.setBorderColour(new float[] {0, 0, 0, 1});
-    _picWindow.setWH(300, 300);
-    
-    _btnTab = new Button[3];
-    
-    ControlEventClick btnTabClick = new ControlEventClick() {
-      public void event() {
-        for(int i = 0; i < _btnTab.length; i++) {
-          if(_btnTab[i] == getControl()) {
-            setTab(i);
-            return;
-          }
-        }
-      }
-    };
-    
-    for(int i = 0; i < _btnTab.length; i++) {
-      _btnTab[i] = new Button(this);
-      _btnTab[i].setXYWH(8 + i * 59, 8, 60, 20);
-      _btnTab[i].addEventClickHandler(btnTabClick);
-      _picWindow.Controls().add(_btnTab[i]);
-    }
-    
-    _btnTab[0].setText("Frames");
-    _btnTab[1].setText("Animations");
-    _btnTab[2].setText("Settings");
-    
-    _picTab = new Picture[3];
-    for(int i = 0; i < _picTab.length; i++) {
-      _picTab[i] = new Picture(this);
-      _picTab[i].setBackColour(new float[] {0.1f, 0.1f, 0.1f, 1});
-      _picTab[i].setXYWH(8, _btnTab[i].getY() + _btnTab[i].getH(), 256, 256);
-      _picTab[i].setVisible(false);
-      _picWindow.Controls().add(_picTab[i]);
-    }
-    
-    _btnClose = new Button(this);
-    _btnClose.setText("Close");
-    _btnClose.setY((_picTab[0].getY() - _btnClose.getH()) / 2);
-    _btnClose.addEventClickHandler(new ControlEventClick() {
+    _wndEditor = new Window(this);
+    _wndEditor.setWH(300, 300);
+    _wndEditor.setText("Sprite Editor");
+    _wndEditor.addTab("Frames");
+    _wndEditor.addTab("Animations");
+    _wndEditor.addTab("Info");
+    _wndEditor.addTab("Scripts");
+    _wndEditor.addEventCloseHandler(new ControlEventClose() {
       public void event() {
         unload();
       }
     });
-    
-    _btnSave = new Button(this);
-    _btnSave.setText("Save");
-    _btnSave.setY(_btnClose.getY());
-    _btnSave.addEventClickHandler(new ControlEventClick() {
+    _wndEditor.addButton("Save").addEventClickHandler(new ControlEventClick() {
       public void event() {
         save();
       }
     });
-    
-    _picWindow.Controls().add(_btnClose);
-    _picWindow.Controls().add(_btnSave);
     
     _lblFrameLoc = new Label(this);
     _lblFrameLoc.setText("Location");
@@ -253,9 +208,9 @@ public class SpriteEditor extends GUI implements Editor {
     _picFrameSpriteBack.setXY(_drpSprite.getX(), _drpSprite.getY() + _drpSprite.getH());
     _picFrameSpriteBack.Controls().add(_picFrameSprite);
     
-    _picTab[0].Controls().add(_splFrame);
-    _picTab[0].Controls().add(_drpSprite);
-    _picTab[0].Controls().add(_picFrameSpriteBack);
+    _wndEditor.Controls(0).add(_splFrame);
+    _wndEditor.Controls(0).add(_drpSprite);
+    _wndEditor.Controls(0).add(_picFrameSpriteBack);
     
     _lblAnimName = new Label(this);
     _lblAnimName.setText("Name");
@@ -398,12 +353,12 @@ public class SpriteEditor extends GUI implements Editor {
     _picAnim.Controls().add(_scrList);
     _picAnim.Controls().add(_picList);
     
-    _picTab[1].Controls().add(_btnAnimAdd);
-    _picTab[1].Controls().add(_btnAnimDel);
-    _picTab[1].Controls().add(_btnAnimClone);
-    _picTab[1].Controls().add(_lblAnimNum);
-    _picTab[1].Controls().add(_scrAnim);
-    _picTab[1].Controls().add(_picAnim);
+    _wndEditor.Controls(1).add(_btnAnimAdd);
+    _wndEditor.Controls(1).add(_btnAnimDel);
+    _wndEditor.Controls(1).add(_btnAnimClone);
+    _wndEditor.Controls(1).add(_lblAnimNum);
+    _wndEditor.Controls(1).add(_scrAnim);
+    _wndEditor.Controls(1).add(_picAnim);
     
     ControlEventChange change = new ControlEventChange() {
       public void event() {
@@ -447,16 +402,16 @@ public class SpriteEditor extends GUI implements Editor {
     _txtH.addEventChangeHandler(change);
     _txtH.setNumeric(true);
     
-    _picTab[2].Controls().add(_lblName);
-    _picTab[2].Controls().add(_txtName);
-    _picTab[2].Controls().add(_lblNote);
-    _picTab[2].Controls().add(_txtNote);
-    _picTab[2].Controls().add(_lblW);
-    _picTab[2].Controls().add(_txtW);
-    _picTab[2].Controls().add(_lblH);
-    _picTab[2].Controls().add(_txtH);
+    _wndEditor.Controls(2).add(_lblName);
+    _wndEditor.Controls(2).add(_txtName);
+    _wndEditor.Controls(2).add(_lblNote);
+    _wndEditor.Controls(2).add(_txtNote);
+    _wndEditor.Controls(2).add(_lblW);
+    _wndEditor.Controls(2).add(_txtW);
+    _wndEditor.Controls(2).add(_lblH);
+    _wndEditor.Controls(2).add(_txtH);
     
-    Controls().add(_picWindow);
+    Controls().add(_wndEditor);
     
     _frameLoc = Context.newDrawable();
     _frameLoc.setColour(new float[] {0, 1, 0, 1});
@@ -466,7 +421,6 @@ public class SpriteEditor extends GUI implements Editor {
     _frameFoot.setWH(16, 16);
     _frameFoot.createBorder();
     
-    setTab(_tab);
     listSprites(new File("../gfx/textures/sprites/"), "../gfx/textures/sprites/");
   }
   
@@ -477,18 +431,10 @@ public class SpriteEditor extends GUI implements Editor {
   public void resize() {
     _picFrameSpriteBack.setWH(_picFrameSprite.getW(), _picFrameSprite.getH());
     _splFrame.setW(_picFrameSpriteBack.getW());
-    _picTab[0].setWH(_picFrameSpriteBack.getX() + _picFrameSpriteBack.getW() + 4, _picFrameSpriteBack.getY() + _picFrameSpriteBack.getH() + 4);
-    _picWindow.setWH(_picTab[_tab].getW() + 16, _btnTab[_tab].getH() + _picTab[_tab].getH() + 16);
-    _picWindow.setXY((_context.getW() - _picWindow.getW()) / 2, (_context.getH() - _picWindow.getH()) / 2);
+    _wndEditor.setWH(_picFrameSpriteBack.getX() + _picFrameSpriteBack.getW() + 4, _picFrameSpriteBack.getY() + _picFrameSpriteBack.getH() + 24);
+    _wndEditor.setXY((_context.getW() - _wndEditor.getW()) / 2, (_context.getH() - _wndEditor.getH()) / 2);
     
-    _btnClose.setX(_picWindow.getW() - _btnClose.getW() - 4);
-    _btnSave.setX(_btnClose.getX() - _btnSave.getW() - 4);
-    
-    for(int i = 1; i < _picTab.length; i++) {
-      _picTab[i].setWH(_picTab[0].getW(), _picTab[0].getH());
-    }
-    
-    _picAnim.setWH(_picTab[1].getW() - _picAnim.getX() - 4, _picTab[1].getH() - _picAnim.getY() - 4);
+    _picAnim.setWH(_wndEditor.getW() - _picAnim.getX() - 4, _wndEditor.getH() - _picAnim.getY() - 4);
     _picList.setWH(_picAnim.getW() - _picList.getX() - 4, _picAnim.getH() - _picList.getY() - 4);
   }
   
@@ -562,16 +508,6 @@ public class SpriteEditor extends GUI implements Editor {
     _txtH.setText(String.valueOf(_sprite.getH()));
     
     setAnim(0);
-    
-    resize();
-  }
-  
-  private void setTab(int index) {
-    _btnTab[_tab].setBackColour(new float[] {0.2f, 0.2f, 0.2f, 1});
-    _picTab[_tab].setVisible(false);
-    _btnTab[index].setBackColour(new float[] {0, 0, 0.8f, 1});
-    _picTab[index].setVisible(true);
-    _tab = index;
     
     resize();
   }
