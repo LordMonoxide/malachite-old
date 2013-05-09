@@ -593,10 +593,8 @@ public class SpriteEditor extends GUI implements Editor {
   }
   
   private void delFrame() {
-    if(_sprite._frame.size() != 0) {
-      _sprite._frame.remove(((ScrollPanelFrame)_splFrame.getItem())._frame);
-      _splFrame.remove();
-    }
+    _sprite._frame.remove(((ScrollPanelFrame)_splFrame.getItem())._frame);
+    _splFrame.remove();
   }
   
   private void setFrame(Sprite.Frame frame) {
