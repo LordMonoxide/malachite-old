@@ -139,6 +139,10 @@ public class ScrollPanel extends Control {
     _item.remove(index);
     
     if(_item.size() != 0) {
+      for(int i = index; i < _item.size(); i++) {
+        _item.get(i)._index--;
+      }
+      
       if(_scroll.getVal() != _scroll.getMax()) {
         _scroll.setMax(_item.size() - 1);
         setItem(_scroll.getVal());
