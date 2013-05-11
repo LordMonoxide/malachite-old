@@ -240,7 +240,9 @@ public class MapEditor extends GUI {
     });
     _splSprite.events().onSelect(new ScrollPanel.Events.Select() {
       public void event(ScrollPanel.Item item) {
-        selSprite(((ScrollPanelSprite)item)._sprite);
+        if(item != null) {
+          selSprite(((ScrollPanelSprite)item)._sprite);
+        }
       }
     });
     
