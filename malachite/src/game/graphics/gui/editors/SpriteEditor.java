@@ -480,8 +480,6 @@ public class SpriteEditor extends GUI implements Editor {
     push();
     
     _sprite = new SpriteEditorSprite((Sprite)data);
-    if(_sprite._frame.size() == 0) addFrame();
-    if(_sprite._anim .size() == 0) addAnim();
     
     int i = 0;
     for(Dropdown.Item item : _drpSprite) {
@@ -495,6 +493,9 @@ public class SpriteEditor extends GUI implements Editor {
     for(Sprite.Frame f : _sprite._frame) {
       _splFrame.add(new ScrollPanelFrame(f));
     }
+    
+    if(_sprite._frame.size() == 0) addFrame();
+    if(_sprite._anim .size() == 0) addAnim();
     
     _scrAnim .setMax(_sprite._anim .size() - 1);
     _scrListFrame.setMax(_splFrame.size());
