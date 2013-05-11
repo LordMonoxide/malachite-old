@@ -100,9 +100,7 @@ public class Map extends Serializable {
           
           Attrib.Type t = Attrib.Type.fromVal(_layer[z]._attrib[x][y]._type);
           for(int i = 0; i < b.capacity() / 4; i++) {
-            for(int n = 0; n < 4; n++) {
-              b.put(t._col[n]);
-            }
+            b.put(t._col);
           }
           
           b.flip();
