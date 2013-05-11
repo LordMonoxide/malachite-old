@@ -1,25 +1,34 @@
 package game.graphics.gui;
 
+import java.nio.ByteBuffer;
+
 import graphics.shared.gui.GUI;
-import graphics.shared.gui.controls.Dropdown;
+import graphics.shared.gui.controls.Picture;
+import graphics.shared.textures.Texture;
+import graphics.shared.textures.Textures;
 
 public class Menu extends GUI {
-  private Dropdown drpTest;
-  private Dropdown drpTest2;
+  private Picture _pic;
   
   public void load() {
     _context.setBackColour(new float[] {1, 1, 1, 1});
     
-    drpTest = new Dropdown(this);
-    drpTest.add(new Dropdown.Item("Test"));
-    drpTest.add(new Dropdown.Item("Test 2"));
-    drpTest.add(new Dropdown.Item("Test 3"));
+    ByteBuffer b = ByteBuffer.allocateDirect(32 * 32 * 4);
+    for(int i = 0; i < b.capacity(); i += 4) {
+      b.put((byte)255);
+      b.put((byte)0);
+      b.put((byte)0);
+      b.put((byte)255);
+    }
+    b.flip();
     
-    drpTest2 = new Dropdown(this);
-    drpTest2.setY(10);
+    Texture t = Textures.getInstance().getTexture("mal.png", true);
+    t.update(32, 32, 32, 32, b);
     
-    Controls().add(drpTest);
-    Controls().add(drpTest2);
+    _pic = new Picture(this);
+    _pic.setTexture(t);
+    
+    Controls().add(_pic);
   }
   
   public void destroy() {
