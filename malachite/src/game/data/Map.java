@@ -1,5 +1,6 @@
 package game.data;
 
+import java.nio.ByteBuffer;
 import java.util.LinkedList;
 
 import game.Game;
@@ -87,45 +88,30 @@ public class Map extends Serializable {
     }
   }
   
-  public Drawable[] createAttribMaskFromLayer(int z) {
-    Drawable[] d = new Drawable[Settings.Map.Attrib.Count * Settings.Map.Attrib.Count];
-    int tiles = 0;
+  public Texture createAttribMaskTextureFromLayer(int z) {
+    Texture texture = Textures.getInstance().getTexture(_x + "x" + _y + "x" + z + " mask", Settings.Map.Size, Settings.Map.Size, null, true);
+    
+    ByteBuffer b = ByteBuffer.allocateDirect(Settings.Map.Attrib.Size * Settings.Map.Attrib.Size * 4);
     
     for(int x = 0; x < _layer[z]._attrib.length; x++) {
       for(int y = 0; y < _layer[z]._attrib[x].length; y++) {
         if(_layer[z]._attrib[x][y]._type != 0) {
-          d[tiles] = Context.newDrawable();
-          d[tiles].setColour(Attrib.Type.values()[_layer[z]._attrib[x][y]._type]._col);
-          d[tiles].setXYWH(x * Settings.Map.Attrib.Size, y * Settings.Map.Attrib.Size, Settings.Map.Attrib.Size, Settings.Map.Attrib.Size);
-          d[tiles].createQuad();
-          tiles++;
+          b.clear();
+          
+          Attrib.Type t = Attrib.Type.fromVal(_layer[z]._attrib[x][y]._type);
+          for(int i = 0; i < b.capacity() / 4; i++) {
+            for(int n = 0; n < 4; n++) {
+              b.put(t._col[n]);
+            }
+          }
+          
+          b.flip();
+          texture.update(x * Settings.Map.Attrib.Size, y * Settings.Map.Attrib.Size, Settings.Map.Attrib.Size, Settings.Map.Attrib.Size, b);
         }
       }
     }
     
-    if(tiles != 0) {
-      Drawable[] d2 = new Drawable[tiles];
-      System.arraycopy(d, 0, d2, 0, tiles);
-      return d2;
-    }
-    
-    return null;
-  }
-  
-  public Texture createAttribMaskTextureFromLayer(int z) {
-    Drawable[] attribs = createAttribMaskFromLayer(z);
-    
-    if(attribs != null) {
-      Canvas c = new Canvas(_x + "x" + _y + "x" + z, Settings.Map.Size, Settings.Map.Size);
-      c.bind();
-      for(Drawable d : attribs) {
-        d.draw();
-      }
-      c.unbind();
-      return c.getTexture();
-    } else {
-      return null;
-    }
+    return texture;
   }
   
   public game.world.Sprite[] spawn() {
@@ -381,12 +367,22 @@ public class Map extends Serializable {
     public byte _type;
     
     public static enum Type {
-      BLOCKED(0x80, new float[] {1, 0, 0, 1});
+      BLOCKED((byte)0x80, new byte[] {(byte)255, 0, 0, (byte)255});
       
-      private final   int   _val;
-      private final float[] _col;
+      public static Type fromVal(int val) {
+        for(Type t : Type.values()) {
+          if(t._val == val) {
+            return t;
+          }
+        }
+        
+        return null;
+      }
       
-      private Type(int val, float[] col) {
+      private final  byte   _val;
+      private final  byte[] _col;
+      
+      private Type(byte val, byte[] col) {
         _val = val;
         _col = col;
       }
@@ -395,7 +391,7 @@ public class Map extends Serializable {
         return _val;
       }
       
-      public float[] col() {
+      public byte[] col() {
         return _col;
       }
     }
