@@ -37,6 +37,11 @@ public class Texture {
     System.out.println("Loaded requested texture ID " + _id);
   }
   
+  public void update(int x, int y, int w, int h, ByteBuffer data) {
+    GL11.glBindTexture(GL11.GL_TEXTURE_2D, _id);
+    GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, x, y, w, h, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, data);
+  }
+  
   public void use() {
     GL11.glBindTexture(GL11.GL_TEXTURE_2D, _id);
   }
