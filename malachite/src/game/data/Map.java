@@ -77,7 +77,48 @@ public class Map extends Serializable {
     if(tiles != null) {
       Canvas c = new Canvas(_x + "x" + _y + "x" + z, Settings.Map.Size, Settings.Map.Size);
       c.bind();
-      for(Drawable d : createDrawablesFromLayer(z)) {
+      for(Drawable d : tiles) {
+        d.draw();
+      }
+      c.unbind();
+      return c.getTexture();
+    } else {
+      return null;
+    }
+  }
+  
+  public Drawable[] createAttribMaskFromLayer(int z) {
+    Drawable[] d = new Drawable[Settings.Map.Attrib.Count * Settings.Map.Attrib.Count];
+    int tiles = 0;
+    
+    for(int x = 0; x < _layer[z]._attrib.length; x++) {
+      for(int y = 0; y < _layer[z]._attrib[x].length; y++) {
+        if(_layer[z]._attrib[x][y]._type != 0) {
+          d[tiles] = Context.newDrawable();
+          d[tiles].setColour(Attrib.Type.values()[_layer[z]._attrib[x][y]._type]._col);
+          d[tiles].setXYWH(x * Settings.Map.Attrib.Size, y * Settings.Map.Attrib.Size, Settings.Map.Attrib.Size, Settings.Map.Attrib.Size);
+          d[tiles].createQuad();
+          tiles++;
+        }
+      }
+    }
+    
+    if(tiles != 0) {
+      Drawable[] d2 = new Drawable[tiles];
+      System.arraycopy(d, 0, d2, 0, tiles);
+      return d2;
+    }
+    
+    return null;
+  }
+  
+  public Texture createAttribMaskTextureFromLayer(int z) {
+    Drawable[] attribs = createAttribMaskFromLayer(z);
+    
+    if(attribs != null) {
+      Canvas c = new Canvas(_x + "x" + _y + "x" + z, Settings.Map.Size, Settings.Map.Size);
+      c.bind();
+      for(Drawable d : attribs) {
         d.draw();
       }
       c.unbind();
@@ -324,60 +365,38 @@ public class Map extends Serializable {
     public Tile getTile(int x, int y) {
       return _tile[x][y];
     }
+    
+    public Attrib getAttrib(int x, int y) {
+      return _attrib[x][y];
+    }
   }
   
   public class Tile {
-    protected byte _x, _y;
-    protected byte _tileset;
-    protected byte _a;
-    
-    public byte getX() {
-      return _x;
-    }
-    
-    public void setX(byte x) {
-      _x = x;
-    }
-    
-    public byte getY() {
-      return _y;
-    }
-    
-    public void setY(byte y) {
-      _y = y;
-    }
-    
-    public int getTileset() {
-      return _tileset;
-    }
-    
-    public void setTileset(byte tileset) {
-      _tileset = tileset;
-    }
-    
-    public byte getA() {
-      return _a;
-    }
-    
-    public void setA(byte a) {
-      _a = a;
-    }
+    public byte _x, _y;
+    public byte _tileset;
+    public byte _a;
   }
   
   public static class Attrib {
-    protected byte _type;
+    public byte _type;
     
     public static enum Type {
-      BLOCKED(0x80);
+      BLOCKED(0x80, new float[] {1, 0, 0, 1});
       
-      private final int _val;
+      private final   int   _val;
+      private final float[] _col;
       
-      private Type(int val) {
+      private Type(int val, float[] col) {
         _val = val;
+        _col = col;
       }
       
       public int val() {
         return _val;
+      }
+      
+      public float[] col() {
+        return _col;
       }
     }
   }
