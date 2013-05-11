@@ -397,6 +397,9 @@ public class MapEditor extends GUI {
       _region = region;
       _region.setMap(new MapEditorMap(_region.getMap()));
       _map = (MapEditorMap)_region.getMap();
+      _mx = _map.getX();
+      _my = _map.getY();
+      System.out.println(_mx + "\t" + _my + "\t" + "Changing");
       
       if(!_regions.contains(_region)) {
         System.out.println("Adding region " + region.getMap().getX() + ", " + region.getMap().getY());
@@ -544,8 +547,6 @@ public class MapEditor extends GUI {
       if(y < 0) my -= 1;
       
       if((_mx != mx || _my != my) || _region == null) {
-        _mx = mx;
-        _my = my;
         setRegion(_game.getWorld().getRegion(mx, my));
       }
     }
@@ -564,9 +565,37 @@ public class MapEditor extends GUI {
         
         switch(button) {
           case 0:
+            int x4 = 0, y4 = 0;
             for(int x2 = 0; x2 < _w; x2++) {
               for(int y2 = 0; y2 < _h; y2++) {
-                t = _map.getLayer(_layer).getTile(x1 + x2, y1 + y2);
+                int x3 = _mx, y3 = _my;
+                
+                if(x1 + x2 - x4 < 0) {
+                  x3--;
+                  x4 -= Settings.Map.Tile.Count;
+                }
+                
+                if(y1 + y2 - y4 < 0) {
+                  y3--;
+                  y4 -= Settings.Map.Tile.Count;
+                }
+                
+                if(x1 + x2 - x4 >= Settings.Map.Tile.Count) {
+                  x3++;
+                  x4 += Settings.Map.Tile.Count;
+                }
+                
+                if(y1 + y2 - y4 >= Settings.Map.Tile.Count) {
+                  y3++;
+                  y4 += Settings.Map.Tile.Count;
+                }
+                
+                if(x3 != _mx || y3 != _my) {
+                  _region.calc();
+                  setRegion(_game.getWorld().getRegion(x3, y3));
+                }
+                
+                t = _map.getLayer(_layer).getTile(x1 + x2 - x4, y1 + y2 - y4);
                 t._tileset = (byte)_tileset;
                 t._x = (byte)(_x + x2);
                 t._y = (byte)(_y + y2);
