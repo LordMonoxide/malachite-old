@@ -153,6 +153,14 @@ public class ScrollPanel extends Control<ScrollPanel.Events> {
     }
   }
   
+  public void clear() {
+    _item.clear();
+    _panel.setEnabled(false);
+    _scroll.setEnabled(false);
+    _del.setEnabled(false);
+    setItem(null);
+  }
+  
   public Item getItem() {
     return _sel;
   }
