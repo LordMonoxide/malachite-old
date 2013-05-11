@@ -1,6 +1,7 @@
 package game.graphics.gui.editors;
 
 import java.io.File;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
@@ -22,6 +23,7 @@ import graphics.shared.gui.controls.Label;
 import graphics.shared.gui.controls.Picture;
 import graphics.shared.gui.controls.Textbox;
 import graphics.shared.gui.controls.compound.ScrollPanel;
+import graphics.shared.textures.Texture;
 
 public class MapEditor extends GUI {
   private Game _game = (Game)Context.getGame();
@@ -42,6 +44,10 @@ public class MapEditor extends GUI {
   private Drawable  _selected;
   
   private Button[]  _btnAttrib;
+  
+  private Texture[] _attribMask;
+  private Drawable  _attribDrawable;
+  private int _attribDrawCallback = -1;
   
   private ScrollPanel _splSprite;
   private Label     _lblSpriteFile;
@@ -319,6 +325,12 @@ public class MapEditor extends GUI {
       }
     }
     
+    _attribMask = new Texture[Settings.Map.Depth];
+    
+    _attribDrawable = Context.newDrawable();
+    _attribDrawable.setWH(Settings.Map.Size, Settings.Map.Size);
+    _attribDrawable.setColour(new float[] {1, 1, 1, 0.5f});
+    
     setTab(_tab);
     setLayer(_layer);
     setTileset(_tileset);
@@ -358,15 +370,19 @@ public class MapEditor extends GUI {
             }
           }
           
-          return true;
+          break;
           
         case JOptionPane.NO_OPTION:
           for(Region r : _regions) {
             r.setMap(((MapEditorMap)r.getMap()).getMap());
           }
           
-          return true;
+          break;
       }
+    }
+    
+    if(_attribDrawCallback != -1) {
+      _region.events().removeDraw(_attribDrawCallback);
     }
     
     return true;
@@ -374,6 +390,10 @@ public class MapEditor extends GUI {
   
   public void setRegion(Region region) {
     if(region != _region) {
+      if(_attribDrawCallback != -1) {
+        _region.events().removeDraw(_attribDrawCallback);
+      }
+      
       _region = region;
       _region.setMap(new MapEditorMap(_region.getMap()));
       _map = (MapEditorMap)_region.getMap();
@@ -383,9 +403,29 @@ public class MapEditor extends GUI {
         _regions.add(_region);
       }
       
+      for(int z = 0; z < Settings.Map.Depth; z++) {
+        updateAttrib(z);
+      }
+      
+      _attribDrawable.setTexture(_attribMask[_layer]);
+      _attribDrawable.createQuad();
+      
       for(Map.Sprite s : _map._sprite) {
         _splSprite.add(new ScrollPanelSprite(s));
       }
+      
+      _attribDrawCallback = _region.events().onDraw(new Region.Events.Draw() {
+        public void event(int z) {
+          
+        }
+        
+        public void event() {
+          switch(_tab) {
+            case 1:
+              _attribDrawable.draw();
+          }
+        }
+      });
     }
   }
   
@@ -403,6 +443,8 @@ public class MapEditor extends GUI {
     _btnLayer[_layer].setBackColour(new float[] {0.2f, 0.2f, 0.2f, 1});
     _btnLayer[index].setBackColour(new float[] {0, 0, 0.8f, 1});
     _layer = index;
+    _attribDrawable.setTexture(_attribMask[_layer]);
+    _attribDrawable.createQuad();
   }
   
   private void setTileset(int index) {
@@ -421,6 +463,10 @@ public class MapEditor extends GUI {
     _btnAttrib[_attrib].setBackColour(new float[] {0.2f, 0.2f, 0.2f, 1});
     _btnAttrib[index].setBackColour(new float[] {0, 0, 0.8f, 1});
     _attrib = index;
+  }
+  
+  private void updateAttrib(int layer) {
+    _attribMask[layer] = _map.createAttribMaskTextureFromLayer(layer);
   }
   
   private void addSprite() {
@@ -478,8 +524,10 @@ public class MapEditor extends GUI {
   }
   
   public boolean draw() {
-    if(_tab == 0) {
-      _selected.draw();
+    switch(_tab) {
+      case 0:
+        _selected.draw();
+        break;
     }
     
     return false;
@@ -546,18 +594,37 @@ public class MapEditor extends GUI {
         y %= Settings.Map.Size;
         if(x < 0) x += Settings.Map.Size;
         if(y < 0) y += Settings.Map.Size;
-        x1 = (int)x / Settings.Map.Tile.Size;
-        y1 = (int)y / Settings.Map.Tile.Size;
+        x1 = (int)x / Settings.Map.Attrib.Size;
+        y1 = (int)y / Settings.Map.Attrib.Size;
         
         Map.Attrib a = _map.getLayer(_layer).getAttrib(x1, y1);
         
+        ByteBuffer b;
         switch(button) {
           case 0:
-            a._type = (byte)_attrib;
+            a._type = (byte)Map.Attrib.Type.values()[_attrib].val();
+            
+            b = ByteBuffer.allocateDirect(Settings.Map.Attrib.Size * Settings.Map.Attrib.Size * 4);
+            for(int i = 0; i < b.capacity() / 4; i++) {
+              b.put(Map.Attrib.Type.values()[_attrib].col());
+            }
+            b.flip();
+            
+            _attribMask[_layer].update(x1 * Settings.Map.Attrib.Size, y1 * Settings.Map.Attrib.Size, Settings.Map.Attrib.Size, Settings.Map.Attrib.Size, b);
+            _attribDrawable.setTexture(_attribMask[_layer]);
+            _attribDrawable.createQuad();
             return true;
             
           case 1:
             a._type = (byte)0;
+            
+            b = ByteBuffer.allocateDirect(Settings.Map.Attrib.Size * Settings.Map.Attrib.Size * 4);
+            b.put(new byte[b.capacity()]);
+            b.flip();
+            
+            _attribMask[_layer].update(x1 * Settings.Map.Attrib.Size, y1 * Settings.Map.Attrib.Size, Settings.Map.Attrib.Size, Settings.Map.Attrib.Size, b);
+            _attribDrawable.setTexture(_attribMask[_layer]);
+            _attribDrawable.createQuad();
             return true;
         }
         
@@ -627,13 +694,10 @@ public class MapEditor extends GUI {
   
   public boolean handleMouseMove(int x, int y, int button) {
     if(!_picWindow.getVisible()) {
-      x -= _context.getCameraX();
-      y -= _context.getCameraY();
-      
       switch(_tab) {
         case 0:
-          int x1 = x;
-          int y1 = y;
+          int x1 = x - (int)_context.getCameraX();
+          int y1 = y - (int)_context.getCameraY();
           if(x1 < 0) x1 -= Settings.Map.Tile.Size;
           if(y1 < 0) y1 -= Settings.Map.Tile.Size;
           x1 /= Settings.Map.Tile.Size;
@@ -647,10 +711,15 @@ public class MapEditor extends GUI {
           
           break;
           
+        case 1:
+          if(button != -1) {
+            return mapEditorClick(x, y, button);
+          }
+          
         case 2:
           if(_pickLoc) {
-            _pickSprite.setX(x);
-            _pickSprite.setY(y);
+            _pickSprite.setX(x - _context.getCameraX());
+            _pickSprite.setY(y - _context.getCameraY());
           }
       }
     } else {
