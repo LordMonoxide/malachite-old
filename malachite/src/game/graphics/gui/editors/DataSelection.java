@@ -7,12 +7,11 @@ import javax.swing.JOptionPane;
 import game.data.Sprite;
 import game.data.util.Data;
 import game.data.util.Serializable;
-import graphics.shared.gui.Control.ControlEventClick;
+import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;
 import graphics.shared.gui.controls.Button;
 import graphics.shared.gui.controls.List;
 import graphics.shared.gui.controls.compound.Window;
-import graphics.shared.gui.controls.compound.Window.ControlEventClose;
 
 public class DataSelection extends GUI {
   private Window _window;
@@ -46,7 +45,7 @@ public class DataSelection extends GUI {
     _data = new List(this);
     _data.setXYWH(8, 8, 400, 200);
     
-    ControlEventClick accept = new ControlEventClick() {
+    Control.Events.Click accept = new Control.Events.Click() {
       public void event() {
         editData((Data)((ListItem)getControl()).getData());
       }
@@ -58,7 +57,7 @@ public class DataSelection extends GUI {
         if(s.load()) {
           ListItem l = (ListItem)_data.addItem(new ListItem(this, s));
           l.setText(n + ": " + s.getName() + " - " + s.getNote());
-          l.addEventDoubleClickHandler(accept);
+          l.events().onDoubleClick(accept);
         }
       }
     }
@@ -66,14 +65,14 @@ public class DataSelection extends GUI {
     _new = new Button(this);
     _new.setText("New");
     _new.setXY(_data.getX() + _data.getW() - _new.getW(), _data.getY() + _data.getH() + 7);
-    _new.addEventClickHandler(new ControlEventClick() {
+    _new.events().onClick(new Control.Events.Click() {
       public void event() {
         newData();
       }
     });
     
     _window.setWH(_new.getX() + _new.getW() + 8, _new.getY() + _new.getH() + 28);
-    _window.addEventCloseHandler(new ControlEventClose() {
+    _window.events().onClose(new Window.Events.Close() {
       public void event() {
         pop();
       }
