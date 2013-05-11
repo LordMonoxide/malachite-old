@@ -2,7 +2,6 @@ package game.graphics.gui;
 
 import graphics.shared.gui.GUI;
 import graphics.shared.gui.controls.Dropdown;
-import graphics.shared.gui.controls.Dropdown.DropdownItem;
 
 public class Menu extends GUI {
   private Dropdown drpTest;
@@ -12,9 +11,9 @@ public class Menu extends GUI {
     _context.setBackColour(new float[] {1, 1, 1, 1});
     
     drpTest = new Dropdown(this);
-    drpTest.add(new DropdownItem("Test"));
-    drpTest.add(new DropdownItem("Test 2"));
-    drpTest.add(new DropdownItem("Test 3"));
+    drpTest.add(new Dropdown.Item("Test"));
+    drpTest.add(new Dropdown.Item("Test 2"));
+    drpTest.add(new Dropdown.Item("Test 3"));
     
     drpTest2 = new Dropdown(this);
     drpTest2.setY(10);

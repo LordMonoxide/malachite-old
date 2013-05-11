@@ -15,14 +15,12 @@ import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;
 import graphics.shared.gui.controls.Button;
 import graphics.shared.gui.controls.Dropdown;
-import graphics.shared.gui.controls.Dropdown.DropdownItem;
 import graphics.shared.gui.controls.Label;
 import graphics.shared.gui.controls.Picture;
 import graphics.shared.gui.controls.Scrollbar;
 import graphics.shared.gui.controls.Scrollbar.Orientation;
 import graphics.shared.gui.controls.Textbox;
 import graphics.shared.gui.controls.compound.ScrollPanel;
-import graphics.shared.gui.controls.compound.ScrollPanel.ScrollPanelItem;
 import graphics.shared.gui.controls.compound.Window;
 
 public class SpriteEditor extends GUI implements Editor {
@@ -174,7 +172,7 @@ public class SpriteEditor extends GUI implements Editor {
       }
     });
     _splFrame.events().onSelect(new ScrollPanel.Events.Select() {
-      public void event(ScrollPanelItem item) {
+      public void event(ScrollPanel.Item item) {
         setFrame(item != null ? ((ScrollPanelFrame)item)._frame : null);
         _btnFrameClone.setEnabled(_splFrame.size() != 0);
       }
@@ -183,7 +181,7 @@ public class SpriteEditor extends GUI implements Editor {
     _drpSprite = new Dropdown(this);
     _drpSprite.setXY(_splFrame.getX(), _splFrame.getY() + _splFrame.getH() + 4);
     _drpSprite.events().onSelect(new Dropdown.Events.Select() {
-      public void event(DropdownItem item) {
+      public void event(Dropdown.Item item) {
         setSprite(item.getText());
       }
     });
@@ -456,7 +454,7 @@ public class SpriteEditor extends GUI implements Editor {
     for(File f : dir.listFiles()) {
       if(f.isFile()) {
         String name = f.getPath().substring(f.getPath().indexOf(path) + path.length() + 1).replace('\\', '/');
-        _drpSprite.add(new DropdownItem(name));
+        _drpSprite.add(new Dropdown.Item(name));
       }
     }
     
@@ -479,7 +477,7 @@ public class SpriteEditor extends GUI implements Editor {
     if(_sprite._anim .size() == 0) addAnim();
     
     int i = 0;
-    for(DropdownItem item : _drpSprite) {
+    for(Dropdown.Item item : _drpSprite) {
       if(item.getText().equals(_sprite.getTexture())) {
         _drpSprite.setSeletected(i);
         break;
@@ -642,7 +640,7 @@ public class SpriteEditor extends GUI implements Editor {
   public boolean handleKeyUp   ( int key) { return true; }
   public boolean handleCharDown(char key) { return true; }
   
-  public static class ScrollPanelFrame extends ScrollPanelItem {
+  public static class ScrollPanelFrame extends ScrollPanel.Item {
     Sprite.Frame _frame;
     
     public ScrollPanelFrame(Sprite.Frame frame) {
