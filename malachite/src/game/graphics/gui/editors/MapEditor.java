@@ -399,7 +399,7 @@ public class MapEditor extends GUI {
     _picTab[index].setVisible(true);
     _tab = index;
     
-    _picTilesetList.setVisible(_tab == 0 && _picWindow.getVisible() ? true : false);
+    _picTilesetList.setVisible(_tab == 0 && _picWindow.getVisible());
   }
   
   private void setLayer(int index) {
