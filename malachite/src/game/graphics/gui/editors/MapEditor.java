@@ -42,7 +42,9 @@ public class MapEditor extends GUI {
   private Picture   _picTilesetBack;
   private Picture[] _picTilesets;
   
-  private Drawable _selected;
+  private Drawable  _selected;
+  
+  private Button[]  _btnAttrib;
   
   private ScrollPanel _splSprite;
   private Label     _lblSpriteFile;
@@ -67,6 +69,8 @@ public class MapEditor extends GUI {
   private int _w = 1;
   private int _h = 1;
   private byte _a = (byte)255;
+  
+  private int _attrib;
   
   private Map.Sprite _sprite;
   
@@ -195,6 +199,29 @@ public class MapEditor extends GUI {
       i++;
     }
     
+    // Attribs tab
+    Control.Events.Click btnAttribClick = new Control.Events.Click() {
+      public void event() {
+        for(int i = 0; i < _btnAttrib.length; i++) {
+          if(_btnAttrib[i] == getControl()) {
+            setAttrib(i);
+            return;
+          }
+        }
+      }
+    };
+    
+    i = 0;
+    _btnAttrib = new Button[Map.Attrib.Type.values().length];
+    for(Map.Attrib.Type attrib : Map.Attrib.Type.values()) {
+      _btnAttrib[i] = new Button(this);
+      _btnAttrib[i].setText(attrib.toString());
+      _btnAttrib[i].setXY(4, 4 + i * _btnAttrib[i].getH());
+      _btnAttrib[i].events().onClick(btnAttribClick);
+      _picTab[1].Controls().add(_btnAttrib[i]);
+      i++;
+    }
+    
     // Sprites tab
     _splSprite = new ScrollPanel(this);
     _splSprite.setXY(4, 4);
@@ -298,6 +325,7 @@ public class MapEditor extends GUI {
     setTab(_tab);
     setLayer(_layer);
     setTileset(_tileset);
+    setAttrib(_attrib);
   }
   
   public void destroy() {
@@ -380,8 +408,8 @@ public class MapEditor extends GUI {
     _layer = index;
   }
   
-  private void setTileset(int tileset) {
-    _tileset = tileset;
+  private void setTileset(int index) {
+    _tileset = index;
     _picTileset.setTexture(_picTilesets[_tileset].getTexture());
     _picWindow.setWH(_picTileset.getW() + 124, _picTileset.getH() + _btnTab[0].getH() + _btnTab[0].getY() * 2);
     _picLayers.setX(_picTab[0].getX() + _picTab[0].getW() + 8);
@@ -390,6 +418,12 @@ public class MapEditor extends GUI {
     _selected.setTWH(_w * Settings.Map.Tile.Size, _h * Settings.Map.Tile.Size);
     _selected.createQuad();
     resize();
+  }
+  
+  private void setAttrib(int index) {
+    _btnAttrib[_attrib].setBackColour(new float[] {0.2f, 0.2f, 0.2f, 1});
+    _btnAttrib[index].setBackColour(new float[] {0, 0, 0.8f, 1});
+    _attrib = index;
   }
   
   private void addSprite() {
