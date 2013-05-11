@@ -420,9 +420,16 @@ public class SpriteEditor extends GUI implements Editor {
   }
   
   public void resize() {
-    _picFrameSpriteBack.setWH(_picFrameSprite.getW(), _picFrameSprite.getH());
-    _splFrame.setW(_picFrameSpriteBack.getW());
-    _wndEditor.setWH(_picFrameSpriteBack.getX() + _picFrameSpriteBack.getW() + 4, _picFrameSpriteBack.getY() + _picFrameSpriteBack.getH() + 24);
+    float w = _picFrameSpriteBack.getW();
+    float h = _picFrameSpriteBack.getH();
+    
+    if(w < 400) w = 500;
+    if(h < 300) h = 300;
+    
+    _picFrameSpriteBack.setWH(w, h);
+    _splFrame.setW(w);
+    
+    _wndEditor.setWH(_picFrameSpriteBack.getX() + w + 4, _picFrameSpriteBack.getY() + h + 24);
     _wndEditor.setXY((_context.getW() - _wndEditor.getW()) / 2, (_context.getH() - _wndEditor.getH()) / 2);
     
     _picAnim.setWH(_wndEditor.getW() - _picAnim.getX() - 4, _wndEditor.getH() - _picAnim.getY() - 4);
