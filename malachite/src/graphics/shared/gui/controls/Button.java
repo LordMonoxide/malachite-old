@@ -9,7 +9,7 @@ import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;
 import graphics.themes.Theme;
 
-public class Button extends Control {
+public class Button extends Control<Control.Events> {
   private Fonts _fonts = Context.getFonts();
   private Font _font = _fonts.getDefault();
   private String _text;
@@ -29,28 +29,30 @@ public class Button extends Control {
   public Button(GUI gui, final Theme theme) {
     super(gui);
     
+    _events = new Control.Events(this);
+    
     _acceptsFocus = false;
     
-    addEventMouseEnterHandler(new ControlEventHover() {
+    _events.onMouseEnter(new Events.Hover() {
       public void event() {
         _hover = true;
       }
     });
     
-    addEventMouseLeaveHandler(new ControlEventHover() {
+    _events.onMouseLeave(new Events.Hover() {
       public void event() {
         _hover = false;
       }
     });
     
-    ControlEventClick click = new ControlEventClick() {
+    Events.Click click = new Events.Click() {
       public void event() {
         _click = 1;
       }
     };
     
-    addEventClickHandler(click);
-    addEventDoubleClickHandler(click);
+    _events.onClick(click);
+    _events.onDoubleClick(click);
     
     theme.create(this);
   }
@@ -146,7 +148,7 @@ public class Button extends Control {
     super.handleKeyDown(key);
     
     if(key == Keyboard.KEY_RETURN) {
-      raiseClick();
+      _events.raiseClick();
     }
   }
 }

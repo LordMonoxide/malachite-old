@@ -7,7 +7,7 @@ import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;
 import graphics.themes.Theme;
 
-public class Label extends Control {
+public class Label extends Control<Control.Events> {
   private Fonts _fonts = Context.getFonts();
   private Font _font = _fonts.getDefault();
   
@@ -21,6 +21,7 @@ public class Label extends Control {
   
   public Label(GUI gui, Theme theme) {
     super(gui, false);
+    _events = new Control.Events(this);
     setAcceptsFocus(false);
     theme.create(this);
   }

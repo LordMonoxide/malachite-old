@@ -13,12 +13,12 @@ public abstract class GUI {
   private boolean _visible = true;
   
   protected Context _context;
-  private Control _control;
-  private Control _focus;
+  private Control<?> _control;
+  private Control<?> _focus;
   
-  private Control _keyDownControl;
-  private Control _selectControl;
-  private Control _selectControlMove;
+  private Control<?> _keyDownControl;
+  private Control<?> _selectControl;
+  private Control<?> _selectControlMove;
   private     int _selectButton = -1;
   private     int _mouseX, _mouseY;
   
@@ -26,7 +26,7 @@ public abstract class GUI {
   
   public GUI() {
     _context = Context.getContext();
-    _control = new Control(this);
+    _control = new Control<Control.Events>(this);
     _control.setAcceptsFocus(false);
   }
   
@@ -42,7 +42,7 @@ public abstract class GUI {
     return _context;
   }
   
-  protected Control getFocus() {
+  protected Control<?> getFocus() {
     return _focus;
   }
   
@@ -50,11 +50,11 @@ public abstract class GUI {
     return _control.Controls();
   }
   
-  public void setFocus(Control control) {
+  public void setFocus(Control<?> control) {
     if(_selectControl == _focus) _selectControl = null;
     
     if(_focus != null) {
-      Control focus = _focus;
+      Control<?> focus = _focus;
       _focus = null;
       focus.setFocus(false);
     }
@@ -113,14 +113,14 @@ public abstract class GUI {
     _context.GUI().pop(this);
   }
   
-  private final Control getSelectControl(int[] colour) {
+  private final Control<?> getSelectControl(int[] colour) {
     if(_control != null)
       return _control.getSelectControl(colour);
     else
       return null;
   }
   
-  protected final int getAllX(Control control) {
+  protected final int getAllX(Control<?> control) {
     int x = (int)control.getX();
     
     if(control.getParent() != null) {
@@ -130,7 +130,7 @@ public abstract class GUI {
     return x;
   }
   
-  protected final int getAllY(Control control) {
+  protected final int getAllY(Control<?> control) {
     int y = (int)control.getY();
     
     if(control.getParent() != null) {

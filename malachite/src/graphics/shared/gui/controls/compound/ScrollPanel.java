@@ -10,9 +10,9 @@ import graphics.shared.gui.controls.Button;
 import graphics.shared.gui.controls.Label;
 import graphics.shared.gui.controls.Picture;
 import graphics.shared.gui.controls.Scrollbar;
-import graphics.shared.gui.controls.Scrollbar.ControlEventScroll;
+import graphics.shared.gui.controls.Scrollbar.Events.Scroll;
 
-public class ScrollPanel extends Control {
+public class ScrollPanel extends Control<ScrollPanel.Events> {
   private ArrayList<ScrollPanelItem> _item = new ArrayList<ScrollPanelItem>();
   
   private Picture   _tabs;
@@ -25,18 +25,12 @@ public class ScrollPanel extends Control {
   
   private ScrollPanelItem _sel;
   
-  private LinkedList<ControlEventButton> _eventButtonAdd = new LinkedList<ControlEventButton>();
-  private LinkedList<ControlEventButton> _eventButtonDel = new LinkedList<ControlEventButton>();
-  private LinkedList<ControlEventSelect> _eventSelect    = new LinkedList<ControlEventSelect>();
-  
-  public void addEventButtonAddHandler(ControlEventButton e) { _eventButtonAdd.add(e); }
-  public void addEventButtonDelHandler(ControlEventButton e) { _eventButtonDel.add(e); }
-  public void addEventSelect          (ControlEventSelect e) { _eventSelect   .add(e); }
-  
   public ScrollPanel(GUI gui) {
     super(gui);
     
-    ControlEventWheel wheel = new ControlEventWheel() {
+    _events = new Events(this);
+    
+    Events.Wheel wheel = new Events.Wheel() {
       public void event(int delta) {
         if(_scroll.getEnabled()) {
           _scroll.handleMouseWheel(delta);
@@ -44,28 +38,28 @@ public class ScrollPanel extends Control {
       }
     };
     
-    ControlEventClick addClick = new ControlEventClick() {
+    Events.Click addClick = new Events.Click() {
       public void event() {
-        raiseButtonAdd();
+        _events.raiseButtonAdd();
       }
     };
     
-    ControlEventClick delClick = new ControlEventClick() {
+    Events.Click delClick = new Events.Click() {
       public void event() {
-        raiseButtonDel();
+        _events.raiseButtonDel();
       }
     };
     
     _add = new Button(gui);
     _add.setText("Add");
-    _add.addEventClickHandler(addClick);
-    _add.addEventDoubleClickHandler(addClick);
+    _add.events().onClick(addClick);
+    _add.events().onDoubleClick(addClick);
     
     _del = new Button(gui);
     _del.setText("Delete");
     _del.setX(_add.getW());
-    _del.addEventClickHandler(delClick);
-    _del.addEventDoubleClickHandler(delClick);
+    _del.events().onClick(delClick);
+    _del.events().onDoubleClick(delClick);
     
     _tabs = new Picture(gui);
     _tabs.setH(_add.getH());
@@ -73,12 +67,12 @@ public class ScrollPanel extends Control {
     _panel = new Picture(gui);
     _panel.setY(_tabs.getH());
     _panel.setBackColour(new float[] {0.33f, 0.33f, 0.33f, 0.66f});
-    _panel.addEventMouseWheelHandler(wheel);
+    _panel.events().onMouseWheel(wheel);
     
     _scroll = new Scrollbar(gui);
     _scroll.setY(_panel.getY());
     _scroll.setH(88);
-    _scroll.addEventScrollHandler(new ControlEventScroll() {
+    _scroll.events().onScroll(new Scroll() {
       public void event(int delta) {
         setItem(_scroll.getVal());
       }
@@ -100,7 +94,7 @@ public class ScrollPanel extends Control {
     super.Controls().add(_scroll);
     super.Controls().add(_num);
     
-    addEventMouseWheelHandler(wheel);
+    _events.onMouseWheel(wheel);
     
     setWH(400, 100);
     
@@ -177,7 +171,7 @@ public class ScrollPanel extends Control {
       _num.setText(null);
     }
     
-    raiseSelect(_sel);
+    _events.raiseSelect(_sel);
   }
   
   public int size() {
@@ -188,27 +182,6 @@ public class ScrollPanel extends Control {
     _tabs.setW(getW() - _tabs.getX());
     _panel.setWH(getW() - _panel.getX(), getH() - _panel.getY());
     _num.setWH(_add.getX(), _scroll.getY());
-  }
-  
-  protected void raiseButtonAdd() {
-    for(ControlEventButton e : _eventButtonAdd) {
-      e.setControl(this);
-      e.event();
-    }
-  }
-  
-  protected void raiseButtonDel() {
-    for(ControlEventButton e : _eventButtonDel) {
-      e.setControl(this);
-      e.event();
-    }
-  }
-  
-  protected void raiseSelect(ScrollPanelItem item) {
-    for(ControlEventSelect e : _eventSelect) {
-      e.setControl(this);
-      e.event(item);
-    }
   }
   
   public static class ScrollPanelItem {
@@ -223,11 +196,46 @@ public class ScrollPanel extends Control {
     }
   }
   
-  public static abstract class ControlEventButton extends ControlEvent {
-    public abstract void event();
-  }
-  
-  public static abstract class ControlEventSelect extends ControlEvent {
-    public abstract void event(ScrollPanelItem item);
+  public static class Events extends Control.Events {
+    private LinkedList<Button> _buttonAdd = new LinkedList<Button>();
+    private LinkedList<Button> _buttonDel = new LinkedList<Button>();
+    private LinkedList<Select> _select    = new LinkedList<Select>();
+    
+    public void onButtonAdd(Button e) { _buttonAdd.add(e); }
+    public void onButtonDel(Button e) { _buttonDel.add(e); }
+    public void onSelect   (Select e) { _select   .add(e); }
+    
+    public Events(Control<?> c) {
+      super(c);
+    }
+    
+    public void raiseButtonAdd() {
+      for(Button e : _buttonAdd) {
+        e.setControl(_control);
+        e.event();
+      }
+    }
+    
+    public void raiseButtonDel() {
+      for(Button e : _buttonDel) {
+        e.setControl(_control);
+        e.event();
+      }
+    }
+    
+    public void raiseSelect(ScrollPanelItem item) {
+      for(Select e : _select) {
+        e.setControl(_control);
+        e.event(item);
+      }
+    }
+    
+    public static abstract class Button extends Event {
+      public abstract void event();
+    }
+    
+    public static abstract class Select extends Event {
+      public abstract void event(ScrollPanelItem item);
+    }
   }
 }

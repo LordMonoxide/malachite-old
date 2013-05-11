@@ -11,15 +11,17 @@ import graphics.shared.textures.Textures;
 import graphics.themes.Theme;
 import graphics.util.Time;
 
-public class Control {
+public class Control<T> {
   protected GUI      _gui;
   protected Matrix   _matrix   = Context.getMatrix();
   protected Textures _textures = Context.getTextures();
   
-  protected Control     _controlParent;
+  protected Control<?>  _controlParent;
   protected ControlList _controlList = new ControlList(this);
-  protected Control     _controlNext;
-  protected Control     _controlPrev;
+  protected Control<?>  _controlNext;
+  protected Control<?>  _controlPrev;
+  
+  protected T        _events;
   
   protected Drawable _border;
   protected Drawable _background;
@@ -35,44 +37,6 @@ public class Control {
   
   private double _lastClick;
   
-  private LinkedList<ControlEventDraw>   _eventDraw        = new LinkedList<ControlEventDraw>();
-  private LinkedList<ControlEventMouse>  _eventMouseDown   = new LinkedList<ControlEventMouse>();
-  private LinkedList<ControlEventMouse>  _eventMouseUp     = new LinkedList<ControlEventMouse>();
-  private LinkedList<ControlEventMouse>  _eventMouseMove   = new LinkedList<ControlEventMouse>();
-  private LinkedList<ControlEventWheel>  _eventMouseWheel  = new LinkedList<ControlEventWheel>();
-  private LinkedList<ControlEventHover>  _eventMouseEnter  = new LinkedList<ControlEventHover>();
-  private LinkedList<ControlEventHover>  _eventMouseLeave  = new LinkedList<ControlEventHover>();
-  private LinkedList<ControlEventKey>    _eventKeyDown     = new LinkedList<ControlEventKey>();
-  private LinkedList<ControlEventKey>    _eventKeyUp       = new LinkedList<ControlEventKey>();
-  private LinkedList<ControlEventChar>   _eventCharDown    = new LinkedList<ControlEventChar>();
-  private LinkedList<ControlEventAxis>   _eventAxisLeft    = new LinkedList<ControlEventAxis>();
-  private LinkedList<ControlEventAxis>   _eventAxisRight   = new LinkedList<ControlEventAxis>();
-  private LinkedList<ControlEventButton> _eventButtonDown  = new LinkedList<ControlEventButton>();
-  private LinkedList<ControlEventButton> _eventButtonUp    = new LinkedList<ControlEventButton>();
-  private LinkedList<ControlEventClick>  _eventClick       = new LinkedList<ControlEventClick>();
-  private LinkedList<ControlEventClick>  _eventDoubleClick = new LinkedList<ControlEventClick>();
-  private LinkedList<ControlEventFocus>  _eventGotFocus    = new LinkedList<ControlEventFocus>();
-  private LinkedList<ControlEventFocus>  _eventLostFocus   = new LinkedList<ControlEventFocus>();
-  
-  public void addEventDrawHandler       (ControlEventDraw   e) { _eventDraw       .add(e); }
-  public void addEventMouseDownHandler  (ControlEventMouse  e) { _eventMouseDown  .add(e); }
-  public void addEventMouseUpHandler    (ControlEventMouse  e) { _eventMouseUp    .add(e); }
-  public void addEventMouseMoveHandler  (ControlEventMouse  e) { _eventMouseMove  .add(e); }
-  public void addEventMouseWheelHandler (ControlEventWheel  e) { _eventMouseWheel .add(e); }
-  public void addEventMouseEnterHandler (ControlEventHover  e) { _eventMouseEnter .add(e); }
-  public void addEventMouseLeaveHandler (ControlEventHover  e) { _eventMouseLeave .add(e); }
-  public void addEventKeyDownHandler    (ControlEventKey    e) { _eventKeyDown    .add(e); }
-  public void addEventKeyUpHandler      (ControlEventKey    e) { _eventKeyUp      .add(e); }
-  public void addEventCharDownHandler   (ControlEventChar   e) { _eventCharDown   .add(e); }
-  public void addEventAxisLeftHandler   (ControlEventAxis   e) { _eventAxisLeft   .add(e); }
-  public void addEventAxisRightHandler  (ControlEventAxis   e) { _eventAxisRight  .add(e); }
-  public void addEventButtonDownHandler (ControlEventButton e) { _eventButtonDown .add(e); }
-  public void addEventButtonUpHandler   (ControlEventButton e) { _eventButtonUp   .add(e); }
-  public void addEventClickHandler      (ControlEventClick  e) { _eventClick      .add(e); }
-  public void addEventDoubleClickHandler(ControlEventClick  e) { _eventDoubleClick.add(e); }
-  public void addEventGotFocusHandler   (ControlEventFocus  e) { _eventGotFocus   .add(e); }
-  public void addEventLostFocusHandler  (ControlEventFocus  e) { _eventLostFocus  .add(e); }
-  
   public Control(GUI gui) {
     this(gui, Theme.getInstance(), true);
   }
@@ -85,8 +49,11 @@ public class Control {
     this(gui, Theme.getInstance(), register);
   }
   
+  @SuppressWarnings("unchecked")
   public Control(GUI gui, Theme theme, boolean register) {
     _gui = gui;
+    
+    _events = (T)new Events(this);
     
     if(register) {
       _selBox = Context.newDrawable();
@@ -110,15 +77,15 @@ public class Control {
     _border.setXY(-1, -1);
   }
   
-  public Control getParent() {
+  public Control<?> getParent() {
     return _controlParent;
   }
   
-  protected void setParent(Control parent) {
+  protected void setParent(Control<?> parent) {
     _controlParent = parent;
   }
   
-  protected Control getRoot() {
+  protected Control<?> getRoot() {
     if(_controlParent != null) {
       return _controlParent.getRoot();
     }
@@ -130,20 +97,24 @@ public class Control {
     return _controlList;
   }
   
-  protected final Control getControlNext() {
+  protected final Control<?> getControlNext() {
     return _controlNext;
   }
   
-  protected final void setControlNext(Control control) {
+  protected final void setControlNext(Control<?> control) {
     _controlNext = control;
   }
   
-  protected final Control getControlPrev() {
+  protected final Control<?> getControlPrev() {
     return _controlPrev;
   }
   
-  protected final void setControlPrev(Control control) {
+  protected final void setControlPrev(Control<?> control) {
     _controlPrev = control;
+  }
+  
+  public T events() {
+    return _events;
   }
   
   public Drawable getBackground()  { return _background; }
@@ -245,7 +216,7 @@ public class Control {
   
   public void handleKeyDown(int key) {
     if(key == Keyboard.KEY_TAB) {
-      Control c = _controlNext;
+      Control<?> c = _controlNext;
       if(c == null) {
         if(_controlParent != null) {
           c = _controlParent.Controls().getLast();
@@ -269,196 +240,70 @@ public class Control {
       }
     }
     
-    raiseKeyDown(key);
+    ((Events)_events).raiseKeyDown(key);
   }
   
   public void handleKeyUp(int key) {
-    raiseKeyUp(key);
+    ((Events)_events).raiseKeyUp(key);
   }
   
   public void handleCharDown(char key) {
-    raiseCharDown(key);
+    ((Events)_events).raiseCharDown(key);
   }
   
   public void handleMouseDown(int x, int y, int button) {
-    raiseMouseDown(x, y, button);
+    ((Events)_events).raiseMouseDown(x, y, button);
   }
   
   public void handleMouseUp(int x, int y, int button) {
-    raiseMouseUp(x, y, button);
+    ((Events)_events).raiseMouseUp(x, y, button);
     
     if(Time.getTime() - _lastClick <= 250) {
-      raiseDoubleClick();
+      ((Events)_events).raiseDoubleClick();
     } else {
-      raiseClick();
+      ((Events)_events).raiseClick();
       _lastClick = Time.getTime();
     }
   }
   
   public void handleMouseMove(int x, int y, int button) {
-    raiseMouseMove(x, y, button);
+    ((Events)_events).raiseMouseMove(x, y, button);
   }
   
   public void handleMouseWheel(int delta) {
-    raiseMouseWheel(delta);
+    ((Events)_events).raiseMouseWheel(delta);
   }
   
   public void handleMouseEnter() {
-    raiseMouseEnter();
+    ((Events)_events).raiseMouseEnter();
   }
   
   public void handleMouseLeave() {
-    raiseMouseLeave();
+    ((Events)_events).raiseMouseLeave();
   }
   
   public void handleAxisLeft(double angle, float x, float y) {
-    raiseAxisLeft(angle, x, y);
+    ((Events)_events).raiseAxisLeft(angle, x, y);
   }
   
   public void handleAxisRight(double angle, float x, float y) {
-    raiseAxisRight(angle, x, y);
+    ((Events)_events).raiseAxisRight(angle, x, y);
   }
   
   public void handleButtonDown(int button) {
-    raiseButtonDown(button);
+    ((Events)_events).raiseButtonDown(button);
   }
   
   public void handleButtonUp(int button) {
-    raiseButtonUp(button);
+    ((Events)_events).raiseButtonUp(button);
   }
   
   public void handleGotFocus() {
-    raiseGotFocus();
+    ((Events)_events).raiseGotFocus();
   }
   
   public void handleLostFocus() {
-    raiseLostFocus();
-  }
-  
-  protected void raiseDraw() {
-    for(ControlEventDraw e : _eventDraw) {
-      e.setControl(this);
-      e.event();
-    }
-  }
-  
-  protected void raiseMouseDown(int x, int y, int button) {
-    for(ControlEventMouse e : _eventMouseDown) {
-      e.setControl(this);
-      e.event(x, y, button);
-    }
-  }
-  
-  protected void raiseMouseUp(int x, int y, int button) {
-    for(ControlEventMouse e : _eventMouseUp) {
-      e.setControl(this);
-      e.event(x, y, button);
-    }
-  }
-  
-  protected void raiseMouseMove(int x, int y, int button) {
-    for(ControlEventMouse e : _eventMouseMove) {
-      e.setControl(this);
-      e.event(x, y, button);
-    }
-  }
-  
-  protected void raiseMouseWheel(int delta) {
-    for(ControlEventWheel e : _eventMouseWheel) {
-      e.setControl(this);
-      e.event(delta);
-    }
-  }
-  
-  protected void raiseMouseEnter() {
-    for(ControlEventHover e : _eventMouseEnter) {
-      e.setControl(this);
-      e.event();
-    }
-  }
-  
-  protected void raiseMouseLeave() {
-    for(ControlEventHover e : _eventMouseLeave) {
-      e.setControl(this);
-      e.event();
-    }
-  }
-  
-  protected void raiseKeyDown(int key) {
-    for(ControlEventKey e : _eventKeyDown) {
-      e.setControl(this);
-      e.event(key);
-    }
-  }
-  
-  protected void raiseKeyUp(int key) {
-    for(ControlEventKey e : _eventKeyUp) {
-      e.setControl(this);
-      e.event(key);
-    }
-  }
-  
-  protected void raiseCharDown(char key) {
-    for(ControlEventChar e : _eventCharDown) {
-      e.setControl(this);
-      e.event(key);
-    }
-  }
-  
-  protected void raiseAxisLeft(double angle, float x, float y) {
-    for(ControlEventAxis e : _eventAxisLeft) {
-      e.setControl(this);
-      e.event(x, y, angle);
-    }
-  }
-  
-  protected void raiseAxisRight(double angle, float x, float y) {
-    for(ControlEventAxis e : _eventAxisRight) {
-      e.setControl(this);
-      e.event(x, y, angle);
-    }
-  }
-  
-  protected void raiseButtonDown(int button) {
-    for(ControlEventButton e : _eventButtonDown) {
-      e.setControl(this);
-      e.event(button);
-    }
-  }
-  
-  protected void raiseButtonUp(int button) {
-    for(ControlEventButton e : _eventButtonUp) {
-      e.setControl(this);
-      e.event(button);
-    }
-  }
-  
-  protected void raiseClick() {
-    for(ControlEventClick e : _eventClick) {
-      e.setControl(this);
-      e.event();
-    }
-  }
-  
-  protected void raiseDoubleClick() {
-    for(ControlEventClick e : _eventDoubleClick) {
-      e.setControl(this);
-      e.event();
-    }
-  }
-  
-  protected void raiseGotFocus() {
-    for(ControlEventFocus e : _eventGotFocus) {
-      e.setControl(this);
-      e.event();
-    }
-  }
-  
-  protected void raiseLostFocus() {
-    for(ControlEventFocus e : _eventLostFocus) {
-      e.setControl(this);
-      e.event();
-    }
+    ((Events)_events).raiseLostFocus();
   }
   
   protected boolean drawBegin() {
@@ -482,7 +327,7 @@ public class Control {
   
   protected void drawEnd() {
     if(_visible) {
-      raiseDraw();
+      ((Events)_events).raiseDraw();
       
       _controlList.draw();
       _matrix.pop();
@@ -529,11 +374,11 @@ public class Control {
     }
   }
   
-  public Control getSelectControl(int[] colour) {
+  public Control<?> getSelectControl(int[] colour) {
     if(_selBox != null && colour[0] == _selColour[0] && colour[1] == _selColour[1] && colour[2] == _selColour[2]) {
       return this;
     } else {
-      Control control = _controlList.getSelectControl(colour);
+      Control<?> control = _controlList.getSelectControl(colour);
       if(control != null) {
         return control;
       } else {
@@ -546,55 +391,222 @@ public class Control {
     return null;
   }
   
-  public static class ControlEvent {
-    private Control _control;
+  public static class Events {
+    private LinkedList<Draw>   _draw        = new LinkedList<Draw>();
+    private LinkedList<Mouse>  _mouseDown   = new LinkedList<Mouse>();
+    private LinkedList<Mouse>  _mouseUp     = new LinkedList<Mouse>();
+    private LinkedList<Mouse>  _mouseMove   = new LinkedList<Mouse>();
+    private LinkedList<Wheel>  _mouseWheel  = new LinkedList<Wheel>();
+    private LinkedList<Hover>  _mouseEnter  = new LinkedList<Hover>();
+    private LinkedList<Hover>  _mouseLeave  = new LinkedList<Hover>();
+    private LinkedList<Key>    _keyDown     = new LinkedList<Key>();
+    private LinkedList<Key>    _keyUp       = new LinkedList<Key>();
+    private LinkedList<Char>   _charDown    = new LinkedList<Char>();
+    private LinkedList<Axis>   _axisLeft    = new LinkedList<Axis>();
+    private LinkedList<Axis>   _axisRight   = new LinkedList<Axis>();
+    private LinkedList<Button> _buttonDown  = new LinkedList<Button>();
+    private LinkedList<Button> _buttonUp    = new LinkedList<Button>();
+    private LinkedList<Click>  _click       = new LinkedList<Click>();
+    private LinkedList<Click>  _doubleClick = new LinkedList<Click>();
+    private LinkedList<Focus>  _gotFocus    = new LinkedList<Focus>();
+    private LinkedList<Focus>  _lostFocus   = new LinkedList<Focus>();
     
-    public Control getControl() {
-      return _control;
+    public void onDraw       (Draw   e) { _draw       .add(e); }
+    public void onMouseDown  (Mouse  e) { _mouseDown  .add(e); }
+    public void onMouseUp    (Mouse  e) { _mouseUp    .add(e); }
+    public void onMouseMove  (Mouse  e) { _mouseMove  .add(e); }
+    public void onMouseWheel (Wheel  e) { _mouseWheel .add(e); }
+    public void onMouseEnter (Hover  e) { _mouseEnter .add(e); }
+    public void onMouseLeave (Hover  e) { _mouseLeave .add(e); }
+    public void onKeyDown    (Key    e) { _keyDown    .add(e); }
+    public void onKeyUp      (Key    e) { _keyUp      .add(e); }
+    public void onCharDown   (Char   e) { _charDown   .add(e); }
+    public void onAxisLeft   (Axis   e) { _axisLeft   .add(e); }
+    public void onAxisRight  (Axis   e) { _axisRight  .add(e); }
+    public void onButtonDown (Button e) { _buttonDown .add(e); }
+    public void onButtonUp   (Button e) { _buttonUp   .add(e); }
+    public void onClick      (Click  e) { _click      .add(e); }
+    public void onDoubleClick(Click  e) { _doubleClick.add(e); }
+    public void onGotFocus   (Focus  e) { _gotFocus   .add(e); }
+    public void onLostFocus  (Focus  e) { _lostFocus  .add(e); }
+    
+    protected Control<?> _control;
+    
+    public Events(Control<?> c) {
+      _control = c;
     }
     
-    public void setControl(Control control) {
-      _control = control;
+    public void raiseDraw() {
+      for(Draw e : _draw) {
+        e.setControl(_control);
+        e.event();
+      }
     }
-  }
-  
-  public static abstract class ControlEventDraw extends ControlEvent {
-    public abstract void event();
-  }
-  
-  public static abstract class ControlEventMouse extends ControlEvent {
-    public abstract void event(int x, int y, int button);
-  }
-  
-  public static abstract class ControlEventWheel extends ControlEvent {
-    public abstract void event(int delta);
-  }
-  
-  public static abstract class ControlEventHover extends ControlEvent {
-    public abstract void event();
-  }
-  
-  public static abstract class ControlEventKey extends ControlEvent {
-    public abstract void event(int key);
-  }
-  
-  public static abstract class ControlEventChar extends ControlEvent {
-    public abstract void event(char key);
-  }
-  
-  public static abstract class ControlEventAxis extends ControlEvent {
-    public abstract void event(float x, float y, double angle);
-  }
-  
-  public static abstract class ControlEventButton extends ControlEvent {
-    public abstract void event(int button);
-  }
-  
-  public static abstract class ControlEventClick extends ControlEvent {
-    public abstract void event();
-  }
-  
-  public static abstract class ControlEventFocus extends ControlEvent {
-    public abstract void event();
+    
+    public void raiseMouseDown(int x, int y, int button) {
+      for(Mouse e : _mouseDown) {
+        e.setControl(_control);
+        e.event(x, y, button);
+      }
+    }
+    
+    public void raiseMouseUp(int x, int y, int button) {
+      for(Mouse e : _mouseUp) {
+        e.setControl(_control);
+        e.event(x, y, button);
+      }
+    }
+    
+    public void raiseMouseMove(int x, int y, int button) {
+      for(Mouse e : _mouseMove) {
+        e.setControl(_control);
+        e.event(x, y, button);
+      }
+    }
+    
+    public void raiseMouseWheel(int delta) {
+      for(Wheel e : _mouseWheel) {
+        e.setControl(_control);
+        e.event(delta);
+      }
+    }
+    
+    public void raiseMouseEnter() {
+      for(Hover e : _mouseEnter) {
+        e.setControl(_control);
+        e.event();
+      }
+    }
+    
+    public void raiseMouseLeave() {
+      for(Hover e : _mouseLeave) {
+        e.setControl(_control);
+        e.event();
+      }
+    }
+    
+    public void raiseKeyDown(int key) {
+      for(Key e : _keyDown) {
+        e.setControl(_control);
+        e.event(key);
+      }
+    }
+    
+    public void raiseKeyUp(int key) {
+      for(Key e : _keyUp) {
+        e.setControl(_control);
+        e.event(key);
+      }
+    }
+    
+    public void raiseCharDown(char key) {
+      for(Char e : _charDown) {
+        e.setControl(_control);
+        e.event(key);
+      }
+    }
+    
+    public void raiseAxisLeft(double angle, float x, float y) {
+      for(Axis e : _axisLeft) {
+        e.setControl(_control);
+        e.event(x, y, angle);
+      }
+    }
+    
+    public void raiseAxisRight(double angle, float x, float y) {
+      for(Axis e : _axisRight) {
+        e.setControl(_control);
+        e.event(x, y, angle);
+      }
+    }
+    
+    public void raiseButtonDown(int button) {
+      for(Button e : _buttonDown) {
+        e.setControl(_control);
+        e.event(button);
+      }
+    }
+    
+    public void raiseButtonUp(int button) {
+      for(Button e : _buttonUp) {
+        e.setControl(_control);
+        e.event(button);
+      }
+    }
+    
+    public void raiseClick() {
+      for(Click e : _click) {
+        e.setControl(_control);
+        e.event();
+      }
+    }
+    
+    public void raiseDoubleClick() {
+      for(Click e : _doubleClick) {
+        e.setControl(_control);
+        e.event();
+      }
+    }
+    
+    public void raiseGotFocus() {
+      for(Focus e : _gotFocus) {
+        e.setControl(_control);
+        e.event();
+      }
+    }
+    
+    public void raiseLostFocus() {
+      for(Focus e : _lostFocus) {
+        e.setControl(_control);
+        e.event();
+      }
+    }
+    
+    public static class Event {
+      private Control<?> _control;
+      
+      public Control<?> getControl() { return _control; }
+      public    void    setControl(Control<?> control) { _control = control; }
+    }
+    
+    public static abstract class Draw extends Event {
+      public abstract void event();
+    }
+    
+    public static abstract class Mouse extends Event {
+      public abstract void event(int x, int y, int button);
+    }
+    
+    public static abstract class Wheel extends Event {
+      public abstract void event(int delta);
+    }
+    
+    public static abstract class Hover extends Event {
+      public abstract void event();
+    }
+    
+    public static abstract class Key extends Event {
+      public abstract void event(int key);
+    }
+    
+    public static abstract class Char extends Event {
+      public abstract void event(char key);
+    }
+    
+    public static abstract class Axis extends Event {
+      public abstract void event(float x, float y, double angle);
+    }
+    
+    public static abstract class Button extends Event {
+      public abstract void event(int button);
+    }
+    
+    public static abstract class Click extends Event {
+      public abstract void event();
+    }
+    
+    public static abstract class Focus extends Event {
+      public abstract void event();
+    }
   }
 }

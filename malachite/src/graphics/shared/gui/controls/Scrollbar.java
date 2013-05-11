@@ -6,14 +6,10 @@ import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;
 import graphics.themes.Theme;
 
-public class Scrollbar extends Control {
+public class Scrollbar extends Control<Scrollbar.Events> {
   private Button _up, _down;
   private int _min, _max, _val;
   private Orientation _orientation;
-  
-  private LinkedList<ControlEventScroll> _eventScroll = new LinkedList<ControlEventScroll>();
-
-  public void addEventScrollHandler(ControlEventScroll e) { _eventScroll.add(e); }
   
   public Scrollbar(GUI gui) {
     this(gui, Theme.getInstance());
@@ -22,19 +18,21 @@ public class Scrollbar extends Control {
   public Scrollbar(GUI gui, Theme theme) {
     super(gui);
     
-    ControlEventClick up = new ControlEventClick() {
+    _events = new Events(this);
+    
+    Events.Click up = new Events.Click() {
       public void event() {
         if(_val > _min) setVal(_val - 1);
       }
     };
     
-    ControlEventClick down = new ControlEventClick() {
+    Events.Click down = new Events.Click() {
       public void event() {
         if(_val < _max) setVal(_val + 1);
       }
     };
     
-    ControlEventWheel wheel = new ControlEventWheel() {
+    Events.Wheel wheel = new Events.Wheel() {
       public void event(int delta) {
         while(delta > 0) {
           delta -= 120;
@@ -48,17 +46,17 @@ public class Scrollbar extends Control {
       }
     };
     
-    addEventMouseWheelHandler(wheel);
+    _events.onMouseWheel(wheel);
     
     _up = new Button(gui, theme);
-    _up.addEventClickHandler(up);
-    _up.addEventDoubleClickHandler(up);
-    _up.addEventMouseWheelHandler(wheel);
+    _up.events().onClick(up);
+    _up.events().onDoubleClick(up);
+    _up.events().onMouseWheel(wheel);
     
     _down = new Button(gui, theme);
-    _down.addEventClickHandler(down);
-    _down.addEventDoubleClickHandler(down);
-    _down.addEventMouseWheelHandler(wheel);
+    _down.events().onClick(down);
+    _down.events().onDoubleClick(down);
+    _down.events().onMouseWheel(wheel);
     
     Controls().add(_up);
     Controls().add(_down);
@@ -88,7 +86,7 @@ public class Scrollbar extends Control {
     if(_val != val) {
       int delta = val - _val;
       _val = val;
-      raiseScroll(delta);
+      _events.raiseScroll(delta);
     }
   }
   
@@ -120,15 +118,25 @@ public class Scrollbar extends Control {
     }
   }
   
-  protected void raiseScroll(int delta) {
-    for(ControlEventScroll e : _eventScroll) {
-      e.setControl(this);
-      e.event(delta);
+  public static class Events extends Control.Events {
+    private LinkedList<Scroll> _scroll = new LinkedList<Scroll>();
+    
+    public void onScroll(Scroll e) { _scroll.add(e); }
+    
+    protected Events(Control<?> c) {
+      super(c);
     }
-  }
-  
-  public static abstract class ControlEventScroll extends ControlEvent {
-    public abstract void event(int delta);
+    
+    protected void raiseScroll(int delta) {
+      for(Scroll e : _scroll) {
+        e.setControl(_control);
+        e.event(delta);
+      }
+    }
+    
+    public static abstract class Scroll extends Event {
+      public abstract void event(int delta);
+    }
   }
   
   public static enum Orientation {

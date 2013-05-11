@@ -12,7 +12,7 @@ import graphics.shared.gui.controls.Label;
 import graphics.shared.gui.controls.Picture;
 import graphics.themes.Theme;
 
-public class Window extends Control {
+public class Window extends Control<Window.Events> {
   private Font _font = Context.getFonts().getDefault();
   
   private Theme _theme;
@@ -32,11 +32,7 @@ public class Window extends Control {
   private int _mouseDownX;
   private int _mouseDownY;
   
-  private ControlEventClick _tabClick;
-  
-  private LinkedList<ControlEventClose> _eventClose = new LinkedList<ControlEventClose>();
-  
-  public void addEventCloseHandler(ControlEventClose e) { _eventClose.add(e); }
+  private Events.Click _tabClick;
   
   public Window(GUI gui) {
     this(gui, Theme.getInstance());
@@ -45,14 +41,16 @@ public class Window extends Control {
   public Window(GUI gui, Theme theme) {
     super(gui);
     
+    _events = new Events(this);
+    
     _title = new Picture(gui, true);
-    _title.addEventMouseDownHandler(new ControlEventMouse() {
+    _title.events().onMouseDown(new Events.Mouse() {
       public void event(int x, int y, int button) {
         _mouseDownX = x;
         _mouseDownY = y;
       }
     });
-    _title.addEventMouseMoveHandler(new ControlEventMouse() {
+    _title.events().onMouseMove(new Events.Mouse() {
       public void event(int x, int y, int button) {
         if(button == 0) {
           setXY(_loc[0] + x - _mouseDownX, _loc[1] + y - _mouseDownY);
@@ -62,15 +60,15 @@ public class Window extends Control {
     
     _text = new Label(gui);
     
-    ControlEventClick closeClick = new ControlEventClick() {
+    Events.Click closeClick = new Events.Click() {
       public void event() {
-        raiseClose();
+        _events.raiseClose();
       }
     };
     
     _close = new Button(gui);
-    _close.addEventClickHandler(closeClick);
-    _close.addEventDoubleClickHandler(closeClick);
+    _close.events().onClick(closeClick);
+    _close.events().onDoubleClick(closeClick);
     
     _buttons = new Picture(gui);
     
@@ -89,7 +87,7 @@ public class Window extends Control {
     _buttons.setH(_close.getH());
     _panels.setY(_title.getH());
     
-    _tabClick = new ControlEventClick() {
+    _tabClick = new Events.Click() {
       public void event() {
         for(int i = 0; i < _tab.size(); i++) {
           if(getControl() == _tab.get(i)) {
@@ -143,7 +141,7 @@ public class Window extends Control {
     _theme.createWindowTab(tab, panel);
     
     tab.setText(text);
-    tab.addEventClickHandler(_tabClick);
+    tab.events().onClick(_tabClick);
     
     if(_tab.size() != 0) {
       tab.setX(_tab.getLast().getX() + _tab.getLast().getW() - 1);
@@ -198,14 +196,24 @@ public class Window extends Control {
     }
   }
   
-  protected void raiseClose() {
-    for(ControlEventClose e : _eventClose) {
-      e.setControl(this);
-      e.event();
+  public static class Events extends Control.Events {
+    private LinkedList<Close> _close = new LinkedList<Close>();
+    
+    public void onClose(Close e) { _close.add(e); }
+    
+    public Events(Control<?> c) {
+      super(c);
     }
-  }
-  
-  public static abstract class ControlEventClose extends ControlEvent {
-    public abstract void event();
+    
+    protected void raiseClose() {
+      for(Close e : _close) {
+        e.setControl(_control);
+        e.event();
+      }
+    }
+    
+    public static abstract class Close extends Event {
+      public abstract void event();
+    }
   }
 }

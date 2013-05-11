@@ -8,21 +8,15 @@ import graphics.gl00.Context;
 import graphics.gl00.Drawable;
 import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;
-import graphics.shared.gui.controls.List.ListItem.ControlEventSelect;
-import graphics.shared.gui.controls.Scrollbar.ControlEventScroll;
 import graphics.shared.textures.Texture;
 import graphics.shared.textures.Textures;
 import graphics.themes.Theme;
 
-public class List extends Control {
+public class List extends Control<List.ListItem.Events> {
   private LinkedList<ListItem> _items = new LinkedList<ListItem>();
   private ListItem _selected;
   private Scrollbar _scroll;
   private int _start, _length;
-  
-  private LinkedList<ControlEventSelect> _eventSelect = new LinkedList<ControlEventSelect>();
-  
-  public void addEventSelectHandler(ControlEventSelect e) { _eventSelect.add(e); }
   
   public List(GUI gui) {
     this(gui, Theme.getInstance());
@@ -31,8 +25,10 @@ public class List extends Control {
   public List(GUI gui, Theme theme) {
     super(gui);
     
+    _events = new List.ListItem.Events(this);
+    
     _scroll = new Scrollbar(gui);
-    _scroll.addEventScrollHandler(new ControlEventScroll() {
+    _scroll.events().onScroll(new Scrollbar.Events.Scroll() {
       public void event(int delta) {
         _start -= delta;
       }
@@ -74,7 +70,7 @@ public class List extends Control {
   public ListItem addItem(final ListItem l) {
     l._index = _items.size();
     l.setXYWH(0, _items.size() * 41, _loc[2] - 16, 40);
-    l.addEventSelectHandler(new ControlEventSelect() {
+    l.events().onSelect(new ListItem.Events.Select() {
       public void event() {
         handleSelect(l);
       }
@@ -120,7 +116,7 @@ public class List extends Control {
   
   protected void drawEnd() {
     if(_visible) {
-      raiseDraw();
+      ((Events)_events).raiseDraw();
       
       _controlList.draw();
       _matrix.pop();
@@ -165,11 +161,11 @@ public class List extends Control {
     }
   }
   
-  public Control getSelectControl(int[] colour) {
+  public Control<?> getSelectControl(int[] colour) {
     if(_selBox != null && colour[0] == _selColour[0] && colour[1] == _selColour[1] && colour[2] == _selColour[2]) {
       return this;
     } else {
-      Control control = _controlList.getSelectControl(colour);
+      Control<?> control = _controlList.getSelectControl(colour);
       
       if(control == null) {
         switch(_items.size()) {
@@ -218,17 +214,10 @@ public class List extends Control {
   }
   
   public void handleSelect(ListItem l) {
-    raiseEventSelect(l);
+    _events.raiseSelect(l);
   }
   
-  protected void raiseEventSelect(ListItem l) {
-    for(ControlEventSelect e : _eventSelect) {
-      e.setControl(l);
-      e.event();
-    }
-  }
-  
-  public static class ListItem extends Control {
+  public static class ListItem extends Control<ListItem.Events> {
     private Textures _textures = Context.getTextures();
     private Drawable _borderT = Context.newDrawable();
     private Drawable _borderB = Context.newDrawable();
@@ -238,12 +227,10 @@ public class List extends Control {
     private Label _text;
     protected int _index;
     
-    private LinkedList<ControlEventSelect> _eventSelect = new LinkedList<ControlEventSelect>();
-    
-    public void addEventSelectHandler(ControlEventSelect e) { _eventSelect.add(e); }
-    
     protected ListItem(GUI gui) {
       super(gui);
+      
+      _events = new Events(this);
       
       _borderT.setTexture(_textures.getTexture("gui/textbox.png"));
       _borderT.setH(1);
@@ -387,18 +374,28 @@ public class List extends Control {
     }
     
     public void handleSelect() {
-      raiseEventSelect();
+      ((Events)_events).raiseSelect(this);
     }
     
-    protected void raiseEventSelect() {
-      for(ControlEventSelect e : _eventSelect) {
-        e.setControl(this);
-        e.event();
+    public static class Events extends Control.Events {
+      private LinkedList<Select> _select = new LinkedList<Select>();
+      
+      public void onSelect(Select e) { _select.add(e); }
+      
+      protected Events(Control<?> c) {
+        super(c);
       }
-    }
-    
-    public static abstract class ControlEventSelect extends ControlEvent {
-      public abstract void event();
+      
+      public void raiseSelect(ListItem i) {
+        for(Select e : _select) {
+          e.setControl(i);
+          e.event();
+        }
+      }
+      
+      public static abstract class Select extends Event {
+        public abstract void event();
+      }
     }
   }
 }

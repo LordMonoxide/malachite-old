@@ -1,12 +1,12 @@
 package graphics.shared.gui;
 
 public class ControlList {
-  private Control _parent;
-  private Control _first;
-  private Control _last;
+  private Control<?> _parent;
+  private Control<?> _first;
+  private Control<?> _last;
   private int _size;
   
-  protected ControlList(Control parent) {
+  protected ControlList(Control<?> parent) {
     _parent = parent;
   }
   
@@ -14,7 +14,7 @@ public class ControlList {
     return _size;
   }
   
-  public void add(Control control) {
+  public void add(Control<?> control) {
     control.setParent(_parent);
     
     if(_first != null) {
@@ -32,8 +32,8 @@ public class ControlList {
     _size++;
   }
   
-  public void remove(Control control) {
-    Control c = control.getControlNext();
+  public void remove(Control<?> control) {
+    Control<?> c = control.getControlNext();
     if(c != null) {
       c.setControlPrev(control.getControlPrev());
       
@@ -66,16 +66,16 @@ public class ControlList {
     _size--;
   }
   
-  public Control getFirst() {
+  public Control<?> getFirst() {
     return _first;
   }
   
-  public Control getLast() {
+  public Control<?> getLast() {
     return _last;
   }
   
   public void killFocus() {
-    Control c = _last;
+    Control<?> c = _last;
     
     while(c != null) {
       c.setFocus(false);
@@ -102,7 +102,7 @@ public class ControlList {
     }
   }
   
-  public Control getSelectControl(int[] colour) {
+  public Control<?> getSelectControl(int[] colour) {
     if(_last != null) {
       return _last.getSelectControl(colour);
     } else {

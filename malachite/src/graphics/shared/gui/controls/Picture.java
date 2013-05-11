@@ -4,13 +4,14 @@ import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;
 import graphics.shared.textures.Texture;
 
-public class Picture extends Control {
+public class Picture extends Control<Control.Events> {
   public Picture(GUI gui) {
     this(gui, false);
   }
   
   public Picture(GUI gui, boolean register) {
     super(gui, register);
+    _events = new Control.Events(this);
     _acceptsFocus = false;
   }
   

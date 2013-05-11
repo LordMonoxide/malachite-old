@@ -12,7 +12,7 @@ import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;
 import graphics.themes.Theme;
 
-public class Dropdown extends Control implements Iterable<Dropdown.DropdownItem> {
+public class Dropdown extends Control<Dropdown.Events> implements Iterable<Dropdown.DropdownItem> {
   private Fonts _fonts = Context.getFonts();
   private Font _font = _fonts.getDefault();
   
@@ -34,10 +34,6 @@ public class Dropdown extends Control implements Iterable<Dropdown.DropdownItem>
   private float[] _glowColour = {0, 0, 0, 0};
   private float   _fade;
   
-  private LinkedList<ControlEventSelect> _eventSelect = new LinkedList<ControlEventSelect>();
-  
-  public void addEventSelectHandler(ControlEventSelect e) { _eventSelect.add(e); }
-  
   public Dropdown(GUI gui) {
     this(gui, Theme.getInstance());
   }
@@ -45,29 +41,30 @@ public class Dropdown extends Control implements Iterable<Dropdown.DropdownItem>
   public Dropdown(GUI gui, Theme theme) {
     super(gui, theme);
     
-    addEventMouseEnterHandler(new ControlEventHover() {
+    _events = new Events(this);
+    _events.onMouseEnter(new Events.Hover() {
       public void event() {
         _hover = true;
       }
     });
     
-    addEventMouseLeaveHandler(new ControlEventHover() {
+    _events.onMouseLeave(new Events.Hover() {
       public void event() {
         _hover = false;
       }
     });
     
-    ControlEventClick click = new ControlEventClick() {
+    Events.Click click = new Events.Click() {
       public void event() {
         _btnDrop.handleMouseDown(0, 0, 0);
         _btnDrop.handleMouseUp(0, 0, 0);
       }
     };
     
-    addEventClickHandler(click);
-    addEventDoubleClickHandler(click);
+    _events.onClick(click);
+    _events.onDoubleClick(click);
     
-    ControlEventClick btnDropClick = new ControlEventClick() {
+    Events.Click btnDropClick = new Events.Click() {
       public void event() {
         if(!_picDrop.getVisible()) {
           if(_text.size() != 0) {
@@ -86,12 +83,12 @@ public class Dropdown extends Control implements Iterable<Dropdown.DropdownItem>
     
     _btnDrop = new Button(gui, theme);
     _btnDrop.setText("\u25BC");
-    _btnDrop.addEventClickHandler(btnDropClick);
-    _btnDrop.addEventDoubleClickHandler(btnDropClick);
+    _btnDrop.events().onClick(btnDropClick);
+    _btnDrop.events().onDoubleClick(btnDropClick);
     
     _picDrop = new Picture(gui, true);
     _picDrop.setVisible(false);
-    _picDrop.addEventDrawHandler(new ControlEventDraw() {
+    _picDrop.events().onDraw(new Events.Draw() {
       public void event() {
         if(_selectedIndex != -1) {
           _selected.draw();
@@ -104,23 +101,22 @@ public class Dropdown extends Control implements Iterable<Dropdown.DropdownItem>
         }
       }
     });
-    _picDrop.addEventMouseMoveHandler(new ControlEventMouse() {
+    _picDrop.events().onMouseMove(new Events.Mouse() {
       public void event(int x, int y, int button) {
         _selectedIndex = (y - 1) / _font.getH();
         _selected.setY(_selectedIndex * _font.getH());
       }
     });
-    _picDrop.addEventClickHandler(new ControlEventClick() {
+    _picDrop.events().onClick(new Events.Click() {
       public void event() {
         _btnDrop.handleMouseDown(0, 0, 0);
         _btnDrop.handleMouseUp(0, 0, 0);
         setSeletected(_selectedIndex);
-        raiseEventSelect(_textIndex != -1 ? _text.get(_textIndex) : null);
+        _events.raiseSelect(_textIndex != -1 ? _text.get(_textIndex) : null);
       }
     });
     
     Controls().add(_btnDrop);
-    //Controls().add(_picDrop);
     
     _selected = Context.newDrawable();
     _selected.setColour(new float[] {1, 1, 1, 0.33f});
@@ -229,13 +225,6 @@ public class Dropdown extends Control implements Iterable<Dropdown.DropdownItem>
     }
   }
   
-  protected void raiseEventSelect(DropdownItem l) {
-    for(ControlEventSelect e : _eventSelect) {
-      e.setControl(this);
-      e.event(l);
-    }
-  }
-  
   public Iterator<DropdownItem> iterator() {
     return _text.iterator();
   }
@@ -256,8 +245,25 @@ public class Dropdown extends Control implements Iterable<Dropdown.DropdownItem>
     }
   }
   
-  public static abstract class ControlEventSelect extends ControlEvent {
-    public abstract void event(DropdownItem item);
+  public static class Events extends Control.Events {
+    private LinkedList<Select> _select = new LinkedList<Select>();
+    
+    public void onSelect(Select e) { _select.add(e); }
+    
+    protected Events(Control<?> c) {
+      super(c);
+    }
+    
+    public void raiseSelect(DropdownItem l) {
+      for(Select e : _select) {
+        e.setControl(_control);
+        e.event(l);
+      }
+    }
+    
+    public static abstract class Select extends Event {
+      public abstract void event(DropdownItem item);
+    }
   }
   
   private class DropdownGUI extends GUI {
