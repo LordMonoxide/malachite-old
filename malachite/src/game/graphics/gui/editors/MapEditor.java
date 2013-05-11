@@ -413,6 +413,7 @@ public class MapEditor extends GUI {
       _attribDrawable.setTexture(_attribMask[_layer]);
       _attribDrawable.createQuad();
       
+      _splSprite.clear();
       for(Map.Sprite s : _map._sprite) {
         _splSprite.add(new ScrollPanelSprite(s));
       }
