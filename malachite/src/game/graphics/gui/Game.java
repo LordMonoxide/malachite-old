@@ -16,13 +16,11 @@ import graphics.gl00.Canvas;
 import graphics.gl00.Context;
 import graphics.gl00.Drawable;
 import graphics.shared.fonts.Font;
+import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;
-import graphics.shared.gui.Control.ControlEventClick;
-import graphics.shared.gui.Control.ControlEventKey;
 import graphics.shared.gui.controls.Button;
 import graphics.shared.gui.controls.Textbox;
 import graphics.shared.gui.controls.compound.Window;
-import graphics.shared.gui.controls.compound.Window.ControlEventClose;
 
 public class Game extends GUI {
   private game.Game _game = (game.Game)Context.getGame();
@@ -50,7 +48,7 @@ public class Game extends GUI {
     _txtChat = new Textbox(this);
     _txtChat.setXY(4, _context.getH() - _txtChat.getH() - 4);
     _txtChat.setVisible(false);
-    _txtChat.addEventKeyDownHandler(new ControlEventKey() {
+    _txtChat.events().onKeyDown(new Control.Events.Key() {
       public void event(int key) {
         handleChatText(key);
       }
@@ -59,10 +57,12 @@ public class Game extends GUI {
     _wndAdmin = new Window(this);
     _wndAdmin.setWH(250, 300);
     _wndAdmin.setXY((_context.getW() - _wndAdmin.getW()) / 2, (_context.getH() - _wndAdmin.getH()) / 2);
+    _wndAdmin.addTab("Mods");
     _wndAdmin.addTab("Editors");
+    _wndAdmin.setTab(1);
     _wndAdmin.setText("Administration");
     _wndAdmin.setVisible(false);
-    _wndAdmin.addEventCloseHandler(new ControlEventClose() {
+    _wndAdmin.events().onClose(new Window.Events.Close() {
       public void event() {
         _wndAdmin.setVisible(false);
       }
@@ -76,7 +76,7 @@ public class Game extends GUI {
     }
     
     _btnEdit[0].setText("Edit Maps");
-    _btnEdit[0].addEventClickHandler(new ControlEventClick() {
+    _btnEdit[0].events().onClick(new Control.Events.Click() {
       public void event() {
         if(_editMap == null) {
           _editMap = new MapEditor();
@@ -88,7 +88,7 @@ public class Game extends GUI {
       }
     });
     _btnEdit[1].setText("Edit Sprites");
-    _btnEdit[1].addEventClickHandler(new ControlEventClick() {
+    _btnEdit[1].events().onClick(new Control.Events.Click() {
       public void event() {
         SpriteEditor editor = new SpriteEditor();
         editor.load();
