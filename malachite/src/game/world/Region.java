@@ -1,5 +1,7 @@
 package game.world;
 
+import java.util.LinkedList;
+
 import game.data.Map;
 import game.settings.Settings;
 import graphics.gl00.Context;
@@ -9,6 +11,8 @@ import graphics.gl00.Matrix;
 public class Region {
   private Matrix _matrix = Context.getMatrix();
   
+  private Events _events;
+  
   private World _world;
   private Drawable[] _layer;
   private Map _map;
@@ -16,7 +20,12 @@ public class Region {
   private Sprite[] _sprite;
   
   public Region(World world) {
+    _events = new Events();
     _world = world;
+  }
+  
+  public Events events() {
+    return _events;
   }
   
   public Region getRelativeRegion(int x, int y) {
@@ -65,8 +74,35 @@ public class Region {
     
     if(_layer[z] != null) {
       _layer[z].draw();
+      _events.raiseDraw(z);
     }
     
+    _events.raiseDraw();
+    
     _matrix.pop();
+  }
+  
+  public static class Events {
+    private LinkedList<Draw> _draw = new LinkedList<Draw>();
+    
+    public int onDraw(Draw e) { _draw.add(e); return _draw.size() - 1; }
+    public void removeDraw(int index) { _draw.remove(index); }
+    
+    public void raiseDraw() {
+      for(Draw e : _draw) {
+        e.event();
+      }
+    }
+    
+    public void raiseDraw(int z) {
+      for(Draw e : _draw) {
+        e.event(z);
+      }
+    }
+    
+    public static abstract class Draw {
+      public abstract void event();
+      public abstract void event(int z);
+    }
   }
 }
