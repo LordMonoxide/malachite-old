@@ -186,7 +186,7 @@ public class Window extends Control<Window.Events> {
       x = (int)(_tab.getLast().getX() + _tab.getLast().getW());
     }
     
-    int w = (int)(_title.getW() - _close.getW()) - x;
+    int w = (int)(_title.getW() - _close.getW() - _buttons.getW()) - x;
     _text.setXY((w - _text.getW()) / 2 + x, (_title.getH() - _text.getH()) / 2);
     
     _panels.setWH(_loc[2], _loc[3] - _title.getH());
