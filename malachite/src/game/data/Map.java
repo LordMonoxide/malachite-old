@@ -364,8 +364,22 @@ public class Map extends Serializable {
     }
   }
   
-  public class Attrib {
+  public static class Attrib {
     protected byte _type;
+    
+    public static enum Type {
+      BLOCKED(0x80);
+      
+      private final int _val;
+      
+      private Type(int val) {
+        _val = val;
+      }
+      
+      public int val() {
+        return _val;
+      }
+    }
   }
   
   public static class Sprite {
