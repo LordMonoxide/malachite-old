@@ -95,17 +95,19 @@ public class Map extends Serializable {
     
     for(int x = 0; x < _layer[z]._attrib.length; x++) {
       for(int y = 0; y < _layer[z]._attrib[x].length; y++) {
+        b.clear();
+        
         if(_layer[z]._attrib[x][y]._type != 0) {
-          b.clear();
-          
           Attrib.Type t = Attrib.Type.fromVal(_layer[z]._attrib[x][y]._type);
           for(int i = 0; i < b.capacity() / 4; i++) {
             b.put(t._col);
           }
-          
-          b.flip();
-          texture.update(x * Settings.Map.Attrib.Size, y * Settings.Map.Attrib.Size, Settings.Map.Attrib.Size, Settings.Map.Attrib.Size, b);
+        } else {
+          b.put(new byte[b.capacity()]);
         }
+        
+        b.flip();
+        texture.update(x * Settings.Map.Attrib.Size, y * Settings.Map.Attrib.Size, Settings.Map.Attrib.Size, Settings.Map.Attrib.Size, b);
       }
     }
     
