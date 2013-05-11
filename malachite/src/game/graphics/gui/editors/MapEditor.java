@@ -15,19 +15,15 @@ import game.settings.Settings;
 import game.world.Region;
 import graphics.gl00.Context;
 import graphics.gl00.Drawable;
-import graphics.shared.gui.Control.ControlEventClick;
-import graphics.shared.gui.Control.ControlEventMouse;
+import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;
 import graphics.shared.gui.controls.Button;
 import graphics.shared.gui.controls.Dropdown;
-import graphics.shared.gui.controls.Dropdown.ControlEventSelect;
 import graphics.shared.gui.controls.Label;
 import graphics.shared.gui.controls.Picture;
 import graphics.shared.gui.controls.Dropdown.DropdownItem;
 import graphics.shared.gui.controls.Textbox;
-import graphics.shared.gui.controls.Textbox.ControlEventChange;
 import graphics.shared.gui.controls.compound.ScrollPanel;
-import graphics.shared.gui.controls.compound.ScrollPanel.ControlEventButton;
 import graphics.shared.gui.controls.compound.ScrollPanel.ScrollPanelItem;
 
 public class MapEditor extends GUI {
@@ -97,7 +93,7 @@ public class MapEditor extends GUI {
     
     _btnTab = new Button[5];
     
-    ControlEventClick btnTabClick = new ControlEventClick() {
+    Control.Events.Click btnTabClick = new Control.Events.Click() {
       public void event() {
         for(int i = 0; i < _btnTab.length; i++) {
           if(_btnTab[i] == getControl()) {
@@ -112,7 +108,7 @@ public class MapEditor extends GUI {
       _btnTab[i] = new Button(this);
       _btnTab[i].setBackColour(new float[] {0.2f, 0.2f, 0.2f, 1});
       _btnTab[i].setXYWH(8 + i * 49, 8, 50, 20);
-      _btnTab[i].addEventClickHandler(btnTabClick);
+      _btnTab[i].events().onClick(btnTabClick);
       _picWindow.Controls().add(_btnTab[i]);
     }
 
@@ -132,12 +128,12 @@ public class MapEditor extends GUI {
     }
     
     _picTileset = new Picture(this, true);
-    _picTileset.addEventMouseDownHandler(new ControlEventMouse() {
+    _picTileset.events().onMouseDown(new Control.Events.Mouse() {
       public void event(int x, int y, int button) {
         handleTilesetMouseDown(x, y, button);
       }
     });
-    _picTileset.addEventMouseMoveHandler(new ControlEventMouse() {
+    _picTileset.events().onMouseMove(new Control.Events.Mouse() {
       public void event(int x, int y, int button) {
         handleTilesetMouseMove(x, y, button);
       }
@@ -156,7 +152,7 @@ public class MapEditor extends GUI {
     
     _btnLayer = new Button[Settings.Map.Depth];
     
-    ControlEventClick btnLayerClick = new ControlEventClick() {
+    Control.Events.Click btnLayerClick = new Control.Events.Click() {
       public void event() {
         for(int i = 0; i < _btnLayer.length; i++) {
           if(_btnLayer[i] == getControl()) {
@@ -172,7 +168,7 @@ public class MapEditor extends GUI {
       _btnLayer[i].setBackColour(new float[] {0.2f, 0.2f, 0.2f, 1});
       _btnLayer[i].setXYWH(2, 2 + i * 16, 96, 16);
       _btnLayer[i].setText("Layer " + i);
-      _btnLayer[i].addEventClickHandler(btnLayerClick);
+      _btnLayer[i].events().onClick(btnLayerClick);
       _picLayers.Controls().add(_btnLayer[i]);
     }
     
@@ -202,17 +198,17 @@ public class MapEditor extends GUI {
     // Sprites tab
     _splSprite = new ScrollPanel(this);
     _splSprite.setXY(4, 4);
-    _splSprite.addEventButtonAddHandler(new ControlEventButton() {
+    _splSprite.events().onButtonAdd(new ScrollPanel.Events.Button() {
       public void event() {
         addSprite();
       }
     });
-    _splSprite.addEventButtonDelHandler(new ControlEventButton() {
+    _splSprite.events().onButtonDel(new ScrollPanel.Events.Button() {
       public void event() {
         delSprite();
       }
     });
-    _splSprite.addEventSelect(new ScrollPanel.ControlEventSelect() {
+    _splSprite.events().onSelect(new ScrollPanel.Events.Select() {
       public void event(ScrollPanelItem item) {
         selSprite(((ScrollPanelSprite)item)._sprite);
       }
@@ -224,7 +220,7 @@ public class MapEditor extends GUI {
     
     _drpSpriteFile = new Dropdown(this);
     _drpSpriteFile.setXY(_lblSpriteFile.getX(), _lblSpriteFile.getY() + _lblSpriteFile.getH());
-    _drpSpriteFile.addEventSelectHandler(new ControlEventSelect() {
+    _drpSpriteFile.events().onSelect(new Dropdown.Events.Select() {
       public void event(DropdownItem item) {
         updateSprite();
       }
@@ -238,7 +234,7 @@ public class MapEditor extends GUI {
     _txtSpriteX.setXY(_lblSpriteLoc.getX(), _lblSpriteLoc.getY() + _lblSpriteLoc.getH());
     _txtSpriteX.setW(40);
     _txtSpriteX.setNumeric(true);
-    _txtSpriteX.addEventChangeHandler(new ControlEventChange() {
+    _txtSpriteX.events().onChange(new Textbox.Events.Change() {
       public void event() {
         _sprite._x = Integer.parseInt(_txtSpriteX.getText());
       }
@@ -248,7 +244,7 @@ public class MapEditor extends GUI {
     _txtSpriteY.setXY(_txtSpriteX.getX() + _txtSpriteX.getW() + 4, _txtSpriteX.getY());
     _txtSpriteY.setW(40);
     _txtSpriteY.setNumeric(true);
-    _txtSpriteY.addEventChangeHandler(new ControlEventChange() {
+    _txtSpriteY.events().onChange(new Textbox.Events.Change() {
       public void event() {
         _sprite._y = Integer.parseInt(_txtSpriteY.getText());
       }
@@ -258,7 +254,7 @@ public class MapEditor extends GUI {
     _txtSpriteZ.setXY(_txtSpriteY.getX() + _txtSpriteY.getW() + 4, _txtSpriteY.getY());
     _txtSpriteZ.setW(40);
     _txtSpriteZ.setNumeric(true);
-    _txtSpriteZ.addEventChangeHandler(new ControlEventChange() {
+    _txtSpriteZ.events().onChange(new Textbox.Events.Change() {
       public void event() {
         _sprite._z = Byte.parseByte(_txtSpriteZ.getText());
       }
@@ -267,7 +263,7 @@ public class MapEditor extends GUI {
     _btnSpriteLoc = new Button(this);
     _btnSpriteLoc.setXY(_txtSpriteZ.getX() + _txtSpriteZ.getW() + 4, _txtSpriteZ.getY());
     _btnSpriteLoc.setText("Choose...");
-    _btnSpriteLoc.addEventClickHandler(new ControlEventClick() {
+    _btnSpriteLoc.events().onClick(new Textbox.Events.Click() {
       public void event() {
         startSpriteLoc();
       }
