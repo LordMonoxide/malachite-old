@@ -8,7 +8,6 @@ import javax.swing.JOptionPane;
 import org.lwjgl.input.Keyboard;
 
 import game.Game;
-import game.data.Map.Tile;
 import game.data.Map;
 import game.data.Sprite;
 import game.settings.Settings;
@@ -21,10 +20,8 @@ import graphics.shared.gui.controls.Button;
 import graphics.shared.gui.controls.Dropdown;
 import graphics.shared.gui.controls.Label;
 import graphics.shared.gui.controls.Picture;
-import graphics.shared.gui.controls.Dropdown.DropdownItem;
 import graphics.shared.gui.controls.Textbox;
 import graphics.shared.gui.controls.compound.ScrollPanel;
-import graphics.shared.gui.controls.compound.ScrollPanel.ScrollPanelItem;
 
 public class MapEditor extends GUI {
   private Game _game = (Game)Context.getGame();
@@ -236,7 +233,7 @@ public class MapEditor extends GUI {
       }
     });
     _splSprite.events().onSelect(new ScrollPanel.Events.Select() {
-      public void event(ScrollPanelItem item) {
+      public void event(ScrollPanel.Item item) {
         selSprite(((ScrollPanelSprite)item)._sprite);
       }
     });
@@ -248,7 +245,7 @@ public class MapEditor extends GUI {
     _drpSpriteFile = new Dropdown(this);
     _drpSpriteFile.setXY(_lblSpriteFile.getX(), _lblSpriteFile.getY() + _lblSpriteFile.getH());
     _drpSpriteFile.events().onSelect(new Dropdown.Events.Select() {
-      public void event(DropdownItem item) {
+      public void event(Dropdown.Item item) {
         updateSprite();
       }
     });
@@ -446,7 +443,7 @@ public class MapEditor extends GUI {
     
     if(_sprite._file != null) {
       int i = 0;
-      for(DropdownItem item : _drpSpriteFile) {
+      for(Dropdown.Item item : _drpSpriteFile) {
         DropdownSprite s = (DropdownSprite)item;
         if(s._sprite.getFile().equals(_sprite._file)) {
           _drpSpriteFile.setSeletected(i);
@@ -505,27 +502,27 @@ public class MapEditor extends GUI {
       }
     }
     
+    int x1, y1;
     switch(_tab) {
       case 0:
         x %= Settings.Map.Size;
         y %= Settings.Map.Size;
         if(x < 0) x += Settings.Map.Size;
         if(y < 0) y += Settings.Map.Size;
+        x1 = (int)x / Settings.Map.Tile.Size;
+        y1 = (int)y / Settings.Map.Tile.Size;
         
-        int x1 = (int)x / Settings.Map.Tile.Size;
-        int y1 = (int)y / Settings.Map.Tile.Size;
-        
-        Tile t;
+        Map.Tile t;
         
         switch(button) {
           case 0:
             for(int x2 = 0; x2 < _w; x2++) {
               for(int y2 = 0; y2 < _h; y2++) {
                 t = _map.getLayer(_layer).getTile(x1 + x2, y1 + y2);
-                t.setTileset((byte)_tileset);
-                t.setX((byte)(_x + x2));
-                t.setY((byte)(_y + y2));
-                t.setA(_a);
+                t._tileset = (byte)_tileset;
+                t._x = (byte)(_x + x2);
+                t._y = (byte)(_y + y2);
+                t._a = _a;
               }
             }
             
@@ -534,11 +531,33 @@ public class MapEditor extends GUI {
             
           case 1:
             t = _map.getLayer(_layer).getTile(x1, y1);
-            t.setTileset((byte)0);
-            t.setX((byte)0);
-            t.setY((byte)0);
-            t.setA((byte)0);
+            t._tileset = (byte)0;
+            t._x = (byte)0;
+            t._y = (byte)0;
+            t._a = (byte)0;
             _region.calc();
+            return true;
+        }
+        
+        break;
+        
+      case 1:
+        x %= Settings.Map.Size;
+        y %= Settings.Map.Size;
+        if(x < 0) x += Settings.Map.Size;
+        if(y < 0) y += Settings.Map.Size;
+        x1 = (int)x / Settings.Map.Tile.Size;
+        y1 = (int)y / Settings.Map.Tile.Size;
+        
+        Map.Attrib a = _map.getLayer(_layer).getAttrib(x1, y1);
+        
+        switch(button) {
+          case 0:
+            a._type = (byte)_attrib;
+            return true;
+            
+          case 1:
+            a._type = (byte)0;
             return true;
         }
         
@@ -743,7 +762,7 @@ public class MapEditor extends GUI {
     }
   }
   
-  public static class DropdownSprite extends Dropdown.DropdownItem {
+  public static class DropdownSprite extends Dropdown.Item {
     private Sprite _sprite;
     
     public DropdownSprite(Sprite sprite) {
@@ -756,7 +775,7 @@ public class MapEditor extends GUI {
     }
   }
   
-  public static class ScrollPanelSprite extends ScrollPanelItem {
+  public static class ScrollPanelSprite extends ScrollPanel.Item {
     Map.Sprite _sprite;
     
     public ScrollPanelSprite(Map.Sprite sprite) {

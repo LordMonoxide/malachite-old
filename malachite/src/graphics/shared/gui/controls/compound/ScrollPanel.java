@@ -13,7 +13,7 @@ import graphics.shared.gui.controls.Scrollbar;
 import graphics.shared.gui.controls.Scrollbar.Events.Scroll;
 
 public class ScrollPanel extends Control<ScrollPanel.Events> {
-  private ArrayList<ScrollPanelItem> _item = new ArrayList<ScrollPanelItem>();
+  private ArrayList<Item> _item = new ArrayList<Item>();
   
   private Picture   _tabs;
   private Picture   _panel;
@@ -23,7 +23,7 @@ public class ScrollPanel extends Control<ScrollPanel.Events> {
   private Button    _add;
   private Button    _del;
   
-  private ScrollPanelItem _sel;
+  private Item _sel;
   
   public ScrollPanel(GUI gui) {
     super(gui);
@@ -111,7 +111,7 @@ public class ScrollPanel extends Control<ScrollPanel.Events> {
     return _panel.Controls();
   }
   
-  public void add(ScrollPanelItem item) {
+  public void add(Item item) {
     item._index = _item.size();
     _item.add(item);
     _scroll.setMax(_item.size() - 1);
@@ -127,7 +127,7 @@ public class ScrollPanel extends Control<ScrollPanel.Events> {
     remove(_sel);
   }
   
-  public void remove(ScrollPanelItem item) {
+  public void remove(Item item) {
     remove(item._index);
   }
   
@@ -153,7 +153,7 @@ public class ScrollPanel extends Control<ScrollPanel.Events> {
     }
   }
   
-  public ScrollPanelItem getItem() {
+  public Item getItem() {
     return _sel;
   }
   
@@ -161,7 +161,7 @@ public class ScrollPanel extends Control<ScrollPanel.Events> {
     setItem(_item.get(index));
   }
   
-  public void setItem(ScrollPanelItem item) {
+  public void setItem(Item item) {
     _sel = item;
     
     if(_sel != null) {
@@ -184,7 +184,7 @@ public class ScrollPanel extends Control<ScrollPanel.Events> {
     _num.setWH(_add.getX(), _scroll.getY());
   }
   
-  public static class ScrollPanelItem {
+  public static class Item {
     private int _index;
     
     public int getIndex() {
@@ -223,7 +223,7 @@ public class ScrollPanel extends Control<ScrollPanel.Events> {
       }
     }
     
-    public void raiseSelect(ScrollPanelItem item) {
+    public void raiseSelect(Item item) {
       for(Select e : _select) {
         e.setControl(_control);
         e.event(item);
@@ -235,7 +235,7 @@ public class ScrollPanel extends Control<ScrollPanel.Events> {
     }
     
     public static abstract class Select extends Event {
-      public abstract void event(ScrollPanelItem item);
+      public abstract void event(Item item);
     }
   }
 }

@@ -12,7 +12,7 @@ import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;
 import graphics.themes.Theme;
 
-public class Dropdown extends Control<Dropdown.Events> implements Iterable<Dropdown.DropdownItem> {
+public class Dropdown extends Control<Dropdown.Events> implements Iterable<Dropdown.Item> {
   private Fonts _fonts = Context.getFonts();
   private Font _font = _fonts.getDefault();
   
@@ -21,7 +21,7 @@ public class Dropdown extends Control<Dropdown.Events> implements Iterable<Dropd
   private Picture _picDrop;
   private Button _btnDrop;
   
-  private ArrayList<DropdownItem> _text = new ArrayList<DropdownItem>();
+  private ArrayList<Item> _text = new ArrayList<Item>();
   private int _textIndex = -1;
   private int _textY = 0;
   
@@ -95,7 +95,7 @@ public class Dropdown extends Control<Dropdown.Events> implements Iterable<Dropd
         }
         
         int y = 0;
-        for(DropdownItem d : _text) {
+        for(Item d : _text) {
           _font.draw(0, y, d._text, _foreColour);
           y += _font.getH();
         }
@@ -129,16 +129,16 @@ public class Dropdown extends Control<Dropdown.Events> implements Iterable<Dropd
     theme.create(this);
   }
   
-  public void add(DropdownItem item) {
+  public void add(Item item) {
     _text.add(item);
     _picDrop.setH(_text.size() * _font.getH());
   }
   
-  public DropdownItem get() {
+  public Item get() {
     return get(_textIndex);
   }
   
-  public DropdownItem get(int index) {
+  public Item get(int index) {
     return index != -1 ? _text.get(index) : null;
   }
   
@@ -225,14 +225,14 @@ public class Dropdown extends Control<Dropdown.Events> implements Iterable<Dropd
     }
   }
   
-  public Iterator<DropdownItem> iterator() {
+  public Iterator<Item> iterator() {
     return _text.iterator();
   }
   
-  public static class DropdownItem {
+  public static class Item {
     private String _text;
     
-    public DropdownItem(String text) {
+    public Item(String text) {
       _text = text;
     }
     
@@ -254,7 +254,7 @@ public class Dropdown extends Control<Dropdown.Events> implements Iterable<Dropd
       super(c);
     }
     
-    public void raiseSelect(DropdownItem l) {
+    public void raiseSelect(Item l) {
       for(Select e : _select) {
         e.setControl(_control);
         e.event(l);
@@ -262,7 +262,7 @@ public class Dropdown extends Control<Dropdown.Events> implements Iterable<Dropd
     }
     
     public static abstract class Select extends Event {
-      public abstract void event(DropdownItem item);
+      public abstract void event(Item item);
     }
   }
   
