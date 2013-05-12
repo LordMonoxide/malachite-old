@@ -19,9 +19,16 @@ public class Sprite {
   
   private static Context _context = Context.getContext();
   
+  private static int _tallestSprite;
+  
   public static Sprite add(game.data.Sprite sprite) {
     Sprite s = new Sprite(sprite);
     _sprite.add(s);
+    
+    if(s._h > _tallestSprite) {
+      _tallestSprite = s._h;
+    }
+    
     return s;
   }
   
@@ -31,7 +38,7 @@ public class Sprite {
   
   public static void draw(int z) {
     int y1 = (int)_context.getCameraY();
-    int y2 = _context.getH() - y1;
+    int y2 = _context.getH() - y1 + _tallestSprite;
     
     for(int y = -y1; y <= y2; y++) {
       for(Sprite sprite : _sprite) {
