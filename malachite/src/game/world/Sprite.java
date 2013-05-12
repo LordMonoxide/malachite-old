@@ -21,6 +21,10 @@ public class Sprite {
   
   private static int _tallestSprite;
   
+  public static int count() {
+    return _sprite.size();
+  }
+  
   public static Sprite add(game.data.Sprite sprite) {
     Sprite s = new Sprite(sprite);
     
