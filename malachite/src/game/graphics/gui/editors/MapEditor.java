@@ -23,7 +23,6 @@ import graphics.shared.gui.controls.Label;
 import graphics.shared.gui.controls.Picture;
 import graphics.shared.gui.controls.Textbox;
 import graphics.shared.gui.controls.compound.ScrollPanel;
-import graphics.shared.textures.Texture;
 
 public class MapEditor extends GUI {
   private Game _game = (Game)Context.getGame();
