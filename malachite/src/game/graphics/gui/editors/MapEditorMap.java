@@ -55,11 +55,7 @@ public class MapEditorMap extends Map {
   }
   
   public void createSprites() {
-    if(_sprites != null) {
-      for(game.world.Sprite s : _sprites) {
-        s.remove();
-      }
-    }
+    deleteSprites();
     
     _sprites = spawn();
     _spritesDrawable = new Drawable[_sprites.length];
@@ -69,6 +65,14 @@ public class MapEditorMap extends Map {
       _spritesDrawable[i].setXYWH(_sprite.get(i)._x, _sprite.get(i)._y, _sprites[i].getW(), _sprites[i].getH());
       _spritesDrawable[i].setColour(new float[] {1, 0, 1, 1});
       _spritesDrawable[i].createBorder();
+    }
+  }
+  
+  public void deleteSprites() {
+    if(_sprites != null) {
+      for(game.world.Sprite s : _sprites) {
+        s.remove();
+      }
     }
   }
   
