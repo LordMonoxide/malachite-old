@@ -124,6 +124,7 @@ public class Map extends Serializable {
       s[i].setX(sprite._x);
       s[i].setY(sprite._y);
       s[i].setZ(sprite._z);
+      i++;
     }
     
     return s;
