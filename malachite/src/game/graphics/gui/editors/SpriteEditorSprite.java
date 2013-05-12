@@ -51,6 +51,10 @@ public class SpriteEditorSprite extends Sprite {
     _h = h;
   }
   
+  public void setScript(String script) {
+    _script = script;
+  }
+  
   public String getTexture() {
     return _texture;
   }
