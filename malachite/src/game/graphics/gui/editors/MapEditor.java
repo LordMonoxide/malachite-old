@@ -3,14 +3,17 @@ package game.graphics.gui.editors;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import javax.swing.JOptionPane;
 
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
 import game.Game;
 import game.data.Map;
 import game.data.Sprite;
+import game.data.util.Serializable;
 import game.settings.Settings;
 import game.world.Region;
 import graphics.gl00.Context;
@@ -20,9 +23,11 @@ import graphics.shared.gui.GUI;
 import graphics.shared.gui.controls.Button;
 import graphics.shared.gui.controls.Dropdown;
 import graphics.shared.gui.controls.Label;
+import graphics.shared.gui.controls.List;
 import graphics.shared.gui.controls.Picture;
 import graphics.shared.gui.controls.Textbox;
 import graphics.shared.gui.controls.compound.ScrollPanel;
+import graphics.shared.gui.controls.compound.Window;
 
 public class MapEditor extends GUI {
   private Game _game = (Game)Context.getGame();
@@ -54,7 +59,6 @@ public class MapEditor extends GUI {
   private Textbox   _txtSpriteX;
   private Textbox   _txtSpriteY;
   private Textbox   _txtSpriteZ;
-  private Button    _btnSpriteLoc;
   
   private game.world.Sprite _pickSprite;
   private boolean   _pickLoc;
@@ -294,22 +298,12 @@ public class MapEditor extends GUI {
       }
     });
     
-    _btnSpriteLoc = new Button(this);
-    _btnSpriteLoc.setXY(_txtSpriteZ.getX() + _txtSpriteZ.getW() + 4, _txtSpriteZ.getY());
-    _btnSpriteLoc.setText("Choose...");
-    _btnSpriteLoc.events().onClick(new Textbox.Events.Click() {
-      public void event() {
-        startSpriteLoc();
-      }
-    });
-    
     _splSprite.Controls().add(_lblSpriteFile);
     _splSprite.Controls().add(_drpSpriteFile);
     _splSprite.Controls().add(_lblSpriteLoc);
     _splSprite.Controls().add(_txtSpriteX);
     _splSprite.Controls().add(_txtSpriteY);
     _splSprite.Controls().add(_txtSpriteZ);
-    _splSprite.Controls().add(_btnSpriteLoc);
     
     _picTab[2].Controls().add(_splSprite);
     
@@ -478,15 +472,22 @@ public class MapEditor extends GUI {
   }
   
   private void addSprite() {
-    Map.Sprite s = new Map.Sprite();
+    final SpriteChooser s = new SpriteChooser();
+    s.load();
+    s.events().onSelect(new SpriteChooser.Events.Select() {
+      public void event(String file) {
+        s.pop();
+        
+        _pickLoc = true;
+        _picWindow.setVisible(false);
+        _pickSprite = game.world.Sprite.add(_game.getSprite(file));
+        _pickSprite.setX(Mouse.getX() - _context.getCameraX());
+        _pickSprite.setY(Mouse.getY() - _context.getCameraY());
+        _pickSprite.setZ(_layer);
+      }
+    });
     
-    s._file = ((DropdownSprite)_drpSpriteFile.get(0))._sprite.getFile();
-    s._z = (byte)_layer;
-    
-    _map._sprite.add(s);
-    _splSprite.add(new ScrollPanelSprite(s));
-    
-    _map.createSprites();
+    s.push();
   }
   
   private void delSprite() {
@@ -523,15 +524,6 @@ public class MapEditor extends GUI {
     _sprite._y = Integer.parseInt(_txtSpriteY.getText());
     _sprite._z = Byte.parseByte(_txtSpriteZ.getText());
     selSprite(_sprite);
-  }
-  
-  private void startSpriteLoc() {
-    _pickLoc = true;
-    _picWindow.setVisible(false);
-    _pickSprite = game.world.Sprite.add(((DropdownSprite)_drpSpriteFile.get())._sprite);
-    _pickSprite.setX(_sprite._x);
-    _pickSprite.setY(_sprite._y);
-    _pickSprite.setZ(_layer);
   }
   
   public boolean draw() {
@@ -663,13 +655,19 @@ public class MapEditor extends GUI {
       case 2:
         if(button == 0) {
           if(_pickLoc) {
-            _sprite._x = x;
-            _sprite._y = y;
-            _sprite._z = (byte)_layer;
-            _splSprite.setItem(_splSprite.getItem());
+            Map.Sprite s = new Map.Sprite();
+            
+            s._file = _pickSprite.getSource().getFile();
+            s._x = x;
+            s._y = y;
+            s._z = (byte)_layer;
+            
+            _map._sprite.add(s);
+            _splSprite.add(new ScrollPanelSprite(s));
+            _map.createSprites();
+            
             _pickSprite.remove();
             _pickLoc = false;
-            _map.createSprites();
           }
         }
         
@@ -887,6 +885,93 @@ public class MapEditor extends GUI {
     
     public Map.Sprite getSprite() {
       return _sprite;
+    }
+  }
+  
+  public static class SpriteChooser extends GUI {
+    private Events _events;
+    
+    private Window _window;
+    private List   _data;
+    
+    public void load() {
+      _events = new Events();
+      
+      _window = new Window(this);
+      _window.setText("Choose Sprite");
+      
+      _data = new List(this);
+      _data.setXYWH(8, 8, 400, 200);
+      
+      Control.Events.Click accept = new Control.Events.Click() {
+        public void event() {
+          _events.raiseSelect(((ListItem)_data.getSelected()).getData().getFile());
+        }
+      };
+      
+      File d = new File("../data/sprites/");
+      if(d.isDirectory()) {
+        for(File f : d.listFiles()) {
+          Sprite s = new Sprite(f.getName());
+          if(s.load()) {
+            ListItem l = (ListItem)_data.addItem(new ListItem(this, s));
+            l.setText(s.getFile() + ": " + s.getName() + " - " + s.getNote());
+            l.events().onDoubleClick(accept);
+          }
+        }
+      }
+      
+      _window.setWH(_data.getX() + _data.getW() + 8, _data.getY() + _data.getH() + 28);
+      _window.events().onClose(new Window.Events.Close() {
+        public void event() {
+          pop();
+        }
+      });
+      _window.Controls().add(_data);
+      
+      Controls().add(_window);
+      resize();
+    }
+    
+    public void destroy() {
+      
+    }
+    
+    public void resize() {
+      _window.setXY((_context.getW() - _window.getW()) / 2, (_context.getH() - _window.getH()) / 2);
+    }
+    
+    public Events events() {
+      return _events;
+    }
+    
+    public static class ListItem extends graphics.shared.gui.controls.List.ListItem {
+      private Serializable _data;
+      
+      protected ListItem(GUI gui, Serializable data) {
+        super(gui);
+        _data = data;
+      }
+      
+      public Serializable getData() {
+        return _data;
+      }
+    }
+    
+    public static class Events {
+      private LinkedList<Select> _select = new LinkedList<Select>();
+      
+      public void onSelect(Select e) { _select.add(e); }
+      
+      public void raiseSelect(String file) {
+        for(Select e : _select) {
+          e.event(file);
+        }
+      }
+      
+      public static abstract class Select {
+        public abstract void event(String file);
+      }
     }
   }
 }
