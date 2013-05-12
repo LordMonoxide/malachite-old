@@ -19,6 +19,14 @@ public class Textures {
   private LinkedList<Texture>      _texturesToLoad = new LinkedList<Texture>();
   private PNG _png = new PNG();
   
+  public int loaded() {
+    return _textures.size();
+  }
+  
+  public int loading() {
+    return _texturesToLoad.size();
+  }
+  
   private Textures() { }
   
   public void check() {
