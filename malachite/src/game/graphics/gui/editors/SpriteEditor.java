@@ -420,8 +420,8 @@ public class SpriteEditor extends GUI implements Editor {
   }
   
   public void resize() {
-    float w = _picFrameSpriteBack.getW();
-    float h = _picFrameSpriteBack.getH();
+    float w = _picFrameSprite.getW();
+    float h = _picFrameSprite.getH();
     
     if(w < 400) w = 500;
     if(h < 300) h = 300;
