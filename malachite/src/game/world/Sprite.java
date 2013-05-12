@@ -23,7 +23,10 @@ public class Sprite {
   
   public static Sprite add(game.data.Sprite sprite) {
     Sprite s = new Sprite(sprite);
-    _sprite.add(s);
+    
+    synchronized(_sprite) {
+      _sprite.add(s);
+    }
     
     if(s._h > _tallestSprite) {
       _tallestSprite = s._h;
@@ -33,7 +36,9 @@ public class Sprite {
   }
   
   private static void remove(Sprite sprite) {
-    _sprite.remove(sprite);
+    synchronized(_sprite) {
+      _sprite.remove(sprite);
+    }
   }
   
   public static void draw(int z) {
@@ -41,9 +46,11 @@ public class Sprite {
     int y2 = _context.getH() - y1 + _tallestSprite;
     
     for(int y = -y1; y <= y2; y++) {
-      for(Sprite sprite : _sprite) {
-        if((int)sprite._y == y && sprite._z == z) {
-          sprite.draw();
+      synchronized(_sprite) {
+        for(Sprite sprite : _sprite) {
+          if((int)sprite._y == y && sprite._z == z) {
+            sprite.draw();
+          }
         }
       }
     }
