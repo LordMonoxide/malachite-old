@@ -63,7 +63,20 @@ public class Region {
       _layer[z].createQuad();
     }
     
+    spawn();
+  }
+  
+  public void spawn() {
+    despawn();
     _sprite = _map.spawn();
+  }
+  
+  public void despawn() {
+    if(_sprite != null) {
+      for(Sprite s : _sprite) {
+        s.remove();
+      }
+    }
   }
   
   public void draw(int z) {
