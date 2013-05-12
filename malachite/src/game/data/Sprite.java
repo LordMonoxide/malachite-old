@@ -22,6 +22,13 @@ public class Sprite extends Serializable implements Data {
   
   public Sprite(String file) {
     super("sprites", file);
+    
+    _script = "function init() {\n\n" +
+              "}\n\n" +
+              "function setVelocity(velocity) {\n\n" +
+              "}\n\n" +
+              "function setBearing(bearing) {\n\n" +
+              "}";
   }
   
   public String getName()    { return _name; }
