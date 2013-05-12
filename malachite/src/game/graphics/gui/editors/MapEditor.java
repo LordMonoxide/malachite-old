@@ -253,6 +253,7 @@ public class MapEditor extends GUI {
     _drpSpriteFile.events().onSelect(new Dropdown.Events.Select() {
       public void event(Dropdown.Item item) {
         updateSprite();
+        _map.createSprites();
       }
     });
     
@@ -267,6 +268,7 @@ public class MapEditor extends GUI {
     _txtSpriteX.events().onChange(new Textbox.Events.Change() {
       public void event() {
         _sprite._x = Integer.parseInt(_txtSpriteX.getText());
+        _map.createSprites();
       }
     });
     
@@ -277,6 +279,7 @@ public class MapEditor extends GUI {
     _txtSpriteY.events().onChange(new Textbox.Events.Change() {
       public void event() {
         _sprite._y = Integer.parseInt(_txtSpriteY.getText());
+        _map.createSprites();
       }
     });
     
@@ -287,6 +290,7 @@ public class MapEditor extends GUI {
     _txtSpriteZ.events().onChange(new Textbox.Events.Change() {
       public void event() {
         _sprite._z = Byte.parseByte(_txtSpriteZ.getText());
+        _map.createSprites();
       }
     });
     
@@ -472,16 +476,19 @@ public class MapEditor extends GUI {
   private void addSprite() {
     Map.Sprite s = new Map.Sprite();
     
-    s._file = _drpSpriteFile.get(0).getText();
+    s._file = ((DropdownSprite)_drpSpriteFile.get(0))._sprite.getFile();
     s._z = (byte)_layer;
     
     _map._sprite.add(s);
     _splSprite.add(new ScrollPanelSprite(s));
+    
+    _map.createSprites();
   }
   
   private void delSprite() {
     _map._sprite.remove(_sprite);
     _splSprite.remove();
+    _map.createSprites();
   }
   
   private void selSprite(Map.Sprite sprite) {
@@ -653,12 +660,16 @@ public class MapEditor extends GUI {
         break;
         
       case 2:
-        if(_pickLoc) {
-          _sprite._x = x;
-          _sprite._y = y;
-          _sprite._z = (byte)_layer;
-          _splSprite.setItem(_splSprite.getItem());
-          _pickSprite.remove();
+        if(button == 0) {
+          if(_pickLoc) {
+            _sprite._x = x;
+            _sprite._y = y;
+            _sprite._z = (byte)_layer;
+            _splSprite.setItem(_splSprite.getItem());
+            _pickSprite.remove();
+            _pickLoc = false;
+            _map.createSprites();
+          }
         }
         
         break;
