@@ -109,16 +109,18 @@ public class Game extends GUI {
     _font.getTexture().load();
     Canvas c = new Canvas("Debug text", 256, 256);
     c.bind();
-    _font.draw(4,  4, "Graphics:", _fontColour);
-    _font.draw(4, 14, "Logic:", _fontColour);
-    _font.draw(4, 24, "Physics:", _fontColour);
-    _font.draw(4, 34, "Map: ", _fontColour);
-    _font.draw(4, 44, "Loc:", _fontColour);
-    _font.draw(4, 54, "Layer:", _fontColour);
-    _font.draw(4, 64, "RLoc:", _fontColour);
-    _font.draw(4, 74, "XVel:", _fontColour);
-    _font.draw(4, 84, "YVel:", _fontColour);
-    _font.draw(4, 94, "Bearing:", _fontColour);
+    _font.draw(4,   4, "Graphics:", _fontColour);
+    _font.draw(4,  14, "Logic:", _fontColour);
+    _font.draw(4,  24, "Physics:", _fontColour);
+    _font.draw(4,  34, "Map: ", _fontColour);
+    _font.draw(4,  44, "Loc:", _fontColour);
+    _font.draw(4,  54, "Layer:", _fontColour);
+    _font.draw(4,  64, "RLoc:", _fontColour);
+    _font.draw(4,  74, "XVel:", _fontColour);
+    _font.draw(4,  84, "YVel:", _fontColour);
+    _font.draw(4,  94, "Bearing:", _fontColour);
+    _font.draw(4, 104, "Sprites:", _fontColour);
+    _font.draw(4, 114, "Textures:", _fontColour);
     c.unbind();
     
     _debugText = Context.newDrawable();
@@ -159,16 +161,18 @@ public class Game extends GUI {
     _matrix.reset();
     
     _debugText.draw();
-    _font.draw(53,  4, _context.getFPS() + "hz", _fontColour);
-    _font.draw(53, 14, _context.getLogicFPS() + "hz", _fontColour);
-    _font.draw(53, 24, _game.getWorld().getFPS() + "hz", _fontColour);
-    _font.draw(53, 34, _entity.getMX() + ", " + _entity.getMY(), _fontColour);
-    _font.draw(53, 44, _entity.getX() + ", " + _entity.getY(), _fontColour);
-    _font.draw(53, 54, String.valueOf(_entity.getZ()), _fontColour);
-    _font.draw(53, 64, _entity.getRX() + ", " + _entity.getRY(), _fontColour);
-    _font.draw(53, 74, String.valueOf(_entity.getVel() * _entity.getVelScaleX()), _fontColour);
-    _font.draw(53, 84, String.valueOf(_entity.getVel() * _entity.getVelScaleY()), _fontColour);
-    _font.draw(53, 94, String.valueOf(_entity.getBear()), _fontColour);
+    _font.draw(53,   4, _context.getFPS() + "hz", _fontColour);
+    _font.draw(53,  14, _context.getLogicFPS() + "hz", _fontColour);
+    _font.draw(53,  24, _game.getWorld().getFPS() + "hz", _fontColour);
+    _font.draw(53,  34, _entity.getMX() + ", " + _entity.getMY(), _fontColour);
+    _font.draw(53,  44, _entity.getX() + ", " + _entity.getY(), _fontColour);
+    _font.draw(53,  54, String.valueOf(_entity.getZ()), _fontColour);
+    _font.draw(53,  64, _entity.getRX() + ", " + _entity.getRY(), _fontColour);
+    _font.draw(53,  74, String.valueOf(_entity.getVel() * _entity.getVelScaleX()), _fontColour);
+    _font.draw(53,  84, String.valueOf(_entity.getVel() * _entity.getVelScaleY()), _fontColour);
+    _font.draw(53,  94, String.valueOf(_entity.getBear()), _fontColour);
+    _font.draw(53, 104, String.valueOf(Sprite.count()), _fontColour);
+    _font.draw(53, 114, _textures.loaded() + " (" + _textures.loading() + ")", _fontColour);
     
     _matrix.pop();
     
