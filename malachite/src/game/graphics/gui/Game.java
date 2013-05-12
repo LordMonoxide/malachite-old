@@ -383,6 +383,22 @@ public class Game extends GUI {
         return;
       }
       
+      // /spawn
+      if(chat.equals("/spawn")) {
+        _entity.getRegion().spawn();
+        _txtChat.setText(null);
+        _txtChat.setVisible(false);
+        return;
+      }
+      
+      // /despawn
+      if(chat.equals("/despawn")) {
+        _entity.getRegion().despawn();
+        _txtChat.setText(null);
+        _txtChat.setVisible(false);
+        return;
+      }
+      
       JOptionPane.showMessageDialog(null, "Please enter a valid command.");
     }
   }
