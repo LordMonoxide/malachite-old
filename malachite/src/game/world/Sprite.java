@@ -46,6 +46,8 @@ public class Sprite {
   private ScriptEngine _engine = _manager.getEngineByName("JavaScript");
   private Invocable _script;
   
+  private game.data.Sprite _source;
+  
   private int _w, _h;
   private Drawable[] _frame;
   private Anim[] _anim;
@@ -58,6 +60,7 @@ public class Sprite {
   private double _timer;
   
   private Sprite(game.data.Sprite sprite) {
+    _source = sprite;
     _w = sprite.getW();
     _h = sprite.getH();
     _frame = sprite.createDrawables();
@@ -75,6 +78,10 @@ public class Sprite {
       } catch(NoSuchMethodException e) {
       }
     }
+  }
+  
+  public game.data.Sprite getSource() {
+    return _source;
   }
   
   public float getX() {
@@ -153,6 +160,9 @@ public class Sprite {
     setFrame(_anim[_animNum].getList(_listNum).getFrame());
     _timer = _anim[_animNum].getList(_listNum).getTime() + Time.getTime();
   }
+  
+  public float getFrameX() { return _frame[_frameNum].getX(); }
+  public float getFrameY() { return _frame[_frameNum].getY(); }
   
   private void setFrame(int frame) {
     _frameNum = frame;
