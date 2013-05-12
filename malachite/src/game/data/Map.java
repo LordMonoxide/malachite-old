@@ -121,8 +121,8 @@ public class Map extends Serializable {
     
     for(Map.Sprite sprite : _sprite) {
       s[i] = game.world.Sprite.add(g.getSprite(sprite._file));
-      s[i].setX(sprite._x);
-      s[i].setY(sprite._y);
+      s[i].setX(sprite._x + _x * Settings.Map.Size);
+      s[i].setY(sprite._y + _y * Settings.Map.Size);
       s[i].setZ(sprite._z);
       i++;
     }
