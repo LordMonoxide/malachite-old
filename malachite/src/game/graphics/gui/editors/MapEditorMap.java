@@ -6,14 +6,21 @@ import java.util.LinkedList;
 import game.data.Map;
 import game.data.util.Buffer;
 import game.settings.Settings;
+import graphics.gl00.Context;
+import graphics.gl00.Drawable;
+import graphics.gl00.Matrix;
 import graphics.shared.textures.Texture;
 
 public class MapEditorMap extends Map {
+  private Matrix _matrix = Context.getMatrix();
+  
   private Map _map;
   private int _mapCRC;
   protected LinkedList<Sprite> _sprite = super._sprite;
   
   private Texture[] _attribMask;
+  private game.world.Sprite[] _sprites;
+  private Drawable[] _spritesDrawable;
   
   public MapEditorMap(Map map) {
     super(map.getWorld(), map.getX(), map.getY());
@@ -30,6 +37,16 @@ public class MapEditorMap extends Map {
     
     for(int z = 0; z < _attribMask.length; z++) {
       _attribMask[z] = createAttribMaskTextureFromLayer(z);
+    }
+    
+    _sprites = spawn();
+    _spritesDrawable = new Drawable[_sprites.length];
+    
+    for(int i = 0; i < _spritesDrawable.length; i++) {
+      _spritesDrawable[i] = Context.newDrawable();
+      _spritesDrawable[i].setXYWH(_sprite.get(i)._x, _sprite.get(i)._y, _sprites[i].getW(), _sprites[i].getH());
+      _spritesDrawable[i].setColour(new float[] {1, 0, 1, 1});
+      _spritesDrawable[i].createBorder();
     }
   }
   
@@ -55,5 +72,15 @@ public class MapEditorMap extends Map {
   
   public Texture getAttribMask(int layer) {
     return _attribMask[layer];
+  }
+  
+  public void drawSprites() {
+    int i = 0;
+    for(Drawable d : _spritesDrawable) {
+      _matrix.push();
+      _matrix.translate(_sprites[i].getFrameX(), _sprites[i].getFrameY());
+      d.draw();
+      _matrix.pop();
+    }
   }
 }
