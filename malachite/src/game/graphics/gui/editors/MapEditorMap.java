@@ -39,15 +39,7 @@ public class MapEditorMap extends Map {
       _attribMask[z] = createAttribMaskTextureFromLayer(z);
     }
     
-    _sprites = spawn();
-    _spritesDrawable = new Drawable[_sprites.length];
-    
-    for(int i = 0; i < _spritesDrawable.length; i++) {
-      _spritesDrawable[i] = Context.newDrawable();
-      _spritesDrawable[i].setXYWH(_sprite.get(i)._x, _sprite.get(i)._y, _sprites[i].getW(), _sprites[i].getH());
-      _spritesDrawable[i].setColour(new float[] {1, 0, 1, 1});
-      _spritesDrawable[i].createBorder();
-    }
+    createSprites();
   }
   
   public boolean isChanged() {
@@ -60,6 +52,24 @@ public class MapEditorMap extends Map {
   
   public void updateAttrib(int layer, int x, int y, ByteBuffer data) {
     _attribMask[layer].update(x * Settings.Map.Attrib.Size, y * Settings.Map.Attrib.Size, Settings.Map.Attrib.Size, Settings.Map.Attrib.Size, data);
+  }
+  
+  public void createSprites() {
+    if(_sprites != null) {
+      for(game.world.Sprite s : _sprites) {
+        s.remove();
+      }
+    }
+    
+    _sprites = spawn();
+    _spritesDrawable = new Drawable[_sprites.length];
+    
+    for(int i = 0; i < _spritesDrawable.length; i++) {
+      _spritesDrawable[i] = Context.newDrawable();
+      _spritesDrawable[i].setXYWH(_sprite.get(i)._x, _sprite.get(i)._y, _sprites[i].getW(), _sprites[i].getH());
+      _spritesDrawable[i].setColour(new float[] {1, 0, 1, 1});
+      _spritesDrawable[i].createBorder();
+    }
   }
   
   public Map getMap() {
