@@ -214,6 +214,7 @@ public class List extends Control<List.ListItem.Events> {
   }
   
   public void handleSelect(ListItem l) {
+    _selected = l;
     _events.raiseSelect(l);
   }
   
