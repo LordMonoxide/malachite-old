@@ -1,6 +1,13 @@
 package game.graphics.gui.editors;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
@@ -61,6 +68,9 @@ public class SpriteEditor extends GUI implements Editor {
   private Textbox   _txtNote;
   private Label     _lblW, _lblH;
   private Textbox   _txtW, _txtH;
+  
+  private Button    _btnScriptCopy;
+  private Button    _btnScriptPaste;
   
   private Drawable _frameLoc;
   private Drawable _frameFoot;
@@ -401,6 +411,39 @@ public class SpriteEditor extends GUI implements Editor {
     _wndEditor.Controls(2).add(_txtW);
     _wndEditor.Controls(2).add(_lblH);
     _wndEditor.Controls(2).add(_txtH);
+    
+    _btnScriptCopy = new Button(this);
+    _btnScriptCopy.setText("Copy");
+    _btnScriptCopy.setXY(4, 4);
+    _btnScriptCopy.events().onClick(new Control.Events.Click() {
+      public void event() {
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(_sprite.getScript()), null);
+      }
+    });
+    
+    _btnScriptPaste = new Button(this);
+    _btnScriptPaste.setText("Paste");
+    _btnScriptPaste.setXY(_btnScriptCopy.getX() + _btnScriptCopy.getW() + 4, _btnScriptCopy.getY());
+    _btnScriptPaste.events().onClick(new Control.Events.Click() {
+      public void event() {
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        Transferable contents = clipboard.getContents(null);
+        if(contents != null && contents.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+          try {
+            _sprite.setScript((String)contents.getTransferData(DataFlavor.stringFlavor));
+          } catch(UnsupportedFlavorException ex){
+            System.out.println(ex);
+            ex.printStackTrace();
+          } catch(IOException ex) {
+            System.out.println(ex);
+            ex.printStackTrace();
+          }
+        }
+      }
+    });
+    
+    _wndEditor.Controls(3).add(_btnScriptCopy);
+    _wndEditor.Controls(3).add(_btnScriptPaste);
     
     Controls().add(_wndEditor);
     
