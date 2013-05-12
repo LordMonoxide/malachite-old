@@ -363,6 +363,7 @@ public class MapEditor extends GUI {
         case JOptionPane.YES_OPTION:
           for(Region r : _regions) {
             MapEditorMap m = (MapEditorMap)r.getMap();
+            m.deleteSprites();
             
             if(m.isChanged()) {
               System.out.println("Updating map " + m.getFile());
@@ -377,7 +378,10 @@ public class MapEditor extends GUI {
           
         case JOptionPane.NO_OPTION:
           for(Region r : _regions) {
-            r.setMap(((MapEditorMap)r.getMap()).getMap());
+            MapEditorMap m = (MapEditorMap)r.getMap();
+            m.deleteSprites();
+            
+            r.setMap(m.getMap());
           }
           
           break;
@@ -555,13 +559,14 @@ public class MapEditor extends GUI {
       }
     }
     
+    x %= Settings.Map.Size;
+    y %= Settings.Map.Size;
+    if(x < 0) x += Settings.Map.Size;
+    if(y < 0) y += Settings.Map.Size;
+    
     int x1, y1;
     switch(_tab) {
       case 0:
-        x %= Settings.Map.Size;
-        y %= Settings.Map.Size;
-        if(x < 0) x += Settings.Map.Size;
-        if(y < 0) y += Settings.Map.Size;
         x1 = (int)x / Settings.Map.Tile.Size;
         y1 = (int)y / Settings.Map.Tile.Size;
         
@@ -623,10 +628,6 @@ public class MapEditor extends GUI {
         break;
         
       case 1:
-        x %= Settings.Map.Size;
-        y %= Settings.Map.Size;
-        if(x < 0) x += Settings.Map.Size;
-        if(y < 0) y += Settings.Map.Size;
         x1 = (int)x / Settings.Map.Attrib.Size;
         y1 = (int)y / Settings.Map.Attrib.Size;
         
