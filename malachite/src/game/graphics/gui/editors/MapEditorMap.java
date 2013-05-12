@@ -1,14 +1,19 @@
 package game.graphics.gui.editors;
 
+import java.nio.ByteBuffer;
 import java.util.LinkedList;
 
 import game.data.Map;
 import game.data.util.Buffer;
+import game.settings.Settings;
+import graphics.shared.textures.Texture;
 
 public class MapEditorMap extends Map {
   private Map _map;
   private int _mapCRC;
   protected LinkedList<Sprite> _sprite = super._sprite;
+  
+  private Texture[] _attribMask;
   
   public MapEditorMap(Map map) {
     super(map.getWorld(), map.getX(), map.getY());
@@ -20,6 +25,12 @@ public class MapEditorMap extends Map {
     Buffer b = _map.serialize();
     deserialize(b);
     _mapCRC = b.crc();
+    
+    _attribMask = new Texture[Settings.Map.Depth];
+    
+    for(int z = 0; z < _attribMask.length; z++) {
+      _attribMask[z] = createAttribMaskTextureFromLayer(z);
+    }
   }
   
   public boolean isChanged() {
@@ -30,11 +41,19 @@ public class MapEditorMap extends Map {
     _map.deserialize(serialize());
   }
   
+  public void updateAttrib(int layer, int x, int y, ByteBuffer data) {
+    _attribMask[layer].update(x * Settings.Map.Attrib.Size, y * Settings.Map.Attrib.Size, Settings.Map.Attrib.Size, Settings.Map.Attrib.Size, data);
+  }
+  
   public Map getMap() {
     return _map;
   }
   
   public Layer getLayer(int z) {
     return _layer[z];
+  }
+  
+  public Texture getAttribMask(int layer) {
+    return _attribMask[layer];
   }
 }

@@ -45,7 +45,6 @@ public class MapEditor extends GUI {
   
   private Button[]  _btnAttrib;
   
-  private Texture[] _attribMask;
   private Drawable  _attribDrawable;
   private int _attribDrawCallback = -1;
   
@@ -327,11 +326,10 @@ public class MapEditor extends GUI {
       }
     }
     
-    _attribMask = new Texture[Settings.Map.Depth];
-    
     _attribDrawable = Context.newDrawable();
     _attribDrawable.setWH(Settings.Map.Size, Settings.Map.Size);
     _attribDrawable.setColour(new float[] {1, 1, 1, 0.5f});
+    _attribDrawable.createQuad();
     
     setTab(_tab);
     setLayer(_layer);
@@ -408,12 +406,7 @@ public class MapEditor extends GUI {
         _regions.add(_region);
       }
       
-      for(int z = 0; z < Settings.Map.Depth; z++) {
-        updateAttrib(z);
-      }
-      
-      _attribDrawable.setTexture(_attribMask[_layer]);
-      _attribDrawable.createQuad();
+      _attribDrawable.setTexture(_map.getAttribMask(_layer));
       
       _splSprite.clear();
       for(Map.Sprite s : _map._sprite) {
@@ -449,8 +442,10 @@ public class MapEditor extends GUI {
     _btnLayer[_layer].setBackColour(new float[] {0.2f, 0.2f, 0.2f, 1});
     _btnLayer[index].setBackColour(new float[] {0, 0, 0.8f, 1});
     _layer = index;
-    _attribDrawable.setTexture(_attribMask[_layer]);
-    _attribDrawable.createQuad();
+    
+    if(_map != null) {
+      _attribDrawable.setTexture(_map.getAttribMask(_layer));
+    }
   }
   
   private void setTileset(int index) {
@@ -469,10 +464,6 @@ public class MapEditor extends GUI {
     _btnAttrib[_attrib].setBackColour(new float[] {0.2f, 0.2f, 0.2f, 1});
     _btnAttrib[index].setBackColour(new float[] {0, 0, 0.8f, 1});
     _attrib = index;
-  }
-  
-  private void updateAttrib(int layer) {
-    _attribMask[layer] = _map.createAttribMaskTextureFromLayer(layer);
   }
   
   private void addSprite() {
@@ -642,9 +633,7 @@ public class MapEditor extends GUI {
             }
             b.flip();
             
-            _attribMask[_layer].update(x1 * Settings.Map.Attrib.Size, y1 * Settings.Map.Attrib.Size, Settings.Map.Attrib.Size, Settings.Map.Attrib.Size, b);
-            _attribDrawable.setTexture(_attribMask[_layer]);
-            _attribDrawable.createQuad();
+            _map.updateAttrib(_layer, x1, y1, b);
             return true;
             
           case 1:
@@ -654,9 +643,7 @@ public class MapEditor extends GUI {
             b.put(new byte[b.capacity()]);
             b.flip();
             
-            _attribMask[_layer].update(x1 * Settings.Map.Attrib.Size, y1 * Settings.Map.Attrib.Size, Settings.Map.Attrib.Size, Settings.Map.Attrib.Size, b);
-            _attribDrawable.setTexture(_attribMask[_layer]);
-            _attribDrawable.createQuad();
+            _map.updateAttrib(_layer, x1, y1, b);
             return true;
         }
         
