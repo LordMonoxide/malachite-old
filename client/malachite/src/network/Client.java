@@ -93,7 +93,6 @@ public class Client {
   }
   
   public void shutdown() {
-    close();
     _group.shutdownGracefully();
   }
   
