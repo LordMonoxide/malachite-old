@@ -3,7 +3,9 @@ package game;
 import java.util.HashMap;
 
 import game.data.Sprite;
+import game.graphics.gui.Menu;
 import game.network.Client;
+import game.network.packet.Login;
 import game.settings.Settings;
 import game.world.Entity;
 import game.world.World;
@@ -83,8 +85,13 @@ public class Game implements graphics.gl00.Game {
     _world = new World("default");
     _world.addEntity(_entity);*/
     
-    game.graphics.gui.Menu g = new game.graphics.gui.Menu();
-    //game.graphics.gui.Game g = new game.graphics.gui.Game();
+    Menu g = new game.graphics.gui.Menu();
+    g.events().onLogin(new Menu.Events.Login() {
+      public void event(String name, String pass) {
+        login(name, pass);
+      }
+    });
+    
     g.load();
     g.push();
   }
@@ -92,5 +99,10 @@ public class Game implements graphics.gl00.Game {
   public void destroy() {
     //_world.destroy();
     _net.shutdown();
+  }
+  
+  private void login(String name, String pass) {
+    Login p = new Login(name, pass);
+    _net.send(p);
   }
 }
