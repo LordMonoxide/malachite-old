@@ -62,7 +62,9 @@ public class Window extends Control<Window.Events> {
     
     Events.Click closeClick = new Events.Click() {
       public void event() {
-        _events.raiseClose();
+        if(!_events.raiseClose()) {
+          setVisible(false);
+        }
       }
     };
     
@@ -97,6 +99,14 @@ public class Window extends Control<Window.Events> {
         }
       }
     };
+  }
+  
+  public float getClientW() {
+    return _panels.getW();
+  }
+  
+  public float getClientH() {
+    return _panels.getH();
   }
   
   public String getText() {
@@ -205,15 +215,21 @@ public class Window extends Control<Window.Events> {
       super(c);
     }
     
-    protected void raiseClose() {
+    protected boolean raiseClose() {
+      boolean ret = false;
+      
       for(Close e : _close) {
         e.setControl(_control);
-        e.event();
+        if(e.event()) {
+          ret = true;
+        }
       }
+      
+      return ret;
     }
     
     public static abstract class Close extends Event {
-      public abstract void event();
+      public abstract boolean event();
     }
   }
 }
