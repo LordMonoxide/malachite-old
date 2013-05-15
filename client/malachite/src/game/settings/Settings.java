@@ -1,12 +1,15 @@
 package game.settings;
 
+import game.data.util.Properties;
+import game.data.util.Properties.InvalidDataException;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Properties;
 
 public class Settings {
+  public static final Net Net = new Net();
   public static final Map Map = new Map();
   
   private static Properties _settings = new Properties();
@@ -17,21 +20,43 @@ public class Settings {
     
     try {
       _settings.load(new FileInputStream(_file));
+      Net.load();
       Map.load();
       Map.init();
-      
     } catch(IOException e) {
       e.printStackTrace();
     }
   }
   
   public static void save() {
+    Net.save();
     Map.save();
     
     try {
       _settings.store(new FileOutputStream(_file), null);
     } catch(IOException e) {
       e.printStackTrace();
+    }
+  }
+  
+  public static class Net {
+    public final double Version = 0.01;
+    public String IP = "home.monoxidedesign.com";
+    public int Port = 4000;
+    
+    private void load() {
+      IP = _settings.getString("NetIP");
+      
+      try {
+        Port = _settings.getInt("NetPort");
+      } catch(InvalidDataException e) {
+        e.printStackTrace();
+      }
+    }
+    
+    private void save() {
+      _settings.setProperty("NetIP", IP);
+      _settings.setProperty("NetPort", Integer.toString(Port));
     }
   }
   
@@ -53,8 +78,17 @@ public class Settings {
     }
     
     private void load() {
-      Size = Integer.parseInt(_settings.getProperty("MapSize"));
-      Depth = Integer.parseInt(_settings.getProperty("MapDepth"));
+      try {
+        Size = _settings.getInt("MapSize");
+      } catch(InvalidDataException e) {
+        e.printStackTrace();
+      }
+      
+      try {
+        Depth = _settings.getInt("MapDepth");
+      } catch(InvalidDataException e) {
+        e.printStackTrace();
+      }
       
       Tile.load();
       Attrib.load();
@@ -77,7 +111,11 @@ public class Settings {
       }
       
       private void load() {
-        Size = Integer.parseInt(_settings.getProperty("MapTileSize"));
+        try {
+          Size = _settings.getInt("MapTileSize");
+        } catch(InvalidDataException e) {
+          e.printStackTrace();
+        }
       }
       
       private void save() {
@@ -94,7 +132,11 @@ public class Settings {
       }
       
       private void load() {
-        Size = Integer.parseInt(_settings.getProperty("MapAttribSize"));
+        try {
+          Size = _settings.getInt("MapAttribSize");
+        } catch(InvalidDataException e) {
+          e.printStackTrace();
+        }
       }
       
       private void save() {

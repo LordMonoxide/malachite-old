@@ -1,11 +1,16 @@
 package game;
 
 import game.network.Server;
+import game.settings.Settings;
 
 public class Game {
-  private Server _server;
+  private Server _net;
   
   public void start() {
-    _server = new Server();
+    Settings.load();
+    
+    _net = new Server();
+    _net.initPackets();
+    _net.start();
   }
 }
