@@ -1,7 +1,9 @@
 package game.network;
 
+import network.packet.Packet;
 import network.packet.Packets;
 import game.network.packet.Connect;
+import game.network.packet.Login;
 import game.settings.Settings;
 
 public class Client {
@@ -15,6 +17,7 @@ public class Client {
   
   public void initPackets() {
     Packets.add(Connect.class);
+    Packets.add(Login.class);
   }
   
   public void connect() {
@@ -37,5 +40,9 @@ public class Client {
   
   public void shutdown() {
     _client.shutdown();
+  }
+  
+  public void send(Packet packet) {
+    _client.send(packet);
   }
 }

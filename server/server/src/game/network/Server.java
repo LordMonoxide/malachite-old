@@ -1,6 +1,7 @@
 package game.network;
 
 import game.network.packet.Connect;
+import game.network.packet.Login;
 import game.settings.Settings;
 import network.packet.Packet;
 import network.packet.Packets;
@@ -38,6 +39,7 @@ public class Server {
   
   public void initPackets() {
     Packets.add(Connect.class);
+    Packets.add(Login.class);
   }
   
   public void start() {
