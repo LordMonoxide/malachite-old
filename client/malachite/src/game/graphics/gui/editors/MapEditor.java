@@ -923,8 +923,9 @@ public class MapEditor extends GUI {
       
       _window.setWH(_data.getX() + _data.getW() + 8, _data.getY() + _data.getH() + 28);
       _window.events().onClose(new Window.Events.Close() {
-        public void event() {
+        public boolean event() {
           pop();
+          return true;
         }
       });
       _window.Controls().add(_data);

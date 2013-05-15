@@ -73,8 +73,9 @@ public class DataSelection extends GUI {
     
     _window.setWH(_new.getX() + _new.getW() + 8, _new.getY() + _new.getH() + 28);
     _window.events().onClose(new Window.Events.Close() {
-      public void event() {
+      public boolean event() {
         pop();
+        return true;
       }
     });
     _window.Controls().add(_data);

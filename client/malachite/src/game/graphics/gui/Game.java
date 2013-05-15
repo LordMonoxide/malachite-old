@@ -62,11 +62,6 @@ public class Game extends GUI {
     _wndAdmin.setTab(1);
     _wndAdmin.setText("Administration");
     _wndAdmin.setVisible(false);
-    _wndAdmin.events().onClose(new Window.Events.Close() {
-      public void event() {
-        _wndAdmin.setVisible(false);
-      }
-    });
     
     _btnEdit = new Button[6];
     for(int i = 0; i < _btnEdit.length; i++) {

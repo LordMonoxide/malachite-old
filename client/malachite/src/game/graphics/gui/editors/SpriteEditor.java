@@ -92,8 +92,9 @@ public class SpriteEditor extends GUI implements Editor {
     _wndEditor.addTab("Info");
     _wndEditor.addTab("Scripts");
     _wndEditor.events().onClose(new Window.Events.Close() {
-      public void event() {
+      public boolean event() {
         unload();
+        return true;
       }
     });
     _wndEditor.addButton("Save").events().onClick(new Control.Events.Click() {
