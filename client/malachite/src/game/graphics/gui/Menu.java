@@ -16,6 +16,7 @@ import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;
 import graphics.shared.gui.controls.Button;
 import graphics.shared.gui.controls.Label;
+import graphics.shared.gui.controls.List;
 import graphics.shared.gui.controls.Picture;
 import graphics.shared.gui.controls.Textbox;
 import graphics.shared.gui.controls.compound.Window;
@@ -25,11 +26,17 @@ public class Menu extends GUI {
   
   private Picture[] _background = new Picture[15];
 
-  private Window _wndLogin;
+  private Window  _wndLogin;
   private Textbox _txtName;
   private Textbox _txtPass;
-  private Button _btnLogin;
-  private Label _lblUser;
+  private Button  _btnLogin;
+  private Label   _lblUser;
+  
+  private Window  _wndChar;
+  private List    _lstChar;
+  private Button  _btnCharNew;
+  private Button  _btnCharDel;
+  private Button  _btnCharUse;
   
   private String _savedPass;
   
@@ -92,7 +99,41 @@ public class Menu extends GUI {
     _wndLogin.Controls().add(_btnLogin);
     _wndLogin.Controls().add(_lblUser);
     
+    _wndChar = new Window(this);
+    _wndChar.setWH(272, 178);
+    _wndChar.setXY((_context.getW() - _wndChar.getW()) / 2, (_context.getH() - _wndChar.getH()) / 2);
+    _wndChar.setText("Characters");
+    _wndChar.setVisible(false);
+    
+    _lstChar = new List(this);
+    _lstChar.setX((_wndChar.getClientW() - _lstChar.getW()) / 2);
+    _lstChar.setY(10 - 30);
+    
+    _btnCharNew = new Button(this);
+    _btnCharNew.setText("New");
+    _btnCharNew.setBackColour(new float[] {0xF0 / 255f, 0xE3 / 255f, 0xBF / 255f, 0xBF / 255f});
+    _btnCharNew.setForeColour(new float[] {0, 0, 0, 1});
+    _btnCharNew.setXYWH(_lstChar.getX(), _lstChar.getY() + _lstChar.getH() + 15 + 30, 60, 20);
+    
+    _btnCharDel = new Button(this);
+    _btnCharDel.setText("Del");
+    _btnCharDel.setBackColour(_btnCharNew.getBackColour());
+    _btnCharDel.setForeColour(_btnCharNew.getForeColour());
+    _btnCharDel.setXYWH(_btnCharNew.getX() + _btnCharNew.getW() + 10, _btnCharNew.getY(), 60, 20);
+    
+    _btnCharUse = new Button(this);
+    _btnCharUse.setText("Use");
+    _btnCharUse.setBackColour(_btnCharNew.getBackColour());
+    _btnCharUse.setForeColour(_btnCharNew.getForeColour());
+    _btnCharUse.setXYWH(_btnCharDel.getX() + _btnCharDel.getW() + 10, _btnCharNew.getY(), 60, 20);
+    
+    _wndChar.Controls().add(_lstChar);
+    _wndChar.Controls().add(_btnCharNew);
+    _wndChar.Controls().add(_btnCharDel);
+    _wndChar.Controls().add(_btnCharUse);
+    
     Controls().add(_wndLogin);
+    Controls().add(_wndChar);
     
     Properties login = new Properties();
     try {
@@ -180,7 +221,8 @@ public class Menu extends GUI {
     
     switch(packet.getResponse()) {
       case Login.Response.RESPONSE_OKAY:
-        
+        _wndLogin.setVisible(false);
+        _wndChar.setVisible(true);
         break;
       
       case Login.Response.RESPONSE_NOT_AUTHD:
