@@ -145,15 +145,13 @@ public class Server {
   
   private class Handler extends ChannelInboundMessageHandlerAdapter<Packet> {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-      throw new Exception(cause);
+      System.out.println(cause);
+      //throw new Exception(cause);
     }
     
     public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
-      Connection c;
-      
-      if((c = _connection.add(ctx.channel())) != null) {
-        _events.raiseConnect(c);
-      }
+      Connection c = _connection.add(ctx.channel());
+      if(c != null) _events.raiseConnect(c);
     }
     
     public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {

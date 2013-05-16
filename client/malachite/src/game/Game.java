@@ -2,6 +2,8 @@ package game;
 
 import java.util.HashMap;
 
+import network.packet.Packet;
+
 import game.data.Sprite;
 import game.graphics.gui.Menu;
 import game.network.Client;
@@ -17,6 +19,10 @@ public class Game implements graphics.gl00.Game {
   private Context _context;
   private World _world;
   private Entity _entity;
+  
+  private Menu _menu;
+  
+  private Menu.Events.Login _eventLogin;
   
   private HashMap<String, Sprite> _sprite = new HashMap<String, Sprite>();
   
@@ -85,15 +91,17 @@ public class Game implements graphics.gl00.Game {
     _world = new World("default");
     _world.addEntity(_entity);*/
     
-    Menu g = new game.graphics.gui.Menu();
-    g.events().onLogin(new Menu.Events.Login() {
+    _eventLogin = new Menu.Events.Login() {
       public void event(String name, String pass) {
         login(name, pass);
       }
-    });
+    };
     
-    g.load();
-    g.push();
+    _menu = new game.graphics.gui.Menu();
+    _menu.events().onLogin(_eventLogin);
+    
+    _menu.load();
+    _menu.push();
   }
   
   public void destroy() {
@@ -104,5 +112,14 @@ public class Game implements graphics.gl00.Game {
   private void login(String name, String pass) {
     Login p = new Login(name, pass);
     _net.send(p);
+    
+    _net.events().onPacket(new network.Client.Events.Packet() {
+      public void event(Packet p) {
+        if(p instanceof Login.Response) {
+          _eventLogin.loggedIn((Login.Response)p);
+          remove();
+        }
+      }
+    });
   }
 }

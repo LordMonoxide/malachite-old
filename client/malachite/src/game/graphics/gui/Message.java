@@ -92,4 +92,16 @@ public class Message extends GUI {
   public void resize() {
     
   }
+  
+  public boolean handleMouseDown(int x, int y, int button) {
+    return true;
+  }
+  
+  public boolean handleMouseUp(int x, int y, int button) {
+    return true;
+  }
+  
+  public boolean handleMouseMove(int x, int y, int button) {
+    return true;
+  }
 }

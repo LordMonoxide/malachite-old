@@ -133,7 +133,14 @@ public class Client {
   public static class Events {
     private LinkedList<Packet> _packet = new LinkedList<Packet>();
     
-    public void onPacket(Packet e) { _packet.add(e); }
+    public void onPacket(Packet e) {
+      e._events = this;
+      _packet.add(e);
+    }
+    
+    public void removePacket(Packet e) {
+      _packet.remove(e);
+    }
     
     protected Events() { }
     
@@ -143,6 +150,14 @@ public class Client {
       }
     }
     
-    public static interface Packet { public void event(network.packet.Packet p); }
+    public static abstract class Packet {
+      private Events _events;
+      
+      public void remove() {
+        _events.removePacket(this);
+      }
+      
+      public abstract void event(network.packet.Packet p);
+    }
   }
 }

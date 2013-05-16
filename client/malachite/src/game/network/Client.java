@@ -20,6 +20,10 @@ public class Client {
     });
   }
   
+  public network.Client.Events events() {
+    return _client.events();
+  }
+  
   public void initPackets() {
     Packets.add(Connect.class);
     Packets.add(Login.class);

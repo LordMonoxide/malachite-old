@@ -11,6 +11,7 @@ import network.util.Crypto;
 import org.lwjgl.input.Keyboard;
 
 import game.data.util.Properties;
+import game.network.packet.Login;
 import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;
 import graphics.shared.gui.controls.Button;
@@ -20,7 +21,7 @@ import graphics.shared.gui.controls.Textbox;
 import graphics.shared.gui.controls.compound.Window;
 
 public class Menu extends GUI {
-  private Events _events = new Events();
+  private Events _events = new Events(this);
   
   private Picture[] _background = new Picture[15];
 
@@ -31,6 +32,8 @@ public class Menu extends GUI {
   private Label _lblUser;
   
   private String _savedPass;
+  
+  private Message _wait;
   
   public Events events() { return _events; }
   
@@ -151,7 +154,7 @@ public class Menu extends GUI {
       pass = Crypto.sha256(_txtPass.getText());
     }
     
-    //_wait = Message.showWait("Loading...");
+    _wait = Message.showWait("Loading...");
     
     Properties login = new Properties();
     login.setProperty("username", name);
@@ -172,10 +175,40 @@ public class Menu extends GUI {
     _events.raiseLogin(name, pass);
   }
   
+  private void loginResponse(game.network.packet.Login.Response packet) {
+    _wait.pop();
+    
+    switch(packet.getResponse()) {
+      case Login.Response.RESPONSE_OKAY:
+        
+        break;
+      
+      case Login.Response.RESPONSE_NOT_AUTHD:
+        Message.show("Sorry, you aren't authorised to log in to this account.");
+        break;
+        
+      case Login.Response.RESPONSE_INVALID:
+        Message.show("Your username or password is incorrect.");
+        break;
+        
+      case Login.Response.RESPONSE_SQL_EXCEPTION:
+        Message.show("A server error occurred.");
+        break;
+    }
+  }
+  
   public static class Events {
+    private static Menu _menu;
+    
+    protected Events(Menu m) {
+      _menu = m;
+    }
+    
     private LinkedList<Login> _login = new LinkedList<Login>();
     
-    public void onLogin(Login e) { _login.add(e); }
+    public void onLogin(Login e) {
+      _login.add(e);
+    }
     
     public void raiseLogin(String name, String pass) {
       for(Login e : _login) {
@@ -185,6 +218,10 @@ public class Menu extends GUI {
     
     public static abstract class Login {
       public abstract void event(String name, String pass);
+      
+      public final void loggedIn(game.network.packet.Login.Response packet) {
+        _menu.loginResponse(packet);
+      }
     }
   }
 }
