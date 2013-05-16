@@ -219,7 +219,6 @@ public abstract class Context {
       _backColourUpdate = false;
     }
     
-    _gui.check();
     _textures.check();
   }
   

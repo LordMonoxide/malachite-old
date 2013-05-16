@@ -1,22 +1,20 @@
 package graphics.shared.gui;
 
-import java.util.LinkedList;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class GUIs {
-  protected LinkedList<GUI> _gui = new LinkedList<>();
-  protected LinkedList<GUI> _guisToAdd = new LinkedList<>();
-  protected LinkedList<GUI> _guisToRemove = new LinkedList<>();
+  protected ConcurrentLinkedDeque<GUI> _gui = new ConcurrentLinkedDeque<GUI>();
   
   public void push(GUI gui) {
-    _guisToAdd.offer(gui);
+    _gui.push(gui);
   }
   
   public void pop() {
-    _guisToRemove.offer(_gui.getFirst());
+    _gui.pop();
   }
   
   public void pop(GUI gui) {
-    _guisToRemove.offer(gui);
+    _gui.remove(gui);
   }
   
   public void clear() {
@@ -31,15 +29,11 @@ public class GUIs {
     clear();
   }
   
-  public void check() {
-    GUI g;
-    if((g = _guisToAdd.poll())    != null) { _gui.addFirst(g); }
-    if((g = _guisToRemove.poll()) != null) { _gui.remove(g);   }
-  }
-  
   public void draw() {
+    GUI[] g = _gui.toArray(new GUI[0]);
+    
     for(int i = _gui.size(); --i >= 0;) {
-      _gui.get(i).drawGUI();
+      g[i].drawGUI();
     }
   }
   
