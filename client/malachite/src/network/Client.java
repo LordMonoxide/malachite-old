@@ -1,5 +1,9 @@
 package network;
 
+import java.util.LinkedList;
+
+import network.codec.Decoder;
+import network.codec.DecoderLength;
 import network.codec.EncoderLength;
 import network.codec.Encoder;
 import network.packet.Packet;
@@ -7,6 +11,8 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundMessageHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -18,7 +24,11 @@ public class Client {
   private Bootstrap _bootstrap;
   private Channel _channel;
   
+  private Events _events;
+  
   public Client() {
+    _events = new Events();
+    
     _group = new NioEventLoopGroup();
     _bootstrap = new Bootstrap()
               .group(_group)
@@ -26,8 +36,14 @@ public class Client {
               .handler(new ChannelInitializer<SocketChannel>() {
                 protected void initChannel(SocketChannel ch) throws Exception {
                   ch.pipeline().addLast(new EncoderLength(), new Encoder());
+                  ch.pipeline().addLast(new DecoderLength(), new Decoder());
+                  ch.pipeline().addLast(new Handler());
                 }
     });
+  }
+  
+  public Events events() {
+    return _events;
   }
   
   public void setAddress(String host, int port) {
@@ -100,7 +116,33 @@ public class Client {
     _channel.write(packet);
   }
   
+  private class Handler extends ChannelInboundMessageHandlerAdapter<Packet> {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+      throw new Exception(cause);
+    }
+    
+    public void messageReceived(ChannelHandlerContext ctx, Packet msg) throws Exception {
+      _events.raisePacket(msg);
+    }
+  }
+  
   public static interface Event {
     public void event(boolean success);
+  }
+  
+  public static class Events {
+    private LinkedList<Packet> _packet = new LinkedList<Packet>();
+    
+    public void onPacket(Packet e) { _packet.add(e); }
+    
+    protected Events() { }
+    
+    protected void raisePacket(network.packet.Packet p) {
+      for(Packet e : _packet) {
+        e.event(p);
+      }
+    }
+    
+    public static interface Packet { public void event(network.packet.Packet p); }
   }
 }

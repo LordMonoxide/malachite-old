@@ -6,9 +6,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 
+import network.util.Crypto;
+
 import org.lwjgl.input.Keyboard;
 
-import game.data.util.Crypto;
 import game.data.util.Properties;
 import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;

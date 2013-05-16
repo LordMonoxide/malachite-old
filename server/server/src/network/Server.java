@@ -5,6 +5,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import network.codec.Decoder;
 import network.codec.DecoderLength;
+import network.codec.Encoder;
+import network.codec.EncoderLength;
 import network.packet.Packet;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -35,6 +37,7 @@ public class Server {
               .channel(NioServerSocketChannel.class)
               .childHandler(new ChannelInitializer<SocketChannel>() {
                 protected void initChannel(SocketChannel ch) throws Exception {
+                  ch.pipeline().addLast(new EncoderLength(), new Encoder());
                   ch.pipeline().addLast(new DecoderLength(), new Decoder(s));
                   ch.pipeline().addLast(new Handler());
                 }

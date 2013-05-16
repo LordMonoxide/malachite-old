@@ -18,7 +18,7 @@ public class Server {
     System.out.println("Initialising server...");
     
     _server = new network.Server(Connection.class);
-    _server.setAddress(Settings.Net.Port);
+    _server.setAddress(Settings.Net.Port());
     _server.setBacklog(100);
     _server.setKeepAlive(true);
     _server.setNoDelay(true);
@@ -40,6 +40,7 @@ public class Server {
   public void initPackets() {
     Packets.add(Connect.class);
     Packets.add(Login.class);
+    Packets.add(Login.Response.class);
   }
   
   public void start() {
@@ -47,7 +48,7 @@ public class Server {
     _server.bind(new network.Server.Event() {
       public void event(boolean success) {
         if(success) {
-          System.out.println("Server bound to port " + Settings.Net.Port);
+          System.out.println("Server bound to port " + Settings.Net.Port());
         } else {
           System.out.println("Bind failed");
         }

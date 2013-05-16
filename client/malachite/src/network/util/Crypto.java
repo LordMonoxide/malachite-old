@@ -1,4 +1,4 @@
-package game.data.util;
+package network.util;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;

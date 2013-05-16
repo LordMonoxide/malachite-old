@@ -12,5 +12,7 @@ public class Game {
     _net = new Server();
     _net.initPackets();
     _net.start();
+    
+    //TODO: Need to close SQL tables
   }
 }

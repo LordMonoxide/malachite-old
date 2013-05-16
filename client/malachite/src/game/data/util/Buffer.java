@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import network.util.Crypto;
+
 public class Buffer {
   private int _allocSize = 64;
   private byte[] _buffer;

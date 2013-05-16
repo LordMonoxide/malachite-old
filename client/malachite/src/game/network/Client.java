@@ -13,11 +13,17 @@ public class Client {
     _client = new network.Client();
     _client.setTimeout(3000);
     _client.setAddress(Settings.Net.IP, Settings.Net.Port);
+    _client.events().onPacket(new network.Client.Events.Packet() {
+      public void event(Packet p) {
+        p.process();
+      }
+    });
   }
   
   public void initPackets() {
     Packets.add(Connect.class);
     Packets.add(Login.class);
+    Packets.add(Login.Response.class);
   }
   
   public void connect() {

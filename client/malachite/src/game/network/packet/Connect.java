@@ -19,4 +19,8 @@ public class Connect extends Packet {
   public void deserialize(ByteBuf data) throws NotEnoughDataException {
     
   }
+  
+  public void process() {
+    
+  }
 }
