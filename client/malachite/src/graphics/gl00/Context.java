@@ -77,6 +77,8 @@ public abstract class Context {
   
   private int[] _selectColour = {1, 0, 0, 255};
   
+  private boolean _running;
+  
   private double _fpsTimeout = Time.HzToTicks(1);
   private double _fpsTimer;
   private    int _fpsCount;
@@ -143,6 +145,8 @@ public abstract class Context {
     _game = game;
     _game.init();
     
+    _running = true;
+    
     return true;
   }
   
@@ -167,7 +171,11 @@ public abstract class Context {
   }
   
   public void destroy() {
-    Display.destroy();
+    if(_running) {
+      _running = false;
+    } else {
+      Display.destroy();
+    }
   }
   
   public void run() {
@@ -177,7 +185,7 @@ public abstract class Context {
     
     _logic.start();
     
-    while(!Display.isCloseRequested()) {
+    while(_running) {
       check();
       draw();
       mouse();
@@ -206,9 +214,14 @@ public abstract class Context {
     cleanup();
     Controllers.destroy();
     Logger.printRefs();
+    Display.destroy();
   }
 
   protected void check() {
+    if(Display.isCloseRequested()) {
+      _running = false;
+    }
+    
     if(Display.wasResized()) {
       System.out.println("Window resized!");
       setWH(Display.getWidth(), Display.getHeight());
