@@ -24,7 +24,7 @@ import graphics.shared.gui.controls.compound.Window;
 public class Menu extends GUI {
   private Events _events = new Events(this);
   
-  private Picture[] _background = new Picture[15];
+  //private Picture[] _background = new Picture[15];
 
   private Window  _wndLogin;
   private Textbox _txtName;
@@ -47,12 +47,12 @@ public class Menu extends GUI {
   public void load() {
     _context.setBackColour(new float[] {1, 1, 1, 1});
     
-    for(int i = 0; i < _background.length; i++) {
+    /*for(int i = 0; i < _background.length; i++) {
       _background[i] = new Picture(this);
       _background[i].setXY((i % 5) * 256, (i / 5) * 256);
       _background[i].setTexture(_textures.getTexture("gui/menu/" + i + ".png"));
       Controls().add(_background[i]);
-    }
+    }*/
     
     _wndLogin = new Window(this);
     _wndLogin.setWH(272, 178);
@@ -60,6 +60,7 @@ public class Menu extends GUI {
     _wndLogin.setText("Login");
     _wndLogin.events().onClose(new Window.Events.Close() {
       public boolean event() {
+        _context.destroy();
         return true;
       }
     });
