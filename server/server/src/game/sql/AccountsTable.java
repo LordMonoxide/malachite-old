@@ -14,13 +14,12 @@ public class AccountsTable extends Table {
   private String _name;
   private String _pass;
   private int _permissions;
-  private String[] _charName = new String[3];
   
   private AccountsTable() {
     super("accounts", "a_name");
-    _create = _sql.prepareStatement("CREATE TABLE accounts (a_name VARCHAR(40) NOT NULL, a_pass CHAR(64) NOT NULL, a_p_id INT NOT NULL, a_c_name1 VARCHAR(16), a_c_name2 VARCHAR(16), a_c_name3 VARCHAR(16), CONSTRAINT pk_a_name UNIQUE (a_name), FOREIGN KEY (a_p_id) REFERENCES permissions(p_id), FOREIGN KEY (a_c_name1) REFERENCES characters(c_name), FOREIGN KEY (a_c_name2) REFERENCES characters(c_name), FOREIGN KEY (a_c_name3) REFERENCES characters(c_name))");
-    _insert = _sql.prepareStatement("INSERT INTO accounts VALUES (?, ?, ?, ?, ?, ?)");
-    _update = _sql.prepareStatement("UPDATE accounts SET a_p_id=?, a_c_name1=?, a_c_name2=?, a_c_name3=? WHERE a_name=?");
+    _create = _sql.prepareStatement("CREATE TABLE accounts (a_id INT NOT NULL AUTO_INCREMENT, a_name VARCHAR(40) NOT NULL, a_pass CHAR(64) NOT NULL, a_p_id INT NOT NULL, CONSTRAINT pk_a_id UNIQUE (a_id), CONSTRAINT pk_a_name UNIQUE (a_name), FOREIGN KEY (a_p_id) REFERENCES permissions(p_id))");
+    _insert = _sql.prepareStatement("INSERT INTO accounts VALUES (null, ?, ?, ?)");
+    _update = _sql.prepareStatement("UPDATE accounts SET a_name=?, a_pass=?, a_p_id=? WHERE a_id=?");
   }
   
   public boolean exists() {
@@ -36,18 +35,10 @@ public class AccountsTable extends Table {
   }
   
   public void insert() throws SQLException {
-    int i = 1;
+    int i = 2;
     _insert.setString(i++, _name);
     _insert.setString(i++, _pass);
     _insert.setInt(i++, _permissions);
-    
-    if(_charName[0] != null) _insert.setString(i++, _charName[0]);
-    else                     _insert.setNull(i++, java.sql.Types.VARCHAR);
-    if(_charName[1] != null) _insert.setString(i++, _charName[1]);
-    else                     _insert.setNull(i++, java.sql.Types.VARCHAR);
-    if(_charName[2] != null) _insert.setString(i++, _charName[2]);
-    else                     _insert.setNull(i++, java.sql.Types.VARCHAR);
-    
     _insert.execute();
   }
   
@@ -57,27 +48,19 @@ public class AccountsTable extends Table {
     
     if(_result.next()) {
       int i = 1;
+      _id = _result.getInt(i++);
       _name = _result.getString(i++);
       _pass = _result.getString(i++);
       _permissions = _result.getInt(i++);
-      _charName[0] = _result.getString(i++);
-      _charName[1] = _result.getString(i++);
-      _charName[2] = _result.getString(i++);
     }
   }
   
   public void update() throws SQLException {
     int i = 1;
-    _update.setInt(i++, _permissions);
-    
-    if(_charName[0] != null) _update.setString(i++, _charName[0]);
-    else                     _update.setNull(i++, java.sql.Types.VARCHAR);
-    if(_charName[1] != null) _update.setString(i++, _charName[1]);
-    else                     _update.setNull(i++, java.sql.Types.VARCHAR);
-    if(_charName[2] != null) _update.setString(i++, _charName[2]);
-    else                     _update.setNull(i++, java.sql.Types.VARCHAR);
-    
     _update.setString(i++, _name);
+    _update.setString(i++, _pass);
+    _update.setInt(i++, _permissions);
+    _update.setInt(i++, _id);
     _update.execute();
   }
   
@@ -108,13 +91,5 @@ public class AccountsTable extends Table {
   
   public void setPermissions(int permissions) {
     _permissions = permissions;
-  }
-  
-  public String getCharName(int index) {
-    return _charName[index];
-  }
-  
-  public void setCharName(int index, String charName) {
-    _charName[index] = charName;
   }
 }
