@@ -4,25 +4,28 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.LinkedList;
 
 import network.util.Crypto;
 
 import org.lwjgl.input.Keyboard;
 
+import game.Game;
 import game.data.util.Properties;
+import game.network.packet.CharDel;
 import game.network.packet.Login;
+import graphics.gl00.Context;
 import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;
 import graphics.shared.gui.controls.Button;
 import graphics.shared.gui.controls.Label;
 import graphics.shared.gui.controls.List;
-import graphics.shared.gui.controls.Picture;
 import graphics.shared.gui.controls.Textbox;
 import graphics.shared.gui.controls.compound.Window;
 
 public class Menu extends GUI {
-  private Events _events = new Events(this);
+  private Game _game = (Game)Context.getGame();
+  
+  private Listener _listener = new Listener(this);
   
   //private Picture[] _background = new Picture[15];
 
@@ -38,11 +41,14 @@ public class Menu extends GUI {
   private Button  _btnCharDel;
   private Button  _btnCharUse;
   
+  private Window _wndNewChar;
+  private Textbox _txtNewCharName;
+  private Label _lblNewCharName;
+  private Button _btnNewCharCreate;
+  
   private String _savedPass;
   
   private Message _wait;
-  
-  public Events events() { return _events; }
   
   public void load() {
     _context.setBackColour(new float[] {1, 1, 1, 1});
@@ -132,10 +138,22 @@ public class Menu extends GUI {
     _btnCharNew = new Button(this);
     _btnCharNew.setText("New");
     _btnCharNew.setXYWH(_lstChar.getX(), _lstChar.getY() + _lstChar.getH() + 15, 60, 20);
+    _btnCharNew.events().onClick(new Control.Events.Click() {
+      public void event() {
+        showNewChar();
+      }
+    });
     
     _btnCharDel = new Button(this);
     _btnCharDel.setText("Del");
     _btnCharDel.setXYWH(_btnCharNew.getX() + _btnCharNew.getW() + 10, _btnCharNew.getY(), 60, 20);
+    _btnCharDel.events().onClick(new Control.Events.Click() {
+      public void event() {
+        if(_lstChar.getSelected() != null) {
+          charDel(_lstChar.getSelected().getIndex());
+        }
+      }
+    });
     
     _btnCharUse = new Button(this);
     _btnCharUse.setText("Use");
@@ -146,8 +164,31 @@ public class Menu extends GUI {
     _wndChar.Controls().add(_btnCharDel);
     _wndChar.Controls().add(_btnCharUse);
     
+    _wndNewChar = new Window(this);
+    _wndNewChar.setWH(272, 178);
+    _wndNewChar.setXY((_context.getW() - _wndNewChar.getW()) / 2, (_context.getH() - _wndNewChar.getH()) / 2);
+    _wndNewChar.setText("New Character");
+    _wndNewChar.setVisible(false);
+    
+    _txtNewCharName = new Textbox(this);
+    _txtNewCharName.setX((_wndNewChar.getClientW() - _txtNewCharName.getW()) / 2);
+    _txtNewCharName.setY(_txtNewCharName.getX() + 4);
+    
+    _lblNewCharName = new Label(this);
+    _lblNewCharName.setText("Character Name:");
+    _lblNewCharName.setXY(_txtNewCharName.getX(), _txtNewCharName.getY() - _lblNewCharName.getH() - 4);
+    
+    _btnNewCharCreate = new Button(this);
+    _btnNewCharCreate.setText("Create");
+    _btnNewCharCreate.setXYWH(_lstChar.getX(), _lstChar.getY() + _lstChar.getH() + 15, 60, 20);
+    
+    _wndNewChar.Controls().add(_txtNewCharName);
+    _wndNewChar.Controls().add(_lblNewCharName);
+    _wndNewChar.Controls().add(_btnNewCharCreate);
+    
     Controls().add(_wndLogin);
     Controls().add(_wndChar);
+    Controls().add(_wndNewChar);
     
     Properties login = new Properties();
     try {
@@ -227,16 +268,20 @@ public class Menu extends GUI {
       e.printStackTrace();
     }
     
-    _events.raiseLogin(name, pass);
+    _game.login(name, pass, _listener);
   }
   
-  private void loginResponse(game.network.packet.Login.Response packet) {
+  private void loggedIn(game.network.packet.Login.Response packet) {
     _wait.pop();
     
     switch(packet.getResponse()) {
       case Login.Response.RESPONSE_OKAY:
-        _wndLogin.setVisible(false);
+        for(String s : packet.getName()) {
+          _lstChar.addItem(s, null);
+        }
+        
         _wndChar.setVisible(true);
+        _wndLogin.setVisible(false);
         break;
       
       case Login.Response.RESPONSE_NOT_AUTHD:
@@ -253,31 +298,44 @@ public class Menu extends GUI {
     }
   }
   
-  public static class Events {
-    private static Menu _menu;
-    
-    protected Events(Menu m) {
-      _menu = m;
+  private void showNewChar() {
+    if(!_game.getPermissions().canAlterChars()) {
+      Message.show("Sorry, your account isn't authorised to create or delete characters.");
+      return;
     }
     
-    private LinkedList<Login> _login = new LinkedList<Login>();
-    
-    public void onLogin(Login e) {
-      _login.add(e);
+    _txtNewCharName.setText(null);
+    _txtNewCharName.setFocus(true);
+    _wndNewChar.setVisible(true);
+    _wndChar.setVisible(false);
+  }
+  
+  private void charDel(int id) {
+    if(!_game.getPermissions().canAlterChars()) {
+      Message.show("Sorry, your account isn't authorised to create or delete characters.");
+      return;
     }
     
-    public void raiseLogin(String name, String pass) {
-      for(Login e : _login) {
-        e.event(name, pass);
-      }
+    _game.charDel(id, _listener);
+  }
+  
+  private void charDeleted() {
+    Message.show("Your character has been deleted.");
+  }
+  
+  public static class Listener implements Game.StateListener {
+    private Menu _menu;
+    
+    public Listener(Menu menu) {
+      _menu = menu;
     }
     
-    public static abstract class Login {
-      public abstract void event(String name, String pass);
-      
-      public final void loggedIn(game.network.packet.Login.Response packet) {
-        _menu.loginResponse(packet);
-      }
+    public void loggedIn(Login.Response packet) {
+      _menu.loggedIn(packet);
+    }
+    
+    public void charDeleted(CharDel.Response packet) {
+      _menu.charDeleted();
     }
   }
 }

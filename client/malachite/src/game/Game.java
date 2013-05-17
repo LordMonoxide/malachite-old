@@ -5,8 +5,10 @@ import java.util.HashMap;
 import network.packet.Packet;
 
 import game.data.Sprite;
+import game.data.account.Permissions;
 import game.graphics.gui.Menu;
 import game.network.Client;
+import game.network.packet.CharDel;
 import game.network.packet.Login;
 import game.settings.Settings;
 import game.world.Entity;
@@ -20,14 +22,15 @@ public class Game implements graphics.gl00.Game {
   private World _world;
   private Entity _entity;
   
-  private Menu _menu;
+  private Permissions _permissions = new Permissions();
   
-  private Menu.Events.Login _eventLogin;
+  private Menu _menu;
   
   private HashMap<String, Sprite> _sprite = new HashMap<String, Sprite>();
   
-  public World  getWorld()  { return _world;  }
-  public Entity getEntity() { return _entity; }
+  public Permissions getPermissions() { return _permissions; }
+  public World       getWorld()       { return _world;       }
+  public Entity      getEntity()      { return _entity;      }
   
   public Sprite getSprite(String file) {
     Sprite s = _sprite.get(file);
@@ -91,15 +94,7 @@ public class Game implements graphics.gl00.Game {
     _world = new World("default");
     _world.addEntity(_entity);*/
     
-    _eventLogin = new Menu.Events.Login() {
-      public void event(String name, String pass) {
-        login(name, pass);
-      }
-    };
-    
     _menu = new game.graphics.gui.Menu();
-    _menu.events().onLogin(_eventLogin);
-    
     _menu.load();
     _menu.push();
   }
@@ -109,14 +104,13 @@ public class Game implements graphics.gl00.Game {
     _net.shutdown();
   }
   
-  private void login(String name, String pass) {
+  public void login(String name, String pass, final StateListener s) {
     Login p = new Login(name, pass);
     _net.send(p);
-    
     _net.events().onPacket(new network.Client.Events.Packet() {
       public boolean event(Packet p) {
         if(p instanceof Login.Response) {
-          _eventLogin.loggedIn((Login.Response)p);
+          s.loggedIn((Login.Response)p);
           remove();
           return true;
         }
@@ -124,5 +118,30 @@ public class Game implements graphics.gl00.Game {
         return false;
       }
     }, true);
+  }
+  
+  public void charDel(int id, final StateListener s) {
+    if(!_permissions.canAlterChars()) {
+      return;
+    }
+    
+    CharDel p = new CharDel(id);
+    _net.send(p);
+    _net.events().onPacket(new network.Client.Events.Packet() {
+      public boolean event(Packet p) {
+        if(p instanceof CharDel.Response) {
+          s.charDeleted((CharDel.Response)p);
+          remove();
+          return true;
+        }
+        
+        return false;
+      }
+    }, true);
+  }
+  
+  public static interface StateListener {
+    public void loggedIn(Login.Response packet);
+    public void charDeleted(CharDel.Response packet);
   }
 }
