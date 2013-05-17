@@ -2,8 +2,10 @@ package game.network;
 
 import network.packet.Packet;
 import network.packet.Packets;
+import game.network.packet.CharDel;
 import game.network.packet.Connect;
 import game.network.packet.Login;
+import game.network.packet.Permissions;
 import game.settings.Settings;
 
 public class Client {
@@ -29,6 +31,9 @@ public class Client {
     Packets.add(Connect.class);
     Packets.add(Login.class);
     Packets.add(Login.Response.class);
+    Packets.add(Permissions.class);
+    Packets.add(CharDel.class);
+    Packets.add(CharDel.Response.class);
   }
   
   public void connect() {
