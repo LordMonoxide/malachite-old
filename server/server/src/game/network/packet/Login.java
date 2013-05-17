@@ -49,7 +49,7 @@ public class Login extends Packet {
       tableAccount.setName(_name);
       tableAccount.select();
       
-      if(_pass == tableAccount.getPass()) {
+      if(_pass.equals(tableAccount.getPass())) {
         tablePermission.setID(tableAccount.getPermissions());
         tablePermission.select();
         
