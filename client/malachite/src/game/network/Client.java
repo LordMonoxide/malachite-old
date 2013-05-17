@@ -14,8 +14,9 @@ public class Client {
     _client.setTimeout(3000);
     _client.setAddress(Settings.Net.IP, Settings.Net.Port);
     _client.events().onPacket(new network.Client.Events.Packet() {
-      public void event(Packet p) {
+      public boolean event(Packet p) {
         p.process();
+        return false;
       }
     });
   }

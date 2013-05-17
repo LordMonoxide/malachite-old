@@ -114,12 +114,15 @@ public class Game implements graphics.gl00.Game {
     _net.send(p);
     
     _net.events().onPacket(new network.Client.Events.Packet() {
-      public void event(Packet p) {
+      public boolean event(Packet p) {
         if(p instanceof Login.Response) {
           _eventLogin.loggedIn((Login.Response)p);
           remove();
+          return true;
         }
+        
+        return false;
       }
-    });
+    }, true);
   }
 }
