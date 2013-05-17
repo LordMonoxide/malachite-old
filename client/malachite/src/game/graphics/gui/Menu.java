@@ -64,22 +64,41 @@ public class Menu extends GUI {
       }
     });
     
-    Control.Events.Key loginKey = new Control.Events.Key() {
-      public void event(int key) {
-        if(key == Keyboard.KEY_RETURN) {
-          login();
-        }
-      }
-    };
-    
     _txtName = new Textbox(this);
     _txtName.setX((_wndLogin.getClientW() - _txtName.getW()) / 2);
     _txtName.setY(_txtName.getX() + 4);
-    _txtName.events().onKeyDown(loginKey);
+    _txtName.events().onKeyDown(new Control.Events.Key() {
+      public void event(int key) {
+        if(key == Keyboard.KEY_RETURN) {
+          login();
+        } else {
+          if(_savedPass != null && _savedPass.length() != 0) {
+            _savedPass = null;
+            _txtPass.setText(null);
+          }
+        }
+      }
+    });
     
     _txtPass = new Textbox(this);
     _txtPass.setXY(_txtName.getX(), _txtName.getY() + _txtName.getH() + 9);
-    _txtPass.events().onKeyDown(loginKey);
+    _txtPass.events().onKeyDown(new Control.Events.Key() {
+      public void event(int key) {
+        if(key == Keyboard.KEY_RETURN) {
+          login();
+        } else {
+          _savedPass = null;
+        }
+      }
+    });
+    _txtPass.events().onGotFocus(new Control.Events.Focus() {
+      public void event() {
+        if(_savedPass != null) {
+          _savedPass = null;
+          _txtPass.setText(null);
+        }
+      }
+    });
     
     _btnLogin = new Button(this);
     _btnLogin.setXY(_txtName.getX() + (_txtName.getW() - _btnLogin.getW()) - 3, _txtPass.getY() + _txtPass.getH() + 15);
@@ -107,24 +126,18 @@ public class Menu extends GUI {
     
     _lstChar = new List(this);
     _lstChar.setX((_wndChar.getClientW() - _lstChar.getW()) / 2);
-    _lstChar.setY(10 - 30);
+    _lstChar.setY(22);
     
     _btnCharNew = new Button(this);
     _btnCharNew.setText("New");
-    _btnCharNew.setBackColour(new float[] {0xF0 / 255f, 0xE3 / 255f, 0xBF / 255f, 0xBF / 255f});
-    _btnCharNew.setForeColour(new float[] {0, 0, 0, 1});
-    _btnCharNew.setXYWH(_lstChar.getX(), _lstChar.getY() + _lstChar.getH() + 15 + 30, 60, 20);
+    _btnCharNew.setXYWH(_lstChar.getX(), _lstChar.getY() + _lstChar.getH() + 15, 60, 20);
     
     _btnCharDel = new Button(this);
     _btnCharDel.setText("Del");
-    _btnCharDel.setBackColour(_btnCharNew.getBackColour());
-    _btnCharDel.setForeColour(_btnCharNew.getForeColour());
     _btnCharDel.setXYWH(_btnCharNew.getX() + _btnCharNew.getW() + 10, _btnCharNew.getY(), 60, 20);
     
     _btnCharUse = new Button(this);
     _btnCharUse.setText("Use");
-    _btnCharUse.setBackColour(_btnCharNew.getBackColour());
-    _btnCharUse.setForeColour(_btnCharNew.getForeColour());
     _btnCharUse.setXYWH(_btnCharDel.getX() + _btnCharDel.getW() + 10, _btnCharNew.getY(), 60, 20);
     
     _wndChar.Controls().add(_lstChar);
@@ -160,7 +173,7 @@ public class Menu extends GUI {
     }
     
     if(_txtName.getText() != null && _txtName.getText().length() != 0) {
-      _txtPass.setFocus(true);
+      _txtName.setFocus(true);
     }
   }
   
