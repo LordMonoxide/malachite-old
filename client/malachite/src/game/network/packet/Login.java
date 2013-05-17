@@ -41,6 +41,7 @@ public class Login extends Packet {
     public static final byte RESPONSE_SQL_EXCEPTION = 3;
     
     private byte _response;
+    private String[] _name;
     
     public int getIndex() {
       return 2;
@@ -50,31 +51,28 @@ public class Login extends Packet {
       return _response;
     }
     
+    public String[] getName() {
+      return _name;
+    }
+    
     public ByteBuf serialize() {
       return null;
     }
     
     public void deserialize(ByteBuf data) throws NotEnoughDataException {
       _response = data.readByte();
+      
+      if(_response == RESPONSE_OKAY) {
+        _name = new String[data.readInt()];
+        
+        for(int i = 0; i < _name.length; i++) {
+          _name[i] = new String(data.readBytes(data.readShort()).array());
+        }
+      }
     }
     
     public void process() {
-      switch(_response) {
-        case RESPONSE_OKAY:
-          System.out.println("Okay");
-          break;
-        case RESPONSE_NOT_AUTHD:
-          System.out.println("Not auth'd");
-          break;
-        case RESPONSE_INVALID:
-          System.out.println("Invalid");
-          break;
-        case RESPONSE_SQL_EXCEPTION:
-          System.out.println("DEAD");
-          break;
-        default:
-          System.out.println("Other?");
-      }
+      
     }
   }
 }

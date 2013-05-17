@@ -1,10 +1,13 @@
 package game.network.packet;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import game.data.account.Account;
+import game.data.account.Player;
 import game.network.Connection;
 import game.sql.AccountsTable;
+import game.sql.CharactersTable;
 import game.sql.PermissionsTable;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -42,6 +45,7 @@ public class Login extends Packet {
     
     AccountsTable tableAccount = AccountsTable.getInstance();
     PermissionsTable tablePermission = PermissionsTable.getInstance();
+    CharactersTable tableChar = CharactersTable.getInstance();
     
     Response response = new Response();
     
@@ -54,12 +58,19 @@ public class Login extends Packet {
         tablePermission.select();
         
         if(tablePermission.getPermissions().canLogin()) {
-          Account a = new Account();
+          Account a = new Account(tableAccount.getID());
+          c.setPlayer(tableChar.selectFromAccount(a));
           c.setLoggedIn(true);
           c.setAccount(a);
           a.setName(_name);
+          a.setPermissions(tablePermission.getPermissions());
           
           response._response = Response.RESPONSE_OKAY;
+          response._player = c.getPlayer();
+          
+          Permissions p = new Permissions();
+          p.setPermissions(a.getPermissions());
+          c.send(p);
         } else {
           response._response = Response.RESPONSE_NOT_AUTHD;
         }
@@ -81,6 +92,7 @@ public class Login extends Packet {
     public static final byte RESPONSE_SQL_EXCEPTION = 3;
     
     private byte _response;
+    private ArrayList<Player> _player;
     
     public int getIndex() {
       return 2;
@@ -89,6 +101,16 @@ public class Login extends Packet {
     public ByteBuf serialize() {
       ByteBuf b = Unpooled.buffer(4);
       b.writeByte(_response);
+      
+      if(_player != null) {
+        b.writeInt(_player.size());
+        
+        for(Player p : _player) {
+          b.writeShort(p.getName().length());
+          b.writeBytes(p.getName().getBytes());
+        }
+      }
+      
       return b;
     }
     
