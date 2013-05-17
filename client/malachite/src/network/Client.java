@@ -134,8 +134,16 @@ public class Client {
     private LinkedList<Packet> _packet = new LinkedList<Packet>();
     
     public void onPacket(Packet e) {
+      onPacket(e, false);
+    }
+    
+    public void onPacket(Packet e, boolean first) {
       e._events = this;
-      _packet.add(e);
+      if(first) {
+        _packet.addFirst(e);
+      } else {
+        _packet.add(e);
+      }
     }
     
     public void removePacket(Packet e) {
@@ -146,7 +154,7 @@ public class Client {
     
     protected void raisePacket(network.packet.Packet p) {
       for(Packet e : _packet) {
-        e.event(p);
+        if(e.event(p)) break;
       }
     }
     
@@ -157,7 +165,7 @@ public class Client {
         _events.removePacket(this);
       }
       
-      public abstract void event(network.packet.Packet p);
+      public abstract boolean event(network.packet.Packet p);
     }
   }
 }
