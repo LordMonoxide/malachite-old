@@ -54,14 +54,14 @@ public class Settings {
           permissionsTable.create();
         }
         
-        if(!charTable.exists()) {
-          System.out.println("Creating character table...");
-          charTable.create();
-        }
-        
         if(!accountTable.exists()) {
           System.out.println("Creating account table...");
           accountTable.create();
+        }
+        
+        if(!charTable.exists()) {
+          System.out.println("Creating character table...");
+          charTable.create();
         }
       } catch(SQLException e) {
         e.printStackTrace();
