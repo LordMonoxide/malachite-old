@@ -11,17 +11,17 @@ public class CharactersTable extends Table {
     return _instance;
   }
   
+  private int _account;
   private String _name;
   private String _world;
   private float _x, _y;
   private int _z;
-  private float _r;
   
   public CharactersTable() {
     super("characters", "c_name");
-    _create = _sql.prepareStatement("CREATE TABLE characters (c_name VARCHAR(16) NOT NULL, c_world VARCHAR(40) NOT NULL, c_x FLOAT NOT NULL, c_y FLOAT NOT NULL, c_z INT NOT NULL, c_r FLOAT NOT NULL, CONSTRAINT pk_c_name UNIQUE (c_name))");
+    _create = _sql.prepareStatement("CREATE TABLE characters (c_id INT NOT NULL AUTO_INCREMENT, c_a_id INT NOT NULL, c_name VARCHAR(16) NOT NULL, c_world VARCHAR(40) NOT NULL, c_x FLOAT NOT NULL, c_y FLOAT NOT NULL, c_z INT NOT NULL, CONSTRAINT pk_c_id UNIQUE (c_id), CONSTRAINT pk_c_name UNIQUE (c_name), FOREIGN KEY (c_a_id) REFERENCES accounts(a_id))");
     _insert = _sql.prepareStatement("INSERT INTO characters VALUES (?, ?, ?, ?, ?, ?)");
-    _update = _sql.prepareStatement("UPDATE characters SET c_world =?, c_x=?, c_y=?, c_z=?, c_r=? WHERE c_name=?");
+    _update = _sql.prepareStatement("UPDATE characters SET c_world=?, c_x=?, c_y=?, c_z=? WHERE c_id=?");
   }
   
   public boolean exists() {
@@ -37,13 +37,13 @@ public class CharactersTable extends Table {
   }
   
   public void insert() throws SQLException {
-    int i = 1;
+    int i = 2;
+    _insert.setInt(i++, _account);
     _insert.setString(i++, _name);
     _insert.setString(i++, _world);
     _insert.setFloat(i++, _x);
     _insert.setFloat(i++, _y);
     _insert.setInt(i++, _z);
-    _insert.setFloat(i++, _r);
     _insert.execute();
   }
   
@@ -53,12 +53,13 @@ public class CharactersTable extends Table {
     
     if(_result.next()) {
       int i = 1;
-      _name  = _result.getString(i++);
-      _world = _result.getString(i++);
-      _x     = _result.getFloat(i++);
-      _y     = _result.getFloat(i++);
-      _z     = _result.getInt(i++);
-      _r     = _result.getFloat(i++);
+      _id      = _result.getInt(i++);
+      _account = _result.getInt(i++);
+      _name    = _result.getString(i++);
+      _world   = _result.getString(i++);
+      _x       = _result.getFloat(i++);
+      _y       = _result.getFloat(i++);
+      _z       = _result.getInt(i++);
     }
   }
   
@@ -68,14 +69,21 @@ public class CharactersTable extends Table {
     _update.setFloat(i++, _x);
     _update.setFloat(i++, _y);
     _update.setInt(i++, _z);
-    _update.setFloat(i++, _r);
-    _update.setString(i++, _name);
+    _update.setInt(i++, _id);
     _update.execute();
   }
   
   public void delete() throws SQLException {
     _delete.setString(1, _name);
     _delete.execute();
+  }
+  
+  public int getAccount() {
+    return _account;
+  }
+  
+  public void setAccount(int account) {
+    _account = account;
   }
   
   public String getName() {
@@ -116,13 +124,5 @@ public class CharactersTable extends Table {
   
   public void setZ(int z) {
     _z = z;
-  }
-  
-  public float getR() {
-    return _r;
-  }
-  
-  public void setR(float r) {
-    _r = r;
   }
 }
