@@ -9,6 +9,7 @@ import game.data.account.Permissions;
 import game.graphics.gui.Menu;
 import game.network.Client;
 import game.network.packet.CharDel;
+import game.network.packet.CharNew;
 import game.network.packet.Login;
 import game.settings.Settings;
 import game.world.Entity;
@@ -121,10 +122,6 @@ public class Game implements graphics.gl00.Game {
   }
   
   public void charDel(int id, final StateListener s) {
-    if(!_permissions.canAlterChars()) {
-      return;
-    }
-    
     CharDel p = new CharDel(id);
     _net.send(p);
     _net.events().onPacket(new network.Client.Events.Packet() {
@@ -140,8 +137,25 @@ public class Game implements graphics.gl00.Game {
     }, true);
   }
   
+  public void charNew(String name, final StateListener s) {
+    CharNew p = new CharNew(name);
+    _net.send(p);
+    _net.events().onPacket(new network.Client.Events.Packet() {
+      public boolean event(Packet p) {
+        if(p instanceof CharNew.Response) {
+          s.charCreated((CharNew.Response)p);
+          remove();
+          return true;
+        }
+        
+        return false;
+      }
+    }, true);
+  }
+  
   public static interface StateListener {
     public void loggedIn(Login.Response packet);
     public void charDeleted(CharDel.Response packet);
+    public void charCreated(CharNew.Response packet);
   }
 }

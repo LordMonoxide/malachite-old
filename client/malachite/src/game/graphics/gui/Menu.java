@@ -12,6 +12,7 @@ import org.lwjgl.input.Keyboard;
 import game.Game;
 import game.data.util.Properties;
 import game.network.packet.CharDel;
+import game.network.packet.CharNew;
 import game.network.packet.Login;
 import graphics.gl00.Context;
 import graphics.shared.gui.Control;
@@ -181,6 +182,11 @@ public class Menu extends GUI {
     _btnNewCharCreate = new Button(this);
     _btnNewCharCreate.setText("Create");
     _btnNewCharCreate.setXYWH(_lstChar.getX(), _lstChar.getY() + _lstChar.getH() + 15, 60, 20);
+    _btnNewCharCreate.events().onClick(new Button.Events.Click() {
+      public void event() {
+        charNew(_txtNewCharName.getText());
+      }
+    });
     
     _wndNewChar.Controls().add(_txtNewCharName);
     _wndNewChar.Controls().add(_lblNewCharName);
@@ -329,6 +335,38 @@ public class Menu extends GUI {
     Message.show("Your character has been deleted.");
   }
   
+  private void charNew(String name) {
+    if(!_game.getPermissions().canAlterChars()) {
+      Message.show("Sorry, your account isn't authorised to create or delete characters.");
+      return;
+    }
+    
+    if(!Crypto.validateText(name)) {
+      Message.show("Sorry, you've entered invalid characters.");
+      return;
+    }
+    
+    _game.charNew(name, _listener);
+  }
+  
+  private void charCreated(CharNew.Response packet) {
+    switch(packet.getResponse()) {
+      case CharNew.Response.RESPONSE_OKAY:
+        _lstChar.addItem(_txtNewCharName.getText(), null);
+        _wndChar.setVisible(true);
+        _wndNewChar.setVisible(false);
+        break;
+        
+      case CharNew.Response.RESPONSE_EXISTS:
+        Message.show("Sorry, that name has already been taken.");
+        break;
+        
+      case CharNew.Response.RESPONSE_SQL_EXCEPTION:
+        Message.show("A server error occurred.");
+        break;
+    }
+  }
+  
   public static class Listener implements Game.StateListener {
     private Menu _menu;
     
@@ -342,6 +380,10 @@ public class Menu extends GUI {
     
     public void charDeleted(CharDel.Response packet) {
       _menu.charDeleted();
+    }
+    
+    public void charCreated(CharNew.Response packet) {
+      _menu.charCreated(packet);
     }
   }
 }
