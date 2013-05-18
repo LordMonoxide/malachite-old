@@ -19,6 +19,8 @@ public class Region {
   private int _x, _y;
   private Sprite[] _sprite;
   
+  private boolean _loaded;
+  
   public Region(World world) {
     _events = new Events();
     _world = world;
@@ -64,6 +66,8 @@ public class Region {
     }
     
     spawn();
+    
+    _loaded = true;
   }
   
   public void spawn() {
@@ -80,6 +84,8 @@ public class Region {
   }
   
   public void draw(int z) {
+    if(!_loaded) calc();
+    
     if(_layer == null) return;
     
     _matrix.push();
@@ -87,10 +93,9 @@ public class Region {
     
     if(_layer[z] != null) {
       _layer[z].draw();
-      _events.raiseDraw(z);
     }
     
-    _events.raiseDraw();
+    _events.raiseDraw(z);
     
     _matrix.pop();
   }
@@ -101,12 +106,6 @@ public class Region {
     public int onDraw(Draw e) { _draw.add(e); return _draw.size() - 1; }
     public void removeDraw(int index) { _draw.remove(index); }
     
-    public void raiseDraw() {
-      for(Draw e : _draw) {
-        e.event();
-      }
-    }
-    
     public void raiseDraw(int z) {
       for(Draw e : _draw) {
         e.event(z);
@@ -114,7 +113,6 @@ public class Region {
     }
     
     public static abstract class Draw {
-      public abstract void event();
       public abstract void event(int z);
     }
   }
