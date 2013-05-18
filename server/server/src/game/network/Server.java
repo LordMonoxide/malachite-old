@@ -11,9 +11,9 @@ import network.packet.Packets;
 
 public class Server {
   private static Handler _connect = new Handler();
-  private static Handler _login = new Handler();
+  private static Handler _menu    = new Handler();
   
-  public static Handler getLoginHandler() { return _login; }
+  public static Handler getMenuHandler() { return _menu; }
   
   private network.Server _server;
   

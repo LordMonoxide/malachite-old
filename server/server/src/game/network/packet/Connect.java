@@ -24,7 +24,7 @@ public class Connect extends Packet {
     if(_version != Settings.Net.Version()) {
       _connection.kick("Invalid version");
     } else {
-      ((game.network.Connection)_connection).setHandler(Server.getLoginHandler());
+      ((game.network.Connection)_connection).setHandler(Server.getMenuHandler());
     }
   }
 }
