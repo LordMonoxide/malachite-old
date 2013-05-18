@@ -20,11 +20,11 @@ import org.lwjgl.opengl.GL11;
 public abstract class Context {
   protected static Context  _context;
   protected static Matrix   _matrix;
-  protected static Vertex   _vertex;
   protected static Textures _textures;
   protected static Fonts    _fonts;
-  protected static Drawable _drawable;
-  protected static Scalable _scalable;
+  protected static Class<? extends Vertex>   _vertex;
+  protected static Class<? extends Drawable> _drawable;
+  protected static Class<? extends Scalable> _scalable;
   
   private static Game  _game;
   
@@ -36,7 +36,7 @@ public abstract class Context {
   
   public static final Vertex newVertex() {
     try {
-      return _vertex.getClass().newInstance();
+      return _vertex.newInstance();
     } catch(Exception e) {
       e.printStackTrace();
       return null;
@@ -45,7 +45,7 @@ public abstract class Context {
   
   public static final Drawable newDrawable() {
     try {
-      return _drawable.getClass().newInstance();
+      return _drawable.newInstance();
     } catch(Exception e) {
       e.printStackTrace();
       return null;
@@ -54,7 +54,7 @@ public abstract class Context {
   
   public static final Scalable newScalable() {
     try {
-      return _scalable.getClass().newInstance();
+      return _scalable.newInstance();
     } catch(Exception e) {
       e.printStackTrace();
       return null;

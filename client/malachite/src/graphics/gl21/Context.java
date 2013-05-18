@@ -18,8 +18,8 @@ public class Context extends graphics.gl00.Context {
   protected void createInstances() {
     _context  = this;
     _matrix   = new Matrix();
-    _vertex   = new Vertex();
-    _drawable = new Drawable();
+    _vertex   = Vertex.class;
+    _drawable = Drawable.class;
     _textures = Textures.getInstance();
     _fonts    = Fonts.getInstance();
   }
