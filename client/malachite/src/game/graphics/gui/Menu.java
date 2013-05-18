@@ -276,11 +276,16 @@ public class Menu extends GUI {
     
     switch(packet.getResponse()) {
       case Login.Response.RESPONSE_OKAY:
-        for(String s : packet.getName()) {
-          _lstChar.addItem(s, null);
+        if(packet.getName().length != 0) {
+          for(String s : packet.getName()) {
+            _lstChar.addItem(s, null);
+          }
+          
+          _wndChar.setVisible(true);
+        } else {
+          showNewChar();
         }
         
-        _wndChar.setVisible(true);
         _wndLogin.setVisible(false);
         break;
       
