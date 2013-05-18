@@ -320,6 +320,7 @@ public class Menu extends GUI {
   }
   
   private void charDeleted() {
+    _lstChar.removeItem(_lstChar.getSelected());
     Message.show("Your character has been deleted.");
   }
   
