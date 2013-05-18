@@ -89,6 +89,11 @@ public class List extends Control<List.ListItem.Events> {
     return l;
   }
   
+  public void removeItem(ListItem l) {
+    _items.remove(l);
+    _scroll.setMax(_scroll.getMax() - 1);
+  }
+  
   public void draw() {
     if(drawBegin()) {
       switch(_items.size()) {
