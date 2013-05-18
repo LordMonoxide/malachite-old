@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import game.data.account.Account;
-import game.data.account.Player;
+import game.data.account.Character;
 import game.network.Connection;
 import game.sql.AccountsTable;
 import game.sql.CharactersTable;
@@ -33,7 +33,7 @@ public class Login extends Packet {
   
   public void process() {
     Connection c = (Connection)_connection;
-    if(c.isLoggedIn()) {
+    if(c.getAccount() != null) {
       c.kick("Already logged in");
       return;
     }
@@ -60,7 +60,6 @@ public class Login extends Packet {
         if(tablePermission.getPermissions().canLogin()) {
           Account a = new Account(tableAccount.getID());
           c.setPlayer(tableChar.selectFromAccount(a));
-          c.setLoggedIn(true);
           c.setAccount(a);
           a.setName(_name);
           a.setPermissions(tablePermission.getPermissions());
@@ -92,7 +91,7 @@ public class Login extends Packet {
     public static final byte RESPONSE_SQL_EXCEPTION = 3;
     
     private byte _response;
-    private ArrayList<Player> _player;
+    private ArrayList<Character> _player;
     
     public int getIndex() {
       return 2;
@@ -105,7 +104,7 @@ public class Login extends Packet {
       if(_player != null) {
         b.writeInt(_player.size());
         
-        for(Player p : _player) {
+        for(Character p : _player) {
           b.writeShort(p.getName().length());
           b.writeBytes(p.getName().getBytes());
         }

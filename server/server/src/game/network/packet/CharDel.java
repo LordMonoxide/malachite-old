@@ -25,7 +25,7 @@ public class CharDel extends Packet {
   
   public void process() {
     Connection c = (Connection)_connection;
-    if(!c.isLoggedIn()) {
+    if(c.getAccount() == null) {
       c.kick("Not logged in");
       return;
     }
