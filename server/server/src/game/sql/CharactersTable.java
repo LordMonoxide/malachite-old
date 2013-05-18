@@ -1,7 +1,7 @@
 package game.sql;
 
 import game.data.account.Account;
-import game.data.account.Player;
+import game.data.account.Character;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -24,20 +24,20 @@ public class CharactersTable {
   private PreparedStatement _update;
   
   private PreparedStatement _drop;
-  private PreparedStatement _select;
   private PreparedStatement _selectAccount;
   private PreparedStatement _selectPlayer;
+  private PreparedStatement _selectExist;
   private PreparedStatement _delete;
   
   public CharactersTable() {
     _sql = SQL.getInstance();
     _drop          = _sql.prepareStatement("DROP TABLE characters");
-    _select        = _sql.prepareStatement("SELECT * FROM characters WHERE c_id=?");
     _selectAccount = _sql.prepareStatement("SELECT c_id, c_name FROM characters WHERE c_a_id=?");
     _selectPlayer  = _sql.prepareStatement("SELECT c_name, c_world, c_x, c_y, c_z FROM characters WHERE c_id=? AND c_a_id=?");
+    _selectExist   = _sql.prepareStatement("SELECT c_id FROM characters WHERE c_name=?");
     _delete        = _sql.prepareStatement("DELETE FROM characters WHERE c_id=?");
     _create        = _sql.prepareStatement("CREATE TABLE characters (c_id INT NOT NULL AUTO_INCREMENT, c_a_id INT NOT NULL, c_name VARCHAR(16) NOT NULL, c_world VARCHAR(40) NOT NULL, c_x FLOAT NOT NULL, c_y FLOAT NOT NULL, c_z INT NOT NULL, CONSTRAINT pk_c_id UNIQUE (c_id), CONSTRAINT pk_c_name UNIQUE (c_name), FOREIGN KEY (c_a_id) REFERENCES accounts(a_id))");
-    _insert        = _sql.prepareStatement("INSERT INTO characters VALUES (?, ?, ?, ?, ?, ?)");
+    _insert        = _sql.prepareStatement("INSERT INTO characters VALUES (null, ?, ?, ?, ?, ?, ?)");
     _update        = _sql.prepareStatement("UPDATE characters SET c_world=?, c_x=?, c_y=?, c_z=? WHERE c_id=?");
   }
   
@@ -46,9 +46,9 @@ public class CharactersTable {
     if(_insert != null) _insert.close();
     if(_update != null) _update.close();
     if(_drop   != null) _drop  .close();
-    if(_select != null) _select.close();
     if(_selectAccount != null) _selectAccount.close();
     if(_selectPlayer != null) _selectPlayer.close();
+    if(_selectExist != null) _selectExist.close();
     if(_delete != null) _delete.close();
   }
   
@@ -64,8 +64,8 @@ public class CharactersTable {
     _drop.execute();
   }
   
-  public void insert(Player p) throws SQLException {
-    int i = 2;
+  public void insert(Character p) throws SQLException {
+    int i = 1;
     _insert.setInt(i++, p.getAccount().getID());
     _insert.setString(i++, p.getName());
     _insert.setString(i++, p.getWorld());
@@ -73,16 +73,23 @@ public class CharactersTable {
     _insert.setFloat(i++, p.getY());
     _insert.setInt(i++, p.getZ());
     _insert.execute();
+    
+    _selectExist.setString(1, p.getName());
+    ResultSet r = _selectExist.executeQuery();
+    if(r.next()) {
+      p.setID(r.getInt(1));
+    }
+    r.close();
   }
   
-  public ArrayList<Player> selectFromAccount(Account a) throws SQLException {
+  public ArrayList<Character> selectFromAccount(Account a) throws SQLException {
     _selectAccount.setInt(1, a.getID());
     ResultSet r = _selectAccount.executeQuery();
     
-    ArrayList<Player> player = new ArrayList<Player>();
+    ArrayList<Character> player = new ArrayList<Character>();
     while(r.next()) {
       int i = 1;
-      Player p = new Player(r.getInt(i++), a);
+      Character p = new Character(r.getInt(i++), a);
       p.setName(r.getString(i++));
       player.add(p);
     }
@@ -92,15 +99,15 @@ public class CharactersTable {
     return player;
   }
   
-  public ArrayList<Player> selectFromAccount(Account a, int id) throws SQLException {
+  public ArrayList<Character> selectFromAccount(Account a, int id) throws SQLException {
     _selectPlayer.setInt(1, id);
     _selectPlayer.setInt(2, a.getID());
     ResultSet r = _selectPlayer.executeQuery();
     
-    ArrayList<Player> player = new ArrayList<Player>();
+    ArrayList<Character> player = new ArrayList<Character>();
     while(r.next()) {
       int i = 1;
-      Player p = new Player(id, a);
+      Character p = new Character(id, a);
       p.setName(r.getString(i++));
       p.setWorld(r.getString(i++));
       p.setX(r.getFloat(i++));
@@ -114,26 +121,22 @@ public class CharactersTable {
     return player;
   }
   
-  public Player[] select(int id) throws SQLException {
-    /*_select.setInt(1, id);
-    ResultSet r = _select.executeQuery();
+  public int find(String name) throws SQLException {
+    _selectExist.setString(1, name);
+    _selectExist.execute();
     
-    int i = 1;
-    ArrayList<Player> player = new ArrayList<Player>();
-    while(r.next()) {
-      Player p = new Player(r.getInt(i++), )
-      _id      = _result.getInt(i++);
-      _account = _result.getInt(i++);
-      _name    = _result.getString(i++);
-      _world   = _result.getString(i++);
-      _x       = _result.getFloat(i++);
-      _y       = _result.getFloat(i++);
-      _z       = _result.getInt(i++);
-    }*/
-    return null;
+    ResultSet r = _selectExist.getResultSet();
+    if(r.next()) {
+      int i = r.getInt(1);
+      r.close();
+      return i;
+    }
+    
+    r.close();
+    return -1;
   }
   
-  public void update(Player p) throws SQLException {
+  public void update(Character p) throws SQLException {
     int i = 1;
     _update.setString(i++, p.getWorld());
     _update.setFloat(i++, p.getX());
@@ -143,7 +146,7 @@ public class CharactersTable {
     _update.execute();
   }
   
-  public void delete(Player p) throws SQLException {
+  public void delete(Character p) throws SQLException {
     _delete.setInt(1, p.getID());
     _delete.execute();
   }
