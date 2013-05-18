@@ -1,6 +1,7 @@
 package game.network;
 
 import game.network.packet.CharDel;
+import game.network.packet.CharNew;
 import game.network.packet.Connect;
 import game.network.packet.Login;
 import game.network.packet.Permissions;
@@ -46,6 +47,8 @@ public class Server {
     Packets.add(Permissions.class);
     Packets.add(CharDel.class);
     Packets.add(CharDel.Response.class);
+    Packets.add(CharNew.class);
+    Packets.add(CharNew.Response.class);
   }
   
   public void start() {

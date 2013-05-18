@@ -3,6 +3,7 @@ package game.network;
 import network.packet.Packet;
 import network.packet.Packets;
 import game.network.packet.CharDel;
+import game.network.packet.CharNew;
 import game.network.packet.Connect;
 import game.network.packet.Login;
 import game.network.packet.Permissions;
@@ -34,6 +35,8 @@ public class Client {
     Packets.add(Permissions.class);
     Packets.add(CharDel.class);
     Packets.add(CharDel.Response.class);
+    Packets.add(CharNew.class);
+    Packets.add(CharNew.Response.class);
   }
   
   public void connect() {
