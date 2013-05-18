@@ -12,8 +12,10 @@ import network.packet.Packets;
 public class Server {
   private static Handler _connect = new Handler();
   private static Handler _menu    = new Handler();
+  private static Handler _game    = new Handler();
   
   public static Handler getMenuHandler() { return _menu; }
+  public static Handler getGameHandler() { return _game; }
   
   private network.Server _server;
   
