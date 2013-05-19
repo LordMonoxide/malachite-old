@@ -2,6 +2,7 @@ package game.network.packet;
 
 import game.network.Connection;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import network.packet.Packet;
 
 public class CharUse extends Packet {
@@ -41,7 +42,7 @@ public class CharUse extends Packet {
     }
     
     public ByteBuf serialize() {
-      return null;
+      return Unpooled.EMPTY_BUFFER;
     }
     
     public void deserialize(ByteBuf data) throws NotEnoughDataException {
