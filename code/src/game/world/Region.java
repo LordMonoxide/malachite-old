@@ -17,7 +17,7 @@ public class Region {
   private Drawable[] _layer;
   private Map _map;
   private int _x, _y;
-  private Sprite[] _sprite;
+  private Entity[] _entity;
   
   private boolean _loaded;
   
@@ -72,14 +72,16 @@ public class Region {
   
   public void spawn() {
     despawn();
-    _sprite = _map.spawn();
+    _entity = _map.spawn();
   }
   
   public void despawn() {
-    if(_sprite != null) {
-      for(Sprite s : _sprite) {
-        s.remove();
+    if(_entity != null) {
+      for(Entity e : _entity) {
+        e.getSprite().remove();
       }
+      
+      _entity = null;
     }
   }
   
