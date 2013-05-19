@@ -13,6 +13,7 @@ import game.Game;
 import game.data.util.Properties;
 import game.network.packet.CharDel;
 import game.network.packet.CharNew;
+import game.network.packet.CharUse.Response;
 import game.network.packet.Login;
 import graphics.gl00.Context;
 import graphics.shared.gui.Control;
@@ -52,7 +53,7 @@ public class Menu extends GUI {
   private Message _wait;
   
   public void load() {
-    _context.setBackColour(new float[] {1, 1, 1, 1});
+    //_context.setBackColour(new float[] {1, 1, 1, 1});
     
     /*for(int i = 0; i < _background.length; i++) {
       _background[i] = new Picture(this);
@@ -159,6 +160,13 @@ public class Menu extends GUI {
     _btnCharUse = new Button(this);
     _btnCharUse.setText("Use");
     _btnCharUse.setXYWH(_btnCharDel.getX() + _btnCharDel.getW() + 10, _btnCharNew.getY(), 60, 20);
+    _btnCharUse.events().onClick(new Button.Events.Click() {
+      public void event() {
+        if(_lstChar.getSelected() != null) {
+          charUse(_lstChar.getSelected().getIndex());
+        }
+      }
+    });
     
     _wndChar.Controls().add(_lstChar);
     _wndChar.Controls().add(_btnCharNew);
@@ -321,13 +329,13 @@ public class Menu extends GUI {
     _wndChar.setVisible(false);
   }
   
-  private void charDel(int id) {
+  private void charDel(int index) {
     if(!_game.getPermissions().canAlterChars()) {
       Message.show("Sorry, your account isn't authorised to create or delete characters.");
       return;
     }
     
-    _game.charDel(id, _listener);
+    _game.charDel(index, _listener);
   }
   
   private void charDeleted() {
@@ -367,6 +375,16 @@ public class Menu extends GUI {
     }
   }
   
+  private void charUse(int index) {
+    _game.charUse(index, _listener);
+  }
+  
+  private void charUsed() {
+    game.graphics.gui.Game g = new game.graphics.gui.Game();
+    g.push();
+    pop();
+  }
+  
   public static class Listener implements Game.StateListener {
     private Menu _menu;
     
@@ -384,6 +402,10 @@ public class Menu extends GUI {
     
     public void charCreated(CharNew.Response packet) {
       _menu.charCreated(packet);
+    }
+    
+    public void charUsed(Response packet) {
+      _menu.charUsed();
     }
   }
 }
