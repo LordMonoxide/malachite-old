@@ -13,6 +13,7 @@ import game.Game;
 import game.data.util.Properties;
 import game.network.packet.CharDel;
 import game.network.packet.CharNew;
+import game.network.packet.CharUse;
 import game.network.packet.CharUse.Response;
 import game.network.packet.Login;
 import graphics.gl00.Context;
@@ -379,10 +380,18 @@ public class Menu extends GUI {
     _game.charUse(index, _listener);
   }
   
-  private void charUsed() {
-    game.graphics.gui.Game g = new game.graphics.gui.Game();
-    g.push();
-    pop();
+  private void charUsed(CharUse.Response packet) {
+    switch(packet.getResponse()) {
+      case CharUse.Response.RESPONSE_OKAY:
+        game.graphics.gui.Game g = new game.graphics.gui.Game();
+        g.push();
+        pop();
+        break;
+        
+      case CharUse.Response.RESPONSE_SQL_ERROR:
+        Message.show("A server error occurred.");
+        break;
+    }
   }
   
   public static class Listener implements Game.StateListener {
@@ -405,7 +414,7 @@ public class Menu extends GUI {
     }
     
     public void charUsed(Response packet) {
-      _menu.charUsed();
+      _menu.charUsed(packet);
     }
   }
 }

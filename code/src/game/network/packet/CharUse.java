@@ -30,16 +30,25 @@ public class CharUse extends Packet {
   }
   
   public static class Response extends Packet {
+    public static final byte RESPONSE_OKAY = 0;
+    public static final byte RESPONSE_SQL_ERROR = 1;
+    
+    private byte _response;
+    
     public int getIndex() {
       return 9;
     }
     
+    public byte getResponse() {
+      return _response;
+    }
+    
     public ByteBuf serialize() {
-      return Unpooled.EMPTY_BUFFER;
+      return null;
     }
     
     public void deserialize(ByteBuf data) throws NotEnoughDataException {
-      
+      _response = data.readByte();
     }
     
     public void process() {
