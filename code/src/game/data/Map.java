@@ -7,6 +7,7 @@ import game.Game;
 import game.data.util.Buffer;
 import game.data.util.Serializable;
 import game.settings.Settings;
+import game.world.Entity;
 import graphics.gl00.Canvas;
 import graphics.gl00.Context;
 import graphics.gl00.Drawable;
@@ -114,20 +115,22 @@ public class Map extends Serializable {
     return texture;
   }
   
-  public game.world.Sprite[] spawn() {
+  public Entity[] spawn() {
     Game g = (Game)Context.getGame();
-    game.world.Sprite[] s = new game.world.Sprite[_sprite.size()];
+    Entity[] e = new Entity[_sprite.size()];
     int i = 0;
     
     for(Map.Sprite sprite : _sprite) {
-      s[i] = game.world.Sprite.add(g.getSprite(sprite._file));
-      s[i].setX(sprite._x + _x * Settings.Map.Size);
-      s[i].setY(sprite._y + _y * Settings.Map.Size);
-      s[i].setZ(sprite._z);
+      e[i] = new Entity();
+      e[i].setSprite(g.getSprite(sprite._file));
+      e[i].setWorld(g.getWorld());
+      e[i].setX(sprite._x + _x * Settings.Map.Size);
+      e[i].setY(sprite._y + _y * Settings.Map.Size);
+      e[i].setZ(sprite._z);
       i++;
     }
     
-    return s;
+    return e;
   }
   
   public Buffer serialize() {
