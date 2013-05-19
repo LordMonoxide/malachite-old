@@ -168,6 +168,8 @@ public class Game implements graphics.gl00.Game {
   
   public void loadGame() {
     _entity = new Entity();
+    _entity.setSprite(getSprite("Isaac"));
+    _entity.setWorld(_world);
     _entity.setX(Settings.Map.Size / 2);
     _entity.setY(Settings.Map.Size / 2);
     _entity.setZ(2);
