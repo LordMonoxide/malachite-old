@@ -38,7 +38,11 @@ public class Game extends GUI {
   
   private boolean[] _key = new boolean[4];
   
+  private boolean _loaded;
+  
   public void load() {
+    _context.setBackColour(new float[] {0, 0, 0, 0});
+    
     _entity.setEntityCallback(new EntityCallback() {
       public void move(Entity e) {
         handleEntityMove();
@@ -101,7 +105,7 @@ public class Game extends GUI {
     Controls().add(_txtChat);
     Controls().add(_wndAdmin);
     
-    _font.getTexture().load();
+    //_font.getTexture().load();
     Canvas c = new Canvas("Debug text", 256, 256);
     c.bind();
     _font.draw(4,   4, "Graphics:", _fontColour);
@@ -123,6 +127,8 @@ public class Game extends GUI {
     _debugText.createQuad();
     
     updateCamera();
+    
+    _loaded = true;
   }
   
   public void destroy() {
@@ -136,6 +142,8 @@ public class Game extends GUI {
   }
   
   public boolean draw() {
+    if(!_loaded) load();
+    
     double w = Math.floor(_context.getW() / Settings.Map.Size) + 1;
     double h = Math.floor(_context.getH() / Settings.Map.Size) + 1;
     int x1 = (int)Math.ceil(w / 2);
