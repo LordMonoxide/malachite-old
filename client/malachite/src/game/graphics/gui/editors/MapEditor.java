@@ -417,16 +417,14 @@ public class MapEditor extends GUI {
       
       _attribDrawCallback = _region.events().onDraw(new Region.Events.Draw() {
         public void event(int z) {
-          
-        }
-        
-        public void event() {
-          switch(_tab) {
-            case 1:
-              _attribDrawable.draw();
-              
-            case 2:
-              _map.drawSprites();
+          if(z == Settings.Map.Depth - 1) {
+            switch(_tab) {
+              case 1:
+                _attribDrawable.draw();
+                
+              case 2:
+                _map.drawSprites();
+            }
           }
         }
       });
