@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import game.data.Map;
 import game.data.util.Buffer;
 import game.settings.Settings;
+import game.world.Entity;
 import graphics.gl00.Context;
 import graphics.gl00.Drawable;
 import graphics.gl00.Matrix;
@@ -19,7 +20,7 @@ public class MapEditorMap extends Map {
   protected LinkedList<Sprite> _sprite = super._sprite;
   
   private Texture[] _attribMask;
-  private game.world.Sprite[] _sprites;
+  private Entity[] _entity;
   private Drawable[] _spritesDrawable;
   
   public MapEditorMap(Map map) {
@@ -57,22 +58,24 @@ public class MapEditorMap extends Map {
   public void createSprites() {
     deleteSprites();
     
-    _sprites = spawn();
-    _spritesDrawable = new Drawable[_sprites.length];
+    _entity = spawn();
+    _spritesDrawable = new Drawable[_entity.length];
     
     for(int i = 0; i < _spritesDrawable.length; i++) {
       _spritesDrawable[i] = Context.newDrawable();
-      _spritesDrawable[i].setXYWH(_sprite.get(i)._x, _sprite.get(i)._y, _sprites[i].getW(), _sprites[i].getH());
+      _spritesDrawable[i].setXYWH(_sprite.get(i)._x, _sprite.get(i)._y, _entity[i].getSprite().getW(), _entity[i].getSprite().getH());
       _spritesDrawable[i].setColour(new float[] {1, 0, 1, 1});
       _spritesDrawable[i].createBorder();
     }
   }
   
   public void deleteSprites() {
-    if(_sprites != null) {
-      for(game.world.Sprite s : _sprites) {
-        s.remove();
+    if(_entity != null) {
+      for(Entity e : _entity) {
+        e.getSprite().remove();
       }
+      
+      _entity = null;
     }
   }
   
@@ -92,7 +95,7 @@ public class MapEditorMap extends Map {
     int i = 0;
     for(Drawable d : _spritesDrawable) {
       _matrix.push();
-      _matrix.translate(_sprites[i].getFrameX(), _sprites[i].getFrameY());
+      _matrix.translate(_entity[i].getSprite().getFrameX(), _entity[i].getSprite().getFrameY());
       d.draw();
       _matrix.pop();
     }
