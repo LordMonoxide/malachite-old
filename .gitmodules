@@ -1,0 +1,3 @@
+[submodule "lmgfx"]
+	path = code/lmgfx
+	url = https://github.com/LordMonoxide/lmgfx.git
