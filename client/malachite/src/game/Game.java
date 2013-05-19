@@ -10,6 +10,7 @@ import game.graphics.gui.Menu;
 import game.network.Client;
 import game.network.packet.CharDel;
 import game.network.packet.CharNew;
+import game.network.packet.CharUse;
 import game.network.packet.Login;
 import game.settings.Settings;
 import game.world.Entity;
@@ -87,21 +88,16 @@ public class Game implements graphics.gl00.Game {
   }
   
   public void init() {
-    /*_entity = new Entity();
-    _entity.setX(Settings.Map.Size / 2);
-    _entity.setY(Settings.Map.Size / 2);
-    _entity.setZ(2);
-    
-    _world = new World("default");
-    _world.addEntity(_entity);*/
-    
     _menu = new game.graphics.gui.Menu();
     _menu.load();
     _menu.push();
   }
   
   public void destroy() {
-    //_world.destroy();
+    if(_world != null) {
+      _world.destroy();
+    }
+    
     _net.shutdown();
   }
   
@@ -111,8 +107,8 @@ public class Game implements graphics.gl00.Game {
     _net.events().onPacket(new network.Client.Events.Packet() {
       public boolean event(Packet p) {
         if(p instanceof Login.Response) {
-          s.loggedIn((Login.Response)p);
           remove();
+          s.loggedIn((Login.Response)p);
           return true;
         }
         
@@ -121,14 +117,14 @@ public class Game implements graphics.gl00.Game {
     }, true);
   }
   
-  public void charDel(int id, final StateListener s) {
-    CharDel p = new CharDel(id);
+  public void charDel(int index, final StateListener s) {
+    CharDel p = new CharDel(index);
     _net.send(p);
     _net.events().onPacket(new network.Client.Events.Packet() {
       public boolean event(Packet p) {
         if(p instanceof CharDel.Response) {
-          s.charDeleted((CharDel.Response)p);
           remove();
+          s.charDeleted((CharDel.Response)p);
           return true;
         }
         
@@ -143,8 +139,8 @@ public class Game implements graphics.gl00.Game {
     _net.events().onPacket(new network.Client.Events.Packet() {
       public boolean event(Packet p) {
         if(p instanceof CharNew.Response) {
-          s.charCreated((CharNew.Response)p);
           remove();
+          s.charCreated((CharNew.Response)p);
           return true;
         }
         
@@ -153,9 +149,37 @@ public class Game implements graphics.gl00.Game {
     }, true);
   }
   
+  public void charUse(int index, final StateListener s) {
+    CharUse p = new CharUse(index);
+    _net.send(p);
+    _net.events().onPacket(new network.Client.Events.Packet() {
+      public boolean event(Packet p) {
+        if(p instanceof CharUse.Response) {
+          remove();
+          loadGame();
+          s.charUsed((CharUse.Response)p);
+          return true;
+        }
+        
+        return false;
+      }
+    }, true);
+  }
+  
+  public void loadGame() {
+    _entity = new Entity();
+    _entity.setX(Settings.Map.Size / 2);
+    _entity.setY(Settings.Map.Size / 2);
+    _entity.setZ(2);
+    
+    _world = new World("default");
+    _world.addEntity(_entity);
+  }
+  
   public static interface StateListener {
     public void loggedIn(Login.Response packet);
     public void charDeleted(CharDel.Response packet);
     public void charCreated(CharNew.Response packet);
+    public void charUsed(CharUse.Response packet);
   }
 }
