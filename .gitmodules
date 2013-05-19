@@ -1,3 +1,6 @@
 [submodule "lmgfx"]
 	path = code/lmgfx
 	url = https://github.com/LordMonoxide/lmgfx.git
+[submodule "lmnet"]
+	path = code/lmnet
+	url = https://github.com/LordMonoxide/lmnet.git
