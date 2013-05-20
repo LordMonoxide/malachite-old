@@ -47,6 +47,12 @@ public class Properties extends java.util.Properties {
     }
   }
   
+  public void set(String key, String  value) { setProperty(key, value); }
+  public void set(String key, byte    value) { setProperty(key, String.valueOf(value)); }
+  public void set(String key, int     value) { setProperty(key, String.valueOf(value)); }
+  public void set(String key, double  value) { setProperty(key, String.valueOf(value)); }
+  public void set(String key, boolean value) { setProperty(key, String.valueOf(value)); }
+  
   public static class InvalidDataException extends Exception {
     private static final long serialVersionUID = 1L;
     public InvalidDataException(String expected, String got) {
