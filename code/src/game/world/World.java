@@ -29,6 +29,10 @@ public class World extends Sandbox {
     stopSandbox();
   }
   
+  public String getName() {
+    return _name;
+  }
+  
   public Region getRegion(int x, int y) {
     String name = x + "x" + y;
     Region r = _region.get(name);
@@ -37,7 +41,7 @@ public class World extends Sandbox {
       Map m = _map.get(name);
       
       if(m == null) {
-        m = new Map(_name, x, y);
+        m = new Map(this, x, y);
         
         if(m.load()) {
           System.out.println("Map " + name + " loaded.");

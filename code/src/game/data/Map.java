@@ -8,6 +8,7 @@ import game.data.util.Buffer;
 import game.data.util.Serializable;
 import game.settings.Settings;
 import game.world.Entity;
+import game.world.World;
 import graphics.gl00.Canvas;
 import graphics.gl00.Context;
 import graphics.gl00.Drawable;
@@ -17,13 +18,13 @@ import graphics.shared.textures.Textures;
 public class Map extends Serializable {
   private static final int VERSION = 3;
   
-  protected String _world;
+  protected World _world;
   protected int _x, _y;
   protected Layer[] _layer = new Layer[Settings.Map.Depth];
   protected LinkedList<Sprite> _sprite = new LinkedList<Sprite>();
   
-  public Map(String world, int x, int y) {
-    super("worlds/" + world, x + "x" + y);
+  public Map(World world, int x, int y) {
+    super("worlds/" + world.getName(), x + "x" + y);
     _world = world;
     _x = x;
     _y = y;
@@ -33,7 +34,7 @@ public class Map extends Serializable {
     }
   }
   
-  public String getWorld() {
+  public World getWorld() {
     return _world;
   }
   
@@ -123,7 +124,7 @@ public class Map extends Serializable {
     for(Map.Sprite sprite : _sprite) {
       e[i] = new Entity();
       e[i].setSprite(g.getSprite(sprite._file));
-      e[i].setWorld(g.getWorld());
+      e[i].setWorld(_world);
       e[i].setX(sprite._x + _x * Settings.Map.Size);
       e[i].setY(sprite._y + _y * Settings.Map.Size);
       e[i].setZ(sprite._z);
