@@ -34,6 +34,7 @@ public class CharUse extends Packet {
     public static final byte RESPONSE_SQL_ERROR = 1;
     
     private byte _response;
+    private String _world;
     
     public int getIndex() {
       return 9;
@@ -43,12 +44,20 @@ public class CharUse extends Packet {
       return _response;
     }
     
+    public String getWorld() {
+      return _world;
+    }
+    
     public ByteBuf serialize() {
       return null;
     }
     
     public void deserialize(ByteBuf data) throws NotEnoughDataException {
       _response = data.readByte();
+      
+      if(_response == RESPONSE_OKAY) {
+        _world = new String(data.readBytes(data.readShort()).array());
+      }
     }
     
     public void process() {
