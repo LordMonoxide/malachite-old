@@ -383,6 +383,9 @@ public class Menu extends GUI {
   private void charUsed(CharUse.Response packet) {
     switch(packet.getResponse()) {
       case CharUse.Response.RESPONSE_OKAY:
+        _game.loadWorld(packet.getWorld());
+        _game.loadGame();
+        
         game.graphics.gui.Game g = new game.graphics.gui.Game();
         g.push();
         pop();
