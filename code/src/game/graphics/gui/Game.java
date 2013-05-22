@@ -11,7 +11,6 @@ import game.settings.Settings;
 import game.world.Entity;
 import game.world.Region;
 import game.world.Sprite;
-import game.world.Entity.EntityCallback;
 import graphics.gl00.Canvas;
 import graphics.gl00.Context;
 import graphics.gl00.Drawable;
@@ -42,12 +41,6 @@ public class Game extends GUI {
   
   public void load() {
     _context.setBackColour(new float[] {0, 0, 0, 0});
-    
-    _entity.setEntityCallback(new EntityCallback() {
-      public void move(Entity e) {
-        handleEntityMove();
-      }
-    });
     
     _txtChat = new Textbox(this);
     _txtChat.setXY(4, _context.getH() - _txtChat.getH() - 4);
@@ -105,7 +98,6 @@ public class Game extends GUI {
     Controls().add(_txtChat);
     Controls().add(_wndAdmin);
     
-    //_font.getTexture().load();
     Canvas c = new Canvas("Debug text", 256, 256);
     c.bind();
     _font.draw(4,   4, "Graphics:", _fontColour);
@@ -126,7 +118,7 @@ public class Game extends GUI {
     _debugText.setTexture(c.getTexture());
     _debugText.createQuad();
     
-    updateCamera();
+    _game.updateCamera();
     
     _loaded = true;
   }
@@ -138,7 +130,7 @@ public class Game extends GUI {
   public void resize() {
     _wndAdmin.setXY((_context.getW() - _wndAdmin.getW()) / 2, (_context.getH() - _wndAdmin.getH()) / 2);
     
-    updateCamera();
+    _game.updateCamera();
   }
   
   public boolean draw() {
@@ -180,11 +172,6 @@ public class Game extends GUI {
     _matrix.pop();
     
     return true;
-  }
-  
-  private void updateCamera() {
-    _context.setCameraX(-_entity.getX() + _context.getW() / 2);
-    _context.setCameraY(-_entity.getY() + _context.getH() / 2);
   }
   
   private void checkMovement() {
@@ -306,10 +293,6 @@ public class Game extends GUI {
     }
     
     return false;
-  }
-  
-  private void handleEntityMove() {
-    updateCamera();
   }
   
   private void handleChatText(int key) {
