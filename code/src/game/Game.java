@@ -156,7 +156,6 @@ public class Game implements graphics.gl00.Game {
       public boolean event(Packet p) {
         if(p instanceof CharUse.Response) {
           remove();
-          loadGame();
           s.charUsed((CharUse.Response)p);
           return true;
         }
@@ -166,6 +165,10 @@ public class Game implements graphics.gl00.Game {
     }, true);
   }
   
+  public void loadWorld(String world) {
+    _world = new World(world);
+  }
+  
   public void loadGame() {
     _entity = new Entity();
     _entity.setSprite(getSprite("Isaac"));
@@ -173,8 +176,6 @@ public class Game implements graphics.gl00.Game {
     _entity.setX(Settings.Map.Size / 2);
     _entity.setY(Settings.Map.Size / 2);
     _entity.setZ(2);
-    
-    _world = new World("default");
     _world.addEntity(_entity);
   }
   
