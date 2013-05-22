@@ -193,7 +193,7 @@ public class Menu extends GUI {
     _btnNewCharCreate.setXYWH(_lstChar.getX(), _lstChar.getY() + _lstChar.getH() + 15, 60, 20);
     _btnNewCharCreate.events().onClick(new Button.Events.Click() {
       public void event() {
-        charNew(_txtNewCharName.getText());
+        charCreate(_txtNewCharName.getText());
       }
     });
     
@@ -344,7 +344,7 @@ public class Menu extends GUI {
     Message.show("Your character has been deleted.");
   }
   
-  private void charNew(String name) {
+  private void charCreate(String name) {
     if(!_game.getPermissions().canAlterChars()) {
       Message.show("Sorry, your account isn't authorised to create or delete characters.");
       return;
@@ -355,7 +355,8 @@ public class Menu extends GUI {
       return;
     }
     
-    _game.charNew(name, _listener);
+    //TODO: This needs to be not hardcoded
+    _game.charCreate(name, "Isaac", _listener);
   }
   
   private void charCreated(CharNew.Response packet) {
@@ -384,17 +385,19 @@ public class Menu extends GUI {
     switch(packet.getResponse()) {
       case CharUse.Response.RESPONSE_OKAY:
         _game.loadWorld(packet.getWorld());
-        _game.loadGame();
-        
-        game.graphics.gui.Game g = new game.graphics.gui.Game();
-        g.push();
-        pop();
+        _game.loadGame(_listener);
         break;
         
       case CharUse.Response.RESPONSE_SQL_ERROR:
         Message.show("A server error occurred.");
         break;
     }
+  }
+  
+  private void inGame() {
+    game.graphics.gui.Game g = new game.graphics.gui.Game();
+    g.push();
+    pop();
   }
   
   public static class Listener implements Game.StateListener {
@@ -418,6 +421,10 @@ public class Menu extends GUI {
     
     public void charUsed(Response packet) {
       _menu.charUsed(packet);
+    }
+    
+    public void inGame() {
+      _menu.inGame();
     }
   }
 }
