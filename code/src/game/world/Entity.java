@@ -6,6 +6,8 @@ import physics.Movable;
 public class Entity extends Movable {
   private EntityCallback _callback;
   
+  private String _name;
+  
   private World _world;
   private float _rx, _ry;
   private int _mx, _my;
@@ -31,6 +33,14 @@ public class Entity extends Movable {
   
   public void setSprite(game.data.Sprite sprite) {
     _sprite = Sprite.add(sprite);
+  }
+  
+  public String getName() {
+    return _name;
+  }
+  
+  public void setName(String name) {
+    _name = name;
   }
   
   public World getWorld() {
