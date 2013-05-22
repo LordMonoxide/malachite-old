@@ -6,9 +6,11 @@ import network.packet.Packet;
 
 public class CharNew extends Packet {
   private String _name;
+  private String _sprite;
   
-  public CharNew(String name) {
+  public CharNew(String name, String sprite) {
     _name = name;
+    _sprite = sprite;
   }
   
   public int getIndex() {
@@ -19,6 +21,8 @@ public class CharNew extends Packet {
     ByteBuf b = Unpooled.buffer(_name.length() + 2);
     b.writeShort(_name.length());
     b.writeBytes(_name.getBytes());
+    b.writeShort(_sprite.length());
+    b.writeBytes(_sprite.getBytes());
     return b;
   }
   
