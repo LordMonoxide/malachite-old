@@ -65,8 +65,6 @@ public class Region {
       _layer[z].createQuad();
     }
     
-    spawn();
-    
     _loaded = true;
   }
   
