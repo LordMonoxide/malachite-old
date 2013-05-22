@@ -11,6 +11,7 @@ import game.network.Client;
 import game.network.packet.CharDel;
 import game.network.packet.CharNew;
 import game.network.packet.CharUse;
+import game.network.packet.EntityCreate;
 import game.network.packet.Login;
 import game.settings.Settings;
 import game.world.Entity;
@@ -18,6 +19,9 @@ import game.world.World;
 import graphics.gl00.Context;
 
 public class Game implements graphics.gl00.Game {
+  private static Game _instance = new Game();
+  public static Game getInstance() { return _instance; }
+  
   private Client _net;
   
   private Context _context;
@@ -133,8 +137,8 @@ public class Game implements graphics.gl00.Game {
     }, true);
   }
   
-  public void charNew(String name, final StateListener s) {
-    CharNew p = new CharNew(name);
+  public void charCreate(String name, String sprite, final StateListener s) {
+    CharNew p = new CharNew(name, sprite);
     _net.send(p);
     _net.events().onPacket(new network.Client.Events.Packet() {
       public boolean event(Packet p) {
@@ -169,14 +173,32 @@ public class Game implements graphics.gl00.Game {
     _world = new World(world);
   }
   
-  public void loadGame() {
-    _entity = new Entity();
-    _entity.setSprite(getSprite("Isaac"));
-    _entity.setWorld(_world);
-    _entity.setX(Settings.Map.Size / 2);
-    _entity.setY(Settings.Map.Size / 2);
-    _entity.setZ(2);
-    _world.addEntity(_entity);
+  public void loadGame(final StateListener s) {
+    _net.events().onPacket(new network.Client.Events.Packet() {
+      public boolean event(Packet p) {
+        if(p instanceof EntityCreate) {
+          _entity = ((EntityCreate)p).getEntity();
+          _entity.setEntityCallback(new Entity.EntityCallback() {
+            public void move(Entity e) {
+              updateCamera();
+            }
+          });
+          
+          _world.addEntity(_entity);
+          
+          s.inGame();
+          
+          return true;
+        }
+        
+        return false;
+      }
+    }, true);
+  }
+  
+  public void updateCamera() {
+    _context.setCameraX(-_entity.getX() + _context.getW() / 2);
+    _context.setCameraY(-_entity.getY() + _context.getH() / 2);
   }
   
   public static interface StateListener {
@@ -184,5 +206,6 @@ public class Game implements graphics.gl00.Game {
     public void charDeleted(CharDel.Response packet);
     public void charCreated(CharNew.Response packet);
     public void charUsed(CharUse.Response packet);
+    public void inGame();
   }
 }
