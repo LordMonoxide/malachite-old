@@ -60,6 +60,16 @@ public class World extends Sandbox {
     return r;
   }
   
+  public Entity getEntity(int id) {
+    for(Entity e : _entity) {
+      if(e.getID() == id) {
+        return e;
+      }
+    }
+    
+    return null;
+  }
+  
   public void addEntity(Entity e) {
     System.out.println("Entity " + e.getName());
     
