@@ -28,8 +28,9 @@ public class EntityCreate extends Packet {
     _entity.setAcc(data.readFloat());
     _entity.setDec(data.readFloat());
     _entity.setVelTerm(data.readFloat());
-    _entity.setX(data.readFloat());
-    _entity.setY(data.readFloat());
+    //_entity.setX(data.readFloat());
+    //_entity.setY(data.readFloat());
+    _entity.setInitialXY(data.readFloat(), data.readFloat());
     _entity.setZ(data.readInt());
   }
   

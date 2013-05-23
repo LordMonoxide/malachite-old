@@ -61,6 +61,28 @@ public class Entity extends Movable {
     _world = world;
   }
   
+  public void setInitialXY(float x, float y) {
+    _x = x;
+    _y = y;
+    _rx = (_x % Settings.Map.Size);
+    _ry = (_y % Settings.Map.Size);
+    _mx = (int)_x / Settings.Map.Size;
+    _my = (int)_y / Settings.Map.Size;
+    
+    if(_x < 0) {
+      _rx += Settings.Map.Size;
+      _mx -= 1;
+    }
+    
+    if(_y < 0) {
+      _ry += Settings.Map.Size;
+      _my -= 1;
+    }
+    
+    _sprite.setX(_x);
+    _sprite.setY(_y);
+  }
+  
   public void setX(float x) {
     _x = x;
     _rx = (_x % Settings.Map.Size);
