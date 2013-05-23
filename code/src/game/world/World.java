@@ -54,7 +54,6 @@ public class World extends Sandbox {
       
       r = new Region(this);
       r.setMap(m);
-      //r.calc();
       _region.put(name, r);
     }
     

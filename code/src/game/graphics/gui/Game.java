@@ -373,7 +373,7 @@ public class Game extends GUI {
         return;
       }
       
-      // /spawn
+      /*// /spawn
       if(chat.equals("/spawn")) {
         _entity.getRegion().spawn();
         _txtChat.setText(null);
@@ -387,7 +387,7 @@ public class Game extends GUI {
         _txtChat.setText(null);
         _txtChat.setVisible(false);
         return;
-      }
+      }*/
       
       JOptionPane.showMessageDialog(null, "Please enter a valid command.");
     }

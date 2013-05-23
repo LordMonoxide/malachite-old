@@ -58,7 +58,8 @@ public class MapEditorMap extends Map {
   public void createSprites() {
     deleteSprites();
     
-    _entity = spawn();
+    //XXX
+    //_entity = spawn();
     _spritesDrawable = new Drawable[_entity.length];
     
     for(int i = 0; i < _spritesDrawable.length; i++) {

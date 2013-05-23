@@ -396,7 +396,8 @@ public class MapEditor extends GUI {
       }
       
       _region = region;
-      _region.despawn();
+      //XXX
+      //_region.despawn();
       _region.setMap(new MapEditorMap(_region.getMap()));
       _map = (MapEditorMap)_region.getMap();
       _mx = _map.getX();

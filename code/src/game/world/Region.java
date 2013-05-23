@@ -17,7 +17,7 @@ public class Region {
   private Drawable[] _layer;
   private Map _map;
   private int _x, _y;
-  private Entity[] _entity;
+  //private Entity[] _entity;
   
   private boolean _loaded;
   
@@ -68,7 +68,7 @@ public class Region {
     _loaded = true;
   }
   
-  public void spawn() {
+  /*public void spawn() {
     despawn();
     _entity = _map.spawn();
   }
@@ -81,7 +81,7 @@ public class Region {
       
       _entity = null;
     }
-  }
+  }*/
   
   public void draw(int z) {
     if(!_loaded) calc();

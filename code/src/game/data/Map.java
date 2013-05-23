@@ -3,11 +3,9 @@ package game.data;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 
-import game.Game;
 import game.data.util.Buffer;
 import game.data.util.Serializable;
 import game.settings.Settings;
-import game.world.Entity;
 import game.world.World;
 import graphics.gl00.Canvas;
 import graphics.gl00.Context;
@@ -116,7 +114,7 @@ public class Map extends Serializable {
     return texture;
   }
   
-  public Entity[] spawn() {
+  /*public Entity[] spawn() {
     Game g = (Game)Context.getGame();
     Entity[] e = new Entity[_sprite.size()];
     int i = 0;
@@ -132,7 +130,7 @@ public class Map extends Serializable {
     }
     
     return e;
-  }
+  }*/
   
   public Buffer serialize() {
     Buffer b = new Buffer((_layer[0]._tile.length * _layer[0]._tile[0].length * 7 + _layer[0]._attrib.length * _layer[0]._attrib[0].length) * _layer.length + 28);
