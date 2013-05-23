@@ -189,12 +189,11 @@ public class Game implements graphics.gl00.Game {
               }
             });
             
-            _world.addEntity(_entity);
-            
+            p.process();
             s.inGame();
+            
+            return true;
           }
-          
-          return true;
         }
         
         return false;
