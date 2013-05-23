@@ -9,6 +9,7 @@ public class Entity extends Movable {
   private int _id;
   
   private String _name;
+  private game.data.Sprite _spriteFile;
   
   private World _world;
   private float _rx, _ry;
@@ -34,7 +35,7 @@ public class Entity extends Movable {
   }
   
   public void setSprite(game.data.Sprite sprite) {
-    _sprite = Sprite.add(sprite);
+    _spriteFile = sprite;
   }
   
   public int getID() {
@@ -59,6 +60,18 @@ public class Entity extends Movable {
   
   public void setWorld(World world) {
     _world = world;
+    
+    if(_sprite != null) {
+      _sprite.remove();
+      _sprite = null;
+    }
+    
+    if(_world != null) {
+      _sprite = Sprite.add(_spriteFile);
+      _sprite.setX(_x);
+      _sprite.setY(_y);
+      _sprite.setZ(_z);
+    }
   }
   
   public void setInitialXY(float x, float y) {
@@ -78,9 +91,6 @@ public class Entity extends Movable {
       _ry += Settings.Map.Size;
       _my -= 1;
     }
-    
-    _sprite.setX(_x);
-    _sprite.setY(_y);
   }
   
   public void setX(float x) {
@@ -95,7 +105,9 @@ public class Entity extends Movable {
       setRegion(_world.getRegion(_mx, _my));
     }
     
-    _sprite.setX(_x);
+    if(_sprite != null) {
+      _sprite.setX(_x);
+    }
     
     if(_callback != null) {
       _callback.move(this);
@@ -114,7 +126,9 @@ public class Entity extends Movable {
       setRegion(_world.getRegion(_mx, _my));
     }
     
-    _sprite.setY(_y);
+    if(_sprite != null) {
+      _sprite.setY(_y);
+    }
     
     if(_callback != null) {
       _callback.move(this);
@@ -127,7 +141,10 @@ public class Entity extends Movable {
   
   public void setZ(int z) {
     _z = z;
-    _sprite.setZ(_z);
+    
+    if(_sprite != null) {
+      _sprite.setZ(_z);
+    }
   }
   
   public float getRX() {
