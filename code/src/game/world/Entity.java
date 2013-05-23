@@ -6,6 +6,8 @@ import physics.Movable;
 public class Entity extends Movable {
   private EntityCallback _callback;
   
+  private int _id;
+  
   private String _name;
   
   private World _world;
@@ -33,6 +35,14 @@ public class Entity extends Movable {
   
   public void setSprite(game.data.Sprite sprite) {
     _sprite = Sprite.add(sprite);
+  }
+  
+  public int getID() {
+    return _id;
+  }
+  
+  public void setID(int id) {
+    _id = id;
   }
   
   public String getName() {
