@@ -30,8 +30,17 @@ public class CharDel extends Packet {
   }
   
   public static class Response extends Packet {
+    public static final byte RESPONSE_OKAY = 0;
+    public static final byte RESPONSE_SQL_EXCEPTION = 1;
+    
+    private byte _response;
+    
     public int getIndex() {
       return 5;
+    }
+    
+    public byte getResponse() {
+      return _response;
     }
     
     public ByteBuf serialize() {
@@ -39,7 +48,7 @@ public class CharDel extends Packet {
     }
     
     public void deserialize(ByteBuf data) throws NotEnoughDataException {
-      
+      _response = data.readByte();
     }
     
     public void process() {
