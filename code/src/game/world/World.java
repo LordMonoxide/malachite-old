@@ -62,6 +62,8 @@ public class World extends Sandbox {
   }
   
   public void addEntity(Entity e) {
+    System.out.println("Entity " + e.getName());
+    
     e.setWorld(this);
     e.setRegion(getRegion(e.getMX(), e.getMY()));
     _entity.add(e);
