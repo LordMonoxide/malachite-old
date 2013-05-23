@@ -339,9 +339,17 @@ public class Menu extends GUI {
     _game.charDel(index, _listener);
   }
   
-  private void charDeleted() {
-    _lstChar.removeItem(_lstChar.getSelected());
-    Message.show("Your character has been deleted.");
+  private void charDeleted(CharDel.Response packet) {
+    switch(packet.getResponse()) {
+      case CharDel.Response.RESPONSE_OKAY:
+        _lstChar.removeItem(_lstChar.getSelected());
+        Message.show("Your character has been deleted.");
+        break;
+        
+      case CharDel.Response.RESPONSE_SQL_EXCEPTION:
+        Message.show("A server error occurred.");
+        break;
+    }
   }
   
   private void charCreate(String name) {
@@ -412,7 +420,7 @@ public class Menu extends GUI {
     }
     
     public void charDeleted(CharDel.Response packet) {
-      _menu.charDeleted();
+      _menu.charDeleted(packet);
     }
     
     public void charCreated(CharNew.Response packet) {
