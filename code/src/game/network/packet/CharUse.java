@@ -35,6 +35,7 @@ public class CharUse extends Packet {
     
     private byte _response;
     private String _world;
+    private int _id;
     
     public int getIndex() {
       return 9;
@@ -48,6 +49,10 @@ public class CharUse extends Packet {
       return _world;
     }
     
+    public int getID() {
+      return _id;
+    }
+    
     public ByteBuf serialize() {
       return null;
     }
@@ -57,6 +62,7 @@ public class CharUse extends Packet {
       
       if(_response == RESPONSE_OKAY) {
         _world = new String(data.readBytes(data.readShort()).array());
+        _id = data.readInt();
       }
     }
     
