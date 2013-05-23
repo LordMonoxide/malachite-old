@@ -24,6 +24,7 @@ public class Game implements graphics.gl00.Game {
   
   private Client _net;
   
+  private int _id;
   private Context _context;
   private World _world;
   private Entity _entity;
@@ -160,6 +161,7 @@ public class Game implements graphics.gl00.Game {
       public boolean event(Packet p) {
         if(p instanceof CharUse.Response) {
           remove();
+          _id = ((CharUse.Response)p).getID();
           s.charUsed((CharUse.Response)p);
           return true;
         }
@@ -177,16 +179,20 @@ public class Game implements graphics.gl00.Game {
     _net.events().onPacket(new network.Client.Events.Packet() {
       public boolean event(Packet p) {
         if(p instanceof EntityCreate) {
-          _entity = ((EntityCreate)p).getEntity();
-          _entity.setEntityCallback(new Entity.EntityCallback() {
-            public void move(Entity e) {
-              updateCamera();
-            }
-          });
-          
-          _world.addEntity(_entity);
-          
-          s.inGame();
+          if(((EntityCreate)p).getEntity().getID() == _id) {
+            remove();
+            
+            _entity = ((EntityCreate)p).getEntity();
+            _entity.setEntityCallback(new Entity.EntityCallback() {
+              public void move(Entity e) {
+                updateCamera();
+              }
+            });
+            
+            _world.addEntity(_entity);
+            
+            s.inGame();
+          }
           
           return true;
         }
