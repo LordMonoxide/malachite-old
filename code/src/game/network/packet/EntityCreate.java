@@ -22,6 +22,7 @@ public class EntityCreate extends Packet {
   
   public void deserialize(ByteBuf data) throws NotEnoughDataException {
     _entity = new Entity();
+    _entity.setID(data.readInt());
     _entity.setName(new String(data.readBytes(data.readShort()).array()));
     _entity.setSprite(Game.getInstance().getSprite(new String(data.readBytes(data.readShort()).array())));
     _entity.setAcc(data.readFloat());
