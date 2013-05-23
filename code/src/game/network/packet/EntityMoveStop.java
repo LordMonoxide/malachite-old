@@ -34,6 +34,7 @@ public class EntityMoveStop extends Packet {
   }
   
   public void process() {
+    System.out.println("MoveStop " + _id);
     Entity e = Game.getInstance().getWorld().getEntity(_id);
     e.setX(_x);
     e.setY(_y);

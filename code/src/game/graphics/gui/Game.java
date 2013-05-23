@@ -112,6 +112,7 @@ public class Game extends GUI {
     _font.draw(4,  94, "Bearing:", _fontColour);
     _font.draw(4, 104, "Sprites:", _fontColour);
     _font.draw(4, 114, "Textures:", _fontColour);
+    _font.draw(4, 124, "Entity ID:", _fontColour);
     c.unbind();
     
     _debugText = Context.newDrawable();
@@ -168,6 +169,7 @@ public class Game extends GUI {
     _font.draw(53,  94, String.valueOf(_entity.getBear()), _fontColour);
     _font.draw(53, 104, String.valueOf(Sprite.count()), _fontColour);
     _font.draw(53, 114, _textures.loaded() + " (" + _textures.loading() + ")", _fontColour);
+    _font.draw(53, 124, String.valueOf(_entity.getID()), _fontColour);
     
     _matrix.pop();
     
