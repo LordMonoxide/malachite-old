@@ -206,11 +206,11 @@ public class Game extends GUI {
       _entity.setBear(a);
       
       if(_entity.getVelTarget() == 0) {
-        _entity.startMoving();
+        _game.startMoving();
       }
     } else {
       if(_entity.getVelTarget() != 0) {
-        _entity.stopMoving();
+        _game.stopMoving();
       }
     }
   }

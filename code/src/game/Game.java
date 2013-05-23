@@ -12,6 +12,8 @@ import game.network.packet.CharDel;
 import game.network.packet.CharNew;
 import game.network.packet.CharUse;
 import game.network.packet.EntityCreate;
+import game.network.packet.EntityMoveStart;
+import game.network.packet.EntityMoveStop;
 import game.network.packet.Login;
 import game.settings.Settings;
 import game.world.Entity;
@@ -204,6 +206,14 @@ public class Game implements graphics.gl00.Game {
   public void updateCamera() {
     _context.setCameraX(-_entity.getX() + _context.getW() / 2);
     _context.setCameraY(-_entity.getY() + _context.getH() / 2);
+  }
+  
+  public void startMoving() {
+    _net.send(new EntityMoveStart(_entity));
+  }
+  
+  public void stopMoving() {
+    _net.send(new EntityMoveStop(_entity));
   }
   
   public static interface StateListener {
