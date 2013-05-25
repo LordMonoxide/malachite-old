@@ -12,10 +12,10 @@ public class EntityMoveStart extends Packet {
   private float _bear;
   
   public EntityMoveStart() { }
-  public EntityMoveStart(Entity e) {
-    _x    = e.getX();
-    _y    = e.getY();
-    _bear = e.getBear();
+  public EntityMoveStart(float x, float y, float bear) {
+    _x    = x;
+    _y    = y;
+    _bear = bear;
   }
   
   public int getIndex() {

@@ -210,12 +210,12 @@ public class Game extends GUI {
     }
     
     if(a != -1) {
-      //_entity.setVelScaleX(1);
-      //_entity.setVelScaleY(1);
-      //_entity.setBear(a);
-      
       if(_entity.getVelTarget() == 0) {
-        _game.startMoving();
+        _game.startMoving(a);
+      } else {
+        if(_entity.getBear() != a) {
+          _game.startMoving(a);
+        }
       }
     } else {
       if(_entity.getVelTarget() != 0) {

@@ -208,8 +208,8 @@ public class Game implements graphics.gl00.Game {
     _context.setCameraY(-_entity.getY() + _context.getH() / 2);
   }
   
-  public void startMoving() {
-    _net.send(new EntityMoveStart(_entity));
+  public void startMoving(float bear) {
+    _net.send(new EntityMoveStart(_entity.getX(), _entity.getY(), bear));
   }
   
   public void stopMoving() {
