@@ -103,7 +103,8 @@ public class MapEditor extends GUI {
     _btnTab = new Button[5];
     
     Control.Events.Click btnTabClick = new Control.Events.Click() {
-      public void event() {
+      public void clickDbl() { }
+      public void click() {
         for(int i = 0; i < _btnTab.length; i++) {
           if(_btnTab[i] == getControl()) {
             setTab(i);
@@ -117,7 +118,7 @@ public class MapEditor extends GUI {
       _btnTab[i] = new Button(this);
       _btnTab[i].setBackColour(new float[] {0.2f, 0.2f, 0.2f, 1});
       _btnTab[i].setXYWH(8 + i * 49, 8, 50, 20);
-      _btnTab[i].events().onClick(btnTabClick);
+      _btnTab[i].events().addClickHandler(btnTabClick);
       _picWindow.Controls().add(_btnTab[i]);
     }
 
@@ -137,15 +138,10 @@ public class MapEditor extends GUI {
     }
     
     _picTileset = new Picture(this, true);
-    _picTileset.events().onMouseDown(new Control.Events.Mouse() {
-      public void event(int x, int y, int button) {
-        handleTilesetMouseDown(x, y, button);
-      }
-    });
-    _picTileset.events().onMouseMove(new Control.Events.Mouse() {
-      public void event(int x, int y, int button) {
-        handleTilesetMouseMove(x, y, button);
-      }
+    _picTileset.events().addMouseHandler(new Control.Events.Mouse() {
+      public void down(int x, int y, int button) { handleTilesetMouseDown(x, y, button); }
+      public void move(int x, int y, int button) { handleTilesetMouseMove(x, y, button); }
+      public void up(int x, int y, int button) { }
     });
     
     _picSelected = new Picture(this);
@@ -162,7 +158,8 @@ public class MapEditor extends GUI {
     _btnLayer = new Button[Settings.Map.Depth];
     
     Control.Events.Click btnLayerClick = new Control.Events.Click() {
-      public void event() {
+      public void clickDbl() { }
+      public void click() {
         for(int i = 0; i < _btnLayer.length; i++) {
           if(_btnLayer[i] == getControl()) {
             setLayer(i);
@@ -177,7 +174,7 @@ public class MapEditor extends GUI {
       _btnLayer[i].setBackColour(new float[] {0.2f, 0.2f, 0.2f, 1});
       _btnLayer[i].setXYWH(2, 2 + i * 16, 96, 16);
       _btnLayer[i].setText("Layer " + i);
-      _btnLayer[i].events().onClick(btnLayerClick);
+      _btnLayer[i].events().addClickHandler(btnLayerClick);
       _picLayers.Controls().add(_btnLayer[i]);
     }
     
@@ -206,7 +203,8 @@ public class MapEditor extends GUI {
     
     // Attribs tab
     Control.Events.Click btnAttribClick = new Control.Events.Click() {
-      public void event() {
+      public void clickDbl() { }
+      public void click() {
         for(int i = 0; i < _btnAttrib.length; i++) {
           if(_btnAttrib[i] == getControl()) {
             setAttrib(i);
@@ -222,7 +220,7 @@ public class MapEditor extends GUI {
       _btnAttrib[i] = new Button(this);
       _btnAttrib[i].setText(attrib.toString());
       _btnAttrib[i].setXY(4, 4 + i * _btnAttrib[i].getH());
-      _btnAttrib[i].events().onClick(btnAttribClick);
+      _btnAttrib[i].events().addClickHandler(btnAttribClick);
       _picTab[1].Controls().add(_btnAttrib[i]);
       i++;
     }
@@ -254,8 +252,8 @@ public class MapEditor extends GUI {
     
     _drpSpriteFile = new Dropdown(this);
     _drpSpriteFile.setXY(_lblSpriteFile.getX(), _lblSpriteFile.getY() + _lblSpriteFile.getH());
-    _drpSpriteFile.events().onSelect(new Dropdown.Events.Select() {
-      public void event(Dropdown.Item item) {
+    _drpSpriteFile.events().addSelectHandler(new Dropdown.Events.Select() {
+      public void select(Dropdown.Item item) {
         updateSprite();
         _map.createSprites();
       }
@@ -269,8 +267,8 @@ public class MapEditor extends GUI {
     _txtSpriteX.setXY(_lblSpriteLoc.getX(), _lblSpriteLoc.getY() + _lblSpriteLoc.getH());
     _txtSpriteX.setW(40);
     _txtSpriteX.setNumeric(true);
-    _txtSpriteX.events().onChange(new Textbox.Events.Change() {
-      public void event() {
+    _txtSpriteX.events().addChangeHandler(new Textbox.Events.Change() {
+      public void change() {
         _sprite._x = Integer.parseInt(_txtSpriteX.getText());
         _map.createSprites();
       }
@@ -280,8 +278,8 @@ public class MapEditor extends GUI {
     _txtSpriteY.setXY(_txtSpriteX.getX() + _txtSpriteX.getW() + 4, _txtSpriteX.getY());
     _txtSpriteY.setW(40);
     _txtSpriteY.setNumeric(true);
-    _txtSpriteY.events().onChange(new Textbox.Events.Change() {
-      public void event() {
+    _txtSpriteY.events().addChangeHandler(new Textbox.Events.Change() {
+      public void change() {
         _sprite._y = Integer.parseInt(_txtSpriteY.getText());
         _map.createSprites();
       }
@@ -291,8 +289,8 @@ public class MapEditor extends GUI {
     _txtSpriteZ.setXY(_txtSpriteY.getX() + _txtSpriteY.getW() + 4, _txtSpriteY.getY());
     _txtSpriteZ.setW(40);
     _txtSpriteZ.setNumeric(true);
-    _txtSpriteZ.events().onChange(new Textbox.Events.Change() {
-      public void event() {
+    _txtSpriteZ.events().addChangeHandler(new Textbox.Events.Change() {
+      public void change() {
         _sprite._z = Byte.parseByte(_txtSpriteZ.getText());
         _map.createSprites();
       }
@@ -345,6 +343,18 @@ public class MapEditor extends GUI {
     _picTilesetBack.setX((_picTilesetList.getW() - _picTilesets[_tileset].getW()) / 2 - _tileset * 136 - 54);
     
     _splSprite.setWH(_picTab[2].getW() - _splSprite.getX() * 2, _picTab[2].getH() - _splSprite.getY() * 2);
+  }
+  
+  public void draw() {
+    switch(_tab) {
+      case 0:
+        _selected.draw();
+        break;
+    }
+  }
+  
+  public boolean logic() {
+    return false;
   }
   
   public boolean unload() {
@@ -473,8 +483,8 @@ public class MapEditor extends GUI {
   private void addSprite() {
     final SpriteChooser s = new SpriteChooser();
     s.load();
-    s.events().onSelect(new SpriteChooser.Events.Select() {
-      public void event(String file) {
+    s.events().addSelectHandler(new SpriteChooser.Events.Select() {
+      public void select(String file) {
         s.pop();
         
         _pickLoc = true;
@@ -523,16 +533,6 @@ public class MapEditor extends GUI {
     _sprite._y = Integer.parseInt(_txtSpriteY.getText());
     _sprite._z = Byte.parseByte(_txtSpriteZ.getText());
     selSprite(_sprite);
-  }
-  
-  public boolean draw() {
-    switch(_tab) {
-      case 0:
-        _selected.draw();
-        break;
-    }
-    
-    return false;
   }
   
   private boolean mapEditorClick(int x, int y, int button) {
@@ -903,7 +903,8 @@ public class MapEditor extends GUI {
       _data.setXYWH(8, 8, 400, 200);
       
       Control.Events.Click accept = new Control.Events.Click() {
-        public void event() {
+        public void click() { }
+        public void clickDbl() {
           _events.raiseSelect(((ListItem)_data.getSelected()).getData().getFile());
         }
       };
@@ -915,14 +916,14 @@ public class MapEditor extends GUI {
           if(s.load()) {
             ListItem l = (ListItem)_data.addItem(new ListItem(this, s));
             l.setText(s.getFile() + ": " + s.getName() + " - " + s.getNote());
-            l.events().onDoubleClick(accept);
+            l.events().addClickHandler(accept);
           }
         }
       }
       
       _window.setWH(_data.getX() + _data.getW() + 8, _data.getY() + _data.getH() + 28);
-      _window.events().onClose(new Window.Events.Close() {
-        public boolean event() {
+      _window.events().addCloseHandler(new Window.Events.Close() {
+        public boolean close() {
           pop();
           return true;
         }
@@ -939,6 +940,14 @@ public class MapEditor extends GUI {
     
     public void resize() {
       _window.setXY((_context.getW() - _window.getW()) / 2, (_context.getH() - _window.getH()) / 2);
+    }
+    
+    public void draw() {
+      
+    }
+    
+    public boolean logic() {
+      return false;
     }
     
     public Events events() {
@@ -961,16 +970,16 @@ public class MapEditor extends GUI {
     public static class Events {
       private LinkedList<Select> _select = new LinkedList<Select>();
       
-      public void onSelect(Select e) { _select.add(e); }
+      public void addSelectHandler(Select e) { _select.add(e); }
       
       public void raiseSelect(String file) {
         for(Select e : _select) {
-          e.event(file);
+          e.select(file);
         }
       }
       
       public static abstract class Select {
-        public abstract void event(String file);
+        public abstract void select(String file);
       }
     }
   }

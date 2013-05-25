@@ -67,8 +67,8 @@ public class Menu extends GUI {
     _wndLogin.setWH(272, 178);
     _wndLogin.setXY((_context.getW() - _wndLogin.getW()) / 2, (_context.getH() - _wndLogin.getH()) / 2);
     _wndLogin.setText("Login");
-    _wndLogin.events().onClose(new Window.Events.Close() {
-      public boolean event() {
+    _wndLogin.events().addCloseHandler(new Window.Events.Close() {
+      public boolean close() {
         _context.destroy();
         return true;
       }
@@ -77,8 +77,8 @@ public class Menu extends GUI {
     _txtName = new Textbox(this);
     _txtName.setX((_wndLogin.getClientW() - _txtName.getW()) / 2);
     _txtName.setY(_txtName.getX() + 4);
-    _txtName.events().onKeyDown(new Control.Events.Key() {
-      public void event(int key) {
+    _txtName.events().addKeyHandler(new Control.Events.Key() {
+      public void down(int key) {
         if(key == Keyboard.KEY_RETURN) {
           login();
         } else {
@@ -88,33 +88,43 @@ public class Menu extends GUI {
           }
         }
       }
+      
+      public void up(int key) { }
+      public void text(char key) { }
     });
     
     _txtPass = new Textbox(this);
     _txtPass.setXY(_txtName.getX(), _txtName.getY() + _txtName.getH() + 9);
-    _txtPass.events().onKeyDown(new Control.Events.Key() {
-      public void event(int key) {
+    _txtPass.events().addKeyHandler(new Control.Events.Key() {
+      public void down(int key) {
         if(key == Keyboard.KEY_RETURN) {
           login();
         } else {
           _savedPass = null;
         }
       }
+      
+      public void up(int key) { }
+      public void text(char key) { }
     });
-    _txtPass.events().onGotFocus(new Control.Events.Focus() {
-      public void event() {
+    
+    _txtPass.events().addFocusHandler(new Control.Events.Focus() {
+      public void got() {
         if(_savedPass != null) {
           _savedPass = null;
           _txtPass.setText(null);
         }
       }
+      
+      public void lost() { }
     });
     
     _btnLogin = new Button(this);
     _btnLogin.setXY(_txtName.getX() + (_txtName.getW() - _btnLogin.getW()) - 3, _txtPass.getY() + _txtPass.getH() + 15);
     _btnLogin.setText("Login");
-    _btnLogin.events().onClick(new Control.Events.Click() {
-      public void event() {
+    _btnLogin.events().addClickHandler(new Control.Events.Click() {
+      public void clickDbl() { }
+      public void click() {
         login();
       }
     });
@@ -141,8 +151,9 @@ public class Menu extends GUI {
     _btnCharNew = new Button(this);
     _btnCharNew.setText("New");
     _btnCharNew.setXYWH(_lstChar.getX(), _lstChar.getY() + _lstChar.getH() + 15, 60, 20);
-    _btnCharNew.events().onClick(new Control.Events.Click() {
-      public void event() {
+    _btnCharNew.events().addClickHandler(new Control.Events.Click() {
+      public void clickDbl() { }
+      public void click() {
         showNewChar();
       }
     });
@@ -150,8 +161,9 @@ public class Menu extends GUI {
     _btnCharDel = new Button(this);
     _btnCharDel.setText("Del");
     _btnCharDel.setXYWH(_btnCharNew.getX() + _btnCharNew.getW() + 10, _btnCharNew.getY(), 60, 20);
-    _btnCharDel.events().onClick(new Control.Events.Click() {
-      public void event() {
+    _btnCharDel.events().addClickHandler(new Control.Events.Click() {
+      public void clickDbl() { }
+      public void click() {
         if(_lstChar.getSelected() != null) {
           charDel(_lstChar.getSelected().getIndex());
         }
@@ -161,8 +173,9 @@ public class Menu extends GUI {
     _btnCharUse = new Button(this);
     _btnCharUse.setText("Use");
     _btnCharUse.setXYWH(_btnCharDel.getX() + _btnCharDel.getW() + 10, _btnCharNew.getY(), 60, 20);
-    _btnCharUse.events().onClick(new Button.Events.Click() {
-      public void event() {
+    _btnCharUse.events().addClickHandler(new Button.Events.Click() {
+      public void clickDbl() { }
+      public void click() {
         if(_lstChar.getSelected() != null) {
           charUse(_lstChar.getSelected().getIndex());
         }
@@ -191,8 +204,9 @@ public class Menu extends GUI {
     _btnNewCharCreate = new Button(this);
     _btnNewCharCreate.setText("Create");
     _btnNewCharCreate.setXYWH(_lstChar.getX(), _lstChar.getY() + _lstChar.getH() + 15, 60, 20);
-    _btnNewCharCreate.events().onClick(new Button.Events.Click() {
-      public void event() {
+    _btnNewCharCreate.events().addClickHandler(new Button.Events.Click() {
+      public void clickDbl() { }
+      public void click() {
         charCreate(_txtNewCharName.getText());
       }
     });
@@ -240,6 +254,14 @@ public class Menu extends GUI {
   
   public void resize() {
     
+  }
+  
+  public void draw() {
+    
+  }
+  
+  public boolean logic() {
+    return false;
   }
   
   private void login() {

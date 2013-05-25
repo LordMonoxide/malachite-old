@@ -50,8 +50,9 @@ public class Message extends GUI {
     _okay = new Button(this);
     _okay.setText("Okay");
     _okay.setFocus(true);
-    _okay.events().onClick(new Control.Events.Click() {
-      public void event() {
+    _okay.events().addClickHandler(new Control.Events.Click() {
+      public void clickDbl() { }
+      public void click() {
         pop();
       }
     });
@@ -60,8 +61,8 @@ public class Message extends GUI {
     _window.setText(title);
     _window.Controls().add(_text);
     _window.Controls().add(_okay);
-    _window.events().onClose(new Window.Events.Close() {
-      public boolean event() {
+    _window.events().addCloseHandler(new Window.Events.Close() {
+      public boolean close() {
         pop();
         return true;
       }
@@ -91,6 +92,14 @@ public class Message extends GUI {
   
   public void resize() {
     
+  }
+  
+  public void draw() {
+    
+  }
+  
+  public boolean logic() {
+    return false;
   }
   
   public boolean handleMouseDown(int x, int y, int button) {

@@ -46,7 +46,8 @@ public class DataSelection extends GUI {
     _data.setXYWH(8, 8, 400, 200);
     
     Control.Events.Click accept = new Control.Events.Click() {
-      public void event() {
+      public void click() { }
+      public void clickDbl() {
         editData((Data)((ListItem)getControl()).getData());
       }
     };
@@ -57,7 +58,7 @@ public class DataSelection extends GUI {
         if(s.load()) {
           ListItem l = (ListItem)_data.addItem(new ListItem(this, s));
           l.setText(n + ": " + s.getName() + " - " + s.getNote());
-          l.events().onDoubleClick(accept);
+          l.events().addClickHandler(accept);
         }
       }
     }
@@ -65,15 +66,16 @@ public class DataSelection extends GUI {
     _new = new Button(this);
     _new.setText("New");
     _new.setXY(_data.getX() + _data.getW() - _new.getW(), _data.getY() + _data.getH() + 7);
-    _new.events().onClick(new Control.Events.Click() {
-      public void event() {
+    _new.events().addClickHandler(new Control.Events.Click() {
+      public void clickDbl() { }
+      public void click() {
         newData();
       }
     });
     
     _window.setWH(_new.getX() + _new.getW() + 8, _new.getY() + _new.getH() + 28);
-    _window.events().onClose(new Window.Events.Close() {
-      public boolean event() {
+    _window.events().addCloseHandler(new Window.Events.Close() {
+      public boolean close() {
         pop();
         return true;
       }
@@ -91,6 +93,14 @@ public class DataSelection extends GUI {
   
   public void resize() {
     _window.setXY((_context.getW() - _window.getW()) / 2, (_context.getH() - _window.getH()) / 2);
+  }
+  
+  public void draw() {
+    
+  }
+  
+  public boolean logic() {
+    return false;
   }
   
   private void newData() {

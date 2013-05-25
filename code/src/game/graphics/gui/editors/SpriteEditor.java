@@ -91,14 +91,15 @@ public class SpriteEditor extends GUI implements Editor {
     _wndEditor.addTab("Animations");
     _wndEditor.addTab("Info");
     _wndEditor.addTab("Scripts");
-    _wndEditor.events().onClose(new Window.Events.Close() {
-      public boolean event() {
+    _wndEditor.events().addCloseHandler(new Window.Events.Close() {
+      public boolean close() {
         unload();
         return true;
       }
     });
-    _wndEditor.addButton("Save").events().onClick(new Control.Events.Click() {
-      public void event() {
+    _wndEditor.addButton("Save").events().addClickHandler(new Control.Events.Click() {
+      public void clickDbl() { }
+      public void click() {
         save();
       }
     });
@@ -108,7 +109,7 @@ public class SpriteEditor extends GUI implements Editor {
     _lblFrameLoc.setXY(8, 4);
     
     Textbox.Events.Change textChange = new Textbox.Events.Change() {
-      public void event() {
+      public void change() {
         updateFrame();
       }
     };
@@ -116,25 +117,25 @@ public class SpriteEditor extends GUI implements Editor {
     _txtFrameX = new Textbox(this);
     _txtFrameX.setXY(_lblFrameLoc.getX(), _lblFrameLoc.getY() + _lblFrameLoc.getH() + 3);
     _txtFrameX.setW(40);
-    _txtFrameX.events().onChange(textChange);
+    _txtFrameX.events().addChangeHandler(textChange);
     _txtFrameX.setNumeric(true);
     
     _txtFrameY = new Textbox(this);
     _txtFrameY.setXY(_txtFrameX.getX() + _txtFrameX.getW() + 8, _txtFrameX.getY());
     _txtFrameY.setW(40);
-    _txtFrameY.events().onChange(textChange);
+    _txtFrameY.events().addChangeHandler(textChange);
     _txtFrameY.setNumeric(true);
     
     _txtFrameW = new Textbox(this);
     _txtFrameW.setXY(_txtFrameY.getX() + _txtFrameY.getW() + 8, _txtFrameY.getY());
     _txtFrameW.setW(40);
-    _txtFrameW.events().onChange(textChange);
+    _txtFrameW.events().addChangeHandler(textChange);
     _txtFrameW.setNumeric(true);
     
     _txtFrameH = new Textbox(this);
     _txtFrameH.setXY(_txtFrameW.getX() + _txtFrameW.getW() + 8, _txtFrameW.getY());
     _txtFrameH.setW(40);
-    _txtFrameH.events().onChange(textChange);
+    _txtFrameH.events().addChangeHandler(textChange);
     _txtFrameH.setNumeric(true);
     
     _lblFrameFoot = new Label(this);
@@ -144,21 +145,20 @@ public class SpriteEditor extends GUI implements Editor {
     _txtFrameFX = new Textbox(this);
     _txtFrameFX.setXY(_lblFrameFoot.getX(), _lblFrameFoot.getY() + _lblFrameFoot.getH() + 3);
     _txtFrameFX.setW(40);
-    _txtFrameFX.events().onChange(textChange);
+    _txtFrameFX.events().addChangeHandler(textChange);
     _txtFrameFX.setNumeric(true);
     
     _txtFrameFY = new Textbox(this);
     _txtFrameFY.setXY(_txtFrameFX.getX() + _txtFrameFX.getW() + 8, _txtFrameFX.getY());
     _txtFrameFY.setW(40);
-    _txtFrameFY.events().onChange(textChange);
+    _txtFrameFY.events().addChangeHandler(textChange);
     _txtFrameFY.setNumeric(true);
     
     _btnFrameClone = new Button(this);
     _btnFrameClone.setText("Clone");
-    _btnFrameClone.events().onClick(new Control.Events.Click() {
-      public void event() {
-        cloneFrame();
-      }
+    _btnFrameClone.events().addClickHandler(new Control.Events.Click() {
+      public void click() { cloneFrame(); }
+      public void clickDbl() { click(); }
     });
     
     _splFrame = new ScrollPanel(this);
@@ -191,15 +191,15 @@ public class SpriteEditor extends GUI implements Editor {
     
     _drpSprite = new Dropdown(this);
     _drpSprite.setXY(_splFrame.getX(), _splFrame.getY() + _splFrame.getH() + 4);
-    _drpSprite.events().onSelect(new Dropdown.Events.Select() {
-      public void event(Dropdown.Item item) {
+    _drpSprite.events().addSelectHandler(new Dropdown.Events.Select() {
+      public void select(Dropdown.Item item) {
         setSprite(item.getText());
       }
     });
     
     _picFrameSprite = new Picture(this);
-    _picFrameSprite.events().onDraw(new Control.Events.Draw() {
-      public void event() {
+    _picFrameSprite.events().addDrawHandler(new Control.Events.Draw() {
+      public void draw() {
         _frameLoc.draw();
         _frameFoot.draw();
       }
@@ -219,7 +219,7 @@ public class SpriteEditor extends GUI implements Editor {
     _lblAnimName.setXY(8, 4);
     
     Textbox.Events.Change animChange = new Textbox.Events.Change() {
-      public void event() {
+      public void change() {
         updateAnim();
       }
     };
@@ -227,12 +227,10 @@ public class SpriteEditor extends GUI implements Editor {
     _txtAnimName = new Textbox(this);
     _txtAnimName.setXY(_lblAnimName.getX(), _lblAnimName.getY() + _lblAnimName.getH() + 3);
     _txtAnimName.setW(160);
-    _txtAnimName.events().onChange(animChange);
+    _txtAnimName.events().addChangeHandler(animChange);
     
-    Scrollbar.Events.Scroll listChange = new Scrollbar.Events.Scroll() {
-      public void event(int delta) {
-        updateList();
-      }
+    Scrollbar.Events.Change listChange = new Scrollbar.Events.Change() {
+      public void change(int delta) { updateList(); }
     };
     
     _lblListFrame = new Label(this);
@@ -242,7 +240,7 @@ public class SpriteEditor extends GUI implements Editor {
     _scrListFrame = new Scrollbar(this);
     _scrListFrame.setXYWH(_lblListFrame.getX(), _lblListFrame.getY() + _lblListFrame.getH() + 4, 100, 16);
     _scrListFrame.setOrientation(Orientation.HORIZONTAL);
-    _scrListFrame.events().onScroll(listChange);
+    _scrListFrame.events().addChangeHandler(listChange);
     
     _lblListTime = new Label(this);
     _lblListTime.setText("Time: 0 ms");
@@ -253,32 +251,28 @@ public class SpriteEditor extends GUI implements Editor {
     _scrListTime.setMin(1);
     _scrListTime.setMax(1000);
     _scrListTime.setOrientation(Orientation.HORIZONTAL);
-    _scrListTime.events().onScroll(listChange);
+    _scrListTime.events().addChangeHandler(listChange);
     
     _btnListAdd = new Button(this);
     _btnListAdd.setXY(20, _txtAnimName.getY() + _txtAnimName.getH() + 18);
     _btnListAdd.setText("Add");
-    _btnListAdd.events().onClick(new Control.Events.Click() {
-      public void event() {
-        addList();
-      }
+    _btnListAdd.events().addClickHandler(new Control.Events.Click() {
+      public void click() { addList(); }
+      public void clickDbl() { click(); }
     });
     
     _btnListDel = new Button(this);
     _btnListDel.setXY(_btnListAdd.getX() + _btnListAdd.getW(), _btnListAdd.getY());
     _btnListDel.setText("Del");
-    _btnListDel.events().onClick(new Control.Events.Click() {
-      public void event() {
-        delList();
-      }
+    _btnListDel.events().addClickHandler(new Control.Events.Click() {
+      public void click() { delList(); }
+      public void clickDbl() { click(); }
     });
     
     _scrList = new Scrollbar(this);
     _scrList.setXYWH(4, _btnListAdd.getY() + _btnListAdd.getH(), 16, 64);
-    _scrList.events().onScroll(new Scrollbar.Events.Scroll() {
-      public void event(int delta) {
-        setList(_list + delta);
-      }
+    _scrList.events().addChangeHandler(new Scrollbar.Events.Change() {
+      public void change(int delta) { setList(_list + delta); }
     });
     
     _lblListNum = new Label(this);
@@ -288,10 +282,8 @@ public class SpriteEditor extends GUI implements Editor {
     _picList = new Picture(this);
     _picList.setBackColour(new float[] {0.33f, 0.33f, 0.33f, 0.66f});
     _picList.setXY(_scrList.getX() + _scrList.getW(), _scrList.getY());
-    _picList.events().onMouseWheel(new Control.Events.Wheel() {
-      public void event(int delta) {
-        _scrList.handleMouseWheel(delta);
-      }
+    _picList.events().addScrollHandler(new Control.Events.Scroll() {
+      public void scroll(int delta) { _scrList.handleMouseWheel(delta); }
     });
     
     _picList.Controls().add(_lblListFrame);
@@ -302,36 +294,31 @@ public class SpriteEditor extends GUI implements Editor {
     _btnAnimAdd = new Button(this);
     _btnAnimAdd.setXY(20, 4);
     _btnAnimAdd.setText("Add");
-    _btnAnimAdd.events().onClick(new Control.Events.Click() {
-      public void event() {
-        addAnim();
-      }
+    _btnAnimAdd.events().addClickHandler(new Control.Events.Click() {
+      public void click() { addAnim(); }
+      public void clickDbl() { click(); }
     });
     
     _btnAnimDel = new Button(this);
     _btnAnimDel.setXY(_btnAnimAdd.getX() + _btnAnimAdd.getW(), _btnAnimAdd.getY());
     _btnAnimDel.setText("Del");
-    _btnAnimDel.events().onClick(new Control.Events.Click() {
-      public void event() {
-        delAnim();
-      }
+    _btnAnimDel.events().addClickHandler(new Control.Events.Click() {
+      public void click() { delAnim(); }
+      public void clickDbl() { click(); }
     });
     
     _btnAnimClone = new Button(this);
     _btnAnimClone.setXY(_btnAnimDel.getX() + _btnAnimDel.getW() + 4, _btnAnimDel.getY());
     _btnAnimClone.setText("Clone");
-    _btnAnimClone.events().onClick(new Control.Events.Click() {
-      public void event() {
-        cloneAnim();
-      }
+    _btnAnimClone.events().addClickHandler(new Control.Events.Click() {
+      public void click() { cloneAnim(); }
+      public void clickDbl() { click(); }
     });
     
     _scrAnim = new Scrollbar(this);
     _scrAnim.setXYWH(4, _btnAnimAdd.getY() + _btnAnimAdd.getH(), 16, 64);
-    _scrAnim.events().onScroll(new Scrollbar.Events.Scroll() {
-      public void event(int delta) {
-        setAnim(_anim + delta);
-      }
+    _scrAnim.events().addChangeHandler(new Scrollbar.Events.Change() {
+      public void change(int delta) { setAnim(_anim + delta); }
     });
     
     _lblAnimNum = new Label(this);
@@ -341,10 +328,8 @@ public class SpriteEditor extends GUI implements Editor {
     _picAnim = new Picture(this);
     _picAnim.setBackColour(new float[] {0.33f, 0.33f, 0.33f, 0.66f});
     _picAnim.setXY(_scrAnim.getX() + _scrAnim.getW(), _scrAnim.getY());
-    _picAnim.events().onMouseWheel(new Control.Events.Wheel() {
-      public void event(int delta) {
-        _scrAnim.handleMouseWheel(delta);
-      }
+    _picAnim.events().addScrollHandler(new Control.Events.Scroll() {
+      public void scroll(int delta) { _scrAnim.handleMouseWheel(delta); }
     });
     
     _picAnim.Controls().add(_lblAnimName);
@@ -363,9 +348,7 @@ public class SpriteEditor extends GUI implements Editor {
     _wndEditor.Controls(1).add(_picAnim);
     
     Textbox.Events.Change change = new Textbox.Events.Change() {
-      public void event() {
-        update();
-      }
+      public void change() { update(); }
     };
     
     _lblName = new Label(this);
@@ -374,7 +357,7 @@ public class SpriteEditor extends GUI implements Editor {
     
     _txtName = new Textbox(this);
     _txtName.setXY(_lblName.getX(), _lblName.getY() + _lblName.getH() + 4);
-    _txtName.events().onChange(change);
+    _txtName.events().addChangeHandler(change);
     
     _lblNote = new Label(this);
     _lblNote.setText("Notes");
@@ -382,7 +365,7 @@ public class SpriteEditor extends GUI implements Editor {
     
     _txtNote = new Textbox(this);
     _txtNote.setXY(_lblNote.getX(), _lblNote.getY() + _lblNote.getH() + 4);
-    _txtNote.events().onChange(change);
+    _txtNote.events().addChangeHandler(change);
     
     _lblW = new Label(this);
     _lblW.setText("W");
@@ -391,7 +374,7 @@ public class SpriteEditor extends GUI implements Editor {
     _txtW = new Textbox(this);
     _txtW.setXY(_lblW.getX(), _lblW.getY() + _lblW.getH() + 4);
     _txtW.setW(40);
-    _txtW.events().onChange(change);
+    _txtW.events().addChangeHandler(change);
     _txtW.setNumeric(true);
     
     _lblH = new Label(this);
@@ -401,7 +384,7 @@ public class SpriteEditor extends GUI implements Editor {
     _txtH = new Textbox(this);
     _txtH.setXY(_lblH.getX(), _txtW.getY());
     _txtH.setW(40);
-    _txtH.events().onChange(change);
+    _txtH.events().addChangeHandler(change);
     _txtH.setNumeric(true);
     
     _wndEditor.Controls(2).add(_lblName);
@@ -416,8 +399,9 @@ public class SpriteEditor extends GUI implements Editor {
     _btnScriptCopy = new Button(this);
     _btnScriptCopy.setText("Copy");
     _btnScriptCopy.setXY(4, 4);
-    _btnScriptCopy.events().onClick(new Control.Events.Click() {
-      public void event() {
+    _btnScriptCopy.events().addClickHandler(new Control.Events.Click() {
+      public void clickDbl() { }
+      public void click() {
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(_sprite.getScript()), null);
       }
     });
@@ -425,8 +409,9 @@ public class SpriteEditor extends GUI implements Editor {
     _btnScriptPaste = new Button(this);
     _btnScriptPaste.setText("Paste");
     _btnScriptPaste.setXY(_btnScriptCopy.getX() + _btnScriptCopy.getW() + 4, _btnScriptCopy.getY());
-    _btnScriptPaste.events().onClick(new Control.Events.Click() {
-      public void event() {
+    _btnScriptPaste.events().addClickHandler(new Control.Events.Click() {
+      public void clickDbl() { }
+      public void click() {
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         Transferable contents = clipboard.getContents(null);
         if(contents != null && contents.isDataFlavorSupported(DataFlavor.stringFlavor)) {
@@ -478,6 +463,14 @@ public class SpriteEditor extends GUI implements Editor {
     
     _picAnim.setWH(_wndEditor.getW() - _picAnim.getX() - 4, _wndEditor.getH() - _picAnim.getY() - 4);
     _picList.setWH(_picAnim.getW() - _picList.getX() - 4, _picAnim.getH() - _picList.getY() - 4);
+  }
+  
+  public void draw() {
+    
+  }
+  
+  public boolean logic() {
+    return false;
   }
   
   public void unload() {

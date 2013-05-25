@@ -45,10 +45,13 @@ public class Game extends GUI {
     _txtChat = new Textbox(this);
     _txtChat.setXY(4, _context.getH() - _txtChat.getH() - 4);
     _txtChat.setVisible(false);
-    _txtChat.events().onKeyDown(new Control.Events.Key() {
-      public void event(int key) {
+    _txtChat.events().addKeyHandler(new Control.Events.Key() {
+      public void down(int key) {
         handleChatText(key);
       }
+      
+      public void up(int key) { }
+      public void text(char key) { }
     });
     
     _wndAdmin = new Window(this);
@@ -68,8 +71,9 @@ public class Game extends GUI {
     }
     
     _btnEdit[0].setText("Edit Maps");
-    _btnEdit[0].events().onClick(new Control.Events.Click() {
-      public void event() {
+    _btnEdit[0].events().addClickHandler(new Control.Events.Click() {
+      public void clickDbl() { }
+      public void click() {
         if(_editMap == null) {
           _editMap = new MapEditor();
           _editMap.load();
@@ -80,8 +84,9 @@ public class Game extends GUI {
       }
     });
     _btnEdit[1].setText("Edit Sprites");
-    _btnEdit[1].events().onClick(new Control.Events.Click() {
-      public void event() {
+    _btnEdit[1].events().addClickHandler(new Control.Events.Click() {
+      public void clickDbl() { }
+      public void click() {
         SpriteEditor editor = new SpriteEditor();
         editor.load();
         DataSelection dataSel = new DataSelection(editor, "sprites");
@@ -134,7 +139,7 @@ public class Game extends GUI {
     _game.updateCamera();
   }
   
-  public boolean draw() {
+  public void draw() {
     if(!_loaded) load();
     
     double w = Math.floor(_context.getW() / Settings.Map.Size) + 1;
@@ -172,8 +177,10 @@ public class Game extends GUI {
     _font.draw(53, 124, String.valueOf(_entity.getID()), _fontColour);
     
     _matrix.pop();
-    
-    return true;
+  }
+  
+  public boolean logic() {
+    return false;
   }
   
   private void checkMovement() {
@@ -203,9 +210,9 @@ public class Game extends GUI {
     }
     
     if(a != -1) {
-      _entity.setVelScaleX(1);
-      _entity.setVelScaleY(1);
-      _entity.setBear(a);
+      //_entity.setVelScaleX(1);
+      //_entity.setVelScaleY(1);
+      //_entity.setBear(a);
       
       if(_entity.getVelTarget() == 0) {
         _game.startMoving();
