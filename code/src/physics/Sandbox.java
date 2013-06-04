@@ -2,7 +2,7 @@ package physics;
 
 import graphics.util.Time;
 
-import java.util.LinkedList;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class Sandbox implements Runnable {
   private Thread _thread;
@@ -15,7 +15,7 @@ public class Sandbox implements Runnable {
   private int _fpsCount;
   private int _fps;
   
-  private LinkedList<Movable> _obj = new LinkedList<Movable>();
+  private ConcurrentLinkedDeque<Movable> _obj = new ConcurrentLinkedDeque<Movable>();
   
   public int getFPS() { return _fps; }
   
