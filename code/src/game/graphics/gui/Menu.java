@@ -147,6 +147,17 @@ public class Menu extends GUI {
     _lstChar = new List(this);
     _lstChar.setX((_wndChar.getClientW() - _lstChar.getW()) / 2);
     _lstChar.setY(22);
+    _lstChar.events().addKeyHandler(new Control.Events.Key() {
+      public void up(int key) { }
+      public void text(char key) { }
+      public void down(int key) {
+        if(key == Keyboard.KEY_RETURN) {
+          if(_lstChar.getSelected() != null) {
+            charUse(_lstChar.getSelected().getIndex());
+          }
+        }
+      }
+    });
     
     _btnCharNew = new Button(this);
     _btnCharNew.setText("New");
@@ -358,10 +369,14 @@ public class Menu extends GUI {
       return;
     }
     
+    _wait = Message.showWait("Loading...");
+    
     _game.charDel(index, _listener);
   }
   
   private void charDeleted(CharDel.Response packet) {
+    _wait.pop();
+    
     switch(packet.getResponse()) {
       case CharDel.Response.RESPONSE_OKAY:
         _lstChar.removeItem(_lstChar.getSelected());
@@ -385,11 +400,15 @@ public class Menu extends GUI {
       return;
     }
     
+    _wait = Message.showWait("Loading...");
+    
     //TODO: This needs to be not hardcoded
     _game.charCreate(name, "Isaac", _listener);
   }
   
   private void charCreated(CharNew.Response packet) {
+    _wait.pop();
+    
     switch(packet.getResponse()) {
       case CharNew.Response.RESPONSE_OKAY:
         _lstChar.addItem(_txtNewCharName.getText(), null);
@@ -408,6 +427,8 @@ public class Menu extends GUI {
   }
   
   private void charUse(int index) {
+    _wait = Message.showWait("Loading...");
+    
     _game.charUse(index, _listener);
   }
   
@@ -425,6 +446,8 @@ public class Menu extends GUI {
   }
   
   private void inGame() {
+    _wait.pop();
+    
     game.graphics.gui.Game g = new game.graphics.gui.Game();
     g.push();
     pop();
