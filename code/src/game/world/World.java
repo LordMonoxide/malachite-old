@@ -33,6 +33,20 @@ public class World extends Sandbox {
     return _name;
   }
   
+  public boolean hasMap(int x, int y, int crc) {
+    String name = x + "x" + y;
+    Map m = _map.get(name);
+    
+    if(m == null) {
+      m = new Map(this, x, y);
+      boolean b = m.load();
+      _map.put(name, m);
+      if(!b) return false;
+    }
+    
+    return m.getCRC() == crc;
+  }
+  
   public Region getRegion(int x, int y) {
     String name = x + "x" + y;
     Region r = _region.get(name);
@@ -42,12 +56,15 @@ public class World extends Sandbox {
       
       if(m == null) {
         m = new Map(this, x, y);
+        m.request();
         
-        if(m.load()) {
+        System.out.println("Map " + name + " requested.");
+        
+        /*if(m.load()) {
           System.out.println("Map " + name + " loaded.");
         } else {
           System.out.println("Map " + name + " created.");
-        }
+        }*/
         
         _map.put(name, m);
       }
