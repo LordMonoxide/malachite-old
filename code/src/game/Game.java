@@ -108,6 +108,24 @@ public class Game implements graphics.gl00.Game {
     _net.shutdown();
   }
   
+  public void send(Packet p) {
+    _net.send(p);
+  }
+  
+  public <T extends Packet> void send(Packet p, final Class<T> responsePacket, final PacketCallback<T> responseCallback) {
+    _net.send(p);
+    _net.events().onPacket(new network.Client.Events.Packet() {
+      public boolean event(Packet p) {
+        if(p.getClass() == responsePacket) {
+          responseCallback._handler = this;
+          return responseCallback.recieved((T)p);
+        }
+        
+        return false;
+      }
+    }, true);
+  }
+  
   public void login(String name, String pass, final StateListener s) {
     Login p = new Login(name, pass);
     _net.send(p);
@@ -222,5 +240,15 @@ public class Game implements graphics.gl00.Game {
     public void charCreated(CharNew.Response packet);
     public void charUsed(CharUse.Response packet);
     public void inGame();
+  }
+  
+  public static abstract class PacketCallback<T extends Packet> {
+    private network.Client.Events.Packet _handler;
+    
+    public void remove() {
+      _handler.remove();
+    }
+    
+    public abstract boolean recieved(T packet);
   }
 }
