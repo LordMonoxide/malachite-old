@@ -3,8 +3,11 @@ package game.data;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 
+import game.Game;
 import game.data.util.Buffer;
 import game.data.util.Serializable;
+import game.network.packet.Data;
+import game.network.packet.Data.Response;
 import game.settings.Settings;
 import game.world.World;
 import graphics.gl00.Canvas;
@@ -20,6 +23,7 @@ public class Map extends Serializable {
   protected int _x, _y;
   protected Layer[] _layer = new Layer[Settings.Map.Depth];
   protected LinkedList<Sprite> _sprite = new LinkedList<Sprite>();
+  private boolean _loaded;
   
   public Map(World world, int x, int y) {
     super("worlds/" + world.getName(), x + "x" + y);
@@ -32,6 +36,8 @@ public class Map extends Serializable {
     }
   }
   
+  public boolean loaded() { return _loaded; }
+  
   public World getWorld() {
     return _world;
   }
@@ -42,6 +48,33 @@ public class Map extends Serializable {
   
   public int getY() {
     return _y;
+  }
+  
+  public void request() {
+    updateCRC();
+    
+    Data.Request p = new Data.Request(this);
+    Game g = Game.getInstance();
+    g.send(p, Data.Response.class, new Game.PacketCallback<Data.Response>() {
+      public boolean recieved(Response packet) {
+        if(packet.getX() == _x && packet.getY() == _y) {
+          remove();
+          
+          if(packet.getData() != null) {
+            System.out.println("Map " + _x + "x" + _y + " synced from server");
+            deserialize(new Buffer(packet.getData()));
+            save();
+          } else {
+            System.out.println("Map " + _x + "x" + _y + " loaded");
+            load();
+          }
+          
+          return true;
+        }
+        
+        return false;
+      }
+    });
   }
   
   public Drawable[] createDrawablesFromLayer(int z) {
@@ -180,6 +213,8 @@ public class Map extends Serializable {
       case 2: deserialize02(b); break;
       case 3: deserialize03(b); break;
     }
+    
+    _loaded = true;
   }
   
   private void deserialize01(Buffer b) {
