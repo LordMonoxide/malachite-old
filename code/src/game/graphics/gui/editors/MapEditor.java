@@ -14,6 +14,7 @@ import game.Game;
 import game.data.Map;
 import game.data.Sprite;
 import game.data.util.Serializable;
+import game.network.packet.editors.SaveMap;
 import game.settings.Settings;
 import game.world.Region;
 import graphics.gl00.Context;
@@ -365,9 +366,10 @@ public class MapEditor extends GUI {
           return false;
           
         case JOptionPane.YES_OPTION:
+          SaveMap packet = new SaveMap();
+          
           for(Region r : _regions) {
             MapEditorMap m = (MapEditorMap)r.getMap();
-            m.deleteSprites();
             
             if(m.isChanged()) {
               System.out.println("Updating map " + m.getFile());
@@ -375,7 +377,13 @@ public class MapEditor extends GUI {
               
               r.setMap(m.getMap());
               r.getMap().save();
+              
+              packet.addMap(r.getMap());
             }
+          }
+          
+          if(packet.size() != 0) {
+            _game.send(packet);
           }
           
           break;
@@ -383,7 +391,6 @@ public class MapEditor extends GUI {
         case JOptionPane.NO_OPTION:
           for(Region r : _regions) {
             MapEditorMap m = (MapEditorMap)r.getMap();
-            m.deleteSprites();
             
             r.setMap(m.getMap());
           }
