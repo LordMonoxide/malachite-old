@@ -37,6 +37,8 @@ public class Sprite extends Serializable implements Data {
   public    int getH()       { return _h; }
   public    int getDefault() { return _default; }
   public String getScript()  { return _script; }
+  public Frame  getFrame(int index) { return _frame.get(index); }
+  public Anim   getAnim (int index) { return _anim .get(index); }
   
   public Drawable[] createDrawables() {
     Drawable[] d = new Drawable[_frame.size()];
