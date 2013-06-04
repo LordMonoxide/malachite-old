@@ -8,13 +8,14 @@ import game.data.Sprite;
 import game.data.account.Permissions;
 import game.graphics.gui.Menu;
 import game.network.Client;
-import game.network.packet.CharDel;
-import game.network.packet.CharNew;
-import game.network.packet.CharUse;
+import game.network.packet.Chat;
 import game.network.packet.EntityCreate;
 import game.network.packet.EntityMoveStart;
 import game.network.packet.EntityMoveStop;
-import game.network.packet.Login;
+import game.network.packet.menu.CharDel;
+import game.network.packet.menu.CharNew;
+import game.network.packet.menu.CharUse;
+import game.network.packet.menu.Login;
 import game.settings.Settings;
 import game.world.Entity;
 import game.world.World;
@@ -34,6 +35,9 @@ public class Game implements graphics.gl00.Game {
   private Permissions _permissions = new Permissions();
   
   private Menu _menu;
+  
+  private MenuStateListener _menuListener;
+  private GameStateListener _gameListener;
   
   private HashMap<String, Sprite> _sprite = new HashMap<String, Sprite>();
   
@@ -56,6 +60,9 @@ public class Game implements graphics.gl00.Game {
     
     return s;
   }
+  
+  public void setMenuStateListener(MenuStateListener listener) { _menuListener = listener; }
+  public void setGameStateListener(GameStateListener listener) { _gameListener = listener; }
   
   public void start() {
     Settings.load();
@@ -126,14 +133,14 @@ public class Game implements graphics.gl00.Game {
     }, true);
   }
   
-  public void login(String name, String pass, final StateListener s) {
+  public void login(String name, String pass) {
     Login p = new Login(name, pass);
     _net.send(p);
     _net.events().onPacket(new network.Client.Events.Packet() {
       public boolean event(Packet p) {
         if(p instanceof Login.Response) {
           remove();
-          s.loggedIn((Login.Response)p);
+          _menuListener.loggedIn((Login.Response)p);
           return true;
         }
         
@@ -142,14 +149,14 @@ public class Game implements graphics.gl00.Game {
     }, true);
   }
   
-  public void charDel(int index, final StateListener s) {
+  public void charDel(int index) {
     CharDel p = new CharDel(index);
     _net.send(p);
     _net.events().onPacket(new network.Client.Events.Packet() {
       public boolean event(Packet p) {
         if(p instanceof CharDel.Response) {
           remove();
-          s.charDeleted((CharDel.Response)p);
+          _menuListener.charDeleted((CharDel.Response)p);
           return true;
         }
         
@@ -158,14 +165,14 @@ public class Game implements graphics.gl00.Game {
     }, true);
   }
   
-  public void charCreate(String name, String sprite, final StateListener s) {
+  public void charCreate(String name, String sprite) {
     CharNew p = new CharNew(name, sprite);
     _net.send(p);
     _net.events().onPacket(new network.Client.Events.Packet() {
       public boolean event(Packet p) {
         if(p instanceof CharNew.Response) {
           remove();
-          s.charCreated((CharNew.Response)p);
+          _menuListener.charCreated((CharNew.Response)p);
           return true;
         }
         
@@ -174,7 +181,7 @@ public class Game implements graphics.gl00.Game {
     }, true);
   }
   
-  public void charUse(int index, final StateListener s) {
+  public void charUse(int index) {
     CharUse p = new CharUse(index);
     _net.send(p);
     _net.events().onPacket(new network.Client.Events.Packet() {
@@ -182,7 +189,7 @@ public class Game implements graphics.gl00.Game {
         if(p instanceof CharUse.Response) {
           remove();
           _id = ((CharUse.Response)p).getID();
-          s.charUsed((CharUse.Response)p);
+          _menuListener.charUsed((CharUse.Response)p);
           return true;
         }
         
@@ -195,7 +202,7 @@ public class Game implements graphics.gl00.Game {
     _world = new World(world);
   }
   
-  public void loadGame(final StateListener s) {
+  public void loadGame() {
     _net.events().onPacket(new network.Client.Events.Packet() {
       public boolean event(Packet p) {
         if(p instanceof EntityCreate) {
@@ -210,7 +217,7 @@ public class Game implements graphics.gl00.Game {
             });
             
             p.process();
-            s.inGame();
+            _menuListener.inGame();
             
             return true;
           }
@@ -234,12 +241,24 @@ public class Game implements graphics.gl00.Game {
     _net.send(new EntityMoveStop(_entity));
   }
   
-  public static interface StateListener {
+  public void sendChat(String text) {
+    _net.send(new Chat(text));
+  }
+  
+  public void gotChat(String text) {
+    _gameListener.gotChat(text);
+  }
+  
+  public static interface MenuStateListener {
     public void loggedIn(Login.Response packet);
     public void charDeleted(CharDel.Response packet);
     public void charCreated(CharNew.Response packet);
     public void charUsed(CharUse.Response packet);
     public void inGame();
+  }
+  
+  public static interface GameStateListener {
+    public void gotChat(String text);
   }
   
   public static abstract class PacketCallback<T extends Packet> {
