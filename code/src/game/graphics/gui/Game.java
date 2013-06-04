@@ -27,6 +27,7 @@ public class Game extends GUI {
   private Drawable _debugText;
   
   private boolean[] _key = new boolean[4];
+  private boolean _showChat;
   
   private Listener _listener = new Listener(this);
   
@@ -39,7 +40,6 @@ public class Game extends GUI {
   private Button  _btnEdit[];
   
   private String[] _chat = new String[256];
-  private int _chatIndex;
   private float[] _chatColour = new float[] {1, 1, 1, 1};
   
   private boolean _loaded;
@@ -262,7 +262,7 @@ public class Game extends GUI {
           
         case Keyboard.KEY_T:
           _txtChat.setVisible(true);
-          _txtChat.setFocus(true);
+          _showChat = true;
           return true;
           
         case Keyboard.KEY_SLASH:
@@ -311,6 +311,11 @@ public class Game extends GUI {
           _key[3] = false;
           checkMovement();
           return true;
+      }
+    } else {
+      if(_showChat) {
+        _txtChat.setFocus(true);
+        _showChat = false;
       }
     }
     
