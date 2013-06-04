@@ -38,7 +38,7 @@ public class EntityMoveStart extends Packet {
   }
   
   public void process() {
-    System.out.println("MoveStart " + _id);
+    //System.out.println("MoveStart " + _id);
     Entity e = Game.getInstance().getWorld().getEntity(_id);
     e.setX(_x);
     e.setY(_y);
