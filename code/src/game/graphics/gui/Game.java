@@ -26,6 +26,8 @@ public class Game extends GUI {
   private float[] _fontColour = {1, 0, 1, 1};
   private Drawable _debugText;
   
+  private boolean[] _key = new boolean[4];
+  
   private Listener _listener = new Listener(this);
   
   private Entity _entity = _game.getEntity();
@@ -36,7 +38,9 @@ public class Game extends GUI {
   private Window  _wndAdmin;
   private Button  _btnEdit[];
   
-  private boolean[] _key = new boolean[4];
+  private String[] _chat = new String[256];
+  private int _chatIndex;
+  private float[] _chatColour = new float[] {1, 1, 1, 1};
   
   private boolean _loaded;
   
@@ -163,6 +167,12 @@ public class Game extends GUI {
     
     _matrix.push();
     _matrix.reset();
+    
+    int textHeight = _txtChat.getVisible() ? _context.getH() - (int)_txtChat.getY() : 4;
+    
+    for(int i = 0; i < 5; i++) {
+      _font.draw(4, _context.getH() - (i + 1) * _font.getH() - textHeight, _chat[i], _chatColour);
+    }
     
     _debugText.draw();
     _font.draw(53,   4, _context.getFPS() + "hz", _fontColour);
@@ -403,8 +413,12 @@ public class Game extends GUI {
       _game = game;
     }
     
-    public void gotChat(String text) {
-      System.out.println(text);
+    public void gotChat(String name, String text) {
+      for(int i = _game._chat.length - 1; i >= 1; i--) {
+        _game._chat[i] = _game._chat[i - 1];
+      }
+      
+      _game._chat[0] = name + ": " + text;
     }
   }
 }

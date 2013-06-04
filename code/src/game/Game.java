@@ -245,8 +245,8 @@ public class Game implements graphics.gl00.Game {
     _net.send(new Chat(text));
   }
   
-  public void gotChat(String text) {
-    _gameListener.gotChat(text);
+  public void gotChat(String name, String text) {
+    _gameListener.gotChat(name, text);
   }
   
   public static interface MenuStateListener {
@@ -258,7 +258,7 @@ public class Game implements graphics.gl00.Game {
   }
   
   public static interface GameStateListener {
-    public void gotChat(String text);
+    public void gotChat(String name, String text);
   }
   
   public static abstract class PacketCallback<T extends Packet> {

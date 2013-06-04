@@ -6,6 +6,7 @@ import io.netty.buffer.Unpooled;
 import network.packet.Packet;
 
 public class Chat extends Packet {
+  private String _name;
   private String _text;
   
   public Chat() { }
@@ -27,10 +28,14 @@ public class Chat extends Packet {
   public void deserialize(ByteBuf data) throws NotEnoughDataException {
     byte[] arr = new byte[data.readShort()];
     data.readBytes(arr);
+    _name = new String(arr);
+    
+    arr = new byte[data.readShort()];
+    data.readBytes(arr);
     _text = new String(arr);
   }
   
   public void process() {
-    Game.getInstance().gotChat(_text);
+    Game.getInstance().gotChat(_name, _text);
   }
 }
