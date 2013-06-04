@@ -1,12 +1,11 @@
 package game.graphics.gui;
 
-import javax.swing.JOptionPane;
-
 import org.lwjgl.input.Keyboard;
 
 import game.graphics.gui.editors.DataSelection;
 import game.graphics.gui.editors.MapEditor;
 import game.graphics.gui.editors.SpriteEditor;
+import game.network.packet.Chat;
 import game.settings.Settings;
 import game.world.Entity;
 import game.world.Region;
@@ -27,6 +26,8 @@ public class Game extends GUI {
   private float[] _fontColour = {1, 0, 1, 1};
   private Drawable _debugText;
   
+  private Listener _listener = new Listener(this);
+  
   private Entity _entity = _game.getEntity();
   
   private MapEditor _editMap;
@@ -40,6 +41,8 @@ public class Game extends GUI {
   private boolean _loaded;
   
   public void load() {
+    _game.setGameStateListener(_listener);
+    
     _context.setBackColour(new float[] {0, 0, 0, 0});
     
     _txtChat = new Textbox(this);
@@ -312,7 +315,12 @@ public class Game extends GUI {
       }
       
       String chat = _txtChat.getText();
-      String text[] = chat.split(" ");
+      _txtChat.setText(null);
+      _txtChat.setVisible(false);
+      
+      _game.send(new Chat(chat));
+      
+      /*String text[] = chat.split(" ");
       
       // /xyz
       if(chat.startsWith("/xyz")) {
@@ -320,10 +328,8 @@ public class Game extends GUI {
           _entity.setX(Float.parseFloat(text[1]));
           _entity.setY(Float.parseFloat(text[2]));
           _entity.setZ(Integer.parseInt(text[3]));
-          _txtChat.setText(null);
-          _txtChat.setVisible(false);
         } else {
-          JOptionPane.showMessageDialog(null, "Usage: /xyz # # layer");
+          JOptionPane.showMessageDialog(null, "Usage: /xyz x # layer");
         }
         
         return;
@@ -334,8 +340,6 @@ public class Game extends GUI {
         if(chat.matches("^\\/xy [-+]?[0-9]*\\.?[0-9]+ [-+]?[0-9]*\\.?[0-9]+$")) {
           _entity.setX(Float.parseFloat(text[1]));
           _entity.setY(Float.parseFloat(text[2]));
-          _txtChat.setText(null);
-          _txtChat.setVisible(false);
         } else {
           JOptionPane.showMessageDialog(null, "Usage: /xy # #");
         }
@@ -347,8 +351,6 @@ public class Game extends GUI {
       if(chat.startsWith("/x")) {
         if(chat.matches("^\\/x [-+]?[0-9]*\\.?[0-9]+$")) {
           _entity.setX(Float.parseFloat(text[1]));
-          _txtChat.setText(null);
-          _txtChat.setVisible(false);
         } else {
           JOptionPane.showMessageDialog(null, "Usage: /x #");
         }
@@ -360,8 +362,6 @@ public class Game extends GUI {
       if(chat.startsWith("/y")) {
         if(chat.matches("^\\/y [-+]?[0-9]*\\.?[0-9]+$")) {
           _entity.setY(Float.parseFloat(text[1]));
-          _txtChat.setText(null);
-          _txtChat.setVisible(false);
         } else {
           JOptionPane.showMessageDialog(null, "Usage: /y #");
         }
@@ -373,8 +373,6 @@ public class Game extends GUI {
       if(chat.startsWith("/z")) {
         if(chat.matches("^\\/z [0-" + (Settings.Map.Depth - 1) + "]$")) {
           _entity.setZ(Integer.parseInt(text[1]));
-          _txtChat.setText(null);
-          _txtChat.setVisible(false);
         } else {
           JOptionPane.showMessageDialog(null, "Usage: /z layer");
         }
@@ -382,23 +380,31 @@ public class Game extends GUI {
         return;
       }
       
-      /*// /spawn
-      if(chat.equals("/spawn")) {
-        _entity.getRegion().spawn();
-        _txtChat.setText(null);
-        _txtChat.setVisible(false);
-        return;
-      }
+      // /spawn
+      //if(chat.equals("/spawn")) {
+      //  _entity.getRegion().spawn();
+      //  return;
+      //}
       
       // /despawn
-      if(chat.equals("/despawn")) {
-        _entity.getRegion().despawn();
-        _txtChat.setText(null);
-        _txtChat.setVisible(false);
-        return;
-      }*/
+      //if(chat.equals("/despawn")) {
+      //  _entity.getRegion().despawn();
+      //  return;
+      //}
       
-      JOptionPane.showMessageDialog(null, "Please enter a valid command.");
+      JOptionPane.showMessageDialog(null, "Please enter a valid command.");*/
+    }
+  }
+  
+  public static class Listener implements game.Game.GameStateListener {
+    private Game _game;
+    
+    public Listener(Game game) {
+      _game = game;
+    }
+    
+    public void gotChat(String text) {
+      System.out.println(text);
     }
   }
 }
