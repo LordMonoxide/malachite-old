@@ -53,6 +53,8 @@ public class Region {
   }
   
   public void calc() {
+    if(!_map.loaded()) return;
+    
     _layer = new Drawable[Settings.Map.Depth];
     for(int z = 0; z < _layer.length; z++) {
       _layer[z] = Context.newDrawable();
