@@ -3,16 +3,17 @@ package game.graphics.gui.editors;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 
+import game.Game;
 import game.data.Map;
 import game.data.util.Buffer;
 import game.settings.Settings;
-import game.world.Entity;
 import graphics.gl00.Context;
 import graphics.gl00.Drawable;
 import graphics.gl00.Matrix;
 import graphics.shared.textures.Texture;
 
 public class MapEditorMap extends Map {
+  private Game _game = Game.getInstance();
   private Matrix _matrix = Context.getMatrix();
   
   private Map _map;
@@ -20,8 +21,7 @@ public class MapEditorMap extends Map {
   protected LinkedList<Sprite> _sprite = super._sprite;
   
   private Texture[] _attribMask;
-  private Entity[] _entity;
-  private Drawable[] _spritesDrawable;
+  private EditorSprite[] _spritesDrawable;
   
   public MapEditorMap(Map map) {
     super(map.getWorld(), map.getX(), map.getY());
@@ -56,27 +56,15 @@ public class MapEditorMap extends Map {
   }
   
   public void createSprites() {
-    deleteSprites();
-    
-    //XXX
-    /*_entity = spawn();
-    _spritesDrawable = new Drawable[_entity.length];
-    
-    for(int i = 0; i < _spritesDrawable.length; i++) {
-      _spritesDrawable[i] = Context.newDrawable();
-      _spritesDrawable[i].setXYWH(_sprite.get(i)._x, _sprite.get(i)._y, _entity[i].getSprite().getW(), _entity[i].getSprite().getH());
-      _spritesDrawable[i].setColour(new float[] {1, 0, 1, 1});
-      _spritesDrawable[i].createBorder();
-    }*/
-  }
-  
-  public void deleteSprites() {
-    if(_entity != null) {
-      for(Entity e : _entity) {
-        e.getSprite().remove();
-      }
-      
-      _entity = null;
+    int i = 0;
+    _spritesDrawable = new EditorSprite[_sprite.size()];
+    for(Sprite sprite : _sprite) {
+      _spritesDrawable[i] = new EditorSprite();
+      _spritesDrawable[i]._sprite = _game.getSprite(_sprite.get(i)._file);
+      _spritesDrawable[i]._drawable.setXYWH(sprite._x, sprite._y, _spritesDrawable[i]._sprite.getW(), _spritesDrawable[i]._sprite.getH());
+      _spritesDrawable[i]._drawable.setColour(new float[] {1, 0, 1, 1});
+      _spritesDrawable[i]._drawable.createBorder();
+      i++;
     }
   }
   
@@ -93,12 +81,16 @@ public class MapEditorMap extends Map {
   }
   
   public void drawSprites() {
-    int i = 0;
-    /*for(Drawable d : _spritesDrawable) {
+    for(EditorSprite d : _spritesDrawable) {
       _matrix.push();
-      _matrix.translate(_entity[i].getSprite().getFrameX(), _entity[i].getSprite().getFrameY());
-      d.draw();
+      _matrix.translate(-d._sprite.getFrame(0)._fx, -d._sprite.getH() + d._sprite.getFrame(0)._fy);
+      d._drawable.draw();
       _matrix.pop();
-    }*/
+    }
+  }
+  
+  private static class EditorSprite {
+    private Drawable _drawable = Context.newDrawable();
+    private game.data.Sprite _sprite;
   }
 }
