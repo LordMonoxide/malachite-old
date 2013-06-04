@@ -1,5 +1,6 @@
 package game.network.packet;
 
+import game.Game;
 import game.data.Map;
 import game.data.util.Serializable;
 import io.netty.buffer.ByteBuf;
@@ -10,14 +11,24 @@ public class Data {
   public static final byte DATA_TYPE_MAP = 1;
   
   public static class Request extends Packet {
-    private Serializable _data;
-    private int _type;
+    private byte _type;
+    private int _x, _y;
+    private String _file;
+    private int _crc;
     
     public Request() { }
     public Request(Serializable data) {
-      _data = data;
+      if(data instanceof Map) {
+        _type = DATA_TYPE_MAP;
+        
+        Map m = (Map)data;
+        _x = m.getX();
+        _y = m.getY();
+      } else {
+        _file = data.getFile();
+      }
       
-      if(_data instanceof Map) _type = DATA_TYPE_MAP;
+      _crc = data.getCRC();
     }
     
     public int getIndex() {
@@ -29,46 +40,41 @@ public class Data {
       b.writeByte(_type);
       
       if(_type == DATA_TYPE_MAP) {
-        Map m = (Map)_data;
-        b.writeInt(m.getX());
-        b.writeInt(m.getY());
+        b.writeInt(_x);
+        b.writeInt(_y);
       } else {
-        b.writeShort(_data.getFile().length());
-        b.writeBytes(_data.getFile().getBytes());
+        b.writeShort(_file.length());
+        b.writeBytes(_file.getBytes());
       }
       
-      b.writeInt(_data.getCRC());
+      b.writeInt(_crc);
       return b;
     }
     
     public void deserialize(ByteBuf data) throws NotEnoughDataException {
-      /*int x = 0, y = 0;
+      _type = data.readByte();
       
-      byte type = data.readByte();
-      
-      if(type == DATA_TYPE_MAP) {
-        x = data.readInt();
-        y = data.readInt();
+      if(_type == DATA_TYPE_MAP) {
+        _x = data.readInt();
+        _y = data.readInt();
       } else {
         byte[] arr = new byte[data.readShort()];
         data.readBytes(arr);
-        String file = new String(arr);
+        _file = new String(arr);
       }
       
-      int crc = data.readInt();
-      
-      switch(type) {
-        case DATA_TYPE_MAP:
-          if(!Game.getInstance().getWorld().hasMap(x, y, crc)) {
-            
-          }
-          
-          break;
-      }*/
+      _crc = data.readInt();
     }
     
     public void process() {
-      
+      switch(_type) {
+        case DATA_TYPE_MAP:
+          if(!Game.getInstance().getWorld().hasMap(_x, _y, _crc)) {
+            Game.getInstance().getWorld().getRegion(_x, _y).getMap().request();
+          }
+          
+          break;
+      }
     }
   }
   
