@@ -59,7 +59,7 @@ public class MapEditorMap extends Map {
     deleteSprites();
     
     //XXX
-    //_entity = spawn();
+    /*_entity = spawn();
     _spritesDrawable = new Drawable[_entity.length];
     
     for(int i = 0; i < _spritesDrawable.length; i++) {
@@ -67,7 +67,7 @@ public class MapEditorMap extends Map {
       _spritesDrawable[i].setXYWH(_sprite.get(i)._x, _sprite.get(i)._y, _entity[i].getSprite().getW(), _entity[i].getSprite().getH());
       _spritesDrawable[i].setColour(new float[] {1, 0, 1, 1});
       _spritesDrawable[i].createBorder();
-    }
+    }*/
   }
   
   public void deleteSprites() {
@@ -94,11 +94,11 @@ public class MapEditorMap extends Map {
   
   public void drawSprites() {
     int i = 0;
-    for(Drawable d : _spritesDrawable) {
+    /*for(Drawable d : _spritesDrawable) {
       _matrix.push();
       _matrix.translate(_entity[i].getSprite().getFrameX(), _entity[i].getSprite().getFrameY());
       d.draw();
       _matrix.pop();
-    }
+    }*/
   }
 }
