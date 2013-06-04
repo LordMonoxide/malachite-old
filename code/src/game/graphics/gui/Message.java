@@ -75,7 +75,11 @@ public class Message extends GUI {
   
   public void setText(String text) {
     _text.setText(text);
-    _window.setWH(_text.getW() + _window.getW() - _window.getClientW() + 30, _okay.getH() + 80);
+    
+    float w = _text.getW() + _window.getW() - _window.getClientW() + 30;
+    if(w < 200) w = 200;
+    
+    _window.setWH(w, _okay.getH() + 80);
     _window.setXY((int)(_context.getW() - _window.getW()) / 2, (int)(_context.getH() - _window.getH()) / 2);
     _text.setXY((_window.getClientW() - _text.getW()) / 2, (_window.getClientH() - _text.getH() - _okay.getH()) / 2);
     _okay.setW(_window.getClientW());
