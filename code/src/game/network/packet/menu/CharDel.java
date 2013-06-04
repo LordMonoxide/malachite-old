@@ -1,4 +1,4 @@
-package game.network.packet;
+package game.network.packet.menu;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

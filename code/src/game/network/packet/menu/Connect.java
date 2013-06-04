@@ -1,4 +1,4 @@
-package game.network.packet;
+package game.network.packet.menu;
 
 import game.settings.Settings;
 import io.netty.buffer.ByteBuf;

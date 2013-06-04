@@ -1,4 +1,4 @@
-package game.network.packet;
+package game.network.packet.menu;
 
 import game.Game;
 import graphics.gl00.Context;
