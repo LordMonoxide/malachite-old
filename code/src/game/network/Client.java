@@ -6,6 +6,7 @@ import game.network.packet.CharDel;
 import game.network.packet.CharNew;
 import game.network.packet.CharUse;
 import game.network.packet.Connect;
+import game.network.packet.Data;
 import game.network.packet.EntityCreate;
 import game.network.packet.EntityDestroy;
 import game.network.packet.EntityMoveStart;
@@ -48,6 +49,8 @@ public class Client {
     Packets.add(EntityDestroy.class);
     Packets.add(EntityMoveStart.class);
     Packets.add(EntityMoveStop.class);
+    Packets.add(Data.Request.class);
+    Packets.add(Data.Response.class);
   }
   
   public void connect() {
