@@ -11,11 +11,11 @@ import org.lwjgl.input.Keyboard;
 
 import game.Game;
 import game.data.util.Properties;
-import game.network.packet.CharDel;
-import game.network.packet.CharNew;
-import game.network.packet.CharUse;
-import game.network.packet.CharUse.Response;
-import game.network.packet.Login;
+import game.network.packet.menu.CharDel;
+import game.network.packet.menu.CharNew;
+import game.network.packet.menu.CharUse;
+import game.network.packet.menu.Login;
+import game.network.packet.menu.CharUse.Response;
 import graphics.gl00.Context;
 import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;
@@ -54,6 +54,8 @@ public class Menu extends GUI {
   private Message _wait;
   
   public void load() {
+    _game.setMenuStateListener(_listener);
+    
     //_context.setBackColour(new float[] {1, 1, 1, 1});
     
     /*for(int i = 0; i < _background.length; i++) {
@@ -316,10 +318,10 @@ public class Menu extends GUI {
       e.printStackTrace();
     }
     
-    _game.login(name, pass, _listener);
+    _game.login(name, pass);
   }
   
-  private void loggedIn(game.network.packet.Login.Response packet) {
+  private void loggedIn(game.network.packet.menu.Login.Response packet) {
     _wait.pop();
     
     switch(packet.getResponse()) {
@@ -371,7 +373,7 @@ public class Menu extends GUI {
     
     _wait = Message.showWait("Loading...");
     
-    _game.charDel(index, _listener);
+    _game.charDel(index);
   }
   
   private void charDeleted(CharDel.Response packet) {
@@ -403,7 +405,7 @@ public class Menu extends GUI {
     _wait = Message.showWait("Loading...");
     
     //TODO: This needs to be not hardcoded
-    _game.charCreate(name, "Isaac", _listener);
+    _game.charCreate(name, "Isaac");
   }
   
   private void charCreated(CharNew.Response packet) {
@@ -429,14 +431,14 @@ public class Menu extends GUI {
   private void charUse(int index) {
     _wait = Message.showWait("Loading...");
     
-    _game.charUse(index, _listener);
+    _game.charUse(index);
   }
   
   private void charUsed(CharUse.Response packet) {
     switch(packet.getResponse()) {
       case CharUse.Response.RESPONSE_OKAY:
         _game.loadWorld(packet.getWorld());
-        _game.loadGame(_listener);
+        _game.loadGame();
         break;
         
       case CharUse.Response.RESPONSE_SQL_ERROR:
@@ -453,7 +455,7 @@ public class Menu extends GUI {
     pop();
   }
   
-  public static class Listener implements Game.StateListener {
+  public static class Listener implements Game.MenuStateListener {
     private Menu _menu;
     
     public Listener(Menu menu) {
