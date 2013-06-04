@@ -2,17 +2,18 @@ package game.network;
 
 import network.packet.Packet;
 import network.packet.Packets;
-import game.network.packet.CharDel;
-import game.network.packet.CharNew;
-import game.network.packet.CharUse;
-import game.network.packet.Connect;
+import game.network.packet.Chat;
 import game.network.packet.Data;
 import game.network.packet.EntityCreate;
 import game.network.packet.EntityDestroy;
 import game.network.packet.EntityMoveStart;
 import game.network.packet.EntityMoveStop;
-import game.network.packet.Login;
-import game.network.packet.Permissions;
+import game.network.packet.menu.CharDel;
+import game.network.packet.menu.CharNew;
+import game.network.packet.menu.CharUse;
+import game.network.packet.menu.Connect;
+import game.network.packet.menu.Login;
+import game.network.packet.menu.Permissions;
 import game.settings.Settings;
 
 public class Client {
@@ -51,6 +52,7 @@ public class Client {
     Packets.add(EntityMoveStop.class);
     Packets.add(Data.Request.class);
     Packets.add(Data.Response.class);
+    Packets.add(Chat.class);
   }
   
   public void connect() {
