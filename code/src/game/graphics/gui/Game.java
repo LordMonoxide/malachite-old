@@ -50,7 +50,7 @@ public class Game extends GUI {
     _context.setBackColour(new float[] {0, 0, 0, 0});
     
     _txtChat = new Textbox(this);
-    _txtChat.setXY(4, _context.getH() - _txtChat.getH() - 4);
+    _txtChat.setX(4);
     _txtChat.setVisible(false);
     _txtChat.events().addKeyHandler(new Control.Events.Key() {
       public void down(int key) {
@@ -131,7 +131,7 @@ public class Game extends GUI {
     _debugText.setTexture(c.getTexture());
     _debugText.createQuad();
     
-    _game.updateCamera();
+    resize();
     
     _loaded = true;
   }
@@ -142,6 +142,7 @@ public class Game extends GUI {
   
   public void resize() {
     _wndAdmin.setXY((_context.getW() - _wndAdmin.getW()) / 2, (_context.getH() - _wndAdmin.getH()) / 2);
+    _txtChat.setY(_context.getH() - _txtChat.getH() - 4);
     
     _game.updateCamera();
   }
