@@ -102,7 +102,7 @@ public class Game implements graphics.gl00.Game {
   }
   
   public void init() {
-    _menu = new game.graphics.gui.Menu();
+    _menu = new Menu();
     _menu.load();
     _menu.push();
   }
