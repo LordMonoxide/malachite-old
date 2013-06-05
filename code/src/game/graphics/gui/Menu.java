@@ -256,9 +256,7 @@ public class Menu extends GUI {
       e.printStackTrace();
     }
     
-    if(_txtName.getText() != null && _txtName.getText().length() != 0) {
-      _txtName.setFocus(true);
-    }
+    _txtName.setFocus(true);
   }
   
   public void destroy() {
