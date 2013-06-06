@@ -1,5 +1,6 @@
 package game.data;
 
+import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 
@@ -7,7 +8,6 @@ import game.Game;
 import game.data.util.Buffer;
 import game.data.util.Serializable;
 import game.network.packet.Data;
-import game.network.packet.Data.Response;
 import game.settings.Settings;
 import game.world.World;
 import graphics.gl00.Canvas;
@@ -26,7 +26,7 @@ public class Map extends Serializable {
   private boolean _loaded;
   
   public Map(World world, int x, int y) {
-    super("worlds/" + world.getName(), x + "x" + y);
+    super(new File("../data/worlds/" + world.getName() + "/" + x + "x" + y));
     _world = world;
     _x = x;
     _y = y;
@@ -53,10 +53,9 @@ public class Map extends Serializable {
   public void request() {
     updateCRC();
     
-    Data.Request p = new Data.Request(this);
-    Game g = Game.getInstance();
-    g.send(p, Data.Response.class, new Game.PacketCallback<Data.Response>() {
-      public boolean recieved(Response packet) {
+    Data.MapRequest p = new Data.MapRequest(this);
+    Game.getInstance().send(p, Data.MapResponse.class, new Game.PacketCallback<Data.MapResponse>() {
+      public boolean recieved(Data.MapResponse packet) {
         if(packet.getX() == _x && packet.getY() == _y) {
           remove();
           
