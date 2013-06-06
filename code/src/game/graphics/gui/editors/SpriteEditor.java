@@ -510,7 +510,7 @@ public class SpriteEditor extends GUI implements Editor {
   }
   
   public void newData(String file) {
-    editData(new Sprite(file));
+    editData(new Sprite(file, 0));
   }
   
   public void editData(Data data) {
