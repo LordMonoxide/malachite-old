@@ -4,6 +4,7 @@ import java.io.File;
 
 import javax.swing.JOptionPane;
 
+import game.Game;
 import game.data.Sprite;
 import game.data.util.Data;
 import game.data.util.Serializable;
@@ -20,22 +21,10 @@ public class DataSelection extends GUI {
   
   private Editor _editor;
   private String _dir;
-  private String[] _name;
   
   public DataSelection(Editor editor, String dir) {
     _editor = editor;
     _dir = dir;
-    
-    File[] d = new File("../data/" + _dir).listFiles();
-    
-    if(d != null) {
-      _name = new String[d.length];
-      
-      int i = 0;
-      for(File f : d) {
-        _name[i++] = f.getName();
-      }
-    }
   }
   
   public void load() {
@@ -52,15 +41,11 @@ public class DataSelection extends GUI {
       }
     };
     
-    if(_name != null) {
-      for(String n : _name) {
-        Sprite s = new Sprite(n);
-        if(s.load()) {
-          ListItem l = (ListItem)_data.addItem(new ListItem(this, s));
-          l.setText(n + ": " + s.getName() + " - " + s.getNote());
-          l.events().addClickHandler(accept);
-        }
-      }
+    int n = 1;
+    for(Sprite s : Game.getInstance().getSprites()) {
+      ListItem l = (ListItem)_data.addItem(new ListItem(this, s));
+      l.setText(n++ + ": " + s.getName() + " - " + s.getNote());
+      l.events().addClickHandler(accept);
     }
     
     _new = new Button(this);
