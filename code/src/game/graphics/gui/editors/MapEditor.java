@@ -312,14 +312,8 @@ public class MapEditor extends GUI {
     _selected = Context.newDrawable();
     _selected.setColour(new float[] {1, 1, 1, 0.5f});
     
-    File d = new File("../data/sprites/");
-    if(d.isDirectory()) {
-      for(File f : d.listFiles()) {
-        Sprite s = new Sprite(f.getName());
-        if(s.load()) {
-          _drpSpriteFile.add(new DropdownSprite(s));
-        }
-      }
+    for(Sprite s : _game.getSprites()) {
+      _drpSpriteFile.add(new DropdownSprite(s));
     }
     
     _attribDrawable = Context.newDrawable();
@@ -374,10 +368,7 @@ public class MapEditor extends GUI {
             if(m.isChanged()) {
               System.out.println("Updating map " + m.getFile());
               m.update();
-              
               r.setMap(m.getMap());
-              r.getMap().save();
-              
               packet.addMap(r.getMap());
             }
           }
@@ -413,8 +404,6 @@ public class MapEditor extends GUI {
       }
       
       _region = region;
-      //XXX
-      //_region.despawn();
       _region.setMap(new MapEditorMap(_region.getMap()));
       _map = (MapEditorMap)_region.getMap();
       _mx = _map.getX();
@@ -916,16 +905,10 @@ public class MapEditor extends GUI {
         }
       };
       
-      File d = new File("../data/sprites/");
-      if(d.isDirectory()) {
-        for(File f : d.listFiles()) {
-          Sprite s = new Sprite(f.getName());
-          if(s.load()) {
-            ListItem l = (ListItem)_data.addItem(new ListItem(this, s));
-            l.setText(s.getFile() + ": " + s.getName() + " - " + s.getNote());
-            l.events().addClickHandler(accept);
-          }
-        }
+      for(Sprite s : Game.getInstance().getSprites()) {
+        ListItem l = (ListItem)_data.addItem(new ListItem(this, s));
+        l.setText(s.getFile() + ": " + s.getName() + " - " + s.getNote());
+        l.events().addClickHandler(accept);
       }
       
       _window.setWH(_data.getX() + _data.getW() + 8, _data.getY() + _data.getH() + 28);
