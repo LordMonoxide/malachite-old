@@ -60,12 +60,6 @@ public class World extends Sandbox {
         
         System.out.println("Map " + name + " requested.");
         
-        /*if(m.load()) {
-          System.out.println("Map " + name + " loaded.");
-        } else {
-          System.out.println("Map " + name + " created.");
-        }*/
-        
         _map.put(name, m);
       }
       
