@@ -20,15 +20,8 @@ public class Sprite extends Serializable implements Data {
   protected ArrayList<Anim> _anim = new ArrayList<Anim>();
   protected String _script;
   
-  public Sprite(String file) {
-    super("sprites", file);
-    
-    _script = "function init() {\n\n" +
-              "}\n\n" +
-              "function setVelocity(velocity) {\n\n" +
-              "}\n\n" +
-              "function setBearing(bearing) {\n\n" +
-              "}";
+  public Sprite(String file, int crc) {
+    super(file, crc);
   }
   
   public String getName()    { return _name; }
