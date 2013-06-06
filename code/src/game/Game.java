@@ -1,14 +1,18 @@
 package game;
 
+import java.io.File;
+import java.util.Collection;
 import java.util.HashMap;
 
 import network.packet.Packet;
 
 import game.data.Sprite;
 import game.data.account.Permissions;
+import game.data.util.Serializable;
 import game.graphics.gui.Menu;
 import game.network.Client;
 import game.network.packet.Chat;
+import game.network.packet.Data;
 import game.network.packet.EntityCreate;
 import game.network.packet.EntityMoveStart;
 import game.network.packet.EntityMoveStop;
@@ -45,20 +49,27 @@ public class Game implements graphics.gl00.Game {
   public World       getWorld()       { return _world;       }
   public Entity      getEntity()      { return _entity;      }
   
-  public Sprite getSprite(String file) {
-    Sprite s = _sprite.get(file);
-    
-    if(s == null) {
-      if((s = new Sprite(file)).load()) {
-        System.out.println("Sprite " + file + " loaded.");
+  public void loadSprites(Serializable[] data) {
+    for(Serializable s : data) {
+      if(!s.exists()) {
+        Data.Request request = new Data.Request(s);
+        _net.send(request);
+        System.out.println("Requesting sprite " + s.getFile());
       } else {
-        System.err.println("Couldn't load sprite " + file);
+        s.load();
+        System.out.println("Loading sprite " + s.getFile());
       }
       
-      _sprite.put(file, s);
+      _sprite.put(s.getFile(), (Sprite)s);
     }
-    
-    return s;
+  }
+  
+  public Collection<Sprite> getSprites() {
+    return _sprite.values();
+  }
+  
+  public Sprite getSprite(String file) {
+    return _sprite.get(file);
   }
   
   public void setMenuStateListener(MenuStateListener listener) { _menuListener = listener; }
