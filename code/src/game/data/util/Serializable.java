@@ -5,13 +5,19 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public abstract class Serializable {
-  protected String _path;
-  protected String _file;
+  private File _f;
+  private String _file;
   private int _crc;
   
-  protected Serializable(String path, String file) {
-    _path = path;
+  protected Serializable(File file) {
+    _f = file;
+    _file = _f.getName();
+  }
+  
+  protected Serializable(String file, int crc) {
+    _f = new File("../data/" + crc);
     _file = file;
+    _crc = crc;
   }
   
   public String getFile() {
@@ -22,22 +28,24 @@ public abstract class Serializable {
     return _crc;
   }
   
-  public void updateCRC() {
+  public boolean exists() {
+    return _f.exists();
+  }
+  
+  protected void updateCRC() {
     try {
-      Buffer b = new Buffer(new File("../data/" + _path + "/" + _file));
+      Buffer b = new Buffer(_f);
       _crc = b.crc();
     } catch(IOException e) {
-      //e.printStackTrace();
       _crc = 0;
     }
   }
   
   public void save() {
     Buffer b = serialize();
-    _crc = b.crc();
     
     try {
-      b.save(new File("../data/" + _path + "/" + _file));
+      b.save(_f);
     } catch(IOException e) {
       e.printStackTrace();
     }
@@ -45,9 +53,8 @@ public abstract class Serializable {
   
   public boolean load() {
     try {
-      Buffer b = new Buffer(new File("../data/" + _path + "/" + _file));
+      Buffer b = new Buffer(_f);
       deserialize(b);
-      _crc = b.crc();
       return true;
     } catch(FileNotFoundException e) {
     } catch(IOException e) {
