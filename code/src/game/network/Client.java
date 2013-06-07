@@ -8,6 +8,8 @@ import game.network.packet.EntityCreate;
 import game.network.packet.EntityDestroy;
 import game.network.packet.EntityMoveStart;
 import game.network.packet.EntityMoveStop;
+import game.network.packet.EntityStats;
+import game.network.packet.EntityVitals;
 import game.network.packet.editors.Save;
 import game.network.packet.menu.CharDel;
 import game.network.packet.menu.CharNew;
@@ -59,6 +61,8 @@ public class Client {
     Packets.add(Data.Info.class);
     Packets.add(Data.MapResponse.class);
     Packets.add(Save.Sprite.class);
+    Packets.add(EntityVitals.class);
+    Packets.add(EntityStats.class);
   }
   
   public void connect() {
