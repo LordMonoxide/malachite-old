@@ -1,5 +1,6 @@
 # Engine stuff #
 *.conf
+data/
 
 # Java stuff #
 *.class
