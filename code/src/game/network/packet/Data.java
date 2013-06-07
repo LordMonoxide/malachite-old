@@ -180,7 +180,9 @@ public class Data {
     }
     
     public void process() {
-      Game.getInstance().getWorld().getRegion(_x, _y).getMap().deserialize(new Buffer(_data));
+      Map m = Game.getInstance().getWorld().getRegion(_x, _y).getMap();
+      m.deserialize(new Buffer(_data));
+      m.save();
     }
   }
 }
