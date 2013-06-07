@@ -54,11 +54,11 @@ public class Client {
     Packets.add(Data.Request.class);
     Packets.add(Data.Response.class);
     Packets.add(Chat.class);
-    Packets.add(Save.MapData.class);
+    Packets.add(Save.Map.class);
     Packets.add(Data.MapRequest.class);
     Packets.add(Data.Info.class);
     Packets.add(Data.MapResponse.class);
-    Packets.add(Save.SpriteData.class);
+    Packets.add(Save.Sprite.class);
   }
   
   public void connect() {

@@ -2,7 +2,6 @@ package game.network.packet.editors;
 
 import java.util.ArrayList;
 
-import game.data.Map;
 import game.data.util.Serializable;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -44,7 +43,7 @@ public abstract class Save extends Packet {
     
   }
   
-  public static class MapData extends Save {
+  public static class Map extends Save {
     public int getIndex() {
       return 17;
     }
@@ -54,7 +53,7 @@ public abstract class Save extends Packet {
       
       byte[] arr;
       for(Serializable data : _data) {
-        Map m = (Map)data;
+        game.data.Map m = (game.data.Map)data;
         arr = m.serialize().serialize();
         b.writeInt(m.getX());
         b.writeInt(m.getY());
@@ -66,7 +65,7 @@ public abstract class Save extends Packet {
     }
   }
   
-  public static class SpriteData extends Save {
+  public static class Sprite extends Save {
     public int getIndex() {
       return 21;
     }
