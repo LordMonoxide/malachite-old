@@ -26,6 +26,8 @@ public class Entity extends Movable {
     setAcc(0.148f);
     setDec(0.361f);
     setVelTerm(1.75f);
+    
+    _stats = new Stats();
   }
   
   public void setEntityCallback(EntityCallback callback) {
