@@ -1,10 +1,12 @@
 package game.world;
 
+import java.util.LinkedList;
+
 import game.settings.Settings;
 import physics.Movable;
 
 public class Entity extends Movable {
-  private EntityCallback _callback;
+  private Events _events;
   
   private int _id;
   
@@ -27,11 +29,12 @@ public class Entity extends Movable {
     setDec(0.361f);
     setVelTerm(1.75f);
     
+    _events = new Events(this);
     _stats = new Stats();
   }
   
-  public void setEntityCallback(EntityCallback callback) {
-    _callback = callback;
+  public Events events() {
+    return _events;
   }
   
   public Sprite getSprite() {
@@ -75,6 +78,11 @@ public class Entity extends Movable {
       _sprite.setX(_x);
       _sprite.setY(_y);
       _sprite.setZ(_z);
+      _sprite.events().addDrawHandler(new Sprite.Events.Draw() {
+        public void draw() {
+          _events.raiseDraw();
+        }
+      });
     }
   }
   
@@ -113,9 +121,7 @@ public class Entity extends Movable {
       _sprite.setX(_x);
     }
     
-    if(_callback != null) {
-      _callback.move(this);
-    }
+    _events.raiseMove();
   }
   
   public void setY(float y) {
@@ -134,9 +140,7 @@ public class Entity extends Movable {
       _sprite.setY(_y);
     }
     
-    if(_callback != null) {
-      _callback.move(this);
-    }
+    _events.raiseMove();
   }
   
   public int getZ() {
@@ -189,10 +193,6 @@ public class Entity extends Movable {
     return _stats;
   }
   
-  public interface EntityCallback {
-    public void move(Entity e);
-  }
-  
   public static class Stats {
     public static final int VITALS = 2;
     public static final int VITAL_HP = 0;
@@ -226,4 +226,34 @@ public class Entity extends Movable {
       public float exp;
     }
   }
+  
+  public static class Events {
+    private LinkedList<Draw> _draw = new LinkedList<Draw>();
+    private LinkedList<Move> _move = new LinkedList<Move>();
+    
+    public void addDrawHandler(Draw e) { _draw.add(e); }
+    public void addMoveHandler(Move e) { _move.add(e); }
+    
+    private Entity _entity;
+    
+    public Events(Entity entity) {
+      _entity = entity;
+    }
+    
+    public void raiseDraw() {
+      for(Draw e : _draw) {
+        e.draw(_entity);
+      }
+    }
+    
+    public void raiseMove() {
+      for(Move e : _move) {
+        e.move(_entity);
+      }
+    }
+    
+    public static abstract class Draw { public abstract void draw(Entity e); }
+    public static abstract class Move { public abstract void move(Entity e); }
+  }
+
 }
