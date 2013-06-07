@@ -38,6 +38,6 @@ public class EntityCreate extends Packet {
   }
   
   public void process() {
-    Game.getInstance().getWorld().addEntity(_entity);
+    Game.getInstance().addEntity(_entity);
   }
 }
