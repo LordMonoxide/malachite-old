@@ -209,6 +209,15 @@ public class Menu extends GUI {
     _txtNewCharName = new Textbox(this);
     _txtNewCharName.setX((_wndNewChar.getClientW() - _txtNewCharName.getW()) / 2);
     _txtNewCharName.setY(_txtNewCharName.getX() + 4);
+    _txtNewCharName.events().addKeyHandler(new Control.Events.Key() {
+      public void up(int key) { }
+      public void text(char key) { }
+      public void down(int key) {
+        if(key == Keyboard.KEY_RETURN) {
+          charCreate(_txtNewCharName.getText());
+        }
+      }
+    });
     
     _lblNewCharName = new Label(this);
     _lblNewCharName.setText("Character Name:");
