@@ -10,6 +10,8 @@ import network.packet.Packet;
 public abstract class Save extends Packet {
   protected ArrayList<Serializable> _data = new ArrayList<Serializable>();
   
+  private Save() { }
+  
   public abstract int getIndex();
   
   public void addData(Serializable data) {
