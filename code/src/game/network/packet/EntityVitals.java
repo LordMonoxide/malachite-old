@@ -18,8 +18,8 @@ public class EntityVitals extends Packet {
     Entity e = Game.getInstance().getWorld().getEntity(data.readInt());
     
     for(int i = 0; i < Entity.Stats.VITALS; i++) {
-      e.stats().vital(i).val = data.readInt();
       e.stats().vital(i).max = data.readInt();
+      e.stats().vital(i).val = data.readInt();
     }
   }
   
