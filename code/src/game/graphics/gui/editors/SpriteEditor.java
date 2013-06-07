@@ -11,11 +11,13 @@ import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
+import game.Game;
 import game.data.Sprite;
 import game.data.Sprite.Anim;
 import game.data.Sprite.Frame;
 import game.data.Sprite.List;
 import game.data.util.Data;
+import game.network.packet.editors.Save;
 import graphics.gl00.Context;
 import graphics.gl00.Drawable;
 import graphics.shared.gui.Control;
@@ -491,7 +493,10 @@ public class SpriteEditor extends GUI implements Editor {
   private void save() {
     System.out.println("Updating sprite " + _sprite.getFile());
     _sprite.update();
-    _sprite.save();
+    
+    Save.Sprite packet = new Save.Sprite();
+    packet.addData(_sprite);
+    Game.getInstance().send(packet);
   }
   
   private void listSprites(File dir, String path) {
