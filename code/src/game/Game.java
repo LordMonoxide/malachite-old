@@ -67,6 +67,10 @@ public class Game implements graphics.gl00.Game {
     return _sprite.values();
   }
   
+  public void addSprite(Sprite s) {
+    _sprite.put(s.getFile(), s);
+  }
+  
   public Sprite getSprite(String file) {
     return _sprite.get(file);
   }
