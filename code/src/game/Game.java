@@ -44,6 +44,12 @@ public class Game implements graphics.gl00.Game {
   
   private HashMap<String, Sprite> _sprite = new HashMap<String, Sprite>();
   
+  private Entity.Events.Draw _entityDraw = new Entity.Events.Draw() {
+    public void draw(Entity e) {
+      _gameListener.entityDraw(e);
+    }
+  };
+  
   public Permissions getPermissions() { return _permissions; }
   public World       getWorld()       { return _world;       }
   public Entity      getEntity()      { return _entity;      }
@@ -73,6 +79,11 @@ public class Game implements graphics.gl00.Game {
   
   public Sprite getSprite(String file) {
     return _sprite.get(file);
+  }
+  
+  public void addEntity(Entity e) {
+    _world.addEntity(e);
+    e.events().addDrawHandler(_entityDraw);
   }
   
   public void setMenuStateListener(MenuStateListener listener) { _menuListener = listener; }
@@ -273,6 +284,7 @@ public class Game implements graphics.gl00.Game {
   
   public static interface GameStateListener {
     public void gotChat(String name, String text);
+    public void entityDraw(Entity e);
   }
   
   public static abstract class PacketCallback<T extends Packet> {
