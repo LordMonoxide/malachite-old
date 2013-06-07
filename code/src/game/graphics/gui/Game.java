@@ -23,7 +23,7 @@ import graphics.shared.gui.controls.compound.Window;
 public class Game extends GUI {
   private game.Game _game = (game.Game)Context.getGame();
   private Font _font = Context.getFonts().getDefault();
-  private float[] _fontColour = {1, 0, 1, 1};
+  private float[] _debugColour = {1, 0, 1, 1};
   private Drawable _debugText;
   
   private boolean[] _key = new boolean[4];
@@ -112,19 +112,19 @@ public class Game extends GUI {
     
     Canvas c = new Canvas("Debug text", 256, 256);
     c.bind();
-    _font.draw(4,   4, "Graphics:", _fontColour);
-    _font.draw(4,  14, "Logic:", _fontColour);
-    _font.draw(4,  24, "Physics:", _fontColour);
-    _font.draw(4,  34, "Map: ", _fontColour);
-    _font.draw(4,  44, "Loc:", _fontColour);
-    _font.draw(4,  54, "Layer:", _fontColour);
-    _font.draw(4,  64, "RLoc:", _fontColour);
-    _font.draw(4,  74, "XVel:", _fontColour);
-    _font.draw(4,  84, "YVel:", _fontColour);
-    _font.draw(4,  94, "Bearing:", _fontColour);
-    _font.draw(4, 104, "Sprites:", _fontColour);
-    _font.draw(4, 114, "Textures:", _fontColour);
-    _font.draw(4, 124, "Entity ID:", _fontColour);
+    _font.draw(4,   4, "Graphics:", _debugColour);
+    _font.draw(4,  14, "Logic:", _debugColour);
+    _font.draw(4,  24, "Physics:", _debugColour);
+    _font.draw(4,  34, "Map: ", _debugColour);
+    _font.draw(4,  44, "Loc:", _debugColour);
+    _font.draw(4,  54, "Layer:", _debugColour);
+    _font.draw(4,  64, "RLoc:", _debugColour);
+    _font.draw(4,  74, "XVel:", _debugColour);
+    _font.draw(4,  84, "YVel:", _debugColour);
+    _font.draw(4,  94, "Bearing:", _debugColour);
+    _font.draw(4, 104, "Sprites:", _debugColour);
+    _font.draw(4, 114, "Textures:", _debugColour);
+    _font.draw(4, 124, "Entity ID:", _debugColour);
     c.unbind();
     
     _debugText = Context.newDrawable();
@@ -176,21 +176,27 @@ public class Game extends GUI {
     }
     
     _debugText.draw();
-    _font.draw(53,   4, _context.getFPS() + "hz", _fontColour);
-    _font.draw(53,  14, _context.getLogicFPS() + "hz", _fontColour);
-    _font.draw(53,  24, _game.getWorld().getFPS() + "hz", _fontColour);
-    _font.draw(53,  34, _entity.getMX() + ", " + _entity.getMY(), _fontColour);
-    _font.draw(53,  44, _entity.getX() + ", " + _entity.getY(), _fontColour);
-    _font.draw(53,  54, String.valueOf(_entity.getZ()), _fontColour);
-    _font.draw(53,  64, _entity.getRX() + ", " + _entity.getRY(), _fontColour);
-    _font.draw(53,  74, String.valueOf(_entity.getVel() * _entity.getVelScaleX()), _fontColour);
-    _font.draw(53,  84, String.valueOf(_entity.getVel() * _entity.getVelScaleY()), _fontColour);
-    _font.draw(53,  94, String.valueOf(_entity.getBear()), _fontColour);
-    _font.draw(53, 104, String.valueOf(Sprite.count()), _fontColour);
-    _font.draw(53, 114, _textures.loaded() + " (" + _textures.loading() + ")", _fontColour);
-    _font.draw(53, 124, String.valueOf(_entity.getID()), _fontColour);
+    _font.draw(53,   4, _context.getFPS() + "hz", _debugColour);
+    _font.draw(53,  14, _context.getLogicFPS() + "hz", _debugColour);
+    _font.draw(53,  24, _game.getWorld().getFPS() + "hz", _debugColour);
+    _font.draw(53,  34, _entity.getMX() + ", " + _entity.getMY(), _debugColour);
+    _font.draw(53,  44, _entity.getX() + ", " + _entity.getY(), _debugColour);
+    _font.draw(53,  54, String.valueOf(_entity.getZ()), _debugColour);
+    _font.draw(53,  64, _entity.getRX() + ", " + _entity.getRY(), _debugColour);
+    _font.draw(53,  74, String.valueOf(_entity.getVel() * _entity.getVelScaleX()), _debugColour);
+    _font.draw(53,  84, String.valueOf(_entity.getVel() * _entity.getVelScaleY()), _debugColour);
+    _font.draw(53,  94, String.valueOf(_entity.getBear()), _debugColour);
+    _font.draw(53, 104, String.valueOf(Sprite.count()), _debugColour);
+    _font.draw(53, 114, _textures.loaded() + " (" + _textures.loading() + ")", _debugColour);
+    _font.draw(53, 124, String.valueOf(_entity.getID()), _debugColour);
     
     _matrix.pop();
+  }
+  
+  public void entityDraw(Entity e) {
+    if(e.getName() != null) {
+      _font.draw(-_font.getW(e.getName()) / 2, (int)(-e.getSprite().getFrameH() + e.getSprite().getFrameFY()) - _font.getH(), e.getName(), _chatColour);
+    }
   }
   
   public boolean logic() {
@@ -425,6 +431,10 @@ public class Game extends GUI {
       }
       
       _game._chat[0] = name + ": " + text;
+    }
+    
+    public void entityDraw(Entity e) {
+      _game.entityDraw(e);
     }
   }
 }
