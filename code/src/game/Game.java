@@ -224,7 +224,7 @@ public class Game implements graphics.gl00.Game {
             remove();
             
             _entity = ((EntityCreate)p).getEntity();
-            _entity.setEntityCallback(new Entity.EntityCallback() {
+            _entity.events().addMoveHandler(new Entity.Events.Move() {
               public void move(Entity e) {
                 updateCamera();
               }
