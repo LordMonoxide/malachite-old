@@ -7,6 +7,7 @@ import graphics.gl00.Matrix;
 import graphics.util.Time;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
@@ -64,6 +65,8 @@ public class Sprite {
   private ScriptEngine _engine = _manager.getEngineByName("JavaScript");
   private Invocable _script;
   
+  private Events _events;
+  
   private game.data.Sprite _source;
   
   private int _w, _h;
@@ -78,6 +81,7 @@ public class Sprite {
   private double _timer;
   
   private Sprite(game.data.Sprite sprite) {
+    _events = new Events();
     _source = sprite;
     _w = sprite.getW();
     _h = sprite.getH();
@@ -96,6 +100,10 @@ public class Sprite {
       } catch(NoSuchMethodException e) {
       }
     }
+  }
+  
+  public Events events() {
+    return _events;
   }
   
   public game.data.Sprite getSource() {
@@ -190,12 +198,28 @@ public class Sprite {
     _matrix.push();
     _matrix.translate(_x, _y);
     _frame[_frameNum].draw();
+    _events.raiseDraw();
     _matrix.pop();
     
     if(_anim[_animNum].getListSize() > 1) {
       if(_timer <= Time.getTime()) {
         setList(_listNum + 1);
       }
+    }
+  }
+  
+  public static class Events {
+    private LinkedList<Draw> _draw = new LinkedList<Draw>();
+    public void addDrawHandler(Draw e) { _draw.add(e); }
+    
+    public void raiseDraw() {
+      for(Draw e : _draw) {
+        e.draw();
+      }
+    }
+    
+    public static abstract class Draw {
+      public abstract void draw();
     }
   }
 }
