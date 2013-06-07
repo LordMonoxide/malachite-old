@@ -360,7 +360,7 @@ public class MapEditor extends GUI {
           return false;
           
         case JOptionPane.YES_OPTION:
-          Save packet = new Save.Map();
+          Save.Map packet = new Save.Map();
           
           for(Region r : _regions) {
             MapEditorMap m = (MapEditorMap)r.getMap();
