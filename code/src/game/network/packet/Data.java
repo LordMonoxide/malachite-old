@@ -86,6 +86,7 @@ public class Data {
     private byte _type;
     private String _file;
     private byte[] _data;
+    private int _crc;
     
     public int getIndex() {
       return 15;
@@ -102,13 +103,22 @@ public class Data {
       _file = new String(arr);
       _data = new byte[data.readInt()];
       data.readBytes(_data);
+      _crc = data.readInt();
     }
     
     public void process() {
       Serializable data = null;
       
       switch(_type) {
-        case DATA_TYPE_SPRITE: data = Game.getInstance().getSprite(_file); break;
+        case DATA_TYPE_SPRITE:
+          data = Game.getInstance().getSprite(_file);
+          
+          if(data == null) {
+            data = new Sprite(_file, _crc);
+            Game.getInstance().addSprite((Sprite)data);
+          }
+          
+          break;
       }
       
       data.deserialize(new Buffer(_data));
