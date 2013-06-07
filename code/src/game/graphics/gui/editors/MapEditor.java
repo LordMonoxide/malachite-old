@@ -14,7 +14,7 @@ import game.Game;
 import game.data.Map;
 import game.data.Sprite;
 import game.data.util.Serializable;
-import game.network.packet.editors.SaveMap;
+import game.network.packet.editors.Save;
 import game.settings.Settings;
 import game.world.Region;
 import graphics.gl00.Context;
@@ -360,7 +360,7 @@ public class MapEditor extends GUI {
           return false;
           
         case JOptionPane.YES_OPTION:
-          SaveMap packet = new SaveMap();
+          Save packet = new Save.MapData();
           
           for(Region r : _regions) {
             MapEditorMap m = (MapEditorMap)r.getMap();
@@ -369,7 +369,7 @@ public class MapEditor extends GUI {
               System.out.println("Updating map " + m.getFile());
               m.update();
               r.setMap(m.getMap());
-              packet.addMap(r.getMap());
+              packet.addData(r.getMap());
             }
           }
           
