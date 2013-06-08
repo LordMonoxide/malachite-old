@@ -248,21 +248,17 @@ public class Entity extends Movable {
       private Entity _entity;
       
       private int _val;
-      private float _exp;
       
       private Stat(Entity entity) {
         _entity = entity;
       }
       
-      public   int val() { return _val; }
-      public float exp() { return _exp; }
+      public int val() { return _val; }
       
-      public void val(int val)   { set(val, _exp); }
-      public void exp(float exp) { set(_val, exp); }
+      public void val(int val)   { set(val); }
       
-      public void set(int val, float exp) {
+      public void set(int val) {
         _val = val;
-        _exp = exp;
         
         _entity.events().raiseStats();
       }
