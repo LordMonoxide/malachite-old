@@ -30,7 +30,7 @@ public class Entity extends Movable {
     setVelTerm(1.75f);
     
     _events = new Events(this);
-    _stats = new Stats();
+    _stats = new Stats(this);
   }
   
   public Events events() {
@@ -202,37 +202,81 @@ public class Entity extends Movable {
     public static final int STAT_INT = 1;
     public static final int STAT_DEX = 2;
     
+    private Entity _entity;
+    
     private Vital[] _vital;
     private Stat[]  _stat;
     
-    public Stats() {
+    private Stats(Entity entity) {
+      _entity = entity;
+      
       _vital = new Vital[VITALS];
       _stat  = new Stat [STATS];
       
-      for(int i = 0; i < VITALS; i++) _vital[i] = new Vital();
-      for(int i = 0; i < STATS;  i++) _stat [i] = new Stat();
+      for(int i = 0; i < VITALS; i++) _vital[i] = new Vital(_entity);
+      for(int i = 0; i < STATS;  i++) _stat [i] = new Stat(_entity);
     }
     
     public Vital vital(int index) { return _vital[index]; }
     public Stat  stat (int index) { return _stat [index]; }
     
     public static class Vital {
-      public int val;
-      public int max;
+      private Entity _entity;
+      
+      private int _max;
+      private int _val;
+      
+      private Vital(Entity entity) {
+        _entity = entity;
+      }
+      
+      public int max() { return _max; }
+      public int val() { return _val; }
+      
+      public void max(int max) { set(max, _val); }
+      public void val(int val) { set(_max, val); }
+      
+      public void set(int max, int val) {
+        _max = max;
+        _val = val;
+        
+        _entity.events().raiseVitals();
+      }
     }
     
     public static class Stat {
-      public int val;
-      public float exp;
+      private Entity _entity;
+      
+      private int _val;
+      private float _exp;
+      
+      private Stat(Entity entity) {
+        _entity = entity;
+      }
+      
+      public   int val() { return _val; }
+      public float exp() { return _exp; }
+      
+      public void val(int val)   { set(val, _exp); }
+      public void exp(float exp) { set(_val, exp); }
+      
+      public void set(int val, float exp) {
+        _val = val;
+        _exp = exp;
+        
+        _entity.events().raiseStats();
+      }
     }
   }
   
   public static class Events {
-    private LinkedList<Draw> _draw = new LinkedList<Draw>();
-    private LinkedList<Move> _move = new LinkedList<Move>();
+    private LinkedList<Draw>  _draw  = new LinkedList<Draw>();
+    private LinkedList<Move>  _move  = new LinkedList<Move>();
+    private LinkedList<Stats> _stats = new LinkedList<Stats>();
     
-    public void addDrawHandler(Draw e) { _draw.add(e); }
-    public void addMoveHandler(Move e) { _move.add(e); }
+    public void addDrawHandler (Draw e)  { _draw.add(e); }
+    public void addMoveHandler (Move e)  { _move.add(e); }
+    public void addStatsHandler(Stats e) { _stats.add(e); }
     
     private Entity _entity;
     
@@ -252,8 +296,25 @@ public class Entity extends Movable {
       }
     }
     
-    public static abstract class Draw { public abstract void draw(Entity e); }
-    public static abstract class Move { public abstract void move(Entity e); }
+    public void raiseVitals() {
+      for(Stats e : _stats) {
+        e.vitals(_entity);
+      }
+    }
+    
+    public void raiseStats() {
+      for(Stats e : _stats) {
+        e.stats(_entity);
+      }
+    }
+    
+    public static abstract class Draw  { public abstract void draw  (Entity e); }
+    public static abstract class Move  { public abstract void move  (Entity e); }
+    
+    public static abstract class Stats {
+      public abstract void vitals(Entity e);
+      public abstract void stats (Entity e);
+    }
   }
 
 }
