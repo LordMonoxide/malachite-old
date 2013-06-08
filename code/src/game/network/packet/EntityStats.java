@@ -18,7 +18,7 @@ public class EntityStats extends Packet {
     Entity e = Game.getInstance().getWorld().getEntity(data.readInt());
     
     for(int i = 0; i < Entity.Stats.STATS; i++) {
-      e.stats().stat(i).val = data.readInt();
+      e.stats().stat(i).val(data.readInt());
     }
   }
   
