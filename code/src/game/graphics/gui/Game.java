@@ -17,6 +17,7 @@ import graphics.shared.fonts.Font;
 import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;
 import graphics.shared.gui.controls.Button;
+import graphics.shared.gui.controls.Picture;
 import graphics.shared.gui.controls.Textbox;
 import graphics.shared.gui.controls.compound.Window;
 
@@ -38,6 +39,9 @@ public class Game extends GUI {
   private Textbox _txtChat;
   private Window  _wndAdmin;
   private Button  _btnEdit[];
+  
+  private Picture[] _picVitalBack;
+  private Picture[] _picVital;
   
   private String[] _chat = new String[256];
   private float[] _chatColour = new float[] {1, 1, 1, 1};
@@ -107,6 +111,25 @@ public class Game extends GUI {
     _btnEdit[4].setText("Edit Spells");
     _btnEdit[5].setText("Edit Effects");
     
+    _picVitalBack = new Picture[Entity.Stats.VITALS];
+    _picVital     = new Picture[Entity.Stats.VITALS];
+    
+    for(int i = 0; i < Entity.Stats.VITALS; i++) {
+      _picVitalBack[i] = new Picture(this);
+      _picVitalBack[i].setBackColour(new float[] {0, 0, 0, 1});
+      _picVitalBack[i].setBorderColour(new float[] {1, 1, 1, 1});
+      _picVitalBack[i].setWH(100, 10);
+      _picVitalBack[i].setY((_picVitalBack[i].getH() + 2) * i + 2);
+      
+      _picVital[i] = new Picture(this);
+      _picVital[i].setBackColour(new float[] {0, 1, 0, 1});
+      _picVital[i].setWH(_picVitalBack[i].getW(), _picVitalBack[i].getH() - 1);
+      _picVital[i].setY(1);
+      _picVitalBack[i].Controls().add(_picVital[i]);
+      
+      Controls().add(_picVitalBack[i]);
+    }
+    
     Controls().add(_txtChat);
     Controls().add(_wndAdmin);
     
@@ -143,6 +166,10 @@ public class Game extends GUI {
   public void resize() {
     _wndAdmin.setXY((_context.getW() - _wndAdmin.getW()) / 2, (_context.getH() - _wndAdmin.getH()) / 2);
     _txtChat.setY(_context.getH() - _txtChat.getH() - 4);
+    
+    for(int i = 0; i < Entity.Stats.VITALS; i++) {
+      _picVitalBack[i].setX(_context.getW() - _picVitalBack[i].getW() - 2);
+    }
     
     _game.updateCamera();
   }
