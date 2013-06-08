@@ -32,8 +32,11 @@ public class EntityCreate extends Packet {
     _entity.setZ(data.readInt());
     
     for(int i = 0; i < Entity.Stats.VITALS; i++) {
-      _entity.stats().vital(i).max = data.readInt();
-      _entity.stats().vital(i).val = data.readInt();
+      _entity.stats().vital(i).set(data.readInt(), data.readInt());
+    }
+    
+    for(int i = 0; i < Entity.Stats.STATS; i++) {
+      _entity.stats().stat(i).val(data.readInt());
     }
   }
   
