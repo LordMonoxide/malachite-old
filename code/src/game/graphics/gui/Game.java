@@ -5,9 +5,11 @@ import org.lwjgl.input.Keyboard;
 import game.graphics.gui.editors.DataSelection;
 import game.graphics.gui.editors.MapEditor;
 import game.graphics.gui.editors.SpriteEditor;
+import game.language.Lang;
 import game.network.packet.Chat;
 import game.settings.Settings;
 import game.world.Entity;
+import game.world.Entity.Stats;
 import game.world.Region;
 import game.world.Sprite;
 import graphics.gl00.Canvas;
@@ -17,6 +19,7 @@ import graphics.shared.fonts.Font;
 import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;
 import graphics.shared.gui.controls.Button;
+import graphics.shared.gui.controls.Label;
 import graphics.shared.gui.controls.Picture;
 import graphics.shared.gui.controls.Textbox;
 import graphics.shared.gui.controls.compound.Window;
@@ -42,6 +45,9 @@ public class Game extends GUI {
   
   private Picture[] _picVitalBack;
   private Picture[] _picVital;
+  private Label[]   _lblVital;
+  private Label[]   _lblStat;
+  private Label[]   _lblStatVal;
   
   private String[] _chat = new String[256];
   private float[] _chatColour = new float[] {1, 1, 1, 1};
@@ -113,6 +119,9 @@ public class Game extends GUI {
     
     _picVitalBack = new Picture[Entity.Stats.VITALS];
     _picVital     = new Picture[Entity.Stats.VITALS];
+    _lblVital     = new Label  [Entity.Stats.VITALS];
+    _lblStat      = new Label  [Entity.Stats.STATS];
+    _lblStatVal   = new Label  [Entity.Stats.STATS];
     
     for(int i = 0; i < Entity.Stats.VITALS; i++) {
       _picVitalBack[i] = new Picture(this);
@@ -127,7 +136,24 @@ public class Game extends GUI {
       _picVital[i].setY(1);
       _picVitalBack[i].Controls().add(_picVital[i]);
       
+      _lblVital[i] = new Label(this);
+      _lblVital[i].setText(Lang.VITAL_ABBV.text(i) + ":");
+      _lblVital[i].setY(_picVitalBack[i].getY());
+      
       Controls().add(_picVitalBack[i]);
+      Controls().add(_lblVital[i]);
+    }
+    
+    for(int i = 0; i < Entity.Stats.STATS; i++) {
+      _lblStat[i] = new Label(this);
+      _lblStat[i].setText(Lang.STAT_ABBV.text(i) + ":");
+      _lblStat[i].setY(_lblVital[Entity.Stats.VITALS - 1].getY() + _lblVital[Entity.Stats.VITALS - 1].getH() * (i + 1) + 2);
+      
+      _lblStatVal[i] = new Label(this);
+      _lblStatVal[i].setY(_lblStat[i].getY());
+      
+      Controls().add(_lblStat[i]);
+      Controls().add(_lblStatVal[i]);
     }
     
     Controls().add(_txtChat);
@@ -155,6 +181,7 @@ public class Game extends GUI {
     _debugText.createQuad();
     
     resize();
+    updateStats(_entity.stats());
     
     _loaded = true;
   }
@@ -169,9 +196,21 @@ public class Game extends GUI {
     
     for(int i = 0; i < Entity.Stats.VITALS; i++) {
       _picVitalBack[i].setX(_context.getW() - _picVitalBack[i].getW() - 2);
+      _lblVital[i].setX(_picVitalBack[i].getX() - _lblVital[i].getW() - 4);
+    }
+    
+    for(int i = 0; i < Entity.Stats.STATS; i++) {
+      _lblStat[i].setX(_picVitalBack[0].getX() - _lblStat[i].getW() - 4);
+      _lblStatVal[i].setX(_picVitalBack[0].getX());
     }
     
     _game.updateCamera();
+  }
+  
+  public void updateStats(Stats stats) {
+    for(int i = 0; i < Entity.Stats.STATS; i++) {
+      _lblStatVal[i].setText(String.valueOf(stats.stat(i).val()));
+    }
   }
   
   public void draw() {
@@ -462,6 +501,14 @@ public class Game extends GUI {
     
     public void entityDraw(Entity e) {
       _game.entityDraw(e);
+    }
+    
+    public void updateVitals(Stats stats) {
+      updateStats(stats);
+    }
+    
+    public void updateStats(Stats stats) {
+      updateStats(stats);
     }
   }
 }
