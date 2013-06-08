@@ -16,10 +16,8 @@ public class EntityVitals extends Packet {
   
   public void deserialize(ByteBuf data) throws NotEnoughDataException {
     Entity e = Game.getInstance().getWorld().getEntity(data.readInt());
-    
-    for(int i = 0; i < Entity.Stats.VITALS; i++) {
-      e.stats().vital(i).set(data.readInt(), data.readInt());
-    }
+    e.stats().vitalHP().set(data.readInt(), data.readInt());
+    e.stats().vitalMP().set(data.readInt(), data.readInt());
   }
   
   public void process() {

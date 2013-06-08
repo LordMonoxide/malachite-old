@@ -30,14 +30,11 @@ public class EntityCreate extends Packet {
     _entity.setVelTerm(data.readFloat());
     _entity.setInitialXY(data.readFloat(), data.readFloat());
     _entity.setZ(data.readInt());
-    
-    for(int i = 0; i < Entity.Stats.VITALS; i++) {
-      _entity.stats().vital(i).set(data.readInt(), data.readInt());
-    }
-    
-    for(int i = 0; i < Entity.Stats.STATS; i++) {
-      _entity.stats().stat(i).val(data.readInt());
-    }
+    _entity.stats().vitalHP().set(data.readInt(), data.readInt());
+    _entity.stats().vitalMP().set(data.readInt(), data.readInt());
+    _entity.stats().statSTR().val(data.readInt());
+    _entity.stats().statINT().val(data.readInt());
+    _entity.stats().statDEX().val(data.readInt());
   }
   
   public void process() {

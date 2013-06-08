@@ -117,13 +117,13 @@ public class Game extends GUI {
     _btnEdit[4].setText("Edit Spells");
     _btnEdit[5].setText("Edit Effects");
     
-    _picVitalBack = new Picture[Entity.Stats.VITALS];
-    _picVital     = new Picture[Entity.Stats.VITALS];
-    _lblVital     = new Label  [Entity.Stats.VITALS];
-    _lblStat      = new Label  [Entity.Stats.STATS];
-    _lblStatVal   = new Label  [Entity.Stats.STATS];
+    _picVitalBack = new Picture[2];
+    _picVital     = new Picture[2];
+    _lblVital     = new Label  [2];
+    _lblStat      = new Label  [3];
+    _lblStatVal   = new Label  [3];
     
-    for(int i = 0; i < Entity.Stats.VITALS; i++) {
+    for(int i = 0; i < _lblVital.length; i++) {
       _picVitalBack[i] = new Picture(this);
       _picVitalBack[i].setBackColour(new float[] {0, 0, 0, 1});
       _picVitalBack[i].setBorderColour(new float[] {1, 1, 1, 1});
@@ -144,10 +144,10 @@ public class Game extends GUI {
       Controls().add(_lblVital[i]);
     }
     
-    for(int i = 0; i < Entity.Stats.STATS; i++) {
+    for(int i = 0; i < _lblStat.length; i++) {
       _lblStat[i] = new Label(this);
       _lblStat[i].setText(Lang.STAT_ABBV.text(i) + ":");
-      _lblStat[i].setY(_lblVital[Entity.Stats.VITALS - 1].getY() + _lblVital[Entity.Stats.VITALS - 1].getH() * (i + 1) + 2);
+      _lblStat[i].setY(_lblVital[1].getY() + _lblVital[1].getH() * (i + 1) + 2);
       
       _lblStatVal[i] = new Label(this);
       _lblStatVal[i].setY(_lblStat[i].getY());
@@ -194,12 +194,12 @@ public class Game extends GUI {
     _wndAdmin.setXY((_context.getW() - _wndAdmin.getW()) / 2, (_context.getH() - _wndAdmin.getH()) / 2);
     _txtChat.setY(_context.getH() - _txtChat.getH() - 4);
     
-    for(int i = 0; i < Entity.Stats.VITALS; i++) {
+    for(int i = 0; i < _lblVital.length; i++) {
       _picVitalBack[i].setX(_context.getW() - _picVitalBack[i].getW() - 2);
       _lblVital[i].setX(_picVitalBack[i].getX() - _lblVital[i].getW() - 4);
     }
     
-    for(int i = 0; i < Entity.Stats.STATS; i++) {
+    for(int i = 0; i < _lblStat.length; i++) {
       _lblStat[i].setX(_picVitalBack[0].getX() - _lblStat[i].getW() - 4);
       _lblStatVal[i].setX(_picVitalBack[0].getX());
     }
@@ -208,13 +208,11 @@ public class Game extends GUI {
   }
   
   public void updateStats(Stats stats) {
-    for(int i = 0; i < Entity.Stats.VITALS; i++) {
-      _picVital[i].setW(stats.vital(i).max() / stats.vital(i).val() * _picVitalBack[i].getW());
-    }
-    
-    for(int i = 0; i < Entity.Stats.STATS; i++) {
-      _lblStatVal[i].setText(String.valueOf(stats.stat(i).val()));
-    }
+    _picVital[0].setW(stats.vitalHP().max() / stats.vitalHP().val() * _picVitalBack[0].getW());
+    _picVital[1].setW(stats.vitalMP().max() / stats.vitalMP().val() * _picVitalBack[1].getW());
+    _lblStatVal[0].setText(String.valueOf(stats.statSTR().val()));
+    _lblStatVal[1].setText(String.valueOf(stats.statINT().val()));
+    _lblStatVal[2].setText(String.valueOf(stats.statDEX().val()));
   }
   
   public void draw() {

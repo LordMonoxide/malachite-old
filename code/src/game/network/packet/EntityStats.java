@@ -16,10 +16,9 @@ public class EntityStats extends Packet {
   
   public void deserialize(ByteBuf data) throws NotEnoughDataException {
     Entity e = Game.getInstance().getWorld().getEntity(data.readInt());
-    
-    for(int i = 0; i < Entity.Stats.STATS; i++) {
-      e.stats().stat(i).val(data.readInt());
-    }
+    e.stats().statSTR().val(data.readInt());
+    e.stats().statINT().val(data.readInt());
+    e.stats().statDEX().val(data.readInt());
   }
   
   public void process() {
