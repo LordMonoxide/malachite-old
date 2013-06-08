@@ -194,31 +194,26 @@ public class Entity extends Movable {
   }
   
   public static class Stats {
-    public static final int VITALS = 2;
-    public static final int VITAL_HP = 0;
-    public static final int VITAL_MP = 1;
-    public static final int STATS = 3;
-    public static final int STAT_STR = 0;
-    public static final int STAT_INT = 1;
-    public static final int STAT_DEX = 2;
-    
     private Entity _entity;
     
-    private Vital[] _vital;
-    private Stat[]  _stat;
+    private Vital _hp, _mp;
+    private Stat  _str, _int, _dex;
     
     private Stats(Entity entity) {
       _entity = entity;
       
-      _vital = new Vital[VITALS];
-      _stat  = new Stat [STATS];
-      
-      for(int i = 0; i < VITALS; i++) _vital[i] = new Vital(_entity);
-      for(int i = 0; i < STATS;  i++) _stat [i] = new Stat(_entity);
+      _hp  = new Vital(_entity);
+      _mp  = new Vital(_entity);
+      _str = new Stat(_entity);
+      _int = new Stat(_entity);
+      _dex = new Stat(_entity);
     }
     
-    public Vital vital(int index) { return _vital[index]; }
-    public Stat  stat (int index) { return _stat [index]; }
+    public Vital vitalHP() { return _hp; }
+    public Vital vitalMP() { return _mp; }
+    public Stat  statSTR() { return _str; }
+    public Stat  statINT() { return _int; }
+    public Stat  statDEX() { return _dex; }
     
     public static class Vital {
       private Entity _entity;
