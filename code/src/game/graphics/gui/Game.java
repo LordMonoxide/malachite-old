@@ -208,6 +208,10 @@ public class Game extends GUI {
   }
   
   public void updateStats(Stats stats) {
+    for(int i = 0; i < Entity.Stats.VITALS; i++) {
+      _picVital[i].setW(stats.vital(i).max() / stats.vital(i).val() * _picVitalBack[i].getW());
+    }
+    
     for(int i = 0; i < Entity.Stats.STATS; i++) {
       _lblStatVal[i].setText(String.valueOf(stats.stat(i).val()));
     }
