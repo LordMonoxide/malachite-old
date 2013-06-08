@@ -241,6 +241,16 @@ public class Game implements graphics.gl00.Game {
               }
             });
             
+            _entity.events().addStatsHandler(new Entity.Events.Stats() {
+              public void vitals(Entity e) {
+                _gameListener.updateVitals(e.stats());
+              }
+              
+              public void stats(Entity e) {
+                _gameListener.updateStats(e.stats());
+              }
+            });
+            
             p.process();
             _menuListener.inGame();
             
@@ -285,6 +295,8 @@ public class Game implements graphics.gl00.Game {
   public static interface GameStateListener {
     public void gotChat(String name, String text);
     public void entityDraw(Entity e);
+    public void updateVitals(Entity.Stats stats);
+    public void updateStats(Entity.Stats stats);
   }
   
   public static abstract class PacketCallback<T extends Packet> {
