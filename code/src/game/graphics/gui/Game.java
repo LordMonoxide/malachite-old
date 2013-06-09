@@ -2,7 +2,9 @@ package game.graphics.gui;
 
 import org.lwjgl.input.Keyboard;
 
+import game.data.util.Data;
 import game.graphics.gui.editors.DataSelection;
+import game.graphics.gui.editors.ItemEditor;
 import game.graphics.gui.editors.MapEditor;
 import game.graphics.gui.editors.SpriteEditor;
 import game.language.Lang;
@@ -106,14 +108,25 @@ public class Game extends GUI {
       public void click() {
         SpriteEditor editor = new SpriteEditor();
         editor.load();
-        DataSelection dataSel = new DataSelection(editor, "sprites");
+        DataSelection dataSel = new DataSelection(editor, "sprites", _game.getSprites().toArray(new Data[0]));
         dataSel.load();
         dataSel.push();
         _wndAdmin.setVisible(false);
       }
     });
-    _btnEdit[2].setText("Edit NPCs");
-    _btnEdit[3].setText("Edit Items");
+    _btnEdit[2].setText("Edit Items");
+    _btnEdit[2].events().addClickHandler(new Control.Events.Click() {
+      public void clickDbl() { }
+      public void click() {
+        ItemEditor editor = new ItemEditor();
+        editor.load();
+        DataSelection dataSel = new DataSelection(editor, "items", _game.getItems().toArray(new Data[0]));
+        dataSel.load();
+        dataSel.push();
+        _wndAdmin.setVisible(false);
+      }
+    });
+    _btnEdit[3].setText("Edit NPCs");
     _btnEdit[4].setText("Edit Spells");
     _btnEdit[5].setText("Edit Effects");
     
