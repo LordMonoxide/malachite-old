@@ -12,7 +12,6 @@ public class Item extends Serializable implements Data {
   
   public Item(String file, int crc) {
     super(file, crc);
-    System.out.println("Test");
   }
   
   public String getName()   { return _name; }
