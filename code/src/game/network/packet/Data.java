@@ -1,6 +1,7 @@
 package game.network.packet;
 
 import game.Game;
+import game.data.Item;
 import game.data.Map;
 import game.data.Sprite;
 import game.data.util.Buffer;
@@ -12,6 +13,7 @@ import network.packet.Packet;
 public class Data {
   public static final byte DATA_TYPE_MAP = 1;
   public static final byte DATA_TYPE_SPRITE = 2;
+  public static final byte DATA_TYPE_ITEM = 3;
   
   public static class Info extends Packet {
     private int _type;
@@ -41,6 +43,7 @@ public class Data {
         
         switch(_type) {
           case DATA_TYPE_SPRITE: _data[i] = new Sprite(name, crc); break;
+          case DATA_TYPE_ITEM:   _data[i] = new Item  (name, crc); break;
         }
       }
     }
@@ -48,6 +51,7 @@ public class Data {
     public void process() {
       switch(_type) {
         case DATA_TYPE_SPRITE: Game.getInstance().loadSprites(_data); break;
+        case DATA_TYPE_ITEM:   Game.getInstance().loadItems  (_data); break;
       }
     }
   }
@@ -58,6 +62,7 @@ public class Data {
     
     public Request(Serializable data) {
       if(data instanceof Sprite) _type = DATA_TYPE_SPRITE;
+      if(data instanceof Item)   _type = DATA_TYPE_ITEM;
       _file = data.getFile();
     }
     
@@ -116,6 +121,16 @@ public class Data {
           if(data == null) {
             data = new Sprite(_file, _crc);
             Game.getInstance().addSprite((Sprite)data);
+          }
+          
+          break;
+          
+        case DATA_TYPE_ITEM:
+          data = Game.getInstance().getItem(_file);
+          
+          if(data == null) {
+            data = new Item(_file, _crc);
+            Game.getInstance().addItem((Item)data);
           }
           
           break;
