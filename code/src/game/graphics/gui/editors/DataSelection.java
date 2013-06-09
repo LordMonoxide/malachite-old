@@ -4,10 +4,7 @@ import java.io.File;
 
 import javax.swing.JOptionPane;
 
-import game.Game;
-import game.data.Sprite;
 import game.data.util.Data;
-import game.data.util.Serializable;
 import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;
 import graphics.shared.gui.controls.Button;
@@ -21,10 +18,12 @@ public class DataSelection extends GUI {
   
   private Editor _editor;
   private String _dir;
+  private Data[] _edit;
   
-  public DataSelection(Editor editor, String dir) {
+  public DataSelection(Editor editor, String dir, Data[] data) {
     _editor = editor;
     _dir = dir;
+    _edit = data;
   }
   
   public void load() {
@@ -42,7 +41,7 @@ public class DataSelection extends GUI {
     };
     
     int n = 1;
-    for(Sprite s : Game.getInstance().getSprites()) {
+    for(Data s : _edit) {
       ListItem l = (ListItem)_data.addItem(new ListItem(this, s));
       l.setText(n++ + ": " + s.getName() + " - " + s.getNote());
       l.events().addClickHandler(accept);
@@ -116,14 +115,14 @@ public class DataSelection extends GUI {
   }
   
   public static class ListItem extends graphics.shared.gui.controls.List.ListItem {
-    private Serializable _data;
+    private Data _data;
     
-    protected ListItem(GUI gui, Serializable data) {
+    protected ListItem(GUI gui, Data data) {
       super(gui);
       _data = data;
     }
     
-    public Serializable getData() {
+    public Data getData() {
       return _data;
     }
   }
