@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import network.packet.Packet;
 
+import game.data.Item;
 import game.data.Sprite;
 import game.data.account.Permissions;
 import game.data.util.Serializable;
@@ -43,6 +44,7 @@ public class Game implements graphics.gl00.Game {
   private GameStateListener _gameListener;
   
   private HashMap<String, Sprite> _sprite = new HashMap<String, Sprite>();
+  private HashMap<String, Item>   _item   = new HashMap<String, Item>();
   
   private Entity.Events.Draw _entityDraw = new Entity.Events.Draw() {
     public void draw(Entity e) {
@@ -69,17 +71,29 @@ public class Game implements graphics.gl00.Game {
     }
   }
   
-  public Collection<Sprite> getSprites() {
-    return _sprite.values();
+  public void loadItems(Serializable[] data) {
+    for(Serializable s : data) {
+      if(!s.exists()) {
+        Data.Request request = new Data.Request(s);
+        _net.send(request);
+        System.out.println("Requesting item " + s.getFile());
+      } else {
+        s.load();
+        System.out.println("Loading item " + s.getFile());
+      }
+      
+      _item.put(s.getFile(), (Item)s);
+    }
   }
   
-  public void addSprite(Sprite s) {
-    _sprite.put(s.getFile(), s);
-  }
+  public Collection<Sprite> getSprites() { return _sprite.values(); }
+  public Collection<Item>   getItems()   { return _item.values(); }
   
-  public Sprite getSprite(String file) {
-    return _sprite.get(file);
-  }
+  public void addSprite(Sprite s) { _sprite.put(s.getFile(), s); }
+  public void addItem  (Item   i) { _item  .put(i.getFile(), i); }
+  
+  public Sprite getSprite(String file) { return _sprite.get(file); }
+  public Item   getItem  (String file) { return _item  .get(file); }
   
   public void addEntity(Entity e) {
     _world.addEntity(e);
