@@ -250,19 +250,12 @@ public class Game implements graphics.gl00.Game {
             
             _entity = ((EntityCreate)p).getEntity();
             _entity.events().addMoveHandler(new Entity.Events.Move() {
-              public void move(Entity e) {
-                updateCamera();
-              }
+              public void move(Entity e) { updateCamera(); }
             });
             
             _entity.events().addStatsHandler(new Entity.Events.Stats() {
-              public void vitals(Entity e) {
-                _gameListener.updateVitals(e.stats());
-              }
-              
-              public void stats(Entity e) {
-                _gameListener.updateStats(e.stats());
-              }
+              public void vitals(Entity e) { if(_gameListener != null) _gameListener.updateVitals(e.stats()); }
+              public void stats(Entity e)  { if(_gameListener != null) _gameListener.updateStats(e.stats()); }
             });
             
             p.process();
