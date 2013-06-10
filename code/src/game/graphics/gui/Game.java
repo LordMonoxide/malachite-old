@@ -41,9 +41,9 @@ public class Game extends GUI {
   
   private MapEditor _editMap;
   
-  private Textbox _txtChat;
-  private Window  _wndAdmin;
-  private Button  _btnEdit[];
+  private Textbox  _txtChat;
+  private Window   _wndAdmin;
+  private Button[] _btnEdit;
   
   private Picture[] _picVitalBack;
   private Picture[] _picVital;
