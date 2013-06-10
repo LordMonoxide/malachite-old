@@ -52,7 +52,7 @@ public class Game extends GUI {
   private Label[]   _lblStatVal;
   
   private String[] _chat = new String[256];
-  private float[] _chatColour = new float[] {1, 1, 1, 1};
+  private float[]  _chatColour = new float[] {1, 1, 1, 1};
   
   private boolean _loaded;
   
@@ -519,11 +519,11 @@ public class Game extends GUI {
     }
     
     public void updateVitals(Stats stats) {
-      updateStats(stats);
+      _game.updateStats(stats);
     }
     
     public void updateStats(Stats stats) {
-      updateStats(stats);
+      _game.updateStats(stats);
     }
   }
 }
