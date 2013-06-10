@@ -30,4 +30,12 @@ public class ItemEditorItem extends Item {
   public Item getItem() {
     return _item;
   }
+  
+  public void setName(String name) {
+    _name = name;
+  }
+  
+  public void setNote(String note) {
+    _note = note;
+  }
 }
