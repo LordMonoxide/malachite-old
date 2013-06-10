@@ -7,8 +7,8 @@ import game.data.util.Serializable;
 public class Item extends Serializable implements Data {
   private static final int VERSION = 1;
   
-  private String _name, _note;
-  private String _sprite;
+  protected String _name, _note;
+  protected String _sprite;
   
   public Item(String file, int crc) {
     super(file, crc);
