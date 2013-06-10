@@ -8,10 +8,17 @@ import game.data.util.Data;
 import game.network.packet.editors.Save;
 import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;
+import graphics.shared.gui.controls.Label;
+import graphics.shared.gui.controls.Textbox;
 import graphics.shared.gui.controls.compound.Window;
 
 public class ItemEditor extends GUI implements Editor {
-  private Window _wndEditor;
+  private Window  _wndEditor;
+  
+  private Label   _lblName;
+  private Textbox _txtName;
+  private Label   _lblNote;
+  private Textbox _txtNote;
   
   private ItemEditorItem _item;
   
@@ -32,6 +39,31 @@ public class ItemEditor extends GUI implements Editor {
         save();
       }
     });
+    
+    Textbox.Events.Change change = new Textbox.Events.Change() {
+      public void change() { update(); }
+    };
+    
+    _lblName = new Label(this);
+    _lblName.setText("Name");
+    _lblName.setXY(8, 4);
+    
+    _txtName = new Textbox(this);
+    _txtName.setXY(_lblName.getX(), _lblName.getY() + _lblName.getH() + 4);
+    _txtName.events().addChangeHandler(change);
+    
+    _lblNote = new Label(this);
+    _lblNote.setText("Notes");
+    _lblNote.setXY(_txtName.getX(), _txtName.getY() + _txtName.getH() + 8);
+    
+    _txtNote = new Textbox(this);
+    _txtNote.setXY(_lblNote.getX(), _lblNote.getY() + _lblNote.getH() + 4);
+    _txtNote.events().addChangeHandler(change);
+    
+    _wndEditor.Controls(0).add(_lblName);
+    _wndEditor.Controls(0).add(_txtName);
+    _wndEditor.Controls(0).add(_lblNote);
+    _wndEditor.Controls(0).add(_txtNote);
     
     Controls().add(_wndEditor);
   }
@@ -85,6 +117,14 @@ public class ItemEditor extends GUI implements Editor {
     
     _item = new ItemEditorItem((Item)data);
     
+    _txtName.setText(_item.getName());
+    _txtNote.setText(_item.getNote());
+    
     resize();
+  }
+  
+  private void update() {
+    _item.setName(_txtName.getText());
+    _item.setNote(_txtNote.getText());
   }
 }
