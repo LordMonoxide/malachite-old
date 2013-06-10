@@ -6,6 +6,10 @@ import io.netty.buffer.ByteBuf;
 import network.packet.Packet;
 
 public class EntityVitals extends Packet {
+  private int _id;
+  private int _hp, _hpMax;
+  private int _mp, _mpMax;
+  
   public int getIndex() {
     return 22;
   }
@@ -15,12 +19,16 @@ public class EntityVitals extends Packet {
   }
   
   public void deserialize(ByteBuf data) throws NotEnoughDataException {
-    Entity e = Game.getInstance().getWorld().getEntity(data.readInt());
-    e.stats().vitalHP().set(data.readInt(), data.readInt());
-    e.stats().vitalMP().set(data.readInt(), data.readInt());
+    _id    = data.readInt();
+    _hpMax = data.readInt();
+    _hp    = data.readInt();
+    _mpMax = data.readInt();
+    _mp    = data.readInt();
   }
   
   public void process() {
-    
+    Entity e = Game.getInstance().getWorld().getEntity(_id);
+    e.stats().vitalHP().set(_hpMax, _hp);
+    e.stats().vitalMP().set(_mpMax, _mp);
   }
 }

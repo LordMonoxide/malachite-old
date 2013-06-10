@@ -6,6 +6,9 @@ import io.netty.buffer.ByteBuf;
 import network.packet.Packet;
 
 public class EntityStats extends Packet {
+  private int _id;
+  private int _str, _int, _dex;
+  
   public int getIndex() {
     return 23;
   }
@@ -15,13 +18,16 @@ public class EntityStats extends Packet {
   }
   
   public void deserialize(ByteBuf data) throws NotEnoughDataException {
-    Entity e = Game.getInstance().getWorld().getEntity(data.readInt());
-    e.stats().statSTR().val(data.readInt());
-    e.stats().statINT().val(data.readInt());
-    e.stats().statDEX().val(data.readInt());
+    _id  = data.readInt();
+    _str = data.readInt();
+    _int = data.readInt();
+    _dex = data.readInt();
   }
   
   public void process() {
-    
+    Entity e = Game.getInstance().getWorld().getEntity(_id);
+    e.stats().statSTR().val(_str);
+    e.stats().statINT().val(_int);
+    e.stats().statDEX().val(_dex);
   }
 }
