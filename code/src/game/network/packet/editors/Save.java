@@ -72,4 +72,10 @@ public abstract class Save extends Packet {
       return 21;
     }
   }
+  
+  public static class Item extends Save {
+    public int getIndex() {
+      return 24;
+    }
+  }
 }
