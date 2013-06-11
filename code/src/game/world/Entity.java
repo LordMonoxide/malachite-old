@@ -329,8 +329,8 @@ public class Entity extends Movable {
       }
     }
     
-    public static abstract class Draw  { public abstract void draw  (Entity e); }
-    public static abstract class Move  { public abstract void move  (Entity e); }
+    public static abstract class Draw { public abstract void draw(Entity e); }
+    public static abstract class Move { public abstract void move(Entity e); }
     
     public static abstract class Stats {
       public abstract void vitals(Entity e);
