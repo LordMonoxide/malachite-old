@@ -53,8 +53,10 @@ public class Sprite {
     for(int y = -y1; y <= y2; y++) {
       synchronized(_sprite) {
         for(Sprite sprite : _sprite) {
-          if((int)sprite._y == y && sprite._z == z) {
-            sprite.draw();
+          if(sprite._visible) {
+            if((int)sprite._y == y && sprite._z == z) {
+              sprite.draw();
+            }
           }
         }
       }
@@ -73,6 +75,8 @@ public class Sprite {
   private Drawable[] _frame;
   private Anim[] _anim;
   
+  private boolean _visible;
+  
   private float _x, _y;
   private int _z;
   private int _animNum;
@@ -83,6 +87,7 @@ public class Sprite {
   private Sprite(game.data.Sprite sprite) {
     _events = new Events();
     _source = sprite;
+    _visible = true;
     _w = sprite.getW();
     _h = sprite.getH();
     _frame = sprite.createDrawables();
@@ -108,6 +113,14 @@ public class Sprite {
   
   public game.data.Sprite getSource() {
     return _source;
+  }
+  
+  public boolean getVisible() {
+    return _visible;
+  }
+  
+  public void setVisible(boolean visible) {
+    _visible = visible;
   }
   
   public float getX() {
@@ -198,7 +211,7 @@ public class Sprite {
     _frameNum = frame;
   }
   
-  private void draw() {
+  public void draw() {
     _matrix.push();
     _matrix.translate(_x, _y);
     _frame[_frameNum].draw();
