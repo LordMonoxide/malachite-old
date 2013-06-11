@@ -200,13 +200,19 @@ public class Entity extends Movable {
     return _inv[index];
   }
   
+  public void inv(int index, Inv inv) {
+    Inv oldInv = _inv[index];
+    _inv[index] = inv;
+    _events.raiseInvUpdate(oldInv, inv);
+  }
+  
   public Inv[] inv() {
     return _inv;
   }
   
   public void inv(Inv[] inv) {
     _inv = inv;
-    _events.raiseInv();
+    _events.raiseInvReceive();
   }
   
   public static class Stats {
@@ -273,11 +279,18 @@ public class Entity extends Movable {
   }
   
   public static class Inv {
+    private int _index;
+    
+    public Inv(int index) {
+      _index = index;
+    }
+    
     private Item _item;
     private  int _val;
     
-    public Item item() { return _item; }
-    public  int val () { return _val;  }
+    public  int index() { return _index; }
+    public Item item()  { return _item; }
+    public  int val ()  { return _val;  }
     public void item(Item item) { _item = item; }
     public void val ( int val)  { _val  = val;  }
   }
@@ -323,9 +336,15 @@ public class Entity extends Movable {
       }
     }
     
-    public void raiseInv() {
+    public void raiseInvReceive() {
       for(Inv e : _inv) {
-        e.receive(_entity);
+        e.update(_entity);
+      }
+    }
+    
+    public void raiseInvUpdate(Entity.Inv oldInv, Entity.Inv newInv) {
+      for(Inv e : _inv) {
+        e.update(_entity, oldInv, newInv);
       }
     }
     
@@ -338,7 +357,8 @@ public class Entity extends Movable {
     }
     
     public static abstract class Inv {
-      public abstract void receive(Entity e);
+      public abstract void update(Entity e);
+      public abstract void update(Entity e, Entity.Inv oldInv, Entity.Inv newInv);
     }
   }
 
