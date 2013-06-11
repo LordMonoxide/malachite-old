@@ -17,7 +17,12 @@ public class Connect extends Packet {
   }
   
   public void deserialize(ByteBuf data) throws NotEnoughDataException {
-    
+    Settings.Map.Size  = data.readShort();
+    Settings.Map.Depth = data.readByte();
+    Settings.Map.Tile.Size   = data.readByte();
+    Settings.Map.Attrib.Size = data.readByte();
+    Settings.Player.Inventory.Size = data.readByte();
+    Settings.commit();
   }
   
   public void process() {
