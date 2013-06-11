@@ -22,6 +22,7 @@ import game.network.packet.menu.CharUse;
 import game.network.packet.menu.Login;
 import game.settings.Settings;
 import game.world.Entity;
+import game.world.Entity.Inv;
 import game.world.World;
 import graphics.gl00.Context;
 
@@ -259,7 +260,8 @@ public class Game implements graphics.gl00.Game {
             });
             
             _entity.events().addInvHandler(new Entity.Events.Inv() {
-              public void receive(Entity e) { if(_gameListener != null) _gameListener.updateInv(e.inv()); }
+              public void update(Entity e)                         { if(_gameListener != null) _gameListener.updateInv(e.inv()); }
+              public void update(Entity e, Inv oldInv, Inv newInv) { if(_gameListener != null) _gameListener.updateInv(oldInv, newInv); }
             });
             
             p.process();
@@ -309,6 +311,7 @@ public class Game implements graphics.gl00.Game {
     public void updateVitals(Entity.Stats stats);
     public void updateStats(Entity.Stats stats);
     public void updateInv(Entity.Inv[] inv);
+    public void updateInv(Entity.Inv oldInv, Entity.Inv newInv);
   }
   
   public static abstract class PacketCallback<T extends Packet> {
