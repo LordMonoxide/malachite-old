@@ -11,6 +11,7 @@ import java.io.IOException;
 public class Settings {
   public static final Net Net = new Net();
   public static final Map Map = new Map();
+  public static final Player Player = new Player();
   
   private static Properties _settings = new Properties();
   private static File _file = new File("../settings.conf");
@@ -21,16 +22,17 @@ public class Settings {
     try {
       _settings.load(new FileInputStream(_file));
       Net.load();
-      Map.load();
-      Map.init();
     } catch(IOException e) {
       e.printStackTrace();
     }
   }
   
+  public static void commit() {
+    Map.init();
+  }
+  
   public static void save() {
     Net.save();
-    Map.save();
     
     try {
       _settings.store(new FileOutputStream(_file), null);
@@ -77,49 +79,12 @@ public class Settings {
       Attrib.init();
     }
     
-    private void load() {
-      try {
-        Size = _settings.getInt("MapSize");
-      } catch(InvalidDataException e) {
-        e.printStackTrace();
-      }
-      
-      try {
-        Depth = _settings.getInt("MapDepth");
-      } catch(InvalidDataException e) {
-        e.printStackTrace();
-      }
-      
-      Tile.load();
-      Attrib.load();
-    }
-    
-    private void save() {
-      _settings.setProperty("MapSize", Integer.toString(Size));
-      _settings.setProperty("MapDepth", Integer.toString(Depth));
-      
-      Tile.save();
-      Attrib.save();
-    }
-    
     public static class Tile {
       public int Size = 32;
       public int Count;
       
       private void init() {
         Count = Settings.Map.Size / Size;
-      }
-      
-      private void load() {
-        try {
-          Size = _settings.getInt("MapTileSize");
-        } catch(InvalidDataException e) {
-          e.printStackTrace();
-        }
-      }
-      
-      private void save() {
-        _settings.setProperty("MapTileSize", Integer.toString(Size));
       }
     }
     
@@ -130,18 +95,14 @@ public class Settings {
       private void init() {
         Count = Settings.Map.Size / Size;
       }
-      
-      private void load() {
-        try {
-          Size = _settings.getInt("MapAttribSize");
-        } catch(InvalidDataException e) {
-          e.printStackTrace();
-        }
-      }
-      
-      private void save() {
-        _settings.setProperty("MapAttribSize", Integer.toString(Size));
-      }
+    }
+  }
+  
+  public static class Player {
+    public final Inventory Inventory = new Inventory();
+    
+    public static class Inventory {
+      public int Size = 40;
     }
   }
 }
