@@ -11,7 +11,7 @@ import game.language.Lang;
 import game.network.packet.Chat;
 import game.settings.Settings;
 import game.world.Entity;
-import game.world.Entity.Stats;
+import game.world.Entity.Inv;
 import game.world.Region;
 import game.world.Sprite;
 import graphics.gl00.Canvas;
@@ -50,6 +50,9 @@ public class Game extends GUI {
   private Label[]   _lblVital;
   private Label[]   _lblStat;
   private Label[]   _lblStatVal;
+  
+  private Window    _wndInv;
+  private Picture[] _picInv;
   
   private String[] _chat = new String[256];
   private float[]  _chatColour = new float[] {1, 1, 1, 1};
@@ -169,6 +172,22 @@ public class Game extends GUI {
       Controls().add(_lblStatVal[i]);
     }
     
+    _wndInv = new Window(this);
+    _picInv = new Picture[Settings.Player.Inventory.Size];
+    for(int i = 0; i < _picInv.length; i++) {
+      _picInv[i] = new Picture(this);
+      _picInv[i].setBackColour(new float[] {0, 0, 0, 1});
+      _picInv[i].setBorderColour(new float[] {1, 1, 1, 1});
+      _picInv[i].setWH(32, 32);
+      _picInv[i].setXY(i % 8 * 34 + 5, i / 8 * 34 + 5);
+      _wndInv.Controls().add(_picInv[i]);
+    }
+    
+    _wndInv.setText("Inventory");
+    _wndInv.setClientWH(8 * 34 + 8, 5 * 34 + 8);
+    _wndInv.setVisible(false);
+    
+    Controls().add(_wndInv);
     Controls().add(_txtChat);
     Controls().add(_wndAdmin);
     
@@ -205,6 +224,7 @@ public class Game extends GUI {
   
   public void resize() {
     _wndAdmin.setXY((_context.getW() - _wndAdmin.getW()) / 2, (_context.getH() - _wndAdmin.getH()) / 2);
+    _wndInv.setXY((_context.getW() - _wndInv.getW()) / 2, (_context.getH() - _wndInv.getH()) / 2);
     _txtChat.setY(_context.getH() - _txtChat.getH() - 4);
     
     for(int i = 0; i < _lblVital.length; i++) {
@@ -220,12 +240,16 @@ public class Game extends GUI {
     _game.updateCamera();
   }
   
-  public void updateStats(Stats stats) {
+  public void updateStats(Entity.Stats stats) {
     _picVital[0].setW(stats.vitalHP().max() / stats.vitalHP().val() * _picVitalBack[0].getW());
     _picVital[1].setW(stats.vitalMP().max() / stats.vitalMP().val() * _picVitalBack[1].getW());
     _lblStatVal[0].setText(String.valueOf(stats.statSTR().val()));
     _lblStatVal[1].setText(String.valueOf(stats.statINT().val()));
     _lblStatVal[2].setText(String.valueOf(stats.statDEX().val()));
+  }
+  
+  public void updateInv(Entity.Inv[] inv) {
+    
   }
   
   public void draw() {
@@ -329,21 +353,25 @@ public class Game extends GUI {
     if(!_txtChat.getVisible()) {
       switch(key) {
         case Keyboard.KEY_W:
+        case Keyboard.KEY_UP:
           _key[0] = true;
           checkMovement();
           return true;
           
         case Keyboard.KEY_A:
+        case Keyboard.KEY_LEFT:
           _key[2] = true;
           checkMovement();
           return true;
           
         case Keyboard.KEY_S:
+        case Keyboard.KEY_DOWN:
           _key[1] = true;
           checkMovement();
           return true;
         
         case Keyboard.KEY_D:
+        case Keyboard.KEY_RIGHT:
           _key[3] = true;
           checkMovement();
           return true;
@@ -351,6 +379,11 @@ public class Game extends GUI {
         case Keyboard.KEY_T:
           _txtChat.setVisible(true);
           _showChat = true;
+          return true;
+          
+        case Keyboard.KEY_E:
+        case Keyboard.KEY_I:
+          _wndInv.setVisible(!_wndInv.getVisible());
           return true;
           
         case Keyboard.KEY_SLASH:
@@ -518,12 +551,16 @@ public class Game extends GUI {
       _game.entityDraw(e);
     }
     
-    public void updateVitals(Stats stats) {
+    public void updateVitals(Entity.Stats stats) {
       _game.updateStats(stats);
     }
     
-    public void updateStats(Stats stats) {
+    public void updateStats(Entity.Stats stats) {
       _game.updateStats(stats);
+    }
+    
+    public void updateInv(Inv[] inv) {
+      _game.updateInv(inv);
     }
   }
 }
