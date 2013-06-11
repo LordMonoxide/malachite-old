@@ -2,7 +2,6 @@ package game.world;
 
 import java.util.LinkedList;
 
-import game.Game;
 import game.data.Item;
 import game.settings.Settings;
 import physics.Movable;
