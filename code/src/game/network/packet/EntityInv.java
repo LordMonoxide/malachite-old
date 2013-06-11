@@ -41,15 +41,16 @@ public class EntityInv extends Packet {
   public void process() {
     Entity e = Game.getInstance().getWorld().getEntity(_id);
     
+    Entity.Inv inv[] = new Entity.Inv[_data.length];
     for(int i = 0; i < _data.length; i++) {
       if(_data[i] != null) {
-        e.inv(i).item(Game.getInstance().getItem(_data[i].file));
-        e.inv(i).val(_data[i].val);
-      } else {
-        e.inv(i).item(null);
-        e.inv(i).val(0);
+        inv[i] = new Entity.Inv();
+        inv[i].item(Game.getInstance().getItem(_data[i].file));
+        inv[i].val(_data[i].val);
       }
     }
+    
+    e.inv(inv);
   }
   
   private class TempData {
