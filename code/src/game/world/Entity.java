@@ -34,6 +34,11 @@ public class Entity extends Movable {
     
     _events = new Events(this);
     _stats  = new Stats(this);
+    _inv    = new Inv[Settings.Player.Inventory.Size];
+    
+    for(int i = 0; i < _inv.length; i++) {
+      _inv[i] = new Inv();
+    }
   }
   
   public Events events() {
@@ -196,6 +201,14 @@ public class Entity extends Movable {
     return _stats;
   }
   
+  public Inv inv(int index) {
+    return _inv[index];
+  }
+  
+  public Inv[] inv() {
+    return _inv;
+  }
+  
   public static class Stats {
     private Entity _entity;
     
@@ -260,13 +273,6 @@ public class Entity extends Movable {
   }
   
   public static class Inv {
-    public Inv(String file, int val) {
-      if(file != null) {
-        _item = Game.getInstance().getItem(file);
-        _val  = val;
-      }
-    }
-    
     private Item _item;
     private  int _val;
     
