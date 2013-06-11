@@ -34,10 +34,6 @@ public class Entity extends Movable {
     _events = new Events(this);
     _stats  = new Stats(this);
     _inv    = new Inv[Settings.Player.Inventory.Size];
-    
-    for(int i = 0; i < _inv.length; i++) {
-      _inv[i] = new Inv();
-    }
   }
   
   public Events events() {
