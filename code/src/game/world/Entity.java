@@ -208,6 +208,11 @@ public class Entity extends Movable {
     return _inv;
   }
   
+  public void inv(Inv[] inv) {
+    _inv = inv;
+    _events.raiseInv();
+  }
+  
   public static class Stats {
     private Entity _entity;
     
@@ -285,10 +290,12 @@ public class Entity extends Movable {
     private LinkedList<Draw>  _draw  = new LinkedList<Draw>();
     private LinkedList<Move>  _move  = new LinkedList<Move>();
     private LinkedList<Stats> _stats = new LinkedList<Stats>();
+    private LinkedList<Inv>   _inv   = new LinkedList<Inv>();
     
     public void addDrawHandler (Draw e)  { _draw.add(e); }
     public void addMoveHandler (Move e)  { _move.add(e); }
     public void addStatsHandler(Stats e) { _stats.add(e); }
+    public void addInvHandler  (Inv e)   { _inv.add(e); }
     
     private Entity _entity;
     
@@ -320,12 +327,22 @@ public class Entity extends Movable {
       }
     }
     
+    public void raiseInv() {
+      for(Inv e : _inv) {
+        e.receive(_entity);
+      }
+    }
+    
     public static abstract class Draw  { public abstract void draw  (Entity e); }
     public static abstract class Move  { public abstract void move  (Entity e); }
     
     public static abstract class Stats {
       public abstract void vitals(Entity e);
       public abstract void stats (Entity e);
+    }
+    
+    public static abstract class Inv {
+      public abstract void receive(Entity e);
     }
   }
 
