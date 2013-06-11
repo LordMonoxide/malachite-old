@@ -44,7 +44,7 @@ public class EntityInv extends Packet {
     Entity.Inv inv[] = new Entity.Inv[_data.length];
     for(int i = 0; i < _data.length; i++) {
       if(_data[i] != null) {
-        inv[i] = new Entity.Inv();
+        inv[i] = new Entity.Inv(i);
         inv[i].item(Game.getInstance().getItem(_data[i].file));
         inv[i].val(_data[i].val);
       }
