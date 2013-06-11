@@ -2,6 +2,8 @@ package game.world;
 
 import java.util.LinkedList;
 
+import game.Game;
+import game.data.Item;
 import game.settings.Settings;
 import physics.Movable;
 
@@ -21,6 +23,7 @@ public class Entity extends Movable {
   private int _z;
   
   private Stats _stats;
+  private Inv[] _inv;
   
   private Sprite _sprite;
   
@@ -30,7 +33,7 @@ public class Entity extends Movable {
     setVelTerm(1.75f);
     
     _events = new Events(this);
-    _stats = new Stats(this);
+    _stats  = new Stats(this);
   }
   
   public Events events() {
@@ -248,16 +251,29 @@ public class Entity extends Movable {
         _entity = entity;
       }
       
-      public int val() { return _val; }
-      
-      public void val(int val)   { set(val); }
-      
-      public void set(int val) {
+      public  int val() { return _val; }
+      public void val(int val) {
         _val = val;
-        
         _entity.events().raiseStats();
       }
     }
+  }
+  
+  public static class Inv {
+    public Inv(String file, int val) {
+      if(file != null) {
+        _item = Game.getInstance().getItem(file);
+        _val  = val;
+      }
+    }
+    
+    private Item _item;
+    private  int _val;
+    
+    public Item item() { return _item; }
+    public  int val () { return _val;  }
+    public void item(Item item) { _item = item; }
+    public void val ( int val)  { _val  = val;  }
   }
   
   public static class Events {
