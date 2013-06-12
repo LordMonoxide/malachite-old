@@ -38,4 +38,8 @@ public class ItemEditorItem extends Item {
   public void setNote(String note) {
     _note = note;
   }
+  
+  public void setSprite(String sprite) {
+    _sprite = sprite;
+  }
 }
