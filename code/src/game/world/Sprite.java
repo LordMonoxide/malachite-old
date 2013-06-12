@@ -26,8 +26,10 @@ public class Sprite {
     return _sprite.size();
   }
   
-  public static Sprite add(game.data.Sprite sprite) {
+  public static Sprite add(game.data.Sprite sprite) { return add(sprite, true); }
+  public static Sprite add(game.data.Sprite sprite, boolean visible) {
     Sprite s = new Sprite(sprite);
+    s.setVisible(visible);
     
     synchronized(_sprite) {
       _sprite.add(s);
@@ -84,7 +86,7 @@ public class Sprite {
   private int _frameNum;
   private double _timer;
   
-  private Sprite(game.data.Sprite sprite) {
+  public Sprite(game.data.Sprite sprite) {
     _events = new Events();
     _source = sprite;
     _visible = true;
