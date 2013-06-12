@@ -4,21 +4,28 @@ import javax.swing.JOptionPane;
 
 import game.Game;
 import game.data.Item;
+import game.data.Sprite;
 import game.data.util.Data;
 import game.network.packet.editors.Save;
+import graphics.gl00.Context;
 import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;
+import graphics.shared.gui.controls.Dropdown;
 import graphics.shared.gui.controls.Label;
 import graphics.shared.gui.controls.Textbox;
 import graphics.shared.gui.controls.compound.Window;
 
 public class ItemEditor extends GUI implements Editor {
+  private Game _game = (Game)Context.getGame();
+  
   private Window  _wndEditor;
   
-  private Label   _lblName;
-  private Textbox _txtName;
-  private Label   _lblNote;
-  private Textbox _txtNote;
+  private Label    _lblName;
+  private Textbox  _txtName;
+  private Label    _lblNote;
+  private Textbox  _txtNote;
+  private Label    _lblSprite;
+  private Dropdown _drpSprite;
   
   private ItemEditorItem _item;
   
@@ -60,10 +67,28 @@ public class ItemEditor extends GUI implements Editor {
     _txtNote.setXY(_lblNote.getX(), _lblNote.getY() + _lblNote.getH() + 4);
     _txtNote.events().addChangeHandler(change);
     
+    _lblSprite = new Label(this);
+    _lblSprite.setXY(_txtNote.getX(), _txtNote.getY() + _txtNote.getH() + 8);
+    _lblSprite.setText("Sprite");
+    
+    _drpSprite = new Dropdown(this);
+    _drpSprite.setXY(_lblSprite.getX(), _lblSprite.getY() + _lblSprite.getH());
+    _drpSprite.events().addSelectHandler(new Dropdown.Events.Select() {
+      public void select(Dropdown.Item item) {
+        update();
+      }
+    });
+    
     _wndEditor.Controls(0).add(_lblName);
     _wndEditor.Controls(0).add(_txtName);
     _wndEditor.Controls(0).add(_lblNote);
     _wndEditor.Controls(0).add(_txtNote);
+    _wndEditor.Controls(0).add(_lblSprite);
+    _wndEditor.Controls(0).add(_drpSprite);
+    
+    for(Sprite s : _game.getSprites()) {
+      _drpSprite.add(new DropdownSprite(s));
+    }
     
     Controls().add(_wndEditor);
   }
@@ -120,11 +145,37 @@ public class ItemEditor extends GUI implements Editor {
     _txtName.setText(_item.getName());
     _txtNote.setText(_item.getNote());
     
+    int i = 0;
+    for(Dropdown.Item item : _drpSprite) {
+      DropdownSprite s = (DropdownSprite)item;
+      if(s._sprite.getFile().equals(_item.getSprite())) {
+        _drpSprite.setSeletected(i);
+        break;
+      }
+      i++;
+    }
+    
     resize();
   }
   
   private void update() {
+    DropdownSprite sprite = (DropdownSprite)_drpSprite.get();
+    
     _item.setName(_txtName.getText());
     _item.setNote(_txtNote.getText());
+    _item.setSprite(sprite != null ? sprite._sprite.getFile() : null);
+  }
+  
+  public static class DropdownSprite extends Dropdown.Item {
+    private Sprite _sprite;
+    
+    public DropdownSprite(Sprite sprite) {
+      super(sprite.getName() + " - " + sprite.getNote());
+      _sprite = sprite;
+    }
+    
+    public Sprite getSprite() {
+      return _sprite;
+    }
   }
 }
