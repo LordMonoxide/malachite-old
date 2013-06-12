@@ -256,7 +256,7 @@ public class Game extends GUI {
       }
       
       if(inv[i] != null) {
-        _sprInv[i].setSprite(Sprite.add(_game.getSprite(inv[i].item().getSprite())));
+        _sprInv[i].setSprite(new Sprite(_game.getSprite(inv[i].item().getSprite())));
       }
     }
   }
@@ -273,7 +273,7 @@ public class Game extends GUI {
     }
     
     if(newInv != null) {
-      _sprInv[index].setSprite(Sprite.add(_game.getSprite(newInv.item().getSprite())));
+      _sprInv[index].setSprite(new Sprite(_game.getSprite(newInv.item().getSprite())));
     }
   }
   
