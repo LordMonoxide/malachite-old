@@ -146,24 +146,6 @@ public class Map extends Serializable {
     return texture;
   }
   
-  /*public Entity[] spawn() {
-    Game g = (Game)Context.getGame();
-    Entity[] e = new Entity[_sprite.size()];
-    int i = 0;
-    
-    for(Map.Sprite sprite : _sprite) {
-      e[i] = new Entity();
-      e[i].setSprite(g.getSprite(sprite._file));
-      e[i].setWorld(_world);
-      e[i].setX(sprite._x + _x * Settings.Map.Size);
-      e[i].setY(sprite._y + _y * Settings.Map.Size);
-      e[i].setZ(sprite._z);
-      i++;
-    }
-    
-    return e;
-  }*/
-  
   public Buffer serialize() {
     Buffer b = new Buffer((_layer[0]._tile.length * _layer[0]._tile[0].length * 7 + _layer[0]._attrib.length * _layer[0]._attrib[0].length) * _layer.length + 28);
     b.put(VERSION);
