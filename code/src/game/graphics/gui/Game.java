@@ -195,7 +195,7 @@ public class Game extends GUI {
     _font.draw(4,   4, "Graphics:", _debugColour);
     _font.draw(4,  14, "Logic:", _debugColour);
     _font.draw(4,  24, "Physics:", _debugColour);
-    _font.draw(4,  34, "Map: ", _debugColour);
+    _font.draw(4,  34, "Map:", _debugColour);
     _font.draw(4,  44, "Loc:", _debugColour);
     _font.draw(4,  54, "Layer:", _debugColour);
     _font.draw(4,  64, "RLoc:", _debugColour);
