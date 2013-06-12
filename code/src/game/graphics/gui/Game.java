@@ -11,7 +11,6 @@ import game.language.Lang;
 import game.network.packet.Chat;
 import game.settings.Settings;
 import game.world.Entity;
-import game.world.Entity.Inv;
 import game.world.Region;
 import game.world.Sprite;
 import graphics.gl00.Canvas;
@@ -52,7 +51,7 @@ public class Game extends GUI {
   private Label[]   _lblStatVal;
   
   private Window    _wndInv;
-  private Picture[] _picInv;
+  private game.graphics.gui.controls.Sprite[] _sprInv;
   
   private String[] _chat = new String[256];
   private float[]  _chatColour = new float[] {1, 1, 1, 1};
@@ -173,14 +172,14 @@ public class Game extends GUI {
     }
     
     _wndInv = new Window(this);
-    _picInv = new Picture[Settings.Player.Inventory.Size];
-    for(int i = 0; i < _picInv.length; i++) {
-      _picInv[i] = new Picture(this);
-      _picInv[i].setBackColour(new float[] {0, 0, 0, 1});
-      _picInv[i].setBorderColour(new float[] {1, 1, 1, 1});
-      _picInv[i].setWH(32, 32);
-      _picInv[i].setXY(i % 8 * 34 + 5, i / 8 * 34 + 5);
-      _wndInv.Controls().add(_picInv[i]);
+    _sprInv = new game.graphics.gui.controls.Sprite[Settings.Player.Inventory.Size];
+    for(int i = 0; i < _sprInv.length; i++) {
+      _sprInv[i] = new game.graphics.gui.controls.Sprite(this);
+      _sprInv[i].setBackColour(new float[] {0, 0, 0, 1});
+      _sprInv[i].setBorderColour(new float[] {1, 1, 1, 1});
+      _sprInv[i].setWH(32, 32);
+      _sprInv[i].setXY(i % 8 * 34 + 5, i / 8 * 34 + 5);
+      _wndInv.Controls().add(_sprInv[i]);
     }
     
     _wndInv.setText("Inventory");
@@ -249,7 +248,32 @@ public class Game extends GUI {
   }
   
   public void updateInv(Entity.Inv[] inv) {
+    for(int i = 0; i < Settings.Player.Inventory.Size; i++) {
+      if(_sprInv[i].getSprite() != null) {
+        _sprInv[i].getSprite().remove();
+        _sprInv[i].setSprite(null);
+      }
+      
+      if(inv[i] != null) {
+        _sprInv[i].setSprite(Sprite.add(_game.getSprite(inv[i].item().getSprite())));
+      }
+    }
+  }
+  
+  public void updateInv(Entity.Inv oldInv, Entity.Inv newInv) {
+    int index = -1;
+    if(oldInv != null) index = oldInv.index();
+    if(newInv != null) index = newInv.index();
+    if(index == -1) return;
     
+    if(_sprInv[index].getSprite() != null) {
+      _sprInv[index].getSprite().remove();
+      _sprInv[index].setSprite(null);
+    }
+    
+    if(newInv != null) {
+      _sprInv[index].setSprite(Sprite.add(_game.getSprite(newInv.item().getSprite())));
+    }
   }
   
   public void draw() {
@@ -559,8 +583,12 @@ public class Game extends GUI {
       _game.updateStats(stats);
     }
     
-    public void updateInv(Inv[] inv) {
+    public void updateInv(Entity.Inv[] inv) {
       _game.updateInv(inv);
+    }
+
+    public void updateInv(Entity.Inv oldInv, Entity.Inv newInv) {
+      _game.updateInv(oldInv, newInv);
     }
   }
 }
