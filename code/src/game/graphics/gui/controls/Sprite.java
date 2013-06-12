@@ -24,18 +24,20 @@ public class Sprite extends Picture {
   
   public void draw() {
     if(drawBegin()) {
-      float scale;
-      if(_sprite.getFrameW() > _sprite.getFrameH()) {
-        scale = _loc[2] / _sprite.getFrameW();
-      } else {
-        scale = _loc[3] / _sprite.getFrameH();
+      if(_sprite != null) {
+        float scale;
+        if(_sprite.getFrameW() > _sprite.getFrameH()) {
+          scale = _loc[2] / _sprite.getFrameW();
+        } else {
+          scale = _loc[3] / _sprite.getFrameH();
+        }
+        
+        _matrix.push();
+        _matrix.translate(_loc[2] / 2, _loc[3] - 2);
+        _matrix.scale(scale, scale);
+        _sprite.draw();
+        _matrix.pop();
       }
-      
-      _matrix.push();
-      _matrix.translate(_loc[2] / 2, _loc[3] - 2);
-      _matrix.scale(scale, scale);
-      _sprite.draw();
-      _matrix.pop();
     }
     
     drawEnd();
