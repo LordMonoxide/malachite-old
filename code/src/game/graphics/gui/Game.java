@@ -213,6 +213,7 @@ public class Game extends GUI {
     
     resize();
     updateStats(_entity.stats());
+    updateInv(_entity.inv());
     
     _loaded = true;
   }
