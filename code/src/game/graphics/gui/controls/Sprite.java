@@ -33,8 +33,9 @@ public class Sprite extends Picture {
         }
         
         _matrix.push();
-        _matrix.translate(_loc[2] / 2, _loc[3] - 2);
+        _matrix.translate(_loc[2] / 2, 0);
         _matrix.scale(scale, scale);
+        _matrix.translate(0, _sprite.getH() - _sprite.getFrameFY());
         _sprite.draw();
         _matrix.pop();
       }
