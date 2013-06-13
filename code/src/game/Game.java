@@ -300,8 +300,10 @@ public class Game implements graphics.gl00.Game {
   
   public Entity interact(int x, int y) {
     for(Entity e : _world.getEntity()) {
-      if(Math.inBox(x, y, (int)(e.getX() + _context.getCameraX()) - 16, (int)(e.getY() + _context.getCameraY()) - 16, 32, 32)) {
-        return e;
+      if(e.getZ() == _entity.getZ()) {
+        if(Math.inBox(x, y, (int)(e.getX() + _context.getCameraX()) - 16, (int)(e.getY() + _context.getCameraY()) - 16, 32, 32)) {
+          return e;
+        }
       }
     }
     
