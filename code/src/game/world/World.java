@@ -9,6 +9,10 @@ import java.util.LinkedList;
 import physics.Sandbox;
 
 public class World extends Sandbox {
+  public String toString() {
+    return "world '" + _name + "'";
+  }
+  
   private HashMap<String, Region> _region = new HashMap<String, Region>();
   private HashMap<String, Map> _map = new HashMap<String, Map>();
   
@@ -71,6 +75,7 @@ public class World extends Sandbox {
     return r;
   }
   
+  public LinkedList<Entity> getEntity() { return _entity; }
   public Entity getEntity(int id) {
     for(Entity e : _entity) {
       if(e.getID() == id) {
