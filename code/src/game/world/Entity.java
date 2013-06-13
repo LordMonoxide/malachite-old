@@ -13,6 +13,7 @@ public class Entity extends Movable {
   
   private String _name;
   private game.data.Sprite _spriteFile;
+  private Type   _type;
   
   private World _world;
   private float _rx, _ry;
@@ -62,6 +63,14 @@ public class Entity extends Movable {
   
   public void setName(String name) {
     _name = name;
+  }
+  
+  public Type getType() {
+    return _type;
+  }
+  
+  public void setType(Type type) {
+    _type = type;
   }
   
   public World getWorld() {
@@ -293,6 +302,20 @@ public class Entity extends Movable {
     public  int val ()  { return _val;  }
     public void item(Item item) { _item = item; }
     public void val ( int val)  { _val  = val;  }
+  }
+  
+  public enum Type {
+    Player, Sprite, Item;
+    
+    public static Type valueOf(int index) {
+      switch(index) {
+        case 0: return Player;
+        case 1: return Sprite;
+        case 2: return Item;
+      }
+      
+      return null;
+    }
   }
   
   public static class Events {
