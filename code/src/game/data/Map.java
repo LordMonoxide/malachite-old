@@ -17,7 +17,7 @@ import graphics.shared.textures.Texture;
 import graphics.shared.textures.Textures;
 
 public class Map extends Serializable {
-  private static final int VERSION = 3;
+  private static final int VERSION = 4;
   
   protected World _world;
   protected int _x, _y;
@@ -161,6 +161,7 @@ public class Map extends Serializable {
     b.put(_layer[0]._attrib[0].length);
     
     b.put(_sprite.size());
+    b.put(_item.size());
     
     for(int z = 0; z < _layer.length; z++) {
       for(int x = 0; x < _layer[z]._tile.length; x++) {
@@ -184,6 +185,14 @@ public class Map extends Serializable {
       b.put(s._x);
       b.put(s._y);
       b.put(s._z);
+    }
+    
+    for(Item i : _item) {
+      b.put(i._file);
+      b.put(i._val);
+      b.put(i._x);
+      b.put(i._y);
+      b.put(i._z);
     }
     
     return b;
@@ -466,8 +475,8 @@ public class Map extends Serializable {
         return null;
       }
       
-      private final  byte   _val;
-      private final  byte[] _col;
+      private final byte   _val;
+      private final byte[] _col;
       
       private Type(byte val, byte[] col) {
         _val = val;
