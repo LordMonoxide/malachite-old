@@ -374,6 +374,12 @@ public class Game extends GUI {
     }
   }
   
+  public boolean handleMouseUp(int x, int y, int button) {
+    System.out.println(_game.interact(x, y));
+    
+    return false;
+  }
+  
   public boolean handleKeyDown(int key) {
     if(!_txtChat.getVisible()) {
       switch(key) {
