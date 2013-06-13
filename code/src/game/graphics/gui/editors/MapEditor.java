@@ -11,9 +11,10 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import game.Game;
+import game.data.Item;
 import game.data.Map;
 import game.data.Sprite;
-import game.data.util.Serializable;
+import game.data.util.Data;
 import game.network.packet.editors.Save;
 import game.settings.Settings;
 import game.world.Region;
@@ -61,6 +62,16 @@ public class MapEditor extends GUI {
   private Textbox   _txtSpriteY;
   private Textbox   _txtSpriteZ;
   
+  private ScrollPanel _splItem;
+  private Label     _lblItemFile;
+  private Dropdown  _drpItemFile;
+  private Label     _lblItemVal;
+  private Textbox   _txtItemVal;
+  private Label     _lblItemLoc;
+  private Textbox   _txtItemX;
+  private Textbox   _txtItemY;
+  private Textbox   _txtItemZ;
+  
   private game.world.Sprite _pickSprite;
   private boolean   _pickLoc;
   
@@ -78,7 +89,9 @@ public class MapEditor extends GUI {
   
   private int _attrib;
   
+  private String     _file;
   private Map.Sprite _sprite;
+  private Map.Item   _item;
   
   private int _mx, _my;
   private MapEditorMap _map;
@@ -126,8 +139,8 @@ public class MapEditor extends GUI {
     _btnTab[0].setText("Tiles");
     _btnTab[1].setText("Attribs");
     _btnTab[2].setText("Sprites");
-    _btnTab[3].setText("NPCs");
-    _btnTab[4].setText("Items");
+    _btnTab[3].setText("Items");
+    _btnTab[4].setText("NPCs");
     
     _picTab = new Picture[5];
     for(int i = 0; i < _picTab.length; i++) {
@@ -306,6 +319,101 @@ public class MapEditor extends GUI {
     
     _picTab[2].Controls().add(_splSprite);
     
+    // Items tab
+    _splItem = new ScrollPanel(this);
+    _splItem.setXY(4, 4);
+    _splItem.events().onButtonAdd(new ScrollPanel.Events.Button() {
+      public void event() {
+        addItem();
+      }
+    });
+    _splItem.events().onButtonDel(new ScrollPanel.Events.Button() {
+      public void event() {
+        delItem();
+      }
+    });
+    _splItem.events().onSelect(new ScrollPanel.Events.Select() {
+      public void event(ScrollPanel.Item item) {
+        if(item != null) {
+          selItem(((ScrollPanelItem)item)._item);
+        }
+      }
+    });
+    
+    _lblItemFile = new Label(this);
+    _lblItemFile.setXY(4, 4);
+    _lblItemFile.setText("File");
+    
+    _drpItemFile = new Dropdown(this);
+    _drpItemFile.setXY(_lblItemFile.getX(), _lblItemFile.getY() + _lblItemFile.getH());
+    _drpItemFile.events().addSelectHandler(new Dropdown.Events.Select() {
+      public void select(Dropdown.Item item) {
+        updateItem();
+        _map.createItems();
+      }
+    });
+    
+    _lblItemVal = new Label(this);
+    _lblItemVal.setXY(4, 4);
+    _lblItemVal.setText("Val");
+    
+    _txtItemVal = new Textbox(this);
+    _txtItemVal.setXY(_lblItemVal.getX(), _lblItemVal.getY() + _lblItemVal.getH());
+    _txtItemVal.setW(40);
+    _txtItemVal.setNumeric(true);
+    _txtItemVal.events().addChangeHandler(new Textbox.Events.Change() {
+      public void change() {
+        _item._x = Integer.parseInt(_txtItemVal.getText());
+        _map.createItems();
+      }
+    });
+    
+    _lblItemLoc = new Label(this);
+    _lblItemLoc.setXY(_drpItemFile.getX(), _drpItemFile.getY() + _drpItemFile.getH() + 8);
+    _lblItemLoc.setText("Location");
+    
+    _txtItemX = new Textbox(this);
+    _txtItemX.setXY(_lblItemLoc.getX(), _lblItemLoc.getY() + _lblItemLoc.getH());
+    _txtItemX.setW(40);
+    _txtItemX.setNumeric(true);
+    _txtItemX.events().addChangeHandler(new Textbox.Events.Change() {
+      public void change() {
+        _item._x = Integer.parseInt(_txtItemX.getText());
+        _map.createItems();
+      }
+    });
+    
+    _txtItemY = new Textbox(this);
+    _txtItemY.setXY(_txtItemX.getX() + _txtItemX.getW() + 4, _txtItemX.getY());
+    _txtItemY.setW(40);
+    _txtItemY.setNumeric(true);
+    _txtItemY.events().addChangeHandler(new Textbox.Events.Change() {
+      public void change() {
+        _item._y = Integer.parseInt(_txtItemY.getText());
+        _map.createItems();
+      }
+    });
+    
+    _txtItemZ = new Textbox(this);
+    _txtItemZ.setXY(_txtItemY.getX() + _txtItemY.getW() + 4, _txtItemY.getY());
+    _txtItemZ.setW(40);
+    _txtItemZ.setNumeric(true);
+    _txtItemZ.events().addChangeHandler(new Textbox.Events.Change() {
+      public void change() {
+        _item._z = Byte.parseByte(_txtItemZ.getText());
+        _map.createItems();
+      }
+    });
+    
+    _splItem.Controls().add(_lblItemFile);
+    _splItem.Controls().add(_drpItemFile);
+    _splItem.Controls().add(_lblItemLoc);
+    _splItem.Controls().add(_txtItemX);
+    _splItem.Controls().add(_txtItemY);
+    _splItem.Controls().add(_txtItemZ);
+    
+    _picTab[3].Controls().add(_splItem);
+    
     Controls().add(_picWindow);
     Controls().add(_picTilesetList);
     
@@ -314,6 +422,10 @@ public class MapEditor extends GUI {
     
     for(Sprite s : _game.getSprites()) {
       _drpSpriteFile.add(new DropdownSprite(s));
+    }
+    
+    for(Item item : _game.getItems()) {
+      _drpItemFile.add(new DropdownItem(item));
     }
     
     _attribDrawable = Context.newDrawable();
@@ -338,6 +450,7 @@ public class MapEditor extends GUI {
     _picTilesetBack.setX((_picTilesetList.getW() - _picTilesets[_tileset].getW()) / 2 - _tileset * 136 - 54);
     
     _splSprite.setWH(_picTab[2].getW() - _splSprite.getX() * 2, _picTab[2].getH() - _splSprite.getY() * 2);
+    _splItem  .setWH(_picTab[2].getW() - _splItem  .getX() * 2, _picTab[2].getH() - _splItem  .getY() * 2);
   }
   
   public void draw() {
@@ -426,11 +539,9 @@ public class MapEditor extends GUI {
         public void event(int z) {
           if(z == Settings.Map.Depth - 1) {
             switch(_tab) {
-              case 1:
-                _attribDrawable.draw();
-                
-              case 2:
-                _map.drawSprites();
+              case 1: _attribDrawable.draw(); break;
+              case 2: _map.drawSprites(); break;
+              case 3: _map.drawItems(); break;                                            
             }
           }
         }
@@ -477,12 +588,13 @@ public class MapEditor extends GUI {
   }
   
   private void addSprite() {
-    final SpriteChooser s = new SpriteChooser();
+    final Chooser s = new Chooser(_game.getSprites().toArray(new Sprite[0]));
     s.load();
-    s.events().addSelectHandler(new SpriteChooser.Events.Select() {
+    s.events().addSelectHandler(new Chooser.Events.Select() {
       public void select(String file) {
         s.pop();
         
+        _file = file;
         _pickLoc = true;
         _picWindow.setVisible(false);
         _pickSprite = game.world.Sprite.add(_game.getSprite(file));
@@ -529,6 +641,62 @@ public class MapEditor extends GUI {
     _sprite._y = Integer.parseInt(_txtSpriteY.getText());
     _sprite._z = Byte.parseByte(_txtSpriteZ.getText());
     selSprite(_sprite);
+  }
+  
+  private void addItem() {
+    final Chooser s = new Chooser(_game.getItems().toArray(new Item[0]));
+    s.load();
+    s.events().addSelectHandler(new Chooser.Events.Select() {
+      public void select(String file) {
+        s.pop();
+
+        _file = file;
+        _pickLoc = true;
+        _picWindow.setVisible(false);
+        _pickSprite = game.world.Sprite.add(_game.getSprite(_game.getItem(file).getSprite()));
+        _pickSprite.setX(Mouse.getX() - _context.getCameraX());
+        _pickSprite.setY(Mouse.getY() - _context.getCameraY());
+        _pickSprite.setZ(_layer);
+      }
+    });
+    
+    s.push();
+  }
+  
+  private void delItem() {
+    _map._sprite.remove(_item);
+    _splItem.remove();
+    _map.createItems();
+  }
+  
+  private void selItem(Map.Item item) {
+    _item = item;
+    
+    if(_item._file != null) {
+      int i = 0;
+      for(Dropdown.Item file : _drpItemFile) {
+        DropdownItem s = (DropdownItem)file;
+        if(s._item.getFile().equals(_item._file)) {
+          _drpItemFile.setSeletected(i);
+        }
+        i++;
+      }
+    } else {
+      _drpItemFile.setSeletected(-1);
+    }
+    
+    _txtItemX.setText(String.valueOf(_item._x));
+    _txtItemY.setText(String.valueOf(_item._y));
+    _txtItemZ.setText(String.valueOf(_item._z));
+  }
+  
+  private void updateItem() {
+    DropdownItem item = (DropdownItem)_drpItemFile.get();
+    _item._file = item != null ? item._item.getFile() : null;
+    _item._x = Integer.parseInt(_txtSpriteX.getText());
+    _item._y = Integer.parseInt(_txtSpriteY.getText());
+    _item._z = Byte.parseByte(_txtSpriteZ.getText());
+    selItem(_item);
   }
   
   private boolean mapEditorClick(int x, int y, int button) {
@@ -652,7 +820,7 @@ public class MapEditor extends GUI {
           if(_pickLoc) {
             Map.Sprite s = new Map.Sprite();
             
-            s._file = _pickSprite.getSource().getFile();
+            s._file = _file;
             s._x = x;
             s._y = y;
             s._z = (byte)_layer;
@@ -660,6 +828,27 @@ public class MapEditor extends GUI {
             _map._sprite.add(s);
             _splSprite.add(new ScrollPanelSprite(s));
             _map.createSprites();
+            
+            _pickSprite.remove();
+            _pickLoc = false;
+          }
+        }
+        
+        break;
+        
+      case 3:
+        if(button == 0) {
+          if(_pickLoc) {
+            Map.Item s = new Map.Item();
+            
+            s._file = _file;
+            s._x = x;
+            s._y = y;
+            s._z = (byte)_layer;
+            
+            _map._item.add(s);
+            _splItem.add(new ScrollPanelItem(s));
+            _map.createItems();
             
             _pickSprite.remove();
             _pickLoc = false;
@@ -744,6 +933,7 @@ public class MapEditor extends GUI {
           }
           
         case 2:
+        case 3:
           if(_pickLoc) {
             _pickSprite.setX(x - _context.getCameraX());
             _pickSprite.setY(y - _context.getCameraY());
@@ -777,48 +967,6 @@ public class MapEditor extends GUI {
       }
       
       return true;
-    }
-    
-    return false;
-  }
-  
-  public boolean handleButtonDown(int button) {
-    if(_picWindow.getVisible()) {
-      switch(button) {
-        case 4:
-          if(_tab > 0) setTab(_tab - 1);
-          return true;
-          
-        case 5:
-          if(_tab < _picTab.length - 1) setTab(_tab + 1);
-          return true;
-          
-        case 1000:
-          if(_y > 0) _y -= 1;
-          _picSelected.setXYWH(_x * Settings.Map.Tile.Size, _y * Settings.Map.Tile.Size, Settings.Map.Tile.Size, Settings.Map.Tile.Size);
-          return true;
-          
-        case 1001:
-          if(_y < _picTileset.getH() / Settings.Map.Tile.Size - 1) _y += 1;
-          _picSelected.setXYWH(_x * Settings.Map.Tile.Size, _y * Settings.Map.Tile.Size, Settings.Map.Tile.Size, Settings.Map.Tile.Size);
-          return true;
-          
-        case 1002:
-          if(_x > 0) _x -= 1;
-          _picSelected.setXYWH(_x * Settings.Map.Tile.Size, _y * Settings.Map.Tile.Size, Settings.Map.Tile.Size, Settings.Map.Tile.Size);
-          return true;
-          
-        case 1003:
-          if(_x < _picTileset.getW() / Settings.Map.Tile.Size - 1) _x += 1;
-          _picSelected.setXYWH(_x * Settings.Map.Tile.Size, _y * Settings.Map.Tile.Size, Settings.Map.Tile.Size, Settings.Map.Tile.Size);
-          return true;
-      }
-    }
-    
-    switch(button) {
-      case 11:
-        _picWindow.setVisible(!_picWindow.getVisible());
-        _picTilesetList.setVisible(_picWindow.getVisible());
     }
     
     return false;
@@ -858,69 +1006,84 @@ public class MapEditor extends GUI {
     }
   }
   
-  public static class DropdownSprite extends Dropdown.Item {
+  private class DropdownSprite extends Dropdown.Item {
     private Sprite _sprite;
     
     public DropdownSprite(Sprite sprite) {
       super(sprite.getName() + " - " + sprite.getNote());
       _sprite = sprite;
     }
+  }
+  
+  private class DropdownItem extends Dropdown.Item {
+    private Item _item;
     
-    public Sprite getSprite() {
-      return _sprite;
+    public DropdownItem(Item item) {
+      super(item.getName() + " - " + item.getNote());
+      _item = item;
     }
   }
   
-  public static class ScrollPanelSprite extends ScrollPanel.Item {
+  private class ScrollPanelSprite extends ScrollPanel.Item {
     Map.Sprite _sprite;
     
     public ScrollPanelSprite(Map.Sprite sprite) {
       _sprite = sprite;
     }
+  }
+  
+  private class ScrollPanelItem extends ScrollPanel.Item {
+    Map.Item _item;
     
-    public Map.Sprite getSprite() {
-      return _sprite;
+    public ScrollPanelItem(Map.Item item) {
+      _item = item;
     }
   }
   
-  public static class SpriteChooser extends GUI {
+  public static class Chooser extends GUI {
     private Events _events;
     
-    private Window _window;
-    private List   _data;
+    private Window _wndWindow;
+    private List   _lstData;
+    
+    private Data[] _data;
+    
+    public Chooser(Data[] data) {
+      _data = data;
+    }
     
     public void load() {
       _events = new Events();
       
-      _window = new Window(this);
-      _window.setText("Choose Sprite");
+      _wndWindow = new Window(this);
+      _wndWindow.setText("Choose Sprite");
       
-      _data = new List(this);
-      _data.setXYWH(8, 8, 400, 200);
+      _lstData = new List(this);
+      _lstData.setXYWH(8, 8, 400, 200);
       
       Control.Events.Click accept = new Control.Events.Click() {
         public void click() { }
         public void clickDbl() {
-          _events.raiseSelect(((ListItem)_data.getSelected()).getData().getFile());
+          _events.raiseSelect(((ListItem)_lstData.getSelected())._data.getFile());
         }
       };
       
-      for(Sprite s : Game.getInstance().getSprites()) {
-        ListItem l = (ListItem)_data.addItem(new ListItem(this, s));
+      for(Data s : _data) {
+        ListItem l = (ListItem)_lstData.addItem(new ListItem(this, s));
         l.setText(s.getFile() + ": " + s.getName() + " - " + s.getNote());
         l.events().addClickHandler(accept);
       }
       
-      _window.setWH(_data.getX() + _data.getW() + 8, _data.getY() + _data.getH() + 28);
-      _window.events().addCloseHandler(new Window.Events.Close() {
+      _wndWindow.setWH(_lstData.getX() + _lstData.getW() + 8, _lstData.getY() + _lstData.getH() + 28);
+      _wndWindow.events().addCloseHandler(new Window.Events.Close() {
         public boolean close() {
           pop();
           return true;
         }
       });
-      _window.Controls().add(_data);
+      _wndWindow.Controls().add(_lstData);
       
-      Controls().add(_window);
+      Controls().add(_wndWindow);
       resize();
     }
     
@@ -929,7 +1092,7 @@ public class MapEditor extends GUI {
     }
     
     public void resize() {
-      _window.setXY((_context.getW() - _window.getW()) / 2, (_context.getH() - _window.getH()) / 2);
+      _wndWindow.setXY((_context.getW() - _wndWindow.getW()) / 2, (_context.getH() - _wndWindow.getH()) / 2);
     }
     
     public void draw() {
@@ -944,16 +1107,12 @@ public class MapEditor extends GUI {
       return _events;
     }
     
-    public static class ListItem extends graphics.shared.gui.controls.List.ListItem {
-      private Serializable _data;
+    private class ListItem extends graphics.shared.gui.controls.List.ListItem {
+      private Data _data;
       
-      protected ListItem(GUI gui, Serializable data) {
+      protected ListItem(GUI gui, Data data) {
         super(gui);
         _data = data;
-      }
-      
-      public Serializable getData() {
-        return _data;
       }
     }
     
