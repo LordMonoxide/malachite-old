@@ -25,6 +25,7 @@ import game.world.Entity;
 import game.world.Entity.Inv;
 import game.world.World;
 import graphics.gl00.Context;
+import graphics.util.Math;
 
 public class Game implements graphics.gl00.Game {
   private static Game _instance = new Game();
@@ -295,6 +296,16 @@ public class Game implements graphics.gl00.Game {
   
   public void gotChat(String name, String text) {
     _gameListener.gotChat(name, text);
+  }
+  
+  public Entity interact(int x, int y) {
+    for(Entity e : _world.getEntity()) {
+      if(Math.inBox(x, y, (int)(e.getX() + _context.getCameraX()) - 16, (int)(e.getY() + _context.getCameraY()) - 16, 32, 32)) {
+        return e;
+      }
+    }
+    
+    return null;
   }
   
   public static interface MenuStateListener {
