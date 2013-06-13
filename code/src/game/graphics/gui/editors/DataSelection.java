@@ -40,10 +40,9 @@ public class DataSelection extends GUI {
       }
     };
     
-    int n = 1;
     for(Data s : _edit) {
       ListItem l = (ListItem)_data.addItem(new ListItem(this, s));
-      l.setText(n++ + ": " + s.getName() + " - " + s.getNote());
+      l.setText(s.getFile() + ": " + s.getName() + " - " + s.getNote());
       l.events().addClickHandler(accept);
     }
     
