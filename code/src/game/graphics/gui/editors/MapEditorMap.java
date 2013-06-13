@@ -19,9 +19,11 @@ public class MapEditorMap extends Map {
   private Map _map;
   private int _mapCRC;
   protected LinkedList<Sprite> _sprite = super._sprite;
+  protected LinkedList<Item>   _item   = super._item;
   
   private Texture[] _attribMask;
   private EditorSprite[] _spritesDrawable;
+  private EditorSprite[] _itemsDrawable;
   
   public MapEditorMap(Map map) {
     super(map.getWorld(), map.getX(), map.getY());
@@ -41,6 +43,7 @@ public class MapEditorMap extends Map {
     }
     
     createSprites();
+    createItems();
   }
   
   public boolean isChanged() {
@@ -68,6 +71,19 @@ public class MapEditorMap extends Map {
     }
   }
   
+  public void createItems() {
+    int i = 0;
+    _itemsDrawable = new EditorSprite[_item.size()];
+    for(Item item : _item) {
+      _itemsDrawable[i] = new EditorSprite();
+      _itemsDrawable[i]._sprite = _game.getSprite(_game.getItem(_item.get(i)._file).getSprite());
+      _itemsDrawable[i]._drawable.setXYWH(item._x, item._y, _itemsDrawable[i]._sprite.getW(), _itemsDrawable[i]._sprite.getH());
+      _itemsDrawable[i]._drawable.setColour(new float[] {0, 1, 0, 1});
+      _itemsDrawable[i]._drawable.createBorder();
+      i++;
+    }
+  }
+  
   public Map getMap() {
     return _map;
   }
@@ -82,6 +98,15 @@ public class MapEditorMap extends Map {
   
   public void drawSprites() {
     for(EditorSprite d : _spritesDrawable) {
+      _matrix.push();
+      _matrix.translate(-d._sprite.getFrame(0)._fx, -d._sprite.getH() + d._sprite.getFrame(0)._fy);
+      d._drawable.draw();
+      _matrix.pop();
+    }
+  }
+  
+  public void drawItems() {
+    for(EditorSprite d : _itemsDrawable) {
       _matrix.push();
       _matrix.translate(-d._sprite.getFrame(0)._fx, -d._sprite.getH() + d._sprite.getFrame(0)._fy);
       d._drawable.draw();
