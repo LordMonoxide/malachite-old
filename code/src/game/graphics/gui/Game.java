@@ -21,6 +21,7 @@ import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;
 import graphics.shared.gui.controls.Button;
 import graphics.shared.gui.controls.Label;
+import graphics.shared.gui.controls.Menu;
 import graphics.shared.gui.controls.Picture;
 import graphics.shared.gui.controls.Textbox;
 import graphics.shared.gui.controls.compound.Window;
@@ -52,6 +53,8 @@ public class Game extends GUI {
   
   private Window    _wndInv;
   private game.graphics.gui.controls.Sprite[] _sprInv;
+  
+  private Menu _mnuItem;
   
   private String[] _chat = new String[256];
   private float[]  _chatColour = new float[] {1, 1, 1, 1};
@@ -186,8 +189,14 @@ public class Game extends GUI {
     _wndInv.setClientWH(8 * 34 + 8, 5 * 34 + 8);
     _wndInv.setVisible(false);
     
-    Controls().add(_wndInv);
+    _mnuItem = new Menu(this);
+    _mnuItem.setW(100);
+    _mnuItem.add("Pick up");
+    _mnuItem.add("View details");
+    
     Controls().add(_txtChat);
+    Controls().add(_mnuItem);
+    Controls().add(_wndInv);
     Controls().add(_wndAdmin);
     
     Canvas c = new Canvas("Debug text", 256, 256);
@@ -375,7 +384,12 @@ public class Game extends GUI {
   }
   
   public boolean handleMouseUp(int x, int y, int button) {
-    System.out.println(_game.interact(x, y));
+    Entity e = _game.interact(x, y);
+    
+    if(e != null) {
+      _mnuItem.show((int)(e.getX() + _context.getCameraX() - _mnuItem.getW() / 2), (int)(e.getY() + _context.getCameraY()) + 16);
+      return true;
+    }
     
     return false;
   }
