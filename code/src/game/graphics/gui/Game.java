@@ -403,7 +403,10 @@ public class Game extends GUI {
     _selectedEntity = _game.interact(x, y);
     
     if(_selectedEntity != null) {
-      _mnuItem.show((int)(_selectedEntity.getX() + _context.getCameraX() - _mnuItem.getW() / 2), (int)(_selectedEntity.getY() + _context.getCameraY()) + 16);
+      if(_selectedEntity.getType() == Entity.Type.Item) {
+        _mnuItem.show((int)(_selectedEntity.getX() + _context.getCameraX() - _mnuItem.getW() / 2), (int)(_selectedEntity.getY() + _context.getCameraY()) + 16);
+      }
+      
       return true;
     }
     
