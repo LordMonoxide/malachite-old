@@ -6,6 +6,7 @@ import game.network.packet.Chat;
 import game.network.packet.Data;
 import game.network.packet.EntityCreate;
 import game.network.packet.EntityDestroy;
+import game.network.packet.EntityInteract;
 import game.network.packet.EntityInv;
 import game.network.packet.EntityInvUpdate;
 import game.network.packet.EntityMoveStart;
@@ -68,6 +69,7 @@ public class Client {
     Packets.add(Save.Item.class);
     Packets.add(EntityInv.class);
     Packets.add(EntityInvUpdate.class);
+    Packets.add(EntityInteract.class);
   }
   
   public void connect() {
