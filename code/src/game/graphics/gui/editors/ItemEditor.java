@@ -20,6 +20,11 @@ public class ItemEditor extends GUI implements Editor {
   
   private Window  _wndEditor;
   
+  private Label    _lblType;
+  private Dropdown _drpType;
+  private Label    _lblDamage;
+  private Textbox  _txtDamage;
+  
   private Label    _lblName;
   private Textbox  _txtName;
   private Label    _lblNote;
@@ -33,6 +38,7 @@ public class ItemEditor extends GUI implements Editor {
     _wndEditor = new Window(this);
     _wndEditor.setWH(300, 300);
     _wndEditor.setText("Item Editor");
+    _wndEditor.addTab("Type");
     _wndEditor.addTab("Info");
     _wndEditor.events().addCloseHandler(new Window.Events.Close() {
       public boolean close() {
@@ -50,6 +56,28 @@ public class ItemEditor extends GUI implements Editor {
     Textbox.Events.Change change = new Textbox.Events.Change() {
       public void change() { update(); }
     };
+    
+    _lblType = new Label(this);
+    _lblType.setText("Type");
+    _lblType.setXY(8, 4);
+    
+    _drpType = new Dropdown(this);
+    _drpType.setXY(_lblType.getX(), _lblType.getY() + _lblType.getH() + 4);
+    for(Item.Type type : Item.Type.values()) {
+      _drpType.add(new DropdownType(type));
+    }
+    _drpType.events().addSelectHandler(new Dropdown.Events.Select() {
+      public void select(Dropdown.Item item) { update(); }
+    });
+    
+    _lblDamage = new Label(this);
+    _lblDamage.setText("Damage");
+    _lblDamage.setXY(_drpType.getX(), _drpType.getY() + _drpType.getH() + 8);
+    
+    _txtDamage = new Textbox(this);
+    _txtDamage.setXY(_lblDamage.getX(), _lblDamage.getY() + _lblDamage.getH() + 4);
+    _txtDamage.setNumeric(true);
+    _txtDamage.events().addChangeHandler(change);
     
     _lblName = new Label(this);
     _lblName.setText("Name");
@@ -74,17 +102,19 @@ public class ItemEditor extends GUI implements Editor {
     _drpSprite = new Dropdown(this);
     _drpSprite.setXY(_lblSprite.getX(), _lblSprite.getY() + _lblSprite.getH());
     _drpSprite.events().addSelectHandler(new Dropdown.Events.Select() {
-      public void select(Dropdown.Item item) {
-        update();
-      }
+      public void select(Dropdown.Item item) { update(); }
     });
     
-    _wndEditor.Controls(0).add(_lblName);
-    _wndEditor.Controls(0).add(_txtName);
-    _wndEditor.Controls(0).add(_lblNote);
-    _wndEditor.Controls(0).add(_txtNote);
-    _wndEditor.Controls(0).add(_lblSprite);
-    _wndEditor.Controls(0).add(_drpSprite);
+    _wndEditor.Controls(0).add(_lblType);
+    _wndEditor.Controls(0).add(_drpType);
+    _wndEditor.Controls(0).add(_lblDamage);
+    _wndEditor.Controls(0).add(_txtDamage);
+    _wndEditor.Controls(1).add(_lblName);
+    _wndEditor.Controls(1).add(_txtName);
+    _wndEditor.Controls(1).add(_lblNote);
+    _wndEditor.Controls(1).add(_txtNote);
+    _wndEditor.Controls(1).add(_lblSprite);
+    _wndEditor.Controls(1).add(_drpSprite);
     
     for(Sprite s : _game.getSprites()) {
       _drpSprite.add(new DropdownSprite(s));
@@ -142,6 +172,8 @@ public class ItemEditor extends GUI implements Editor {
     
     _item = new ItemEditorItem((Item)data);
     
+    _drpType.setSeletected(_item.getType().ordinal());
+    _txtDamage.setText(String.valueOf(_item.getDamage()));
     _txtName.setText(_item.getName());
     _txtNote.setText(_item.getNote());
     
@@ -161,21 +193,28 @@ public class ItemEditor extends GUI implements Editor {
   private void update() {
     DropdownSprite sprite = (DropdownSprite)_drpSprite.get();
     
+    _item.setType(((DropdownType)_drpType.get())._type);
+    _item.setDamage(Integer.parseInt(_txtDamage.getText()));
     _item.setName(_txtName.getText());
     _item.setNote(_txtNote.getText());
     _item.setSprite(sprite != null ? sprite._sprite.getFile() : null);
   }
   
-  public static class DropdownSprite extends Dropdown.Item {
+  private class DropdownSprite extends Dropdown.Item {
     private Sprite _sprite;
     
     public DropdownSprite(Sprite sprite) {
       super(sprite.getName() + " - " + sprite.getNote());
       _sprite = sprite;
     }
+  }
+  
+  private class DropdownType extends Dropdown.Item {
+    private Item.Type _type;
     
-    public Sprite getSprite() {
-      return _sprite;
+    public DropdownType(Item.Type type) {
+      super(type.name());
+      _type = type;
     }
   }
 }
