@@ -54,6 +54,9 @@ public class Game extends GUI {
   
   private Window    _wndInv;
   private game.graphics.gui.controls.Sprite[] _sprInv;
+  private Picture   _picItemDesc;
+  private game.graphics.gui.controls.Sprite _sprInvHover;
+  private Label     _lblInvName;
   
   private Menu _mnuItem;
   
@@ -180,13 +183,56 @@ public class Game extends GUI {
     _wndInv = new Window(this);
     _sprInv = new game.graphics.gui.controls.Sprite[Settings.Player.Inventory.Size];
     for(int i = 0; i < _sprInv.length; i++) {
+      final int n = i;
       _sprInv[i] = new game.graphics.gui.controls.Sprite(this);
       _sprInv[i].setBackColour(new float[] {0, 0, 0, 1});
       _sprInv[i].setBorderColour(new float[] {1, 1, 1, 1});
       _sprInv[i].setWH(32, 32);
       _sprInv[i].setXY(i % 8 * 34 + 5, i / 8 * 34 + 5);
+      _sprInv[i].events().addDrawHandler(new Control.Events.Draw() {
+        public void draw() {
+          if(_entity.inv(n) != null) {
+            if(_entity.inv(n).val() != 1) {
+              _font.draw(2, 2, String.valueOf(_entity.inv(n).val()), _chatColour);
+            }
+          }
+        }
+      });
+      
+      _sprInv[i].events().addHoverHandler(new Control.Events.Hover() {
+        public void enter() {
+          if(_entity.inv(n) != null) {
+            _sprInvHover.setSprite(_sprInv[n].getSprite());
+            _lblInvName.setText(_entity.inv(n).item().getName());
+            _picItemDesc.setXY(getControl().getX() - 3, getControl().getY() - 3);
+            _picItemDesc.setVisible(true);
+          }
+        }
+        
+        public void leave() {
+          _picItemDesc.setVisible(false);
+        }
+      });
+      
       _wndInv.Controls().add(_sprInv[i]);
     }
+    
+    _picItemDesc = new Picture(this);
+    _picItemDesc.setBorderColour(new float[] {0, 0, 0, 1});
+    _picItemDesc.setBackColour(new float[] {0.3f, 0.3f, 0.3f, 1});
+    _picItemDesc.setWH(138, 38);
+    _picItemDesc.setVisible(false);
+    _wndInv.Controls().add(_picItemDesc);
+    
+    _sprInvHover = new game.graphics.gui.controls.Sprite(this, false);
+    _sprInvHover.setBackColour(new float[] {0, 0, 0, 1});
+    _sprInvHover.setBorderColour(new float[] {1, 1, 1, 1});
+    _sprInvHover.setXYWH(3, 3, 32, 32);
+    _picItemDesc.Controls().add(_sprInvHover);
+    
+    _lblInvName = new Label(this);
+    _lblInvName.setXY(_sprInvHover.getX() + _sprInvHover.getW() + 4, _sprInvHover.getY());
+    _picItemDesc.Controls().add(_lblInvName);
     
     _wndInv.setText("Inventory");
     _wndInv.setClientWH(8 * 34 + 8, 5 * 34 + 8);
