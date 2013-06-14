@@ -9,6 +9,7 @@ import game.graphics.gui.editors.MapEditor;
 import game.graphics.gui.editors.SpriteEditor;
 import game.language.Lang;
 import game.network.packet.Chat;
+import game.network.packet.EntityInteract;
 import game.settings.Settings;
 import game.world.Entity;
 import game.world.Region;
@@ -55,6 +56,8 @@ public class Game extends GUI {
   private game.graphics.gui.controls.Sprite[] _sprInv;
   
   private Menu _mnuItem;
+  
+  private Entity _selectedEntity;
   
   private String[] _chat = new String[256];
   private float[]  _chatColour = new float[] {1, 1, 1, 1};
@@ -193,6 +196,19 @@ public class Game extends GUI {
     _mnuItem.setW(100);
     _mnuItem.add("Pick up");
     _mnuItem.add("View details");
+    _mnuItem.events().addSelectHandler(new Menu.Events.Select() {
+      public void select(int index) {
+        switch(index) {
+          case 0:
+            _game.send(new EntityInteract(_selectedEntity));
+            break;
+            
+          case 1:
+            Message.show("Not yet implemented");
+            break;
+        }
+      }
+    });
     
     Controls().add(_txtChat);
     Controls().add(_mnuItem);
@@ -384,10 +400,10 @@ public class Game extends GUI {
   }
   
   public boolean handleMouseUp(int x, int y, int button) {
-    Entity e = _game.interact(x, y);
+    _selectedEntity = _game.interact(x, y);
     
-    if(e != null) {
-      _mnuItem.show((int)(e.getX() + _context.getCameraX() - _mnuItem.getW() / 2), (int)(e.getY() + _context.getCameraY()) + 16);
+    if(_selectedEntity != null) {
+      _mnuItem.show((int)(_selectedEntity.getX() + _context.getCameraX() - _mnuItem.getW() / 2), (int)(_selectedEntity.getY() + _context.getCameraY()) + 16);
       return true;
     }
     
