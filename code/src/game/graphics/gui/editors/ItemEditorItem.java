@@ -42,4 +42,12 @@ public class ItemEditorItem extends Item {
   public void setSprite(String sprite) {
     _sprite = sprite;
   }
+  
+  public void setType(Item.Type type) {
+    _type = type;
+  }
+  
+  public void setDamage(int damage) {
+    _damage = damage;
+  }
 }
