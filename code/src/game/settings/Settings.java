@@ -42,7 +42,7 @@ public class Settings {
   }
   
   public static class Net {
-    public final double Version = 0.01;
+    public final double Version = 0.02;
     public String IP = "home.monoxidedesign.com";
     public int Port = 4000;
     
