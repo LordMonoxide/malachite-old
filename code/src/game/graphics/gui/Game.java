@@ -2,6 +2,7 @@ package game.graphics.gui;
 
 import org.lwjgl.input.Keyboard;
 
+import game.data.Item;
 import game.data.util.Data;
 import game.graphics.gui.editors.DataSelection;
 import game.graphics.gui.editors.ItemEditor;
@@ -57,6 +58,7 @@ public class Game extends GUI {
   private Picture   _picItemDesc;
   private game.graphics.gui.controls.Sprite _sprInvHover;
   private Label     _lblInvName;
+  private Label     _lblInvType;
   
   private Menu _mnuItem;
   
@@ -204,6 +206,13 @@ public class Game extends GUI {
           if(_entity.inv(n) != null) {
             _sprInvHover.setSprite(_sprInv[n].getSprite());
             _lblInvName.setText(_entity.inv(n).item().getName());
+            
+            if(_entity.inv(n).item().getType() != Item.Type.None) {
+              _lblInvType.setText(_entity.inv(n).item().getType().name());
+            } else {
+              _lblInvType.setText(null);
+            }
+            
             _picItemDesc.setXY(getControl().getX() - 3, getControl().getY() - 3);
             _picItemDesc.setVisible(true);
           }
@@ -228,11 +237,16 @@ public class Game extends GUI {
     _sprInvHover.setBackColour(new float[] {0, 0, 0, 1});
     _sprInvHover.setBorderColour(new float[] {1, 1, 1, 1});
     _sprInvHover.setXYWH(3, 3, 32, 32);
-    _picItemDesc.Controls().add(_sprInvHover);
     
     _lblInvName = new Label(this);
     _lblInvName.setXY(_sprInvHover.getX() + _sprInvHover.getW() + 4, _sprInvHover.getY());
+    
+    _lblInvType = new Label(this);
+    _lblInvType.setXY(_lblInvName.getX(), _lblInvName.getY() + _lblInvName.getH());
+    
+    _picItemDesc.Controls().add(_sprInvHover);
     _picItemDesc.Controls().add(_lblInvName);
+    _picItemDesc.Controls().add(_lblInvType);
     
     _wndInv.setText("Inventory");
     _wndInv.setClientWH(8 * 34 + 8, 5 * 34 + 8);
