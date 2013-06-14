@@ -7,7 +7,7 @@ public class Sprite extends Picture {
   private game.world.Sprite _sprite;
   
   public Sprite(GUI gui) {
-    this(gui, false);
+    this(gui, true);
   }
   
   public Sprite(GUI gui, boolean register) {
