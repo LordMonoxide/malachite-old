@@ -25,8 +25,14 @@ public class ItemEditor extends GUI implements Editor {
   private Dropdown _drpType;
   private Label    _lblSubtype;
   private Dropdown _drpSubtype;
+  
   private Label    _lblDamage;
   private Textbox  _txtDamage;
+  
+  private Label    _lblHPHeal;
+  private Textbox  _txtHPHeal;
+  private Label    _lblMPHeal;
+  private Textbox  _txtMPHeal;
   
   private Label    _lblName;
   private Textbox  _txtName;
@@ -97,6 +103,24 @@ public class ItemEditor extends GUI implements Editor {
     _txtDamage.setNumeric(true);
     _txtDamage.events().addChangeHandler(change);
     
+    _lblHPHeal = new Label(this);
+    _lblHPHeal.setText("Heal HP");
+    _lblHPHeal.setXY(_drpSubtype.getX(), _drpSubtype.getY() + _drpSubtype.getH() + 8);
+    
+    _txtHPHeal = new Textbox(this);
+    _txtHPHeal.setXY(_lblHPHeal.getX(), _lblHPHeal.getY() + _lblHPHeal.getH() + 4);
+    _txtHPHeal.setNumeric(true);
+    _txtHPHeal.events().addChangeHandler(change);
+    
+    _lblMPHeal = new Label(this);
+    _lblMPHeal.setText("Heal MP");
+    _lblMPHeal.setXY(_txtHPHeal.getX(), _txtHPHeal.getY() + _txtHPHeal.getH() + 8);
+    
+    _txtMPHeal = new Textbox(this);
+    _txtMPHeal.setXY(_lblMPHeal.getX(), _lblMPHeal.getY() + _lblMPHeal.getH() + 4);
+    _txtMPHeal.setNumeric(true);
+    _txtMPHeal.events().addChangeHandler(change);
+    
     _lblName = new Label(this);
     _lblName.setText("Name");
     _lblName.setXY(8, 4);
@@ -127,6 +151,10 @@ public class ItemEditor extends GUI implements Editor {
     _wndEditor.Controls(0).add(_drpType);
     _wndEditor.Controls(0).add(_lblDamage);
     _wndEditor.Controls(0).add(_txtDamage);
+    _wndEditor.Controls(0).add(_lblHPHeal);
+    _wndEditor.Controls(0).add(_txtHPHeal);
+    _wndEditor.Controls(0).add(_lblMPHeal);
+    _wndEditor.Controls(0).add(_txtMPHeal);
     _wndEditor.Controls(0).add(_lblSubtype);
     _wndEditor.Controls(0).add(_drpSubtype);
     _wndEditor.Controls(1).add(_lblName);
@@ -194,6 +222,9 @@ public class ItemEditor extends GUI implements Editor {
     
     _drpType.setSeletected((_item.getType() & Item.ITEM_TYPE_BITMASK) >> Item.ITEM_TYPE_BITSHIFT);
     _txtDamage.setText(String.valueOf(_item.getDamage()));
+    _txtHPHeal.setText(String.valueOf(_item.getHPHeal()));
+    _txtMPHeal.setText(String.valueOf(_item.getMPHeal()));
+    
     _txtName.setText(_item.getName());
     _txtNote.setText(_item.getNote());
     
@@ -212,6 +243,14 @@ public class ItemEditor extends GUI implements Editor {
   }
   
   private void updateSubtypes() {
+    _lblDamage.setVisible(false);
+    _txtDamage.setVisible(false);
+    
+    _lblHPHeal.setVisible(false);
+    _txtHPHeal.setVisible(false);
+    _lblMPHeal.setVisible(false);
+    _txtMPHeal.setVisible(false);
+    
     _drpSubtype.clear();
     switch(_drpType.getSelected()) {
       case Item.ITEM_TYPE_NONE:
@@ -222,18 +261,29 @@ public class ItemEditor extends GUI implements Editor {
         for(String type : Lang.ITEM_WEAPON.get()) {
           _drpSubtype.add(new Dropdown.Item(type));
         }
+        
+        _lblDamage.setVisible(true);
+        _txtDamage.setVisible(true);
         break;
         
       case Item.ITEM_TYPE_ARMOUR:
         for(String type : Lang.ITEM_ARMOUR.get()) {
           _drpSubtype.add(new Dropdown.Item(type));
         }
+        
+        _lblDamage.setVisible(true);
+        _txtDamage.setVisible(true);
         break;
         
       case Item.ITEM_TYPE_POTION:
         for(String type : Lang.ITEM_POTION.get()) {
           _drpSubtype.add(new Dropdown.Item(type));
         }
+        
+        _lblHPHeal.setVisible(true);
+        _txtHPHeal.setVisible(true);
+        _lblMPHeal.setVisible(true);
+        _txtMPHeal.setVisible(true);
         break;
         
       case Item.ITEM_TYPE_SPELL:
@@ -259,6 +309,9 @@ public class ItemEditor extends GUI implements Editor {
     
     _item.setType((_drpType.getSelected() << Item.ITEM_TYPE_BITSHIFT) | (_drpSubtype.getSelected() << Item.ITEM_SUBTYPE_BITSHIFT));
     _item.setDamage(Integer.parseInt(_txtDamage.getText()));
+    _item.setHPHeal(Integer.parseInt(_txtHPHeal.getText()));
+    _item.setMPHeal(Integer.parseInt(_txtMPHeal.getText()));
+    
     _item.setName(_txtName.getText());
     _item.setNote(_txtNote.getText());
     _item.setSprite(sprite != null ? sprite._sprite.getFile() : null);
