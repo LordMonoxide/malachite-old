@@ -31,23 +31,11 @@ public class ItemEditorItem extends Item {
     return _item;
   }
   
-  public void setName(String name) {
-    _name = name;
-  }
-  
-  public void setNote(String note) {
-    _note = note;
-  }
-  
-  public void setSprite(String sprite) {
-    _sprite = sprite;
-  }
-  
-  public void setType(int type) {
-    _type = type;
-  }
-  
-  public void setDamage(int damage) {
-    _damage = damage;
-  }
+  public void setName  (String name)   { _name = name; }
+  public void setNote  (String note)   { _note = note; }
+  public void setSprite(String sprite) { _sprite = sprite; }
+  public void setType  (int type)      { _type = type; }
+  public void setDamage(int damage)    { _damage = damage; }
+  public void setHPHeal(int hpHeal)    { _hpHeal = hpHeal; }
+  public void setMPHeal(int mpHeal)    { _mpHeal = mpHeal; }
 }
