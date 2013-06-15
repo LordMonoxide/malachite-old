@@ -556,21 +556,25 @@ public class Game extends GUI {
     if(!_txtChat.getVisible()) {
       switch(key) {
         case Keyboard.KEY_W:
+        case Keyboard.KEY_UP:
           _key[0] = false;
           checkMovement();
           return true;
           
         case Keyboard.KEY_A:
+        case Keyboard.KEY_LEFT:
           _key[2] = false;
           checkMovement();
           return true;
           
         case Keyboard.KEY_S:
+        case Keyboard.KEY_DOWN:
           _key[1] = false;
           checkMovement();
           return true;
           
         case Keyboard.KEY_D:
+        case Keyboard.KEY_RIGHT:
           _key[3] = false;
           checkMovement();
           return true;
