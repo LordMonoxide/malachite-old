@@ -5,12 +5,14 @@ import game.data.util.Data;
 import game.data.util.Serializable;
 
 public class Item extends Serializable implements Data {
-  private static final int VERSION = 1;
+  private static final int VERSION = 2;
   
   protected String _name, _note;
   protected String _sprite;
   protected int    _type;
   protected int    _damage;
+  
+  protected int    _hpHeal, _mpHeal;
   
   public Item(String file, int crc) {
     super(file, crc);
@@ -21,6 +23,8 @@ public class Item extends Serializable implements Data {
   public String getSprite() { return _sprite; }
   public int    getType()   { return _type; }
   public int    getDamage() { return _damage; }
+  public int    getHPHeal() { return _hpHeal; }
+  public int    getMPHeal() { return _mpHeal; }
   
   public Buffer serialize() {
     Buffer b = new Buffer();
@@ -30,12 +34,15 @@ public class Item extends Serializable implements Data {
     b.put(_sprite);
     b.put(_type);
     b.put(_damage);
+    b.put(_hpHeal);
+    b.put(_mpHeal);
     return b;
   }
   
   public void deserialize(Buffer b) {
     switch(b.getInt()) {
       case 1: deserialize01(b); break;
+      case 2: deserialize02(b); break;
     }
   }
   
@@ -45,6 +52,16 @@ public class Item extends Serializable implements Data {
     _sprite = b.getString();
     _type   = b.getInt();
     _damage = b.getInt();
+  }
+  
+  private void deserialize02(Buffer b) {
+    _name   = b.getString();
+    _note   = b.getString();
+    _sprite = b.getString();
+    _type   = b.getInt();
+    _damage = b.getInt();
+    _hpHeal = b.getInt();
+    _mpHeal = b.getInt();
   }
   
   /*  0000 0000 0000 0000 0000 0000 0000 0000
