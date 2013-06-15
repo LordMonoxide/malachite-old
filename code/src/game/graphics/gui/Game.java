@@ -231,6 +231,7 @@ public class Game extends GUI {
         
         public void clickDbl() {
           if(_entity.inv(n) != null) {
+            _picItemDesc.setVisible(false);
             useInv(_entity.inv(n));
           }
         }
