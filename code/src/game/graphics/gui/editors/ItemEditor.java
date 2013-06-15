@@ -192,7 +192,7 @@ public class ItemEditor extends GUI implements Editor {
     
     _item = new ItemEditorItem((Item)data);
     
-    _drpType.setSeletected(_item.getType() & Item.ITEM_TYPE_BITMASK);
+    _drpType.setSeletected((_item.getType() & Item.ITEM_TYPE_BITMASK) >> Item.ITEM_TYPE_BITSHIFT);
     _txtDamage.setText(String.valueOf(_item.getDamage()));
     _txtName.setText(_item.getName());
     _txtNote.setText(_item.getNote());
@@ -248,7 +248,7 @@ public class ItemEditor extends GUI implements Editor {
     }
     
     if((_item.getType() & Item.ITEM_TYPE_BITMASK) == _drpType.getSelected()) {
-      _drpSubtype.setSeletected(_item.getType() & Item.ITEM_SUBTYPE_BITMASK);
+      _drpSubtype.setSeletected((_item.getType() & Item.ITEM_SUBTYPE_BITMASK) >> Item.ITEM_SUBTYPE_BITSHIFT);
     } else {
       _drpSubtype.setSeletected(0);
     }
