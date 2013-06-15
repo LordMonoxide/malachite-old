@@ -50,11 +50,14 @@ public class Item extends Serializable implements Data {
   /*  0000 0000 0000 0000 0000 0000 0000 0000
    *  ^     ATTRIBS     ^ ^  SUB  ^ ^ TYPES ^
    */
-  public static final int ITEM_TYPE_BITMASK             = 0x000000FF;
+  public static final int ITEM_TYPE_BITMASK             = 0x0000000F;
   public static final int ITEM_TYPE_BITSHIFT            = 0;
   
-  public static final int ITEM_SUBTYPE_BITMASK          = 0x0000FF00;
+  public static final int ITEM_SUBTYPE_BITMASK          = 0x000000F0;
   public static final int ITEM_SUBTYPE_BITSHIFT         = 4;
+  
+  public static final int ITEM_ATTRIBS_BITMASK          = 0xFFFFFF00;
+  public static final int ITEM_ATTRIBS_BITSHIFT         = 8;
   
   public static final int ITEM_TYPE_NONE                = 0x00;
   
