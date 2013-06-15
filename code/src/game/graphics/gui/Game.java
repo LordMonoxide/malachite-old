@@ -207,8 +207,8 @@ public class Game extends GUI {
             _sprInvHover.setSprite(_sprInv[n].getSprite());
             _lblInvName.setText(_entity.inv(n).item().getName());
             
-            if(_entity.inv(n).item().getType() != Item.Type.None) {
-              _lblInvType.setText(_entity.inv(n).item().getType().name());
+            if(_entity.inv(n).item().getType() != Item.ITEM_TYPE_NONE) {
+              _lblInvType.setText(Lang.ITEM_TYPE.text(_entity.inv(n).item().getType() & Item.ITEM_TYPE_MASK));
             } else {
               _lblInvType.setText(null);
             }
