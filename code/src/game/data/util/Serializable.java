@@ -11,11 +11,13 @@ public abstract class Serializable {
   
   protected Serializable(File file) {
     _f = file;
+    _f.getParentFile().mkdirs();
     _file = _f.getName();
   }
   
   protected Serializable(String file, int crc) {
     _f = new File("../data/" + crc);
+    _f.getParentFile().mkdirs();
     _file = file;
     _crc = crc;
   }
