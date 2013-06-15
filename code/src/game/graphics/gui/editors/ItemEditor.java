@@ -23,6 +23,8 @@ public class ItemEditor extends GUI implements Editor {
   
   private Label    _lblType;
   private Dropdown _drpType;
+  private Label    _lblSubtype;
+  private Dropdown _drpSubtype;
   private Label    _lblDamage;
   private Textbox  _txtDamage;
   
@@ -68,12 +70,27 @@ public class ItemEditor extends GUI implements Editor {
       _drpType.add(new Dropdown.Item(type));
     }
     _drpType.events().addSelectHandler(new Dropdown.Events.Select() {
-      public void select(Dropdown.Item item) { update(); }
+      public void select(Dropdown.Item item) {
+        updateSubtypes();
+        update();
+      }
+    });
+    
+    _lblSubtype = new Label(this);
+    _lblSubtype.setText("Subtype");
+    _lblSubtype.setXY(_drpType.getX(), _drpType.getY() + _drpType.getH() + 8);
+    
+    _drpSubtype = new Dropdown(this);
+    _drpSubtype.setXY(_lblSubtype.getX(), _lblSubtype.getY() + _lblSubtype.getH() + 4);
+    _drpSubtype.events().addSelectHandler(new Dropdown.Events.Select() {
+      public void select(graphics.shared.gui.controls.Dropdown.Item item) {
+        update();
+      }
     });
     
     _lblDamage = new Label(this);
     _lblDamage.setText("Damage");
-    _lblDamage.setXY(_drpType.getX(), _drpType.getY() + _drpType.getH() + 8);
+    _lblDamage.setXY(_drpSubtype.getX(), _drpSubtype.getY() + _drpSubtype.getH() + 8);
     
     _txtDamage = new Textbox(this);
     _txtDamage.setXY(_lblDamage.getX(), _lblDamage.getY() + _lblDamage.getH() + 4);
@@ -110,6 +127,8 @@ public class ItemEditor extends GUI implements Editor {
     _wndEditor.Controls(0).add(_drpType);
     _wndEditor.Controls(0).add(_lblDamage);
     _wndEditor.Controls(0).add(_txtDamage);
+    _wndEditor.Controls(0).add(_lblSubtype);
+    _wndEditor.Controls(0).add(_drpSubtype);
     _wndEditor.Controls(1).add(_lblName);
     _wndEditor.Controls(1).add(_txtName);
     _wndEditor.Controls(1).add(_lblNote);
@@ -173,7 +192,7 @@ public class ItemEditor extends GUI implements Editor {
     
     _item = new ItemEditorItem((Item)data);
     
-    _drpType.setSeletected(_item.getType() & Item.ITEM_TYPE_MASK);
+    _drpType.setSeletected(_item.getType() & Item.ITEM_TYPE_BITMASK);
     _txtDamage.setText(String.valueOf(_item.getDamage()));
     _txtName.setText(_item.getName());
     _txtNote.setText(_item.getNote());
@@ -188,13 +207,57 @@ public class ItemEditor extends GUI implements Editor {
       i++;
     }
     
+    updateSubtypes();
     resize();
+  }
+  
+  private void updateSubtypes() {
+    _drpSubtype.clear();
+    switch(_drpType.getSelected()) {
+      case Item.ITEM_TYPE_NONE:
+        _drpSubtype.add(new Dropdown.Item("None"));
+        break;
+        
+      case Item.ITEM_TYPE_WEAPON:
+        for(String type : Lang.ITEM_WEAPON.get()) {
+          _drpSubtype.add(new Dropdown.Item(type));
+        }
+        break;
+        
+      case Item.ITEM_TYPE_ARMOUR:
+        for(String type : Lang.ITEM_ARMOUR.get()) {
+          _drpSubtype.add(new Dropdown.Item(type));
+        }
+        break;
+        
+      case Item.ITEM_TYPE_POTION:
+        for(String type : Lang.ITEM_POTION.get()) {
+          _drpSubtype.add(new Dropdown.Item(type));
+        }
+        break;
+        
+      case Item.ITEM_TYPE_SPELL:
+        _drpSubtype.add(new Dropdown.Item("None"));
+        break;
+        
+      case Item.ITEM_TYPE_BLING:
+        for(String type : Lang.ITEM_BLING.get()) {
+          _drpSubtype.add(new Dropdown.Item(type));
+        }
+        break;
+    }
+    
+    if((_item.getType() & Item.ITEM_TYPE_BITMASK) == _drpType.getSelected()) {
+      _drpSubtype.setSeletected(_item.getType() & Item.ITEM_SUBTYPE_BITMASK);
+    } else {
+      _drpSubtype.setSeletected(0);
+    }
   }
   
   private void update() {
     DropdownSprite sprite = (DropdownSprite)_drpSprite.get();
     
-    _item.setType(_drpType.getSelected());
+    _item.setType((_drpType.getSelected() << Item.ITEM_TYPE_BITSHIFT) | (_drpSubtype.getSelected() << Item.ITEM_SUBTYPE_BITSHIFT));
     _item.setDamage(Integer.parseInt(_txtDamage.getText()));
     _item.setName(_txtName.getText());
     _item.setNote(_txtNote.getText());
