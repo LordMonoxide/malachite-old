@@ -11,6 +11,7 @@ import game.graphics.gui.editors.SpriteEditor;
 import game.language.Lang;
 import game.network.packet.Chat;
 import game.network.packet.EntityInteract;
+import game.network.packet.InvUse;
 import game.settings.Settings;
 import game.world.Entity;
 import game.world.Region;
@@ -223,6 +224,18 @@ public class Game extends GUI {
         }
       });
       
+      _sprInv[i].events().addClickHandler(new Control.Events.Click() {
+        public void click() {
+          
+        }
+        
+        public void clickDbl() {
+          if(_entity.inv(n) != null) {
+            useInv(_entity.inv(n));
+          }
+        }
+      });
+      
       _wndInv.Controls().add(_sprInv[i]);
     }
     
@@ -326,8 +339,8 @@ public class Game extends GUI {
   }
   
   public void updateStats(Entity.Stats stats) {
-    _picVital[0].setW(stats.vitalHP().max() / stats.vitalHP().val() * _picVitalBack[0].getW());
-    _picVital[1].setW(stats.vitalMP().max() / stats.vitalMP().val() * _picVitalBack[1].getW());
+    _picVital[0].setW((float)stats.vitalHP().val() / stats.vitalHP().max() * _picVitalBack[0].getW());
+    _picVital[1].setW((float)stats.vitalMP().val() / stats.vitalMP().max() * _picVitalBack[1].getW());
     _lblStatVal[0].setText(String.valueOf(stats.statSTR().val()));
     _lblStatVal[1].setText(String.valueOf(stats.statINT().val()));
     _lblStatVal[2].setText(String.valueOf(stats.statDEX().val()));
@@ -360,6 +373,10 @@ public class Game extends GUI {
     if(newInv != null) {
       _sprInv[index].setSprite(new Sprite(_game.getSprite(newInv.item().getSprite())));
     }
+  }
+  
+  private void useInv(Entity.Inv inv) {
+    _game.send(new InvUse(inv));
   }
   
   public void draw() {
