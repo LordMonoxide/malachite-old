@@ -208,7 +208,7 @@ public class Game extends GUI {
             _lblInvName.setText(_entity.inv(n).item().getName());
             
             if(_entity.inv(n).item().getType() != Item.ITEM_TYPE_NONE) {
-              _lblInvType.setText(Lang.ITEM_TYPE.text(_entity.inv(n).item().getType() & Item.ITEM_TYPE_MASK));
+              _lblInvType.setText(Lang.ITEM_TYPE.text(_entity.inv(n).item().getType() & Item.ITEM_TYPE_BITMASK));
             } else {
               _lblInvType.setText(null);
             }
