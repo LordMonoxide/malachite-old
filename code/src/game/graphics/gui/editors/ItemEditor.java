@@ -6,6 +6,7 @@ import game.Game;
 import game.data.Item;
 import game.data.Sprite;
 import game.data.util.Data;
+import game.language.Lang;
 import game.network.packet.editors.Save;
 import graphics.gl00.Context;
 import graphics.shared.gui.Control;
@@ -63,8 +64,8 @@ public class ItemEditor extends GUI implements Editor {
     
     _drpType = new Dropdown(this);
     _drpType.setXY(_lblType.getX(), _lblType.getY() + _lblType.getH() + 4);
-    for(Item.Type type : Item.Type.values()) {
-      _drpType.add(new DropdownType(type));
+    for(String type : Lang.ITEM_TYPE.get()) {
+      _drpType.add(new Dropdown.Item(type));
     }
     _drpType.events().addSelectHandler(new Dropdown.Events.Select() {
       public void select(Dropdown.Item item) { update(); }
@@ -172,7 +173,7 @@ public class ItemEditor extends GUI implements Editor {
     
     _item = new ItemEditorItem((Item)data);
     
-    _drpType.setSeletected(_item.getType().ordinal());
+    _drpType.setSeletected(_item.getType() & Item.ITEM_TYPE_MASK);
     _txtDamage.setText(String.valueOf(_item.getDamage()));
     _txtName.setText(_item.getName());
     _txtNote.setText(_item.getNote());
@@ -193,7 +194,7 @@ public class ItemEditor extends GUI implements Editor {
   private void update() {
     DropdownSprite sprite = (DropdownSprite)_drpSprite.get();
     
-    _item.setType(((DropdownType)_drpType.get())._type);
+    _item.setType(_drpType.getSelected());
     _item.setDamage(Integer.parseInt(_txtDamage.getText()));
     _item.setName(_txtName.getText());
     _item.setNote(_txtNote.getText());
@@ -206,15 +207,6 @@ public class ItemEditor extends GUI implements Editor {
     public DropdownSprite(Sprite sprite) {
       super(sprite.getName() + " - " + sprite.getNote());
       _sprite = sprite;
-    }
-  }
-  
-  private class DropdownType extends Dropdown.Item {
-    private Item.Type _type;
-    
-    public DropdownType(Item.Type type) {
-      super(type.name());
-      _type = type;
     }
   }
 }

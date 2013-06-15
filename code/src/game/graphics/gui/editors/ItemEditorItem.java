@@ -43,7 +43,7 @@ public class ItemEditorItem extends Item {
     _sprite = sprite;
   }
   
-  public void setType(Item.Type type) {
+  public void setType(int type) {
     _type = type;
   }
   
