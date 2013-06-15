@@ -13,6 +13,7 @@ import game.network.packet.EntityMoveStart;
 import game.network.packet.EntityMoveStop;
 import game.network.packet.EntityStats;
 import game.network.packet.EntityVitals;
+import game.network.packet.InvUse;
 import game.network.packet.editors.Save;
 import game.network.packet.menu.CharDel;
 import game.network.packet.menu.CharNew;
@@ -70,6 +71,7 @@ public class Client {
     Packets.add(EntityInv.class);
     Packets.add(EntityInvUpdate.class);
     Packets.add(EntityInteract.class);
+    Packets.add(InvUse.class);
   }
   
   public void connect() {
