@@ -11,6 +11,7 @@ import game.network.packet.editors.Save;
 import graphics.gl00.Context;
 import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;
+import graphics.shared.gui.controls.Checkbox;
 import graphics.shared.gui.controls.Dropdown;
 import graphics.shared.gui.controls.Label;
 import graphics.shared.gui.controls.Textbox;
@@ -33,6 +34,7 @@ public class ItemEditor extends GUI implements Editor {
   private Textbox  _txtHPHeal;
   private Label    _lblMPHeal;
   private Textbox  _txtMPHeal;
+  private Checkbox _chkPercent;
   
   private Label    _lblName;
   private Textbox  _txtName;
@@ -68,10 +70,10 @@ public class ItemEditor extends GUI implements Editor {
     
     _lblType = new Label(this);
     _lblType.setText("Type");
-    _lblType.setXY(8, 4);
+    _lblType.setXY(8, 8);
     
     _drpType = new Dropdown(this);
-    _drpType.setXY(_lblType.getX(), _lblType.getY() + _lblType.getH() + 4);
+    _drpType.setXY(_lblType.getX(), _lblType.getY() + _lblType.getH());
     for(String type : Lang.ITEM_TYPE.get()) {
       _drpType.add(new Dropdown.Item(type));
     }
@@ -87,7 +89,7 @@ public class ItemEditor extends GUI implements Editor {
     _lblSubtype.setXY(_drpType.getX(), _drpType.getY() + _drpType.getH() + 8);
     
     _drpSubtype = new Dropdown(this);
-    _drpSubtype.setXY(_lblSubtype.getX(), _lblSubtype.getY() + _lblSubtype.getH() + 4);
+    _drpSubtype.setXY(_lblSubtype.getX(), _lblSubtype.getY() + _lblSubtype.getH());
     _drpSubtype.events().addSelectHandler(new Dropdown.Events.Select() {
       public void select(graphics.shared.gui.controls.Dropdown.Item item) {
         update();
@@ -99,7 +101,7 @@ public class ItemEditor extends GUI implements Editor {
     _lblDamage.setXY(_drpSubtype.getX(), _drpSubtype.getY() + _drpSubtype.getH() + 8);
     
     _txtDamage = new Textbox(this);
-    _txtDamage.setXY(_lblDamage.getX(), _lblDamage.getY() + _lblDamage.getH() + 4);
+    _txtDamage.setXY(_lblDamage.getX(), _lblDamage.getY() + _lblDamage.getH());
     _txtDamage.setNumeric(true);
     _txtDamage.events().addChangeHandler(change);
     
@@ -108,7 +110,7 @@ public class ItemEditor extends GUI implements Editor {
     _lblHPHeal.setXY(_drpSubtype.getX(), _drpSubtype.getY() + _drpSubtype.getH() + 8);
     
     _txtHPHeal = new Textbox(this);
-    _txtHPHeal.setXY(_lblHPHeal.getX(), _lblHPHeal.getY() + _lblHPHeal.getH() + 4);
+    _txtHPHeal.setXY(_lblHPHeal.getX(), _lblHPHeal.getY() + _lblHPHeal.getH());
     _txtHPHeal.setNumeric(true);
     _txtHPHeal.events().addChangeHandler(change);
     
@@ -117,16 +119,25 @@ public class ItemEditor extends GUI implements Editor {
     _lblMPHeal.setXY(_txtHPHeal.getX(), _txtHPHeal.getY() + _txtHPHeal.getH() + 8);
     
     _txtMPHeal = new Textbox(this);
-    _txtMPHeal.setXY(_lblMPHeal.getX(), _lblMPHeal.getY() + _lblMPHeal.getH() + 4);
+    _txtMPHeal.setXY(_lblMPHeal.getX(), _lblMPHeal.getY() + _lblMPHeal.getH());
     _txtMPHeal.setNumeric(true);
     _txtMPHeal.events().addChangeHandler(change);
+    
+    _chkPercent = new Checkbox(this);
+    _chkPercent.setText("Percent");
+    _chkPercent.setXY(_txtMPHeal.getX(), _txtMPHeal.getY() + _txtMPHeal.getH() + 8);
+    _chkPercent.events().addCheckHandler(new Checkbox.Events.Checked() {
+      public void checked() {
+        update();
+      }
+    });
     
     _lblName = new Label(this);
     _lblName.setText("Name");
     _lblName.setXY(8, 4);
     
     _txtName = new Textbox(this);
-    _txtName.setXY(_lblName.getX(), _lblName.getY() + _lblName.getH() + 4);
+    _txtName.setXY(_lblName.getX(), _lblName.getY() + _lblName.getH());
     _txtName.events().addChangeHandler(change);
     
     _lblNote = new Label(this);
@@ -134,7 +145,7 @@ public class ItemEditor extends GUI implements Editor {
     _lblNote.setXY(_txtName.getX(), _txtName.getY() + _txtName.getH() + 8);
     
     _txtNote = new Textbox(this);
-    _txtNote.setXY(_lblNote.getX(), _lblNote.getY() + _lblNote.getH() + 4);
+    _txtNote.setXY(_lblNote.getX(), _lblNote.getY() + _lblNote.getH());
     _txtNote.events().addChangeHandler(change);
     
     _lblSprite = new Label(this);
@@ -149,14 +160,15 @@ public class ItemEditor extends GUI implements Editor {
     
     _wndEditor.Controls(0).add(_lblType);
     _wndEditor.Controls(0).add(_drpType);
+    _wndEditor.Controls(0).add(_lblSubtype);
+    _wndEditor.Controls(0).add(_drpSubtype);
     _wndEditor.Controls(0).add(_lblDamage);
     _wndEditor.Controls(0).add(_txtDamage);
     _wndEditor.Controls(0).add(_lblHPHeal);
     _wndEditor.Controls(0).add(_txtHPHeal);
     _wndEditor.Controls(0).add(_lblMPHeal);
     _wndEditor.Controls(0).add(_txtMPHeal);
-    _wndEditor.Controls(0).add(_lblSubtype);
-    _wndEditor.Controls(0).add(_drpSubtype);
+    _wndEditor.Controls(0).add(_chkPercent);
     _wndEditor.Controls(1).add(_lblName);
     _wndEditor.Controls(1).add(_txtName);
     _wndEditor.Controls(1).add(_lblNote);
@@ -224,6 +236,7 @@ public class ItemEditor extends GUI implements Editor {
     _txtDamage.setText(String.valueOf(_item.getDamage()));
     _txtHPHeal.setText(String.valueOf(_item.getHPHeal()));
     _txtMPHeal.setText(String.valueOf(_item.getMPHeal()));
+    _chkPercent.setChecked((_item.getType() & Item.ITEM_TYPE_POTION_HEAL_PERCENT) != 0);
     
     _txtName.setText(_item.getName());
     _txtNote.setText(_item.getNote());
@@ -250,6 +263,7 @@ public class ItemEditor extends GUI implements Editor {
     _txtHPHeal.setVisible(false);
     _lblMPHeal.setVisible(false);
     _txtMPHeal.setVisible(false);
+    _chkPercent.setVisible(false);
     
     _drpSubtype.clear();
     switch(_drpType.getSelected()) {
@@ -284,6 +298,7 @@ public class ItemEditor extends GUI implements Editor {
         _txtHPHeal.setVisible(true);
         _lblMPHeal.setVisible(true);
         _txtMPHeal.setVisible(true);
+        _chkPercent.setVisible(true);
         break;
         
       case Item.ITEM_TYPE_SPELL:
@@ -307,7 +322,10 @@ public class ItemEditor extends GUI implements Editor {
   private void update() {
     DropdownSprite sprite = (DropdownSprite)_drpSprite.get();
     
-    _item.setType((_drpType.getSelected() << Item.ITEM_TYPE_BITSHIFT) | (_drpSubtype.getSelected() << Item.ITEM_SUBTYPE_BITSHIFT));
+    int attribs = 0;
+    if(_chkPercent.getChecked()) attribs |= Item.ITEM_TYPE_POTION_HEAL_PERCENT;
+    
+    _item.setType((_drpType.getSelected() << Item.ITEM_TYPE_BITSHIFT) | (_drpSubtype.getSelected() << Item.ITEM_SUBTYPE_BITSHIFT) | attribs);
     _item.setDamage(Integer.parseInt(_txtDamage.getText()));
     _item.setHPHeal(Integer.parseInt(_txtHPHeal.getText()));
     _item.setMPHeal(Integer.parseInt(_txtMPHeal.getText()));
