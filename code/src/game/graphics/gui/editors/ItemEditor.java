@@ -29,6 +29,8 @@ public class ItemEditor extends GUI implements Editor {
   
   private Label    _lblDamage;
   private Textbox  _txtDamage;
+  private Label    _lblWeight;
+  private Textbox  _txtWeight;
   
   private Label    _lblHPHeal;
   private Textbox  _txtHPHeal;
@@ -105,6 +107,15 @@ public class ItemEditor extends GUI implements Editor {
     _txtDamage.setNumeric(true);
     _txtDamage.events().addChangeHandler(change);
     
+    _lblWeight = new Label(this);
+    _lblWeight.setText("Weight");
+    _lblWeight.setXY(_txtDamage.getX(), _txtDamage.getY() + _txtDamage.getH() + 8);
+    
+    _txtWeight = new Textbox(this);
+    _txtWeight.setXY(_lblWeight.getX(), _lblWeight.getY() + _lblWeight.getH());
+    _txtWeight.setNumeric(true);
+    _txtWeight.events().addChangeHandler(change);
+    
     _lblHPHeal = new Label(this);
     _lblHPHeal.setText("Heal HP");
     _lblHPHeal.setXY(_drpSubtype.getX(), _drpSubtype.getY() + _drpSubtype.getH() + 8);
@@ -164,6 +175,8 @@ public class ItemEditor extends GUI implements Editor {
     _wndEditor.Controls(0).add(_drpSubtype);
     _wndEditor.Controls(0).add(_lblDamage);
     _wndEditor.Controls(0).add(_txtDamage);
+    _wndEditor.Controls(0).add(_lblWeight);
+    _wndEditor.Controls(0).add(_txtWeight);
     _wndEditor.Controls(0).add(_lblHPHeal);
     _wndEditor.Controls(0).add(_txtHPHeal);
     _wndEditor.Controls(0).add(_lblMPHeal);
@@ -233,7 +246,10 @@ public class ItemEditor extends GUI implements Editor {
     _item = new ItemEditorItem((Item)data);
     
     _drpType.setSeletected((_item.getType() & Item.ITEM_TYPE_BITMASK) >> Item.ITEM_TYPE_BITSHIFT);
+    
     _txtDamage.setText(String.valueOf(_item.getDamage()));
+    _txtWeight.setText(String.valueOf(_item.getWeight()));
+    
     _txtHPHeal.setText(String.valueOf(_item.getHPHeal()));
     _txtMPHeal.setText(String.valueOf(_item.getMPHeal()));
     _chkPercent.setChecked((_item.getType() & Item.ITEM_TYPE_POTION_HEAL_PERCENT) != 0);
@@ -258,6 +274,8 @@ public class ItemEditor extends GUI implements Editor {
   private void updateSubtypes() {
     _lblDamage.setVisible(false);
     _txtDamage.setVisible(false);
+    _lblWeight.setVisible(false);
+    _txtWeight.setVisible(false);
     
     _lblHPHeal.setVisible(false);
     _txtHPHeal.setVisible(false);
@@ -278,6 +296,8 @@ public class ItemEditor extends GUI implements Editor {
         
         _lblDamage.setVisible(true);
         _txtDamage.setVisible(true);
+        _lblWeight.setVisible(true);
+        _txtWeight.setVisible(true);
         break;
         
       case Item.ITEM_TYPE_ARMOUR:
@@ -323,10 +343,17 @@ public class ItemEditor extends GUI implements Editor {
     DropdownSprite sprite = (DropdownSprite)_drpSprite.get();
     
     int attribs = 0;
-    if(_chkPercent.getChecked()) attribs |= Item.ITEM_TYPE_POTION_HEAL_PERCENT;
+    switch(_drpSubtype.getSelected() << Item.ITEM_SUBTYPE_BITSHIFT) {
+      case Item.ITEM_TYPE_POTION:
+        if(_chkPercent.getChecked()) attribs |= Item.ITEM_TYPE_POTION_HEAL_PERCENT;
+        break;
+    }
     
     _item.setType((_drpType.getSelected() << Item.ITEM_TYPE_BITSHIFT) | (_drpSubtype.getSelected() << Item.ITEM_SUBTYPE_BITSHIFT) | attribs);
+    
     _item.setDamage(Integer.parseInt(_txtDamage.getText()));
+    _item.setWeight(Float.parseFloat(_txtWeight.getText()));
+    
     _item.setHPHeal(Integer.parseInt(_txtHPHeal.getText()));
     _item.setMPHeal(Integer.parseInt(_txtMPHeal.getText()));
     

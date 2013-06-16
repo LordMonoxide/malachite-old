@@ -36,6 +36,7 @@ public class ItemEditorItem extends Item {
   public void setSprite(String sprite) { _sprite = sprite; }
   public void setType  (int type)      { _type = type; }
   public void setDamage(int damage)    { _damage = damage; }
+  public void setWeight(float weight)  { _weight = weight; }
   public void setHPHeal(int hpHeal)    { _hpHeal = hpHeal; }
   public void setMPHeal(int mpHeal)    { _mpHeal = mpHeal; }
 }
