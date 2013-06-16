@@ -362,6 +362,10 @@ public class ItemEditor extends GUI implements Editor {
     _item.setSprite(sprite != null ? sprite._sprite.getFile() : null);
   }
   
+  public boolean handleKeyDown ( int key) { return true; }
+  public boolean handleKeyUp   ( int key) { return true; }
+  public boolean handleCharDown(char key) { return true; }
+  
   private class DropdownSprite extends Dropdown.Item {
     private Sprite _sprite;
     
