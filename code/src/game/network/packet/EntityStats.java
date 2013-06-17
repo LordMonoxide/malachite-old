@@ -8,6 +8,7 @@ import network.packet.Packet;
 public class EntityStats extends Packet {
   private int _id;
   private int _str, _int, _dex;
+  private float _weight;
   
   public int getIndex() {
     return 23;
@@ -22,6 +23,7 @@ public class EntityStats extends Packet {
     _str = data.readInt();
     _int = data.readInt();
     _dex = data.readInt();
+    _weight = data.readFloat();
   }
   
   public void process() {
@@ -29,5 +31,6 @@ public class EntityStats extends Packet {
     e.stats().statSTR().val(_str);
     e.stats().statINT().val(_int);
     e.stats().statDEX().val(_dex);
+    e.stats().weight(_weight);
   }
 }
