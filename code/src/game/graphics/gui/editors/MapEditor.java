@@ -535,6 +535,11 @@ public class MapEditor extends GUI {
         _splSprite.add(new ScrollPanelSprite(s));
       }
       
+      _splItem.clear();
+      for(Map.Item d : _map._item) {
+        _splItem.add(new ScrollPanelItem(d));
+      }
+      
       _attribDrawCallback = _region.events().onDraw(new Region.Events.Draw() {
         public void event(int z) {
           if(z == Settings.Map.Depth - 1) {
