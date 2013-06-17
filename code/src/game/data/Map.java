@@ -362,6 +362,7 @@ public class Map extends Serializable {
   
   private void deserialize04(Buffer b) {
     _sprite.clear();
+    _item.clear();
     
     _x = b.getInt();
     _y = b.getInt();
