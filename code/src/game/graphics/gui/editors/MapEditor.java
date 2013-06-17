@@ -354,21 +354,6 @@ public class MapEditor extends GUI {
       }
     });
     
-    _lblItemVal = new Label(this);
-    _lblItemVal.setXY(4, 4);
-    _lblItemVal.setText("Val");
-    
-    _txtItemVal = new Textbox(this);
-    _txtItemVal.setXY(_lblItemVal.getX(), _lblItemVal.getY() + _lblItemVal.getH());
-    _txtItemVal.setW(40);
-    _txtItemVal.setNumeric(true);
-    _txtItemVal.events().addChangeHandler(new Textbox.Events.Change() {
-      public void change() {
-        _item._x = Integer.parseInt(_txtItemVal.getText());
-        _map.createItems();
-      }
-    });
-    
     _lblItemLoc = new Label(this);
     _lblItemLoc.setXY(_drpItemFile.getX(), _drpItemFile.getY() + _drpItemFile.getH() + 8);
     _lblItemLoc.setText("Location");
@@ -406,12 +391,29 @@ public class MapEditor extends GUI {
       }
     });
     
+    _lblItemVal = new Label(this);
+    _lblItemVal.setXY(_txtItemX.getX(), _txtItemX.getY() + _txtItemX.getH() + 8);
+    _lblItemVal.setText("Val");
+    
+    _txtItemVal = new Textbox(this);
+    _txtItemVal.setXY(_lblItemVal.getX(), _lblItemVal.getY() + _lblItemVal.getH());
+    _txtItemVal.setW(40);
+    _txtItemVal.setNumeric(true);
+    _txtItemVal.events().addChangeHandler(new Textbox.Events.Change() {
+      public void change() {
+        _item._val = Integer.parseInt(_txtItemVal.getText());
+        _map.createItems();
+      }
+    });
+    
     _splItem.Controls().add(_lblItemFile);
     _splItem.Controls().add(_drpItemFile);
     _splItem.Controls().add(_lblItemLoc);
     _splItem.Controls().add(_txtItemX);
     _splItem.Controls().add(_txtItemY);
     _splItem.Controls().add(_txtItemZ);
+    _splItem.Controls().add(_lblItemVal);
+    _splItem.Controls().add(_txtItemVal);
     
     _picTab[3].Controls().add(_splItem);
     
@@ -700,6 +702,7 @@ public class MapEditor extends GUI {
     _txtItemX.setText(String.valueOf(_item._x));
     _txtItemY.setText(String.valueOf(_item._y));
     _txtItemZ.setText(String.valueOf(_item._z));
+    _txtItemVal.setText(String.valueOf(_item._val));
   }
   
   private void updateItem() {
@@ -708,6 +711,7 @@ public class MapEditor extends GUI {
     _item._x = Integer.parseInt(_txtItemX.getText());
     _item._y = Integer.parseInt(_txtItemY.getText());
     _item._z = Byte.parseByte(_txtItemZ.getText());
+    _item._val = Integer.parseInt(_txtItemVal.getText());
     selItem(_item);
   }
   
