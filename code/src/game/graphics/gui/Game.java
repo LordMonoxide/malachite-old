@@ -63,6 +63,11 @@ public class Game extends GUI {
   private Label     _lblInvName;
   private Label     _lblInvType;
   
+  private game.graphics.gui.controls.Sprite   _sprHand1;
+  private game.graphics.gui.controls.Sprite   _sprHand2;
+  private game.graphics.gui.controls.Sprite[] _sprArmour;
+  private game.graphics.gui.controls.Sprite[] _sprBling;
+  
   private Menu _mnuItem;
   
   private Entity _selectedEntity;
@@ -274,8 +279,48 @@ public class Game extends GUI {
     _picItemDesc.Controls().add(_lblInvName);
     _picItemDesc.Controls().add(_lblInvType);
     
+    float x = _sprInv[0].getX();
+    float y = 5 * 34 + 8;
+    
+    _sprHand1 = new game.graphics.gui.controls.Sprite(this);
+    _sprHand1.setBackColour(new float[] {0, 0, 0, 1});
+    _sprHand1.setBorderColour(new float[] {1, 1, 1, 1});
+    _sprHand1.setXYWH(x, y, 32, 32);
+    _wndInv.Controls().add(_sprHand1);
+    x += 34;
+    
+    _sprHand2 = new game.graphics.gui.controls.Sprite(this);
+    _sprHand2.setBackColour(new float[] {0, 0, 0, 1});
+    _sprHand2.setBorderColour(new float[] {1, 1, 1, 1});
+    _sprHand2.setXYWH(x, y, 32, 32);
+    _wndInv.Controls().add(_sprHand2);
+    x += 68;
+    
+    _sprBling = new game.graphics.gui.controls.Sprite[Item.ITEM_TYPE_BLING_COUNT];
+    for(int i = 0; i < Item.ITEM_TYPE_BLING_COUNT; i++) {
+      _sprBling[i] = new game.graphics.gui.controls.Sprite(this);
+      _sprBling[i].setBackColour(new float[] {0, 0, 0, 1});
+      _sprBling[i].setBorderColour(new float[] {1, 1, 1, 1});
+      _sprBling[i].setXYWH(x, y, 32, 32);
+      _wndInv.Controls().add(_sprBling[i]);
+      x += 34;
+    }
+    
+    x = _sprInv[0].getX();
+    y += 34;
+    
+    _sprArmour = new game.graphics.gui.controls.Sprite[Item.ITEM_TYPE_ARMOUR_COUNT];
+    for(int i = 0; i < Item.ITEM_TYPE_ARMOUR_COUNT; i++) {
+      _sprArmour[i] = new game.graphics.gui.controls.Sprite(this);
+      _sprArmour[i].setBackColour(new float[] {0, 0, 0, 1});
+      _sprArmour[i].setBorderColour(new float[] {1, 1, 1, 1});
+      _sprArmour[i].setXYWH(x, y, 32, 32);
+      _wndInv.Controls().add(_sprArmour[i]);
+      x += 34;
+    }
+    
     _wndInv.setText("Inventory");
-    _wndInv.setClientWH(8 * 34 + 8, 5 * 34 + 8);
+    _wndInv.setClientWH(8 * 34 + 8, y + 38);
     _wndInv.setVisible(false);
     
     _mnuItem = new Menu(this);
@@ -389,6 +434,36 @@ public class Game extends GUI {
     
     if(newInv != null) {
       _sprInv[index].setSprite(new Sprite(_game.getSprite(newInv.item().getSprite())));
+    }
+  }
+  
+  public void updateEquip(Entity.Equip equip) {
+    if(_sprHand1.getSprite() != null) {
+      if(equip.hand1() != null) {
+        _sprHand1.setSprite(new Sprite(_game.getSprite(equip.hand1().item().getSprite())));
+      }
+    }
+    
+    if(_sprHand2.getSprite() != null) {
+      if(equip.hand2() != null) {
+        _sprHand2.setSprite(new Sprite(_game.getSprite(equip.hand2().item().getSprite())));
+      }
+    }
+    
+    for(int i = 0; i < Item.ITEM_TYPE_ARMOUR_COUNT; i++) {
+      if(_sprArmour[i].getSprite() != null) {
+        if(equip.armour(i) != null) {
+          _sprArmour[i].setSprite(new Sprite(_game.getSprite(equip.armour(i).item().getSprite())));
+        }
+      }
+    }
+    
+    for(int i = 0; i < Item.ITEM_TYPE_BLING_COUNT; i++) {
+      if(_sprBling[i].getSprite() != null) {
+        if(equip.bling(i) != null) {
+          _sprBling[i].setSprite(new Sprite(_game.getSprite(equip.bling(i).item().getSprite())));
+        }
+      }
     }
   }
   
@@ -653,6 +728,10 @@ public class Game extends GUI {
 
     public void updateInv(Entity.Inv oldInv, Entity.Inv newInv) {
       _game.updateInv(oldInv, newInv);
+    }
+    
+    public void updateEquip(Entity.Equip equip) {
+      _game.updateEquip(equip);
     }
   }
 }
