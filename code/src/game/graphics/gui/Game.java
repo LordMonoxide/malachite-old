@@ -53,6 +53,8 @@ public class Game extends GUI {
   private Label[]   _lblVital;
   private Label[]   _lblStat;
   private Label[]   _lblStatVal;
+  private Label     _lblWeight;
+  private Label     _lblWeightVal;
   
   private Window    _wndInv;
   private game.graphics.gui.controls.Sprite[] _sprInv;
@@ -174,7 +176,7 @@ public class Game extends GUI {
     for(int i = 0; i < _lblStat.length; i++) {
       _lblStat[i] = new Label(this);
       _lblStat[i].setText(Lang.STAT_ABBV.text(i) + ":");
-      _lblStat[i].setY(_lblVital[1].getY() + _lblVital[1].getH() * (i + 1) + 2);
+      _lblStat[i].setY(_lblVital[_lblVital.length - 1].getY() + _lblVital[_lblVital.length - 1].getH() * (i + 1) + 2);
       
       _lblStatVal[i] = new Label(this);
       _lblStatVal[i].setY(_lblStat[i].getY());
@@ -182,6 +184,16 @@ public class Game extends GUI {
       Controls().add(_lblStat[i]);
       Controls().add(_lblStatVal[i]);
     }
+    
+    _lblWeight = new Label(this);
+    _lblWeight.setText("Weight:");
+    _lblWeight.setY(_lblStat[_lblStat.length - 1].getY() + _lblStat[_lblStat.length - 1].getH());
+    
+    _lblWeightVal = new Label(this);
+    _lblWeightVal.setY(_lblWeight.getY());
+    
+    Controls().add(_lblWeight);
+    Controls().add(_lblWeightVal);
     
     _wndInv = new Window(this);
     _sprInv = new game.graphics.gui.controls.Sprite[Settings.Player.Inventory.Size];
@@ -336,6 +348,9 @@ public class Game extends GUI {
       _lblStatVal[i].setX(_picVitalBack[0].getX());
     }
     
+    _lblWeight.setX(_picVitalBack[0].getX() - _lblWeight.getW() - 4);
+    _lblWeightVal.setX(_picVitalBack[0].getX());
+    
     _game.updateCamera();
   }
   
@@ -345,6 +360,7 @@ public class Game extends GUI {
     _lblStatVal[0].setText(String.valueOf(stats.statSTR().val()));
     _lblStatVal[1].setText(String.valueOf(stats.statINT().val()));
     _lblStatVal[2].setText(String.valueOf(stats.statDEX().val()));
+    _lblWeightVal.setText(String.valueOf(stats.weight()));
   }
   
   public void updateInv(Entity.Inv[] inv) {
