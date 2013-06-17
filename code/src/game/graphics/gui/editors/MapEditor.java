@@ -15,6 +15,7 @@ import game.data.Item;
 import game.data.Map;
 import game.data.Sprite;
 import game.data.util.Data;
+import game.graphics.gui.Message;
 import game.network.packet.editors.Save;
 import game.settings.Settings;
 import game.world.Region;
@@ -613,9 +614,12 @@ public class MapEditor extends GUI {
   }
   
   private void delSprite() {
-    _map._sprite.remove(_sprite);
-    _splSprite.remove();
-    _map.createSprites();
+    if(_map._sprite.remove(_sprite)) {
+      _splSprite.remove();
+      _map.createSprites();
+    } else {
+      Message.show("Error", "Couldn't delete sprite");
+    }
   }
   
   private void selSprite(Map.Sprite sprite) {
@@ -669,9 +673,12 @@ public class MapEditor extends GUI {
   }
   
   private void delItem() {
-    _map._sprite.remove(_item);
-    _splItem.remove();
-    _map.createItems();
+    if(_map._item.remove(_item)) {
+      _splItem.remove();
+      _map.createItems();
+    } else {
+      Message.show("Error", "Couldn't delete item");
+    }
   }
   
   private void selItem(Map.Item item) {
@@ -698,9 +705,9 @@ public class MapEditor extends GUI {
   private void updateItem() {
     DropdownItem item = (DropdownItem)_drpItemFile.get();
     _item._file = item != null ? item._item.getFile() : null;
-    _item._x = Integer.parseInt(_txtSpriteX.getText());
-    _item._y = Integer.parseInt(_txtSpriteY.getText());
-    _item._z = Byte.parseByte(_txtSpriteZ.getText());
+    _item._x = Integer.parseInt(_txtItemX.getText());
+    _item._y = Integer.parseInt(_txtItemY.getText());
+    _item._z = Byte.parseByte(_txtItemZ.getText());
     selItem(_item);
   }
   
