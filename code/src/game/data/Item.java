@@ -106,6 +106,7 @@ public class Item extends Serializable implements Data {
   public static final int ITEM_TYPE_ARMOUR_HAND         = 0x02 * 0x10;
   public static final int ITEM_TYPE_ARMOUR_LEGS         = 0x03 * 0x10;
   public static final int ITEM_TYPE_ARMOUR_FEET         = 0x04 * 0x10;
+  public static final int ITEM_TYPE_ARMOUR_COUNT        = 5;
   
   public static final int ITEM_TYPE_POTION              = 0x04;
   public static final int ITEM_TYPE_POTION_HEAL         = 0x00 * 0x10;
@@ -117,4 +118,5 @@ public class Item extends Serializable implements Data {
   public static final int ITEM_TYPE_BLING               = 0x06;
   public static final int ITEM_TYPE_BLING_RING          = 0x00 * 0x10;
   public static final int ITEM_TYPE_BLING_AMULET        = 0x01 * 0x10;
+  public static final int ITEM_TYPE_BLING_COUNT         = 2;
 }
