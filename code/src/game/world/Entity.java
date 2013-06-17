@@ -233,6 +233,7 @@ public class Entity extends Movable {
     
     private Vital _hp, _mp;
     private Stat  _str, _int, _dex;
+    private float _weight;
     
     private Stats(Entity entity) {
       _entity = entity;
@@ -249,6 +250,9 @@ public class Entity extends Movable {
     public Stat  statSTR() { return _str; }
     public Stat  statINT() { return _int; }
     public Stat  statDEX() { return _dex; }
+    
+    public float weight()             { return _weight; }
+    public void  weight(float weight) { _weight = weight; }
     
     public static class Vital {
       private Entity _entity;
