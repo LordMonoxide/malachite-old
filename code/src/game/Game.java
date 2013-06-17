@@ -263,6 +263,7 @@ public class Game implements graphics.gl00.Game {
             _entity.events().addInvHandler(new Entity.Events.Inv() {
               public void update(Entity e)                         { if(_gameListener != null) _gameListener.updateInv(e.inv()); }
               public void update(Entity e, Inv oldInv, Inv newInv) { if(_gameListener != null) _gameListener.updateInv(oldInv, newInv); }
+              public void equip (Entity e, Entity.Equip equip)     { if(_gameListener != null) _gameListener.updateEquip(equip); }
             });
             
             p.process();
@@ -325,6 +326,7 @@ public class Game implements graphics.gl00.Game {
     public void updateStats(Entity.Stats stats);
     public void updateInv(Entity.Inv[] inv);
     public void updateInv(Entity.Inv oldInv, Entity.Inv newInv);
+    public void updateEquip(Entity.Equip equip);
   }
   
   public static abstract class PacketCallback<T extends Packet> {
