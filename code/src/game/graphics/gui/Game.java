@@ -443,6 +443,7 @@ public class Game extends GUI {
     resize();
     updateStats(_entity.stats());
     updateInv(_entity.inv());
+    updateEquip(_entity.equip());
     
     _loaded = true;
   }
@@ -501,7 +502,6 @@ public class Game extends GUI {
     if(index == -1) return;
     
     if(_sprInv[index].getSprite() != null) {
-      _sprInv[index].getSprite().remove();
       _sprInv[index].setSprite(null);
     }
     
@@ -511,31 +511,28 @@ public class Game extends GUI {
   }
   
   public void updateEquip(Entity.Equip equip) {
-    if(_sprHand1.getSprite() != null) {
-      if(equip.hand1() != null) {
-        _sprHand1.setSprite(new Sprite(_game.getSprite(equip.hand1().item().getSprite())));
-      }
+    if(_sprHand1.getSprite() != null) _sprHand1.setSprite(null);
+    if(_sprHand2.getSprite() != null) _sprHand2.setSprite(null);
+    
+    if(equip.hand1() != null) {
+      _sprHand1.setSprite(new Sprite(_game.getSprite(equip.hand1().getSprite())));
     }
     
-    if(_sprHand2.getSprite() != null) {
-      if(equip.hand2() != null) {
-        _sprHand2.setSprite(new Sprite(_game.getSprite(equip.hand2().item().getSprite())));
-      }
+    if(equip.hand2() != null) {
+      _sprHand2.setSprite(new Sprite(_game.getSprite(equip.hand2().getSprite())));
     }
     
     for(int i = 0; i < Item.ITEM_TYPE_ARMOUR_COUNT; i++) {
-      if(_sprArmour[i].getSprite() != null) {
-        if(equip.armour(i) != null) {
-          _sprArmour[i].setSprite(new Sprite(_game.getSprite(equip.armour(i).item().getSprite())));
-        }
+      if(_sprArmour[i].getSprite() != null) _sprArmour[i].setSprite(null);
+      if(equip.armour(i) != null) {
+        _sprArmour[i].setSprite(new Sprite(_game.getSprite(equip.armour(i).getSprite())));
       }
     }
     
     for(int i = 0; i < Item.ITEM_TYPE_BLING_COUNT; i++) {
-      if(_sprBling[i].getSprite() != null) {
-        if(equip.bling(i) != null) {
-          _sprBling[i].setSprite(new Sprite(_game.getSprite(equip.bling(i).item().getSprite())));
-        }
+      if(_sprBling[i].getSprite() != null) _sprBling[i].setSprite(null);
+      if(equip.bling(i) != null) {
+        _sprBling[i].setSprite(new Sprite(_game.getSprite(equip.bling(i).getSprite())));
       }
     }
   }
