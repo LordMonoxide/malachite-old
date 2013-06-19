@@ -62,6 +62,9 @@ public class Game extends GUI {
   private game.graphics.gui.controls.Sprite _sprInvHover;
   private Label     _lblInvName;
   private Label     _lblInvType;
+  private Label     _lblInvVal;
+  
+  private Sprite    _selectedInv;
   
   private game.graphics.gui.controls.Sprite   _sprHand1;
   private game.graphics.gui.controls.Sprite   _sprHand2;
@@ -225,6 +228,9 @@ public class Game extends GUI {
             _sprInvHover.setSprite(_sprInv[n].getSprite());
             _lblInvName.setText(_entity.inv(n).item().getName());
             
+            _lblInvVal.setText(String.valueOf(_entity.inv(n).val()));
+            _lblInvVal.setVisible(_entity.inv(n).val() != 0);
+            
             if(_entity.inv(n).item().getType() != Item.ITEM_TYPE_NONE) {
               _lblInvType.setText(Lang.ITEM_TYPE.text(_entity.inv(n).item().getType() & Item.ITEM_TYPE_BITMASK));
             } else {
@@ -254,6 +260,32 @@ public class Game extends GUI {
         }
       });
       
+      _sprInv[i].events().addMouseHandler(new Control.Events.Mouse() {
+        public void up(int x, int y, int button) {
+          
+        }
+        
+        public void down(int x, int y, int button) {
+          
+        }
+        
+        public void move(int x, int y, int button) {
+          if(_selectedInv == null) {
+            if(button == 0) {
+              _selectedInv = new Sprite(_sprInv[n].getSprite().getSource());
+              
+              _context.setCursor(new Context.CursorCallback() {
+                public void draw() {
+                  _selectedInv.setX(_context.getMouseX());
+                  _selectedInv.setY(_context.getMouseY());
+                  _selectedInv.draw();
+                }
+              });
+            }
+          }
+        }
+      });
+      
       _wndInv.Controls().add(_sprInv[i]);
     }
     
@@ -268,6 +300,10 @@ public class Game extends GUI {
     _sprInvHover.setBackColour(new float[] {0, 0, 0, 1});
     _sprInvHover.setBorderColour(new float[] {1, 1, 1, 1});
     _sprInvHover.setXYWH(3, 3, 32, 32);
+    
+    _lblInvVal = new Label(this);
+    _lblInvVal.setXY(2, 2);
+    _sprInvHover.Controls().add(_lblInvVal);
     
     _lblInvName = new Label(this);
     _lblInvName.setXY(_sprInvHover.getX() + _sprInvHover.getW() + 4, _sprInvHover.getY());
