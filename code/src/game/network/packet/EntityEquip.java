@@ -7,7 +7,7 @@ import io.netty.buffer.ByteBuf;
 import network.packet.Packet;
 
 public class EntityEquip extends Packet {
-  private int   _id;
+  private int      _id;
   private String   _hand1;
   private String   _hand2;
   private String[] _armour = new String[Item.ITEM_TYPE_ARMOUR_COUNT];
@@ -59,7 +59,7 @@ public class EntityEquip extends Packet {
   public void process() {
     Game game = Game.getInstance();
     
-    Entity e = Game.getInstance().getWorld().getEntity(_id);
+    Entity e = game.getWorld().getEntity(_id);
     
     if(_hand1 != null) e.equip().hand1(game.getItem(_hand1));
     if(_hand2 != null) e.equip().hand2(game.getItem(_hand2));
