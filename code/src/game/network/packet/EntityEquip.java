@@ -8,10 +8,10 @@ import network.packet.Packet;
 
 public class EntityEquip extends Packet {
   private int   _id;
-  private int   _hand1;
-  private int   _hand2;
-  private int[] _armour = new int[Item.ITEM_TYPE_ARMOUR_COUNT];
-  private int[] _bling  = new int[Item.ITEM_TYPE_BLING_COUNT];
+  private String   _hand1;
+  private String   _hand2;
+  private String[] _armour = new String[Item.ITEM_TYPE_ARMOUR_COUNT];
+  private String[] _bling  = new String[Item.ITEM_TYPE_BLING_COUNT];
   
   public int getIndex() {
     return 29;
@@ -23,30 +23,53 @@ public class EntityEquip extends Packet {
   
   public void deserialize(ByteBuf data) throws NotEnoughDataException {
     _id = data.readInt();
-    _hand1 = data.readByte();
-    _hand2 = data.readByte();
+    
+    int size;
+    byte[] arr;
+    
+    if((size = data.readByte()) != 0) {
+      arr = new byte[size];
+      data.readBytes(arr);
+      _hand1 = new String(arr);
+    }
+    
+    if((size = data.readByte()) != 0) {
+      arr = new byte[size];
+      data.readBytes(arr);
+      _hand2 = new String(arr);
+    }
     
     for(int i = 0; i < Item.ITEM_TYPE_ARMOUR_COUNT; i++) {
-      _armour[i] = data.readByte();
+      if((size = data.readByte()) != 0) {
+        arr = new byte[size];
+        data.readBytes(arr);
+        _armour[i] = new String(arr);
+      }
     }
     
     for(int i = 0; i < Item.ITEM_TYPE_BLING_COUNT; i++) {
-      _bling[i] = data.readByte();
+      if((size = data.readByte()) != 0) {
+        arr = new byte[size];
+        data.readBytes(arr);
+        _bling[i] = new String(arr);
+      }
     }
   }
   
   public void process() {
+    Game game = Game.getInstance();
+    
     Entity e = Game.getInstance().getWorld().getEntity(_id);
     
-    if(_hand1 != -1) e.equip().hand1(e.inv(_hand1));
-    if(_hand2 != -1) e.equip().hand2(e.inv(_hand1));
+    if(_hand1 != null) e.equip().hand1(game.getItem(_hand1));
+    if(_hand2 != null) e.equip().hand2(game.getItem(_hand2));
     
     for(int i = 0; i < Item.ITEM_TYPE_ARMOUR_COUNT; i++) {
-      if(_armour[i] != -1) e.equip().armour(i, e.inv(_armour[i]));
+      if(_armour[i] != null) e.equip().armour(i, game.getItem(_armour[i]));
     }
     
     for(int i = 0; i < Item.ITEM_TYPE_BLING_COUNT; i++) {
-      if(_bling[i] != -1) e.equip().bling(i, e.inv(_bling[i]));
+      if(_bling[i] != null) e.equip().bling(i, game.getItem(_bling[i]));
     }
   }
 }
