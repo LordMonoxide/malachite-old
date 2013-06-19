@@ -300,6 +300,10 @@ public class ItemEditor extends GUI implements Editor {
         _txtWeight.setVisible(true);
         break;
         
+      case Item.ITEM_TYPE_SHIELD:
+        _drpSubtype.add(new Dropdown.Item("None"));
+        break;
+        
       case Item.ITEM_TYPE_ARMOUR:
         for(String type : Lang.ITEM_ARMOUR.get()) {
           _drpSubtype.add(new Dropdown.Item(type));
