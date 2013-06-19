@@ -12,6 +12,7 @@ import game.language.Lang;
 import game.network.packet.Chat;
 import game.network.packet.EntityInteract;
 import game.network.packet.InvUse;
+import game.network.packet.InvSwap;
 import game.settings.Settings;
 import game.world.Entity;
 import game.world.Region;
@@ -64,7 +65,10 @@ public class Game extends GUI {
   private Label     _lblInvType;
   private Label     _lblInvVal;
   
-  private Sprite    _selectedInv;
+  private game.graphics.gui.controls.Sprite _sprSelectedInv;
+  private Label _lblSelectedInvVal;
+  private Entity.Inv _selectedInv;
+  
   
   private game.graphics.gui.controls.Sprite   _sprHand1;
   private game.graphics.gui.controls.Sprite   _sprHand2;
@@ -262,7 +266,44 @@ public class Game extends GUI {
       
       _sprInv[i].events().addMouseHandler(new Control.Events.Mouse() {
         public void up(int x, int y, int button) {
-          
+          if(button == 0) {
+            if(!_sprSelectedInv.getVisible()) {
+              _sprSelectedInv.setSprite(new Sprite(_sprInv[n].getSprite().getSource()));
+              _sprSelectedInv.setVisible(true);
+              _lblSelectedInvVal.setText(String.valueOf(_entity.inv(n).val()));
+              _lblSelectedInvVal.setVisible(_entity.inv(n).val() != 0);
+              
+              _selectedInv = _entity.inv(n);
+              updateInv(_entity.inv(n), null);
+              _entity.inv(n, null);
+              
+              _picItemDesc.setVisible(false);
+              
+              _context.setCursor(new Context.CursorCallback() {
+                public void draw() {
+                  _sprSelectedInv.setX(_context.getMouseX() - _sprSelectedInv.getW() / 2);
+                  _sprSelectedInv.setY(_context.getMouseY() - _sprSelectedInv.getH() / 2);
+                  _sprSelectedInv.draw();
+                }
+              });
+            } else {
+              _context.setCursor(null);
+              _sprSelectedInv.setVisible(false);
+              
+              if(n == _selectedInv.index()) {
+                updateInv(null, _selectedInv);
+                _entity.inv(n, _selectedInv);
+                _selectedInv = null;
+                return;
+              }
+              
+              if(_entity.inv(n) == null) {
+                _game.send(new InvSwap(_selectedInv.index(), n, _selectedInv.val()));
+              }
+              
+              _selectedInv = null;
+            }
+          }
         }
         
         public void down(int x, int y, int button) {
@@ -270,19 +311,7 @@ public class Game extends GUI {
         }
         
         public void move(int x, int y, int button) {
-          if(_selectedInv == null) {
-            if(button == 0) {
-              _selectedInv = new Sprite(_sprInv[n].getSprite().getSource());
-              
-              _context.setCursor(new Context.CursorCallback() {
-                public void draw() {
-                  _selectedInv.setX(_context.getMouseX());
-                  _selectedInv.setY(_context.getMouseY());
-                  _selectedInv.draw();
-                }
-              });
-            }
-          }
+          
         }
       });
       
@@ -314,6 +343,14 @@ public class Game extends GUI {
     _picItemDesc.Controls().add(_sprInvHover);
     _picItemDesc.Controls().add(_lblInvName);
     _picItemDesc.Controls().add(_lblInvType);
+    
+    _lblSelectedInvVal = new Label(this);
+    _lblSelectedInvVal.setXY(2, 2);
+    
+    _sprSelectedInv = new game.graphics.gui.controls.Sprite(this);
+    _sprSelectedInv.setWH(32, 32);
+    _sprSelectedInv.setVisible(false);
+    _sprSelectedInv.Controls().add(_lblSelectedInvVal);
     
     float x = _sprInv[0].getX();
     float y = 5 * 34 + 8;
@@ -731,7 +768,7 @@ public class Game extends GUI {
     }
   }
   
-  public static class Listener implements game.Game.GameStateListener {
+  public class Listener implements game.Game.GameStateListener {
     private Game _game;
     
     public Listener(Game game) {
