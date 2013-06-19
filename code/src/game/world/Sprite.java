@@ -87,6 +87,8 @@ public class Sprite {
   private double _timer;
   
   public Sprite(game.data.Sprite sprite) {
+    if(sprite == null) return;
+    
     _events = new Events();
     _source = sprite;
     _visible = true;
