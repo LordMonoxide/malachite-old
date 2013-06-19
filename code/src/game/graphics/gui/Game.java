@@ -359,6 +359,31 @@ public class Game extends GUI {
     _sprHand1.setBackColour(new float[] {0, 0, 0, 1});
     _sprHand1.setBorderColour(new float[] {1, 1, 1, 1});
     _sprHand1.setXYWH(x, y, 32, 32);
+    _sprHand1.events().addMouseHandler(new Control.Events.Mouse() {
+      public void move(int x, int y, int button) { }
+      public void down(int x, int y, int button) { }
+      public void up(int x, int y, int button) {
+        if(button == 0) {
+          if(_sprSelectedInv.getVisible()) {
+            switch(_selectedInv.item().getType() & Item.ITEM_TYPE_BITMASK) {
+              case Item.ITEM_TYPE_WEAPON:
+              case Item.ITEM_TYPE_SHIELD:
+                break;
+                
+              default:
+                return;
+            }
+            
+            if(_entity.equip().hand1() != null) return;
+            
+            _game.send(new InvUse(_selectedInv, 0));
+            _context.setCursor(null, (int)(_sprHand1.getAllX() + _sprHand1.getW() / 2), (int)(_sprHand1.getAllY() + _sprHand1.getH() / 2));
+            _sprSelectedInv.setVisible(false);
+            _selectedInv = null;
+          }
+        }
+      }
+    });
     _wndInv.Controls().add(_sprHand1);
     x += 34;
     
@@ -366,15 +391,60 @@ public class Game extends GUI {
     _sprHand2.setBackColour(new float[] {0, 0, 0, 1});
     _sprHand2.setBorderColour(new float[] {1, 1, 1, 1});
     _sprHand2.setXYWH(x, y, 32, 32);
+    _sprHand2.events().addMouseHandler(new Control.Events.Mouse() {
+      public void move(int x, int y, int button) { }
+      public void down(int x, int y, int button) { }
+      public void up(int x, int y, int button) {
+        if(button == 0) {
+          if(_sprSelectedInv.getVisible()) {
+            switch(_selectedInv.item().getType() & Item.ITEM_TYPE_BITMASK) {
+              case Item.ITEM_TYPE_WEAPON:
+              case Item.ITEM_TYPE_SHIELD:
+                break;
+                
+              default:
+                return;
+            }
+            
+            if(_entity.equip().hand2() != null) return;
+            
+            _game.send(new InvUse(_selectedInv, 1));
+            _context.setCursor(null, (int)(_sprHand2.getAllX() + _sprHand2.getW() / 2), (int)(_sprHand2.getAllY() + _sprHand2.getH() / 2));
+            _sprSelectedInv.setVisible(false);
+            _selectedInv = null;
+          }
+        }
+      }
+    });
     _wndInv.Controls().add(_sprHand2);
     x += 68;
     
     _sprBling = new game.graphics.gui.controls.Sprite[Item.ITEM_TYPE_BLING_COUNT];
     for(int i = 0; i < Item.ITEM_TYPE_BLING_COUNT; i++) {
+      final int n = i;
       _sprBling[i] = new game.graphics.gui.controls.Sprite(this);
       _sprBling[i].setBackColour(new float[] {0, 0, 0, 1});
       _sprBling[i].setBorderColour(new float[] {1, 1, 1, 1});
       _sprBling[i].setXYWH(x, y, 32, 32);
+      _sprBling[i].events().addMouseHandler(new Control.Events.Mouse() {
+        public void move(int x, int y, int button) { }
+        public void down(int x, int y, int button) { }
+        public void up(int x, int y, int button) {
+          if(button == 0) {
+            if(_sprSelectedInv.getVisible()) {
+              if((_selectedInv.item().getType() & Item.ITEM_TYPE_BITMASK) != Item.ITEM_TYPE_BLING) return;
+              if((_selectedInv.item().getType() & Item.ITEM_SUBTYPE_BITMASK) != n << Item.ITEM_SUBTYPE_BITSHIFT) return;
+              
+              if(_entity.equip().bling(n) != null) return;
+              
+              _game.send(new InvUse(_selectedInv));
+              _context.setCursor(null, (int)(_sprBling[n].getAllX() + _sprBling[n].getW() / 2), (int)(_sprBling[n].getAllY() + _sprBling[n].getH() / 2));
+              _sprSelectedInv.setVisible(false);
+              _selectedInv = null;
+            }
+          }
+        }
+      });
       _wndInv.Controls().add(_sprBling[i]);
       x += 34;
     }
@@ -384,10 +454,29 @@ public class Game extends GUI {
     
     _sprArmour = new game.graphics.gui.controls.Sprite[Item.ITEM_TYPE_ARMOUR_COUNT];
     for(int i = 0; i < Item.ITEM_TYPE_ARMOUR_COUNT; i++) {
+      final int n = i;
       _sprArmour[i] = new game.graphics.gui.controls.Sprite(this);
       _sprArmour[i].setBackColour(new float[] {0, 0, 0, 1});
       _sprArmour[i].setBorderColour(new float[] {1, 1, 1, 1});
       _sprArmour[i].setXYWH(x, y, 32, 32);
+      _sprArmour[i].events().addMouseHandler(new Control.Events.Mouse() {
+        public void move(int x, int y, int button) { }
+        public void down(int x, int y, int button) { }
+        public void up(int x, int y, int button) {
+          if(button == 0) {
+            if(_sprSelectedInv.getVisible()) {
+              if((_selectedInv.item().getType() & Item.ITEM_TYPE_BITMASK) != Item.ITEM_TYPE_ARMOUR) return;
+              if((_selectedInv.item().getType() & Item.ITEM_SUBTYPE_BITMASK) != n << Item.ITEM_SUBTYPE_BITSHIFT) return;
+              if(_entity.equip().armour(n) != null) return;
+              
+              _game.send(new InvUse(_selectedInv, 0));
+              _context.setCursor(null, (int)(_sprArmour[n].getAllX() + _sprArmour[n].getW() / 2), (int)(_sprArmour[n].getAllY() + _sprArmour[n].getH() / 2));
+              _sprSelectedInv.setVisible(false);
+              _selectedInv = null;
+            }
+          }
+        }
+      });
       _wndInv.Controls().add(_sprArmour[i]);
       x += 34;
     }
