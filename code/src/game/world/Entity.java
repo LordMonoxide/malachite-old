@@ -325,20 +325,20 @@ public class Entity extends Movable {
       _entity = entity;
     }
     
-    private Entity.Inv   _hand1;
-    private Entity.Inv   _hand2;
-    private Entity.Inv[] _armour = new Entity.Inv[Item.ITEM_TYPE_ARMOUR_COUNT];
-    private Entity.Inv[] _bling  = new Entity.Inv[Item.ITEM_TYPE_BLING_COUNT];
+    private Item   _hand1;
+    private Item   _hand2;
+    private Item[] _armour = new Item[Item.ITEM_TYPE_ARMOUR_COUNT];
+    private Item[] _bling  = new Item[Item.ITEM_TYPE_BLING_COUNT];
     
-    public Entity.Inv hand1()          { return _hand1; }
-    public Entity.Inv hand2()          { return _hand2; }
-    public Entity.Inv armour(int type) { return _armour[type]; }
-    public Entity.Inv bling (int type) { return _bling [type]; }
+    public Item hand1()          { return _hand1; }
+    public Item hand2()          { return _hand2; }
+    public Item armour(int type) { return _armour[type]; }
+    public Item bling (int type) { return _bling [type]; }
     
-    public void hand1 (Entity.Inv inv)           { _hand1        = inv; _entity._events.raiseInvEquip(this); }
-    public void hand2 (Entity.Inv inv)           { _hand2        = inv; _entity._events.raiseInvEquip(this); }
-    public void armour(int type, Entity.Inv inv) { _armour[type] = inv; _entity._events.raiseInvEquip(this); }
-    public void bling (int type, Entity.Inv inv) { _bling [type] = inv; _entity._events.raiseInvEquip(this); }
+    public void hand1 (Item item)           { _hand1        = item; _entity._events.raiseInvEquip(this); }
+    public void hand2 (Item item)           { _hand2        = item; _entity._events.raiseInvEquip(this); }
+    public void armour(int type, Item item) { _armour[type] = item; _entity._events.raiseInvEquip(this); }
+    public void bling (int type, Item item) { _bling [type] = item; _entity._events.raiseInvEquip(this); }
   }
   
   public enum Type {
