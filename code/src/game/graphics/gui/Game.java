@@ -285,9 +285,9 @@ public class Game extends GUI {
                   _sprSelectedInv.setY(_context.getMouseY() - _sprSelectedInv.getH() / 2);
                   _sprSelectedInv.draw();
                 }
-              });
+              }, (int)(_sprInv[n].getAllX() + _sprInv[n].getW() / 2), (int)(_sprInv[n].getAllY() + _sprInv[n].getH() / 2));
             } else {
-              _context.setCursor(null);
+              _context.setCursor(null, (int)(_sprInv[n].getAllX() + _sprInv[n].getW() / 2), (int)(_sprInv[n].getAllY() + _sprInv[n].getH() / 2));
               _sprSelectedInv.setVisible(false);
               
               if(n == _selectedInv.index()) {
