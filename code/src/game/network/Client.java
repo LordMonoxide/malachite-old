@@ -16,6 +16,7 @@ import game.network.packet.EntityStats;
 import game.network.packet.EntityVitals;
 import game.network.packet.InvDrop;
 import game.network.packet.InvSwap;
+import game.network.packet.InvUnequip;
 import game.network.packet.InvUse;
 import game.network.packet.editors.Save;
 import game.network.packet.menu.CharDel;
@@ -78,6 +79,7 @@ public class Client {
     Packets.add(EntityEquip.class);
     Packets.add(InvSwap.class);
     Packets.add(InvDrop.class);
+    Packets.add(InvUnequip.class);
   }
   
   public void connect() {
