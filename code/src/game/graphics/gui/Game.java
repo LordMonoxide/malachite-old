@@ -11,6 +11,7 @@ import game.graphics.gui.editors.SpriteEditor;
 import game.language.Lang;
 import game.network.packet.Chat;
 import game.network.packet.EntityInteract;
+import game.network.packet.InvDrop;
 import game.network.packet.InvUse;
 import game.network.packet.InvSwap;
 import game.settings.Settings;
@@ -734,16 +735,21 @@ public class Game extends GUI {
   }
   
   public boolean handleMouseUp(int x, int y, int button) {
-    System.out.println("asdfkashjklfhdgsdfg");
-    
-    _selectedEntity = _game.interact(x, y);
-    
-    if(_selectedEntity != null) {
-      if(_selectedEntity.getType() == Entity.Type.Item) {
-        _mnuItem.show((int)(_selectedEntity.getX() + _context.getCameraX() - _mnuItem.getW() / 2), (int)(_selectedEntity.getY() + _context.getCameraY()) + 16);
-      }
+    if(_selectedInv == null) {
+      _selectedEntity = _game.interact(x, y);
       
-      return true;
+      if(_selectedEntity != null) {
+        if(_selectedEntity.getType() == Entity.Type.Item) {
+          _mnuItem.show((int)(_selectedEntity.getX() + _context.getCameraX() - _mnuItem.getW() / 2), (int)(_selectedEntity.getY() + _context.getCameraY()) + 16);
+        }
+        
+        return true;
+      }
+    } else {
+      _game.send(new InvDrop(_selectedInv));
+      _context.setCursor(null);
+      _sprSelectedInv.setVisible(false);
+      _selectedInv = null;
     }
     
     return false;
