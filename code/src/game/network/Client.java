@@ -5,6 +5,7 @@ import network.packet.Packets;
 import game.network.packet.Chat;
 import game.network.packet.Data;
 import game.network.packet.EntityCreate;
+import game.network.packet.EntityCurrency;
 import game.network.packet.EntityDestroy;
 import game.network.packet.EntityEquip;
 import game.network.packet.EntityInteract;
@@ -80,6 +81,7 @@ public class Client {
     Packets.add(InvSwap.class);
     Packets.add(InvDrop.class);
     Packets.add(InvUnequip.class);
+    Packets.add(EntityCurrency.class);
   }
   
   public void connect() {
