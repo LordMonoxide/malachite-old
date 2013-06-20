@@ -290,6 +290,8 @@ public class Game extends GUI {
               if(n == _selectedInv.index()) {
                 updateInv(null, _selectedInv);
                 _entity.inv(n, _selectedInv);
+                _context.setCursor(null, (int)(_sprInv[n].getAllX() + _sprInv[n].getW() / 2), (int)(_sprInv[n].getAllY() + _sprInv[n].getH() / 2));
+                _sprSelectedInv.setVisible(false);
                 _selectedInv = null;
                 return;
               }
