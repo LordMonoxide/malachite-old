@@ -5,11 +5,13 @@ public enum Lang {
   STAT      ("Strength", "Intelligence", "Dexterity"),
   VITAL_ABBV("HP", "MP"),
   STAT_ABBV ("STR", "INT", "DEX"),
-  ITEM_TYPE ("None", "Weapon", "Shield", "Armour", "Potion", "Spell", "Bling"),
+  ITEM_TYPE ("None", "Weapon", "Shield", "Armour", "Potion", "Spell", "Bling", "Currency"),
   ITEM_WEAPON("Melee", "Bow"),
   ITEM_ARMOUR("Body", "Head", "Head", "Legs", "Feet"),
   ITEM_POTION("Heal", "Buff"),
-  ITEM_BLING ("Ring", "Amulet");
+  ITEM_BLING ("Ring", "Amulet"),
+  ITEM_CURRENCY("Currency"),
+  CURRENCY("Currency");
   
   private String[] _text;
   
