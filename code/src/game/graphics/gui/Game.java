@@ -287,9 +287,6 @@ public class Game extends GUI {
                 }
               }, (int)(_sprInv[n].getAllX() + _sprInv[n].getW() / 2), (int)(_sprInv[n].getAllY() + _sprInv[n].getH() / 2));
             } else {
-              _context.setCursor(null, (int)(_sprInv[n].getAllX() + _sprInv[n].getW() / 2), (int)(_sprInv[n].getAllY() + _sprInv[n].getH() / 2));
-              _sprSelectedInv.setVisible(false);
-              
               if(n == _selectedInv.index()) {
                 updateInv(null, _selectedInv);
                 _entity.inv(n, _selectedInv);
@@ -297,10 +294,15 @@ public class Game extends GUI {
                 return;
               }
               
-              if(_entity.inv(n) == null) {
-                _game.send(new InvSwap(_selectedInv.index(), n, _selectedInv.val()));
+              if(_entity.inv(n) != null) {
+                if(_entity.inv(n).item() != _selectedInv.item()) {
+                  return;
+                }
               }
               
+              _game.send(new InvSwap(_selectedInv.index(), n, _selectedInv.val()));
+              _context.setCursor(null, (int)(_sprInv[n].getAllX() + _sprInv[n].getW() / 2), (int)(_sprInv[n].getAllY() + _sprInv[n].getH() / 2));
+              _sprSelectedInv.setVisible(false);
               _selectedInv = null;
             }
           }
