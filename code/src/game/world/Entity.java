@@ -29,6 +29,7 @@ public class Entity extends Movable {
   private Stats _stats;
   private Inv[] _inv;
   private Equip _equip;
+  private long _curr;
   
   private Sprite _sprite;
   
@@ -234,6 +235,15 @@ public class Entity extends Movable {
     return _equip;
   }
   
+  public long currency() {
+    return _curr;
+  }
+  
+  public void currency(long curr) {
+    _curr = curr;
+    _events.raiseInvCurrency();
+  }
+  
   public static class Stats {
     private Entity _entity;
     
@@ -414,6 +424,12 @@ public class Entity extends Movable {
       }
     }
     
+    public void raiseInvCurrency() {
+      for(Inv e : _inv) {
+        e.currency(_entity);
+      }
+    }
+    
     public static abstract class Draw { public abstract void draw(Entity e); }
     public static abstract class Move { public abstract void move(Entity e); }
     
@@ -426,6 +442,7 @@ public class Entity extends Movable {
       public abstract void update(Entity e);
       public abstract void update(Entity e, Entity.Inv oldInv, Entity.Inv newInv);
       public abstract void equip (Entity e, Entity.Equip equip);
+      public abstract void currency(Entity e);
     }
   }
 
