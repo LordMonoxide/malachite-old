@@ -268,24 +268,26 @@ public class Game extends GUI {
         public void up(int x, int y, int button) {
           if(button == 0) {
             if(!_sprSelectedInv.getVisible()) {
-              _sprSelectedInv.setSprite(new Sprite(_sprInv[n].getSprite().getSource()));
-              _sprSelectedInv.setVisible(true);
-              _lblSelectedInvVal.setText(String.valueOf(_entity.inv(n).val()));
-              _lblSelectedInvVal.setVisible(_entity.inv(n).val() != 0);
-              
-              _selectedInv = _entity.inv(n);
-              updateInv(_entity.inv(n), null);
-              _entity.inv(n, null);
-              
-              _picItemDesc.setVisible(false);
-              
-              _context.setCursor(new Context.CursorCallback() {
-                public void draw() {
-                  _sprSelectedInv.setX(_context.getMouseX() - _sprSelectedInv.getW() / 2);
-                  _sprSelectedInv.setY(_context.getMouseY() - _sprSelectedInv.getH() / 2);
-                  _sprSelectedInv.draw();
-                }
-              }, (int)(_sprInv[n].getAllX() + _sprInv[n].getW() / 2), (int)(_sprInv[n].getAllY() + _sprInv[n].getH() / 2));
+              if(_entity.inv(n) != null) {
+                _sprSelectedInv.setSprite(new Sprite(_sprInv[n].getSprite().getSource()));
+                _sprSelectedInv.setVisible(true);
+                _lblSelectedInvVal.setText(String.valueOf(_entity.inv(n).val()));
+                _lblSelectedInvVal.setVisible(_entity.inv(n).val() != 0);
+                
+                _selectedInv = _entity.inv(n);
+                updateInv(_entity.inv(n), null);
+                _entity.inv(n, null);
+                
+                _picItemDesc.setVisible(false);
+                
+                _context.setCursor(new Context.CursorCallback() {
+                  public void draw() {
+                    _sprSelectedInv.setX(_context.getMouseX() - _sprSelectedInv.getW() / 2);
+                    _sprSelectedInv.setY(_context.getMouseY() - _sprSelectedInv.getH() / 2);
+                    _sprSelectedInv.draw();
+                  }
+                }, (int)(_sprInv[n].getAllX() + _sprInv[n].getW() / 2), (int)(_sprInv[n].getAllY() + _sprInv[n].getH() / 2));
+              }
             } else {
               if(n == _selectedInv.index()) {
                 updateInv(null, _selectedInv);
@@ -732,6 +734,8 @@ public class Game extends GUI {
   }
   
   public boolean handleMouseUp(int x, int y, int button) {
+    System.out.println("asdfkashjklfhdgsdfg");
+    
     _selectedEntity = _game.interact(x, y);
     
     if(_selectedEntity != null) {
