@@ -119,4 +119,6 @@ public class Item extends Serializable implements Data {
   public static final int ITEM_TYPE_BLING_RING          = 0x00 * 0x10;
   public static final int ITEM_TYPE_BLING_AMULET        = 0x01 * 0x10;
   public static final int ITEM_TYPE_BLING_COUNT         = 2;
+  
+  public static final int ITEM_TYPE_CURRENCY            = 0x07;
 }
