@@ -12,6 +12,7 @@ import game.language.Lang;
 import game.network.packet.Chat;
 import game.network.packet.EntityInteract;
 import game.network.packet.InvDrop;
+import game.network.packet.InvUnequip;
 import game.network.packet.InvUse;
 import game.network.packet.InvSwap;
 import game.settings.Settings;
@@ -253,10 +254,7 @@ public class Game extends GUI {
       });
       
       _sprInv[i].events().addClickHandler(new Control.Events.Click() {
-        public void click() {
-          
-        }
-        
+        public void click() { }
         public void clickDbl() {
           if(_entity.inv(n) != null) {
             _picItemDesc.setVisible(false);
@@ -266,6 +264,8 @@ public class Game extends GUI {
       });
       
       _sprInv[i].events().addMouseHandler(new Control.Events.Mouse() {
+        public void move(int x, int y, int button) { }
+        public void down(int x, int y, int button) { }
         public void up(int x, int y, int button) {
           if(button == 0) {
             if(!_sprSelectedInv.getVisible()) {
@@ -311,14 +311,6 @@ public class Game extends GUI {
               _selectedInv = null;
             }
           }
-        }
-        
-        public void down(int x, int y, int button) {
-          
-        }
-        
-        public void move(int x, int y, int button) {
-          
         }
       });
       
@@ -366,6 +358,12 @@ public class Game extends GUI {
     _sprHand1.setBackColour(new float[] {0, 0, 0, 1});
     _sprHand1.setBorderColour(new float[] {1, 1, 1, 1});
     _sprHand1.setXYWH(x, y, 32, 32);
+    _sprHand1.events().addClickHandler(new Control.Events.Click() {
+      public void click() { }
+      public void clickDbl() {
+        if(_entity.equip().hand1() != null) _game.send(new InvUnequip(InvUnequip.HAND, 0));
+      }
+    });
     _sprHand1.events().addMouseHandler(new Control.Events.Mouse() {
       public void move(int x, int y, int button) { }
       public void down(int x, int y, int button) { }
@@ -398,6 +396,12 @@ public class Game extends GUI {
     _sprHand2.setBackColour(new float[] {0, 0, 0, 1});
     _sprHand2.setBorderColour(new float[] {1, 1, 1, 1});
     _sprHand2.setXYWH(x, y, 32, 32);
+    _sprHand2.events().addClickHandler(new Control.Events.Click() {
+      public void click() { }
+      public void clickDbl() {
+        if(_entity.equip().hand2() != null) _game.send(new InvUnequip(InvUnequip.HAND, 1));
+      }
+    });
     _sprHand2.events().addMouseHandler(new Control.Events.Mouse() {
       public void move(int x, int y, int button) { }
       public void down(int x, int y, int button) { }
@@ -433,6 +437,12 @@ public class Game extends GUI {
       _sprBling[i].setBackColour(new float[] {0, 0, 0, 1});
       _sprBling[i].setBorderColour(new float[] {1, 1, 1, 1});
       _sprBling[i].setXYWH(x, y, 32, 32);
+      _sprBling[i].events().addClickHandler(new Control.Events.Click() {
+        public void click() { }
+        public void clickDbl() {
+          if(_entity.equip().bling(n) != null) _game.send(new InvUnequip(InvUnequip.BLING, n));
+        }
+      });
       _sprBling[i].events().addMouseHandler(new Control.Events.Mouse() {
         public void move(int x, int y, int button) { }
         public void down(int x, int y, int button) { }
@@ -466,6 +476,12 @@ public class Game extends GUI {
       _sprArmour[i].setBackColour(new float[] {0, 0, 0, 1});
       _sprArmour[i].setBorderColour(new float[] {1, 1, 1, 1});
       _sprArmour[i].setXYWH(x, y, 32, 32);
+      _sprArmour[i].events().addClickHandler(new Control.Events.Click() {
+        public void click() { }
+        public void clickDbl() {
+          if(_entity.equip().armour(n) != null) _game.send(new InvUnequip(InvUnequip.ARMOUR, n));
+        }
+      });
       _sprArmour[i].events().addMouseHandler(new Control.Events.Mouse() {
         public void move(int x, int y, int button) { }
         public void down(int x, int y, int button) { }
