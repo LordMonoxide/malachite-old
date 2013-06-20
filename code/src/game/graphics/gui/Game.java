@@ -71,11 +71,12 @@ public class Game extends GUI {
   private Label _lblSelectedInvVal;
   private Entity.Inv _selectedInv;
   
-  
   private game.graphics.gui.controls.Sprite   _sprHand1;
   private game.graphics.gui.controls.Sprite   _sprHand2;
   private game.graphics.gui.controls.Sprite[] _sprArmour;
   private game.graphics.gui.controls.Sprite[] _sprBling;
+  
+  private Label _lblCurrency;
   
   private Menu _mnuItem;
   
@@ -504,8 +505,15 @@ public class Game extends GUI {
       x += 34;
     }
     
+    x = _sprInv[0].getX();
+    y += 36;
+    
+    _lblCurrency = new Label(this);
+    _lblCurrency.setXY(x, y);
+    _wndInv.Controls().add(_lblCurrency);
+    
     _wndInv.setText("Inventory");
-    _wndInv.setClientWH(8 * 34 + 8, y + 38);
+    _wndInv.setClientWH(8 * 34 + 8, y + _lblCurrency.getH() + 4);
     _wndInv.setVisible(false);
     
     _mnuItem = new Menu(this);
@@ -556,6 +564,7 @@ public class Game extends GUI {
     updateStats(_entity.stats());
     updateInv(_entity.inv());
     updateEquip(_entity.equip());
+    updateCurrency(_entity.currency());
     
     _loaded = true;
   }
@@ -585,7 +594,7 @@ public class Game extends GUI {
     _game.updateCamera();
   }
   
-  public void updateStats(Entity.Stats stats) {
+  private void updateStats(Entity.Stats stats) {
     _picVital[0].setW((float)stats.vitalHP().val() / stats.vitalHP().max() * _picVitalBack[0].getW());
     _picVital[1].setW((float)stats.vitalMP().val() / stats.vitalMP().max() * _picVitalBack[1].getW());
     _lblStatVal[0].setText(String.valueOf(stats.statSTR().val()));
@@ -594,7 +603,7 @@ public class Game extends GUI {
     _lblWeightVal.setText(String.valueOf(stats.weight()));
   }
   
-  public void updateInv(Entity.Inv[] inv) {
+  private void updateInv(Entity.Inv[] inv) {
     for(int i = 0; i < Settings.Player.Inventory.Size; i++) {
       if(_sprInv[i].getSprite() != null) {
         _sprInv[i].getSprite().remove();
@@ -607,7 +616,7 @@ public class Game extends GUI {
     }
   }
   
-  public void updateInv(Entity.Inv oldInv, Entity.Inv newInv) {
+  private void updateInv(Entity.Inv oldInv, Entity.Inv newInv) {
     int index = -1;
     if(oldInv != null) index = oldInv.index();
     if(newInv != null) index = newInv.index();
@@ -622,7 +631,7 @@ public class Game extends GUI {
     }
   }
   
-  public void updateEquip(Entity.Equip equip) {
+  private void updateEquip(Entity.Equip equip) {
     if(_sprHand1.getSprite() != null) _sprHand1.setSprite(null);
     if(_sprHand2.getSprite() != null) _sprHand2.setSprite(null);
     
@@ -647,6 +656,10 @@ public class Game extends GUI {
         _sprBling[i].setSprite(new Sprite(_game.getSprite(equip.bling(i).getSprite())));
       }
     }
+  }
+  
+  private void updateCurrency(long currency) {
+    _lblCurrency.setText(Lang.CURRENCY.text() + ": " + currency);
   }
   
   private void useInv(Entity.Inv inv) {
@@ -921,6 +934,10 @@ public class Game extends GUI {
     
     public void updateEquip(Entity.Equip equip) {
       _game.updateEquip(equip);
+    }
+    
+    public void updateCurrency(long currency) {
+      _game.updateCurrency(currency);
     }
   }
 }
