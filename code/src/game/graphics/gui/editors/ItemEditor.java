@@ -334,6 +334,10 @@ public class ItemEditor extends GUI implements Editor {
           _drpSubtype.add(new Dropdown.Item(type));
         }
         break;
+        
+      case Item.ITEM_TYPE_CURRENCY:
+        _drpSubtype.add(new Dropdown.Item("None"));
+        break;
     }
     
     if((_item.getType() & Item.ITEM_TYPE_BITMASK) == _drpType.getSelected()) {
