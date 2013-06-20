@@ -61,15 +61,15 @@ public class EntityEquip extends Packet {
     
     Entity e = game.getWorld().getEntity(_id);
     
-    if(_hand1 != null) e.equip().hand1(game.getItem(_hand1));
-    if(_hand2 != null) e.equip().hand2(game.getItem(_hand2));
+    e.equip().hand1(_hand1 != null ? game.getItem(_hand1) : null);
+    e.equip().hand2(_hand2 != null ? game.getItem(_hand2) : null);
     
     for(int i = 0; i < Item.ITEM_TYPE_ARMOUR_COUNT; i++) {
-      if(_armour[i] != null) e.equip().armour(i, game.getItem(_armour[i]));
+      e.equip().armour(i, _armour[i] != null ? game.getItem(_armour[i]) : null);
     }
     
     for(int i = 0; i < Item.ITEM_TYPE_BLING_COUNT; i++) {
-      if(_bling[i] != null) e.equip().bling(i, game.getItem(_bling[i]));
+      e.equip().bling(i, _bling[i] != null ? game.getItem(_bling[i]) : null);
     }
   }
 }
