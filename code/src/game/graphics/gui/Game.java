@@ -88,8 +88,6 @@ public class Game extends GUI {
   private boolean _loaded;
   
   public void load() {
-    _game.setGameStateListener(_listener);
-    
     _context.setBackColour(new float[] {0, 0, 0, 0});
     
     _txtChat = new Textbox(this);
@@ -565,6 +563,8 @@ public class Game extends GUI {
     updateInv(_entity.inv());
     updateEquip(_entity.equip());
     updateCurrency(_entity.currency());
+    
+    _game.setGameStateListener(_listener);
     
     _loaded = true;
   }
