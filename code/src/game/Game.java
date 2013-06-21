@@ -132,6 +132,7 @@ public class Game implements graphics.gl00.Game {
         _context.setBackColour(new float[] {0, 0, 0, 0});
         _context.setTitle("Malachite");
         _context.setResizable(true);
+        _context.setFPSTarget(0);
         
         if(_context == null || !_context.create(this)) {
           System.out.println("Could not create OpenGL.");
