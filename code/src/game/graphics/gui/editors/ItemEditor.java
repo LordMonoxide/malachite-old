@@ -303,7 +303,7 @@ public class ItemEditor extends GUI implements Editor {
         
       case Item.ITEM_TYPE_SHIELD:
         _drpSubtype.add(new Dropdown.Item("None"));
-
+        
         _lblDamage.setText("Protection");
         _lblDamage.setVisible(true);
         _txtDamage.setVisible(true);
