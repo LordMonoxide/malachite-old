@@ -294,6 +294,7 @@ public class ItemEditor extends GUI implements Editor {
           _drpSubtype.add(new Dropdown.Item(type));
         }
         
+        _lblDamage.setText("Damage");
         _lblDamage.setVisible(true);
         _txtDamage.setVisible(true);
         _lblWeight.setVisible(true);
@@ -302,6 +303,12 @@ public class ItemEditor extends GUI implements Editor {
         
       case Item.ITEM_TYPE_SHIELD:
         _drpSubtype.add(new Dropdown.Item("None"));
+
+        _lblDamage.setText("Protection");
+        _lblDamage.setVisible(true);
+        _txtDamage.setVisible(true);
+        _lblWeight.setVisible(true);
+        _txtWeight.setVisible(true);
         break;
         
       case Item.ITEM_TYPE_ARMOUR:
@@ -309,6 +316,7 @@ public class ItemEditor extends GUI implements Editor {
           _drpSubtype.add(new Dropdown.Item(type));
         }
         
+        _lblDamage.setText("Protection");
         _lblDamage.setVisible(true);
         _txtDamage.setVisible(true);
         break;
