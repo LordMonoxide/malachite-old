@@ -7,7 +7,7 @@ public enum Lang {
   STAT_ABBV ("STR", "INT", "DEX"),
   ITEM_TYPE ("None", "Weapon", "Shield", "Armour", "Potion", "Spell", "Bling", "Currency"),
   ITEM_WEAPON("Melee", "Bow"),
-  ITEM_ARMOUR("Body", "Head", "Head", "Legs", "Feet"),
+  ITEM_ARMOUR("Body", "Head", "Hands", "Legs", "Feet"),
   ITEM_POTION("Heal", "Buff"),
   ITEM_BLING ("Ring", "Amulet"),
   ITEM_CURRENCY("Currency"),
