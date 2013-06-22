@@ -38,6 +38,26 @@ public class ItemEditor extends GUI implements Editor {
   private Textbox  _txtMPHeal;
   private Checkbox _chkPercent;
   
+  private Label    _lblBuffHP;
+  private Textbox  _txtBuffHP;
+  private Checkbox _chkBuffHP;
+  
+  private Label    _lblBuffMP;
+  private Textbox  _txtBuffMP;
+  private Checkbox _chkBuffMP;
+  
+  private Label    _lblBuffSTR;
+  private Textbox  _txtBuffSTR;
+  private Checkbox _chkBuffSTR;
+  
+  private Label    _lblBuffDEX;
+  private Textbox  _txtBuffDEX;
+  private Checkbox _chkBuffDEX;
+  
+  private Label    _lblBuffINT;
+  private Textbox  _txtBuffINT;
+  private Checkbox _chkBuffINT;
+  
   private Label    _lblName;
   private Textbox  _txtName;
   private Label    _lblNote;
@@ -52,6 +72,7 @@ public class ItemEditor extends GUI implements Editor {
     _wndEditor.setWH(300, 300);
     _wndEditor.setText("Item Editor");
     _wndEditor.addTab("Type");
+    _wndEditor.addTab("Buffs");
     _wndEditor.addTab("Info");
     _wndEditor.events().addCloseHandler(new Window.Events.Close() {
       public boolean close() {
@@ -138,14 +159,97 @@ public class ItemEditor extends GUI implements Editor {
     _chkPercent.setText("Percent");
     _chkPercent.setXY(_txtMPHeal.getX(), _txtMPHeal.getY() + _txtMPHeal.getH() + 8);
     _chkPercent.events().addCheckHandler(new Checkbox.Events.Checked() {
-      public void checked() {
-        update();
-      }
+      public void checked() { update(); }
+    });
+    
+    _lblBuffHP = new Label(this);
+    _lblBuffHP.setText("Buff HP");
+    _lblBuffHP.setXY(8, 8);
+    
+    _txtBuffHP = new Textbox(this);
+    _txtBuffHP.setXY(_lblBuffHP.getX(), _lblBuffHP.getY() + _lblBuffHP.getH());
+    _txtBuffHP.setNumeric(true);
+    _txtBuffHP.events().addChangeHandler(change);
+    
+    _chkBuffHP = new Checkbox(this);
+    _chkBuffHP.setText("%");
+    _chkBuffHP.setXY(_txtBuffHP.getX() + _txtBuffHP.getW() + 4, _txtBuffHP.getY());
+    _chkBuffHP.setW(34);
+    _chkBuffHP.events().addCheckHandler(new Checkbox.Events.Checked() {
+      public void checked() { update(); }
+    });
+    
+    _lblBuffMP = new Label(this);
+    _lblBuffMP.setText("Buff MP");
+    _lblBuffMP.setXY(_txtBuffHP.getX(), _txtBuffHP.getY() + _txtBuffHP.getH() + 8);
+    
+    _txtBuffMP = new Textbox(this);
+    _txtBuffMP.setXY(_lblBuffMP.getX(), _lblBuffMP.getY() + _lblBuffMP.getH());
+    _txtBuffMP.setNumeric(true);
+    _txtBuffMP.events().addChangeHandler(change);
+    
+    _chkBuffMP = new Checkbox(this);
+    _chkBuffMP.setText("%");
+    _chkBuffMP.setXY(_txtBuffMP.getX() + _txtBuffMP.getW() + 4, _txtBuffMP.getY());
+    _chkBuffMP.setW(34);
+    _chkBuffMP.events().addCheckHandler(new Checkbox.Events.Checked() {
+      public void checked() { update(); }
+    });
+    
+    _lblBuffSTR = new Label(this);
+    _lblBuffSTR.setText("Buff STR");
+    _lblBuffSTR.setXY(_txtBuffMP.getX(), _txtBuffMP.getY() + _txtBuffMP.getH() + 8);
+    
+    _txtBuffSTR = new Textbox(this);
+    _txtBuffSTR.setXY(_lblBuffSTR.getX(), _lblBuffSTR.getY() + _lblBuffSTR.getH());
+    _txtBuffSTR.setNumeric(true);
+    _txtBuffSTR.events().addChangeHandler(change);
+    
+    _chkBuffSTR = new Checkbox(this);
+    _chkBuffSTR.setText("%");
+    _chkBuffSTR.setXY(_txtBuffSTR.getX() + _txtBuffSTR.getW() + 4, _txtBuffSTR.getY());
+    _chkBuffSTR.setW(34);
+    _chkBuffSTR.events().addCheckHandler(new Checkbox.Events.Checked() {
+      public void checked() { update(); }
+    });
+    
+    _lblBuffDEX = new Label(this);
+    _lblBuffDEX.setText("Buff DEX");
+    _lblBuffDEX.setXY(_txtBuffSTR.getX(), _txtBuffSTR.getY() + _txtBuffSTR.getH() + 8);
+    
+    _txtBuffDEX = new Textbox(this);
+    _txtBuffDEX.setXY(_lblBuffDEX.getX(), _lblBuffDEX.getY() + _lblBuffDEX.getH());
+    _txtBuffDEX.setNumeric(true);
+    _txtBuffDEX.events().addChangeHandler(change);
+    
+    _chkBuffDEX = new Checkbox(this);
+    _chkBuffDEX.setText("%");
+    _chkBuffDEX.setXY(_txtBuffDEX.getX() + _txtBuffDEX.getW() + 4, _txtBuffDEX.getY());
+    _chkBuffDEX.setW(34);
+    _chkBuffDEX.events().addCheckHandler(new Checkbox.Events.Checked() {
+      public void checked() { update(); }
+    });
+    
+    _lblBuffINT = new Label(this);
+    _lblBuffINT.setText("Buff INT");
+    _lblBuffINT.setXY(_txtBuffDEX.getX(), _txtBuffDEX.getY() + _txtBuffDEX.getH() + 8);
+    
+    _txtBuffINT = new Textbox(this);
+    _txtBuffINT.setXY(_lblBuffINT.getX(), _lblBuffINT.getY() + _lblBuffINT.getH());
+    _txtBuffINT.setNumeric(true);
+    _txtBuffINT.events().addChangeHandler(change);
+    
+    _chkBuffINT = new Checkbox(this);
+    _chkBuffINT.setText("%");
+    _chkBuffINT.setXY(_txtBuffINT.getX() + _txtBuffINT.getW() + 4, _txtBuffINT.getY());
+    _chkBuffINT.setW(34);
+    _chkBuffINT.events().addCheckHandler(new Checkbox.Events.Checked() {
+      public void checked() { update(); }
     });
     
     _lblName = new Label(this);
     _lblName.setText("Name");
-    _lblName.setXY(8, 4);
+    _lblName.setXY(8, 8);
     
     _txtName = new Textbox(this);
     _txtName.setXY(_lblName.getX(), _lblName.getY() + _lblName.getH());
@@ -182,12 +286,27 @@ public class ItemEditor extends GUI implements Editor {
     _wndEditor.Controls(0).add(_lblMPHeal);
     _wndEditor.Controls(0).add(_txtMPHeal);
     _wndEditor.Controls(0).add(_chkPercent);
-    _wndEditor.Controls(1).add(_lblName);
-    _wndEditor.Controls(1).add(_txtName);
-    _wndEditor.Controls(1).add(_lblNote);
-    _wndEditor.Controls(1).add(_txtNote);
-    _wndEditor.Controls(1).add(_lblSprite);
-    _wndEditor.Controls(1).add(_drpSprite);
+    _wndEditor.Controls(1).add(_lblBuffHP);
+    _wndEditor.Controls(1).add(_txtBuffHP);
+    _wndEditor.Controls(1).add(_chkBuffHP);
+    _wndEditor.Controls(1).add(_lblBuffMP);
+    _wndEditor.Controls(1).add(_txtBuffMP);
+    _wndEditor.Controls(1).add(_chkBuffMP);
+    _wndEditor.Controls(1).add(_lblBuffSTR);
+    _wndEditor.Controls(1).add(_txtBuffSTR);
+    _wndEditor.Controls(1).add(_chkBuffSTR);
+    _wndEditor.Controls(1).add(_lblBuffDEX);
+    _wndEditor.Controls(1).add(_txtBuffDEX);
+    _wndEditor.Controls(1).add(_chkBuffDEX);
+    _wndEditor.Controls(1).add(_lblBuffINT);
+    _wndEditor.Controls(1).add(_txtBuffINT);
+    _wndEditor.Controls(1).add(_chkBuffINT);
+    _wndEditor.Controls(2).add(_lblName);
+    _wndEditor.Controls(2).add(_txtName);
+    _wndEditor.Controls(2).add(_lblNote);
+    _wndEditor.Controls(2).add(_txtNote);
+    _wndEditor.Controls(2).add(_lblSprite);
+    _wndEditor.Controls(2).add(_drpSprite);
     
     for(Sprite s : _game.getSprites()) {
       _drpSprite.add(new DropdownSprite(s));
@@ -253,6 +372,18 @@ public class ItemEditor extends GUI implements Editor {
     _txtHPHeal.setText(String.valueOf(_item.getHPHeal()));
     _txtMPHeal.setText(String.valueOf(_item.getMPHeal()));
     _chkPercent.setChecked((_item.getType() & Item.ITEM_TYPE_POTION_HEAL_PERCENT) != 0);
+    
+    _txtBuffHP.setText(String.valueOf(_item.buffHP().val()));
+    _txtBuffMP.setText(String.valueOf(_item.buffMP().val()));
+    _txtBuffSTR.setText(String.valueOf(_item.buffSTR().val()));
+    _txtBuffDEX.setText(String.valueOf(_item.buffDEX().val()));
+    _txtBuffINT.setText(String.valueOf(_item.buffINT().val()));
+    
+    _chkBuffHP.setChecked(_item.buffHP().percent());
+    _chkBuffMP.setChecked(_item.buffMP().percent());
+    _chkBuffSTR.setChecked(_item.buffSTR().percent());
+    _chkBuffDEX.setChecked(_item.buffDEX().percent());
+    _chkBuffINT.setChecked(_item.buffINT().percent());
     
     _txtName.setText(_item.getName());
     _txtNote.setText(_item.getNote());
@@ -372,6 +503,18 @@ public class ItemEditor extends GUI implements Editor {
     
     _item.setHPHeal(Integer.parseInt(_txtHPHeal.getText()));
     _item.setMPHeal(Integer.parseInt(_txtMPHeal.getText()));
+    
+    _item.buffHP().val(Float.parseFloat(_txtBuffHP.getText()));
+    _item.buffMP().val(Float.parseFloat(_txtBuffMP.getText()));
+    _item.buffSTR().val(Float.parseFloat(_txtBuffSTR.getText()));
+    _item.buffDEX().val(Float.parseFloat(_txtBuffDEX.getText()));
+    _item.buffINT().val(Float.parseFloat(_txtBuffINT.getText()));
+    
+    _item.buffHP().percent(_chkBuffHP.getChecked());
+    _item.buffMP().percent(_chkBuffMP.getChecked());
+    _item.buffSTR().percent(_chkBuffSTR.getChecked());
+    _item.buffDEX().percent(_chkBuffDEX.getChecked());
+    _item.buffINT().percent(_chkBuffINT.getChecked());
     
     _item.setName(_txtName.getText());
     _item.setNote(_txtNote.getText());
