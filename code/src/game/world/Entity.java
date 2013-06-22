@@ -309,6 +309,54 @@ public class Entity extends Movable {
         _entity.events().raiseStats();
       }
     }
+    
+    public static class Buffs {
+      private LinkedList<Buff> _buff = new LinkedList<Buff>();
+      
+      private int _fixed;
+      private float _percent;
+      
+      public int fixed() { return _fixed; }
+      public float percent() { return _percent; }
+      
+      public int add(Buff buff) {
+        if(_buff.add(buff)) {
+          if(buff._percent) {
+            _percent += buff._val;
+          } else {
+            _fixed += buff._val;
+          }
+          
+          buff._buffs = this;
+          buff._index = _buff.size();
+          
+          return buff._index;
+        }
+        
+        return 0;
+      }
+      
+      public boolean remove(int buff) {
+        return _buff.remove(buff) != null;
+      }
+      
+      public static class Buff {
+        private Buffs _buffs;
+        private int _index;
+        
+        private float _val;
+        private boolean _percent;
+        
+        public float   val() { return _val; }
+        public void    val(float val) { _val = val; }
+        public boolean percent() { return _percent; }
+        public void    percent(boolean percent) { _percent = percent; }
+        
+        public void remove() {
+          _buffs.remove(_index);
+        }
+      }
+    }
   }
   
   public static class Inv {
