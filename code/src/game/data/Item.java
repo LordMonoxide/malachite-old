@@ -3,9 +3,10 @@ package game.data;
 import game.data.util.Buffer;
 import game.data.util.Data;
 import game.data.util.Serializable;
+import game.world.Entity;
 
 public class Item extends Serializable implements Data {
-  private static final int VERSION = 3;
+  private static final int VERSION = 4;
   
   protected String _name, _note;
   protected String _sprite;
@@ -15,6 +16,12 @@ public class Item extends Serializable implements Data {
   protected float  _weight;
   
   protected int    _hpHeal, _mpHeal;
+  
+  private Entity.Stats.Buffs.Buff _buffHP = new Entity.Stats.Buffs.Buff();
+  private Entity.Stats.Buffs.Buff _buffMP = new Entity.Stats.Buffs.Buff();
+  private Entity.Stats.Buffs.Buff _buffSTR = new Entity.Stats.Buffs.Buff();
+  private Entity.Stats.Buffs.Buff _buffDEX = new Entity.Stats.Buffs.Buff();
+  private Entity.Stats.Buffs.Buff _buffINT = new Entity.Stats.Buffs.Buff();
   
   public Item(String file, int crc) {
     super(file, crc);
@@ -28,6 +35,11 @@ public class Item extends Serializable implements Data {
   public float  getWeight() { return _weight; }
   public int    getHPHeal() { return _hpHeal; }
   public int    getMPHeal() { return _mpHeal; }
+  public Entity.Stats.Buffs.Buff buffHP() { return _buffHP; }
+  public Entity.Stats.Buffs.Buff buffMP() { return _buffMP; }
+  public Entity.Stats.Buffs.Buff buffSTR() { return _buffSTR; }
+  public Entity.Stats.Buffs.Buff buffDEX() { return _buffDEX; }
+  public Entity.Stats.Buffs.Buff buffINT() { return _buffINT; }
   
   public Buffer serialize() {
     Buffer b = new Buffer();
@@ -40,6 +52,16 @@ public class Item extends Serializable implements Data {
     b.put(_weight);
     b.put(_hpHeal);
     b.put(_mpHeal);
+    b.put(_buffHP.val());
+    b.put(_buffHP.percent());
+    b.put(_buffMP.val());
+    b.put(_buffMP.percent());
+    b.put(_buffSTR.val());
+    b.put(_buffSTR.percent());
+    b.put(_buffDEX.val());
+    b.put(_buffDEX.percent());
+    b.put(_buffINT.val());
+    b.put(_buffINT.percent());
     return b;
   }
   
@@ -48,6 +70,7 @@ public class Item extends Serializable implements Data {
       case 1: deserialize01(b); break;
       case 2: deserialize02(b); break;
       case 3: deserialize03(b); break;
+      case 4: deserialize04(b); break;
     }
   }
   
@@ -78,6 +101,27 @@ public class Item extends Serializable implements Data {
     _weight = b.getFloat();
     _hpHeal = b.getInt();
     _mpHeal = b.getInt();
+  }
+  
+  private void deserialize04(Buffer b) {
+    _name   = b.getString();
+    _note   = b.getString();
+    _sprite = b.getString();
+    _type   = b.getInt();
+    _damage = b.getInt();
+    _weight = b.getFloat();
+    _hpHeal = b.getInt();
+    _mpHeal = b.getInt();
+    _buffHP.val(b.getFloat());
+    _buffHP.percent(b.getBool());
+    _buffMP.val(b.getFloat());
+    _buffMP.percent(b.getBool());
+    _buffSTR.val(b.getFloat());
+    _buffSTR.percent(b.getBool());
+    _buffDEX.val(b.getFloat());
+    _buffDEX.percent(b.getBool());
+    _buffINT.val(b.getFloat());
+    _buffINT.percent(b.getBool());
   }
   
   /*  0000 0000 0000 0000 0000 0000 0000 0000
