@@ -54,6 +54,7 @@ public class Game extends GUI {
   private Picture[] _picVitalBack;
   private Picture[] _picVital;
   private Label[]   _lblVital;
+  private Label[]   _lblVitalVal;
   private Label[]   _lblStat;
   private Label[]   _lblStatVal;
   private Label     _lblWeight;
@@ -162,6 +163,7 @@ public class Game extends GUI {
     _picVitalBack = new Picture[2];
     _picVital     = new Picture[2];
     _lblVital     = new Label  [2];
+    _lblVitalVal  = new Label  [2];
     _lblStat      = new Label  [3];
     _lblStatVal   = new Label  [3];
     
@@ -181,6 +183,10 @@ public class Game extends GUI {
       _lblVital[i] = new Label(this);
       _lblVital[i].setText(Lang.VITAL_ABBV.text(i) + ":");
       _lblVital[i].setY(_picVitalBack[i].getY());
+      
+      _lblVitalVal[i] = new Label(this);
+      _lblVitalVal[i].setXY(1, -2);
+      _picVital[i].Controls().add(_lblVitalVal[i]);
       
       Controls().add(_picVitalBack[i]);
       Controls().add(_lblVital[i]);
@@ -597,6 +603,8 @@ public class Game extends GUI {
   private void updateStats(Entity.Stats stats) {
     _picVital[0].setW((float)stats.vitalHP().val() / stats.vitalHP().max() * _picVitalBack[0].getW());
     _picVital[1].setW((float)stats.vitalMP().val() / stats.vitalMP().max() * _picVitalBack[1].getW());
+    _lblVitalVal[0].setText(stats.vitalHP().val() + "/" + stats.vitalHP().max());
+    _lblVitalVal[1].setText(stats.vitalMP().val() + "/" + stats.vitalMP().max());
     _lblStatVal[0].setText(String.valueOf(stats.statSTR().val()));
     _lblStatVal[1].setText(String.valueOf(stats.statINT().val()));
     _lblStatVal[2].setText(String.valueOf(stats.statDEX().val()));
