@@ -6,13 +6,12 @@ import java.util.HashMap;
 import network.packet.Packet;
 
 import game.data.Item;
+import game.data.NPC;
 import game.data.Sprite;
 import game.data.account.Permissions;
-import game.data.util.Serializable;
 import game.graphics.gui.Menu;
 import game.network.Client;
 import game.network.packet.Chat;
-import game.network.packet.Data;
 import game.network.packet.EntityCreate;
 import game.network.packet.EntityMoveStart;
 import game.network.packet.EntityMoveStop;
@@ -27,7 +26,7 @@ import game.world.World;
 import graphics.gl00.Context;
 import graphics.util.Math;
 
-public class Game implements graphics.gl00.Game {
+public class Game {
   private static Game _instance = new Game();
   public static Game getInstance() { return _instance; }
   
@@ -47,6 +46,7 @@ public class Game implements graphics.gl00.Game {
   
   private HashMap<String, Sprite> _sprite = new HashMap<String, Sprite>();
   private HashMap<String, Item>   _item   = new HashMap<String, Item>();
+  private HashMap<String, NPC>    _npc    = new HashMap<String, NPC>();
   
   private Entity.Events.Draw _entityDraw = new Entity.Events.Draw() {
     public void draw(Entity e) {
@@ -58,44 +58,42 @@ public class Game implements graphics.gl00.Game {
   public World       getWorld()       { return _world;       }
   public Entity      getEntity()      { return _entity;      }
   
-  public void loadSprites(Serializable[] data) {
-    for(Serializable s : data) {
-      if(!s.exists()) {
-        Data.Request request = new Data.Request(s);
-        _net.send(request);
-        System.out.println("Requesting sprite " + s.getFile());
-      } else {
-        s.load();
-        System.out.println("Loading sprite " + s.getFile());
-      }
-      
-      _sprite.put(s.getFile(), (Sprite)s);
-    }
-  }
-  
-  public void loadItems(Serializable[] data) {
-    for(Serializable s : data) {
-      if(!s.exists()) {
-        Data.Request request = new Data.Request(s);
-        _net.send(request);
-        System.out.println("Requesting item " + s.getFile());
-      } else {
-        s.load();
-        System.out.println("Loading item " + s.getFile());
-      }
-      
-      _item.put(s.getFile(), (Item)s);
-    }
-  }
-  
   public Collection<Sprite> getSprites() { return _sprite.values(); }
   public Collection<Item>   getItems()   { return _item.values(); }
+  public Collection<NPC>    getNPCs()    { return _npc.values(); }
   
-  public void addSprite(Sprite s) { _sprite.put(s.getFile(), s); }
-  public void addItem  (Item   i) { _item  .put(i.getFile(), i); }
+  public Sprite getSprite(String file) {
+    Sprite data = _sprite.get(file);
+    if(data == null) {
+      data = new Sprite(file);
+      _sprite.put(file, data);
+      data.request();
+    }
+    
+    return data;
+  }
   
-  public Sprite getSprite(String file) { return _sprite.get(file); }
-  public Item   getItem  (String file) { return _item  .get(file); }
+  public Item getItem(String file) {
+    Item data = _item.get(file);
+    if(data == null) {
+      data = new Item(file);
+      _item.put(file, data);
+      data.request();
+    }
+    
+    return data;
+  }
+  
+  public NPC getNPC(String file) {
+    NPC data = _npc.get(file);
+    if(data == null) {
+      data = new NPC(file);
+      _npc.put(file, data);
+      data.request();
+    }
+    
+    return data;
+  }
   
   public void addEntity(Entity e) {
     _world.addEntity(e);
@@ -112,49 +110,19 @@ public class Game implements graphics.gl00.Game {
     _net.initPackets();
     _net.connect();
     
-    //_context = new graphics.gl32.Context();
-    //_context.setBackColour(new float[] {0, 0, 0, 0});
-    //_context.setTitle("Malachite");
-    //_context.setResizable(true);
-    
-    if(_context == null || !_context.create(this)) {
-      System.out.println("OpenGL 3.2 not supported, trying 2.1...");
-      
-      //_context = new graphics.gl21.Context();
-      //_context.setBackColour(new float[] {0, 0, 0, 0});
-      //_context.setTitle("Malachite");
-      //_context.setResizable(true);
-      
-      if(_context == null || !_context.create(this)) {
-        System.out.println("OpenGL 2.1 not supported, trying 1.4...");
-        
-        _context = new graphics.gl14.Context();
-        _context.setBackColour(new float[] {0, 0, 0, 0});
-        _context.setTitle("Malachite");
-        _context.setResizable(true);
-        _context.setFPSTarget(0);
-        
-        if(_context == null || !_context.create(this)) {
-          System.out.println("Could not create OpenGL.");
+    _context = Context.create();
+    _context.events().addDestroyHandler(new Context.Events.Destroy() {
+      public void destroy() {
+        if(_world != null) {
+          _world.destroy();
         }
+        
+        _net.shutdown();
       }
-    }
+    });
     
-    _context.run();
-  }
-  
-  public void init() {
     _menu = new Menu();
-    _menu.load();
     _menu.push();
-  }
-  
-  public void destroy() {
-    if(_world != null) {
-      _world.destroy();
-    }
-    
-    _net.shutdown();
   }
   
   public void send(Packet p) {
