@@ -2,19 +2,19 @@ package game.network.packet.editors;
 
 import java.util.ArrayList;
 
-import game.data.util.Serializable;
+import game.data.util.GameData;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import network.packet.Packet;
 
-public abstract class Save extends Packet {
-  protected ArrayList<Serializable> _data = new ArrayList<Serializable>();
+public abstract class EditorSave extends Packet {
+  protected ArrayList<GameData> _data = new ArrayList<GameData>();
   
-  private Save() { }
+  private EditorSave() { }
   
   public abstract int getIndex();
   
-  public void addData(Serializable data) {
+  public void addData(GameData data) {
     _data.add(data);
   }
   
@@ -26,7 +26,7 @@ public abstract class Save extends Packet {
     ByteBuf b = Unpooled.buffer();
     
     byte[] arr;
-    for(Serializable data : _data) {
+    for(GameData data : _data) {
       arr = data.serialize().serialize();
       b.writeShort(data.getFile().length());
       b.writeBytes(data.getFile().getBytes());
@@ -45,7 +45,7 @@ public abstract class Save extends Packet {
     
   }
   
-  public static class Map extends Save {
+  public static class Map extends EditorSave {
     public int getIndex() {
       return 17;
     }
@@ -54,7 +54,7 @@ public abstract class Save extends Packet {
       ByteBuf b = Unpooled.buffer();
       
       byte[] arr;
-      for(Serializable data : _data) {
+      for(GameData data : _data) {
         game.data.Map m = (game.data.Map)data;
         arr = m.serialize().serialize();
         b.writeInt(m.getX());
@@ -67,15 +67,15 @@ public abstract class Save extends Packet {
     }
   }
   
-  public static class Sprite extends Save {
+  public static class Sprite extends EditorSave {
     public int getIndex() {
-      return 21;
+      return 20;
     }
   }
   
-  public static class Item extends Save {
+  public static class Item extends EditorSave {
     public int getIndex() {
-      return 24;
+      return 23;
     }
   }
 }
