@@ -1,12 +1,11 @@
 package game.network.packet.menu;
 
 import game.Game;
-import graphics.gl00.Context;
 import io.netty.buffer.ByteBuf;
 import network.packet.Packet;
 
 public class Permissions extends Packet {
-  private game.data.account.Permissions _permissions = ((Game)Context.getGame()).getPermissions();
+  private game.data.account.Permissions _permissions = Game.getInstance().getPermissions();
   
   public int getIndex() {
     return 3;
