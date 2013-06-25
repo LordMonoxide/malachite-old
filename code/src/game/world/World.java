@@ -48,7 +48,7 @@ public class World extends Sandbox {
       if(!b) return false;
     }
     
-    return m.getCRC() == crc;
+    return m.getRev() == crc;
   }
   
   public Region getRegion(int x, int y) {
