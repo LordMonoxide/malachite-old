@@ -1,18 +1,15 @@
 package game.data;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import game.data.util.Buffer;
-import game.data.util.Data;
-import game.data.util.Serializable;
+import game.data.util.GameData;
 import graphics.gl00.Context;
 import graphics.gl00.Drawable;
 import graphics.shared.textures.Texture;
 
-public class Sprite extends Serializable implements Data {
-  private static final int VERSION = 2;
-  
-  protected String _name, _note;
+public class Sprite extends GameData {
   protected String _texture;
   protected int _w, _h;
   protected int _default;
@@ -20,12 +17,10 @@ public class Sprite extends Serializable implements Data {
   protected ArrayList<Anim> _anim = new ArrayList<Anim>();
   protected String _script;
   
-  public Sprite(String file, int crc) {
-    super(file, crc);
+  public Sprite(String file) {
+    super(1, new File("../data/sprites/" + file));
   }
   
-  public String getName()    { return _name; }
-  public String getNote()    { return _note; }
   public    int getW()       { return _w; }
   public    int getH()       { return _h; }
   public    int getDefault() { return _default; }
@@ -63,12 +58,7 @@ public class Sprite extends Serializable implements Data {
     return a;
   }
   
-  public Buffer serialize() {
-    Buffer b = new Buffer();
-    b.put(VERSION);
-    
-    b.put(_name);
-    b.put(_note);
+  protected void serializeInternal(Buffer b) {
     b.put(_texture);
     b.put(_w);
     b.put(_h);
@@ -98,14 +88,11 @@ public class Sprite extends Serializable implements Data {
     }
     
     b.put(_script);
-    
-    return b;
   }
   
-  public void deserialize(Buffer b) {
-    switch(b.getInt()) {
+  protected void deserializeInternal(Buffer b) {
+    switch(getVersion()) {
       case 1: deserialize01(b); break;
-      case 2: deserialize02(b);
     }
   }
   
@@ -113,56 +100,6 @@ public class Sprite extends Serializable implements Data {
     _frame.clear();
     _anim.clear();
     
-    _name = b.getString();
-    _note = b.getString();
-    _texture = b.getString();
-    _w = b.getInt();
-    _h = b.getInt();
-    _default = b.getInt();
-    
-    int frames = b.getInt();
-    int anims = b.getInt();
-    
-    _frame.ensureCapacity(frames);
-    _anim.ensureCapacity(anims);
-    
-    for(int i = 0; i < frames; i++) {
-      Frame f = new Frame();
-      f._fx = b.getInt();
-      f._fy = b.getInt();
-      f._x = b.getInt();
-      f._y = b.getInt();
-      f._w = b.getInt();
-      f._h = b.getInt();
-      _frame.add(f);
-    }
-    
-    for(int i = 0; i < anims; i++) {
-      Anim a = new Anim();
-      a._name = b.getString();
-      a._default = b.getInt();
-      
-      int lists = b.getInt();
-      
-      a._list.ensureCapacity(lists);
-      
-      for(int n = 0; n < lists; n++) {
-        List l = new List();
-        l._frame = b.getInt();
-        l._time = b.getInt();
-        a._list.add(l);
-      }
-      
-      _anim.add(a);
-    }
-  }
-  
-  private void deserialize02(Buffer b) {
-    _frame.clear();
-    _anim.clear();
-    
-    _name = b.getString();
-    _note = b.getString();
     _texture = b.getString();
     _w = b.getInt();
     _h = b.getInt();

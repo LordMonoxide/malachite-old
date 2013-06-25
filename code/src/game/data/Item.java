@@ -1,14 +1,12 @@
 package game.data;
 
+import java.io.File;
+
 import game.data.util.Buffer;
-import game.data.util.Data;
-import game.data.util.Serializable;
+import game.data.util.GameData;
 import game.world.Entity;
 
-public class Item extends Serializable implements Data {
-  private static final int VERSION = 4;
-  
-  protected String _name, _note;
+public class Item extends GameData {
   protected String _sprite;
   protected int    _type;
   
@@ -23,12 +21,10 @@ public class Item extends Serializable implements Data {
   private Entity.Stats.Buffs.Buff _buffDEX = new Entity.Stats.Buffs.Buff();
   private Entity.Stats.Buffs.Buff _buffINT = new Entity.Stats.Buffs.Buff();
   
-  public Item(String file, int crc) {
-    super(file, crc);
+  public Item(String file) {
+    super(1, new File("../data/item/" + file));
   }
   
-  public String getName()   { return _name; }
-  public String getNote()   { return _note; }
   public String getSprite() { return _sprite; }
   public int    getType()   { return _type; }
   public int    getDamage() { return _damage; }
@@ -41,11 +37,7 @@ public class Item extends Serializable implements Data {
   public Entity.Stats.Buffs.Buff buffDEX() { return _buffDEX; }
   public Entity.Stats.Buffs.Buff buffINT() { return _buffINT; }
   
-  public Buffer serialize() {
-    Buffer b = new Buffer();
-    b.put(VERSION);
-    b.put(_name);
-    b.put(_note);
+  protected void serializeInternal(Buffer b) {
     b.put(_sprite);
     b.put(_type);
     b.put(_damage);
@@ -62,50 +54,15 @@ public class Item extends Serializable implements Data {
     b.put(_buffDEX.percent());
     b.put(_buffINT.val());
     b.put(_buffINT.percent());
-    return b;
   }
   
-  public void deserialize(Buffer b) {
-    switch(b.getInt()) {
+  protected void deserializeInternal(Buffer b) {
+    switch(getVersion()) {
       case 1: deserialize01(b); break;
-      case 2: deserialize02(b); break;
-      case 3: deserialize03(b); break;
-      case 4: deserialize04(b); break;
     }
   }
   
   private void deserialize01(Buffer b) {
-    _name   = b.getString();
-    _note   = b.getString();
-    _sprite = b.getString();
-    _type   = b.getInt();
-    _damage = b.getInt();
-  }
-  
-  private void deserialize02(Buffer b) {
-    _name   = b.getString();
-    _note   = b.getString();
-    _sprite = b.getString();
-    _type   = b.getInt();
-    _damage = b.getInt();
-    _hpHeal = b.getInt();
-    _mpHeal = b.getInt();
-  }
-  
-  private void deserialize03(Buffer b) {
-    _name   = b.getString();
-    _note   = b.getString();
-    _sprite = b.getString();
-    _type   = b.getInt();
-    _damage = b.getInt();
-    _weight = b.getFloat();
-    _hpHeal = b.getInt();
-    _mpHeal = b.getInt();
-  }
-  
-  private void deserialize04(Buffer b) {
-    _name   = b.getString();
-    _note   = b.getString();
     _sprite = b.getString();
     _type   = b.getInt();
     _damage = b.getInt();

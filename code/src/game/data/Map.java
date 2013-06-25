@@ -2,12 +2,11 @@ package game.data;
 
 import java.io.File;
 import java.nio.ByteBuffer;
-import java.util.LinkedList;
 
 import game.Game;
 import game.data.util.Buffer;
-import game.data.util.Serializable;
-import game.network.packet.Data;
+import game.data.util.GameData;
+import game.network.packet.DataMap;
 import game.settings.Settings;
 import game.world.World;
 import graphics.gl00.Canvas;
@@ -16,18 +15,15 @@ import graphics.gl00.Drawable;
 import graphics.shared.textures.Texture;
 import graphics.shared.textures.Textures;
 
-public class Map extends Serializable {
-  private static final int VERSION = 4;
-  
+public class Map extends GameData {
   protected World _world;
   protected int _x, _y;
-  protected Layer[]            _layer = new Layer[Settings.Map.Depth];
-  protected LinkedList<Sprite> _sprite = new LinkedList<Sprite>();
-  protected LinkedList<Item>   _item   = new LinkedList<Item>();
+  protected int _version;
+  protected Layer[] _layer  = new Layer[Settings.Map.Depth];
   private boolean _loaded;
   
   public Map(World world, int x, int y) {
-    super(new File("../data/worlds/" + world.getName() + "/" + x + "x" + y));
+    super(1, new File("../data/worlds/" + world.getName() + "/" + x + "x" + y));
     _world = world;
     _x = x;
     _y = y;
@@ -43,20 +39,13 @@ public class Map extends Serializable {
     return _world;
   }
   
-  public int getX() {
-    return _x;
-  }
-  
-  public int getY() {
-    return _y;
-  }
+  public int getX() { return _x; }
+  public int getY() { return _y; }
   
   public void request() {
-    updateCRC();
-    
-    Data.MapRequest p = new Data.MapRequest(this);
-    Game.getInstance().send(p, Data.MapResponse.class, new Game.PacketCallback<Data.MapResponse>() {
-      public boolean recieved(Data.MapResponse packet) {
+    DataMap.Request p = new DataMap.Request(this);
+    Game.getInstance().send(p, DataMap.Response.class, new Game.PacketCallback<DataMap.Response>() {
+      public boolean recieved(DataMap.Response packet) {
         if(packet.getX() == _x && packet.getY() == _y) {
           remove();
           
@@ -77,21 +66,27 @@ public class Map extends Serializable {
     });
   }
   
-  public Drawable[] createDrawablesFromLayer(int z) {
+  public Drawable[] createDrawablesFromLayer(final int z) {
     Drawable[] d = new Drawable[Settings.Map.Tile.Count * Settings.Map.Tile.Count];
     int tiles = 0;
     
     Textures t = Context.getTextures();
     
-    for(int x = 0; x < _layer[z]._tile.length; x++) {
-      for(int y = 0; y < _layer[z]._tile[x].length; y++) {
-        if(_layer[z]._tile[x][y]._a != 0) {
-          d[tiles] = Context.newDrawable();
-          d[tiles].setTexture(t.getTexture("tiles/" + _layer[z]._tile[x][y]._tileset + ".png", true));
-          d[tiles].setXYWH(x * Settings.Map.Tile.Size, y * Settings.Map.Tile.Size, Settings.Map.Tile.Size, Settings.Map.Tile.Size);
-          d[tiles].setTXYWH(_layer[z]._tile[x][y]._x * Settings.Map.Tile.Size, _layer[z]._tile[x][y]._y * Settings.Map.Tile.Size, Settings.Map.Tile.Size, Settings.Map.Tile.Size);
-          d[tiles].createQuad();
-          tiles++;
+    for(int x1 = 0; x1 < _layer[z]._tile.length; x1++) {
+      for(int y1 = 0; y1 < _layer[z]._tile[x1].length; y1++) {
+        if(_layer[z]._tile[x1][y1]._a != 0) {
+          final Drawable tile = Context.newDrawable();
+          final int x = x1;
+          final int y = y1;
+          d[tiles++] = tile;
+          tile.setTexture(t.getTexture("tiles/" + _layer[z]._tile[x][y]._tileset + ".png"));
+          tile.getTexture().events().addLoadHandler(new Texture.Events.Load() {
+            public void load() {
+              tile.setXYWH(x * Settings.Map.Tile.Size, y * Settings.Map.Tile.Size, Settings.Map.Tile.Size, Settings.Map.Tile.Size);
+              tile.setTXYWH(_layer[z]._tile[x][y]._x * Settings.Map.Tile.Size, _layer[z]._tile[x][y]._y * Settings.Map.Tile.Size, Settings.Map.Tile.Size, Settings.Map.Tile.Size);
+              tile.createQuad();
+            }
+          });
         }
       }
     }
@@ -121,36 +116,36 @@ public class Map extends Serializable {
     }
   }
   
-  public Texture createAttribMaskTextureFromLayer(int z) {
-    Texture texture = Textures.getInstance().getTexture(_x + "x" + _y + "x" + z + " mask", Settings.Map.Size, Settings.Map.Size, null, true);
-    
-    ByteBuffer b = ByteBuffer.allocateDirect(Settings.Map.Attrib.Size * Settings.Map.Attrib.Size * 4);
-    
-    for(int x = 0; x < _layer[z]._attrib.length; x++) {
-      for(int y = 0; y < _layer[z]._attrib[x].length; y++) {
-        b.clear();
+  public Texture createAttribMaskTextureFromLayer(final int z) {
+    final Texture texture = Textures.getInstance().getTexture(_x + "x" + _y + "x" + z + " mask", Settings.Map.Size, Settings.Map.Size, null);
+    texture.events().addLoadHandler(new Texture.Events.Load() {
+      public void load() {
+        ByteBuffer b = ByteBuffer.allocateDirect(Settings.Map.Attrib.Size * Settings.Map.Attrib.Size * 4);
         
-        if(_layer[z]._attrib[x][y]._type != 0) {
-          Attrib.Type t = Attrib.Type.fromVal(_layer[z]._attrib[x][y]._type);
-          for(int i = 0; i < b.capacity() / 4; i++) {
-            b.put(t._col);
+        for(int x = 0; x < _layer[z]._attrib.length; x++) {
+          for(int y = 0; y < _layer[z]._attrib[x].length; y++) {
+            b.clear();
+            
+            if(_layer[z]._attrib[x][y]._type != 0) {
+              Attrib.Type t = Attrib.Type.fromVal(_layer[z]._attrib[x][y]._type);
+              for(int i = 0; i < b.capacity() / 4; i++) {
+                b.put(t._col);
+              }
+            } else {
+              b.put(new byte[b.capacity()]);
+            }
+            
+            b.flip();
+            texture.update(x * Settings.Map.Attrib.Size, y * Settings.Map.Attrib.Size, Settings.Map.Attrib.Size, Settings.Map.Attrib.Size, b);
           }
-        } else {
-          b.put(new byte[b.capacity()]);
         }
-        
-        b.flip();
-        texture.update(x * Settings.Map.Attrib.Size, y * Settings.Map.Attrib.Size, Settings.Map.Attrib.Size, Settings.Map.Attrib.Size, b);
       }
-    }
+    });
     
     return texture;
   }
   
-  public Buffer serialize() {
-    Buffer b = new Buffer((_layer[0]._tile.length * _layer[0]._tile[0].length * 7 + _layer[0]._attrib.length * _layer[0]._attrib[0].length) * _layer.length + 28);
-    b.put(VERSION);
-    
+  protected void serializeInternal(Buffer b) {
     b.put(_x);
     b.put(_y);
     
@@ -159,9 +154,6 @@ public class Map extends Serializable {
     b.put(_layer[0]._tile[0].length);
     b.put(_layer[0]._attrib.length);
     b.put(_layer[0]._attrib[0].length);
-    
-    b.put(_sprite.size());
-    b.put(_item.size());
     
     for(int z = 0; z < _layer.length; z++) {
       for(int x = 0; x < _layer[z]._tile.length; x++) {
@@ -179,31 +171,11 @@ public class Map extends Serializable {
         }
       }
     }
-    
-    for(Sprite s : _sprite) {
-      b.put(s._file);
-      b.put(s._x);
-      b.put(s._y);
-      b.put(s._z);
-    }
-    
-    for(Item i : _item) {
-      b.put(i._file);
-      b.put(i._val);
-      b.put(i._x);
-      b.put(i._y);
-      b.put(i._z);
-    }
-    
-    return b;
   }
   
-  public void deserialize(Buffer b) {
-    switch(b.getInt()) {
+  protected void deserializeInternal(Buffer b) {
+    switch(getVersion()) {
       case 1: deserialize01(b); break;
-      case 2: deserialize02(b); break;
-      case 3: deserialize03(b); break;
-      case 4: deserialize04(b); break;
     }
     
     _loaded = true;
@@ -251,185 +223,9 @@ public class Map extends Serializable {
     }
   }
   
-  private void deserialize02(Buffer b) {
-    _sprite.clear();
-    
-    _x = b.getInt();
-    _y = b.getInt();
-    
-    int sizeZ = b.getInt();
-    int sizeX = b.getInt();
-    int sizeY = b.getInt();
-    int sizeXA = b.getInt();
-    int sizeYA = b.getInt();
-    
-    int spriteSize = b.getInt();
-    
-    int maxX = sizeX > Settings.Map.Tile.Count ? Settings.Map.Tile.Count : sizeX;
-    int maxY = sizeY > Settings.Map.Tile.Count ? Settings.Map.Tile.Count : sizeY;
-    int maxZ = sizeZ > Settings.Map.Depth ? Settings.Map.Depth : sizeZ;
-    int maxXA = sizeXA > (Settings.Map.Attrib.Count) ? (Settings.Map.Attrib.Count) : sizeXA;
-    int maxYA = sizeYA > (Settings.Map.Attrib.Count) ? (Settings.Map.Attrib.Count) : sizeYA;
-    
-    _layer = new Layer[Settings.Map.Depth];
-    
-    for(int z = 0; z < maxZ; z++) {
-      _layer[z] = new Layer();
-      _layer[z]._tile = new Tile[Settings.Map.Tile.Count][Settings.Map.Tile.Count];
-      _layer[z]._attrib = new Attrib[Settings.Map.Attrib.Count][Settings.Map.Attrib.Count];
-      
-      for(int x = 0; x < maxX; x++) {
-        for(int y = 0; y < maxY; y++) {
-          _layer[z]._tile[x][y] = new Tile();
-          _layer[z]._tile[x][y]._x = b.getByte();
-          _layer[z]._tile[x][y]._y = b.getByte();
-          _layer[z]._tile[x][y]._tileset = b.getByte();
-          _layer[z]._tile[x][y]._a = b.getByte();
-        }
-      }
-      
-      for(int x = 0; x < maxXA; x++) {
-        for(int y = 0; y < maxYA; y++) {
-          _layer[z]._attrib[x][y] = new Attrib();
-          _layer[z]._attrib[x][y]._type = b.getByte();
-        }
-      }
-    }
-    
-    for(int i = 0; i < spriteSize; i++) {
-      Sprite s = new Sprite();
-      s._file = b.getString();
-      s._x = b.getInt();
-      s._y = b.getInt();
-      _sprite.add(s);
-    }
-  }
-  
-  private void deserialize03(Buffer b) {
-    _sprite.clear();
-    
-    _x = b.getInt();
-    _y = b.getInt();
-    
-    int sizeZ = b.getInt();
-    int sizeX = b.getInt();
-    int sizeY = b.getInt();
-    int sizeXA = b.getInt();
-    int sizeYA = b.getInt();
-    
-    int spriteSize = b.getInt();
-    
-    int maxX = sizeX > Settings.Map.Tile.Count ? Settings.Map.Tile.Count : sizeX;
-    int maxY = sizeY > Settings.Map.Tile.Count ? Settings.Map.Tile.Count : sizeY;
-    int maxZ = sizeZ > Settings.Map.Depth ? Settings.Map.Depth : sizeZ;
-    int maxXA = sizeXA > (Settings.Map.Attrib.Count) ? (Settings.Map.Attrib.Count) : sizeXA;
-    int maxYA = sizeYA > (Settings.Map.Attrib.Count) ? (Settings.Map.Attrib.Count) : sizeYA;
-    
-    _layer = new Layer[Settings.Map.Depth];
-    
-    for(int z = 0; z < maxZ; z++) {
-      _layer[z] = new Layer();
-      _layer[z]._tile = new Tile[Settings.Map.Tile.Count][Settings.Map.Tile.Count];
-      _layer[z]._attrib = new Attrib[Settings.Map.Attrib.Count][Settings.Map.Attrib.Count];
-      
-      for(int x = 0; x < maxX; x++) {
-        for(int y = 0; y < maxY; y++) {
-          _layer[z]._tile[x][y] = new Tile();
-          _layer[z]._tile[x][y]._x = b.getByte();
-          _layer[z]._tile[x][y]._y = b.getByte();
-          _layer[z]._tile[x][y]._tileset = b.getByte();
-          _layer[z]._tile[x][y]._a = b.getByte();
-        }
-      }
-      
-      for(int x = 0; x < maxXA; x++) {
-        for(int y = 0; y < maxYA; y++) {
-          _layer[z]._attrib[x][y] = new Attrib();
-          _layer[z]._attrib[x][y]._type = b.getByte();
-        }
-      }
-    }
-    
-    for(int i = 0; i < spriteSize; i++) {
-      Sprite s = new Sprite();
-      s._file = b.getString();
-      s._x = b.getInt();
-      s._y = b.getInt();
-      s._z = b.getByte();
-      _sprite.add(s);
-    }
-  }
-  
-  private void deserialize04(Buffer b) {
-    _sprite.clear();
-    _item.clear();
-    
-    _x = b.getInt();
-    _y = b.getInt();
-    
-    int sizeZ = b.getInt();
-    int sizeX = b.getInt();
-    int sizeY = b.getInt();
-    int sizeXA = b.getInt();
-    int sizeYA = b.getInt();
-    
-    int spriteSize = b.getInt();
-    int itemSize = b.getInt();
-    
-    int maxX = sizeX > Settings.Map.Tile.Count ? Settings.Map.Tile.Count : sizeX;
-    int maxY = sizeY > Settings.Map.Tile.Count ? Settings.Map.Tile.Count : sizeY;
-    int maxZ = sizeZ > Settings.Map.Depth ? Settings.Map.Depth : sizeZ;
-    int maxXA = sizeXA > (Settings.Map.Attrib.Count) ? (Settings.Map.Attrib.Count) : sizeXA;
-    int maxYA = sizeYA > (Settings.Map.Attrib.Count) ? (Settings.Map.Attrib.Count) : sizeYA;
-    
-    _layer = new Layer[Settings.Map.Depth];
-    
-    for(int z = 0; z < maxZ; z++) {
-      _layer[z] = new Layer();
-      _layer[z]._tile = new Tile[Settings.Map.Tile.Count][Settings.Map.Tile.Count];
-      _layer[z]._attrib = new Attrib[Settings.Map.Attrib.Count][Settings.Map.Attrib.Count];
-      
-      for(int x = 0; x < maxX; x++) {
-        for(int y = 0; y < maxY; y++) {
-          _layer[z]._tile[x][y] = new Tile();
-          _layer[z]._tile[x][y]._x = b.getByte();
-          _layer[z]._tile[x][y]._y = b.getByte();
-          _layer[z]._tile[x][y]._tileset = b.getByte();
-          _layer[z]._tile[x][y]._a = b.getByte();
-        }
-      }
-      
-      for(int x = 0; x < maxXA; x++) {
-        for(int y = 0; y < maxYA; y++) {
-          _layer[z]._attrib[x][y] = new Attrib();
-          _layer[z]._attrib[x][y]._type = b.getByte();
-        }
-      }
-    }
-    
-    for(int i = 0; i < spriteSize; i++) {
-      Sprite s = new Sprite();
-      s._file = b.getString();
-      s._x = b.getInt();
-      s._y = b.getInt();
-      s._z = b.getByte();
-      _sprite.add(s);
-    }
-    
-    for(int i = 0; i < itemSize; i++) {
-      Item item = new Item();
-      item._file = b.getString();
-      item._val = b.getInt();
-      item._x = b.getInt();
-      item._y = b.getInt();
-      item._z = b.getByte();
-      _item.add(item);
-    }
-  }
-  
   public class Layer {
-    protected Tile[][] _tile = new Tile[Settings.Map.Tile.Count][Settings.Map.Tile.Count];
-    protected Attrib[][] _attrib = new Attrib[Settings.Map.Attrib.Count][Settings.Map.Attrib.Count];
+    public Tile[][] _tile = new Tile[Settings.Map.Tile.Count][Settings.Map.Tile.Count];
+    public Attrib[][] _attrib = new Attrib[Settings.Map.Attrib.Count][Settings.Map.Attrib.Count];
     
     public Layer() {
       for(int x = 0; x < _tile.length; x++) {
@@ -492,18 +288,5 @@ public class Map extends Serializable {
         return _col;
       }
     }
-  }
-  
-  public static class Sprite {
-    public String _file;
-    public int _x, _y;
-    public byte _z;
-  }
-  
-  public static class Item {
-    public String _file;
-    public int _val;
-    public int _x, _y;
-    public byte _z;
   }
 }
