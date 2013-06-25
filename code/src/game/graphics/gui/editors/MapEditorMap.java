@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import game.Game;
 import game.data.Map;
 import game.data.util.Buffer;
+import game.network.packet.editors.EditorDataMap;
 import game.settings.Settings;
 import graphics.gl00.Context;
 import graphics.gl00.Drawable;
@@ -17,41 +18,21 @@ public class MapEditorMap extends Map {
   private Matrix _matrix = Context.getMatrix();
   
   private Map _map;
-  private int _mapCRC;
-  protected LinkedList<Sprite> _sprite = super._sprite;
-  protected LinkedList<Item>   _item   = super._item;
+  protected LinkedList<Sprite> _sprite = new LinkedList<Sprite>();
+  protected LinkedList<Item>   _item   = new LinkedList<Item>();
+  protected LinkedList<NPC>    _npc    = new LinkedList<NPC>();
   
-  private Texture[] _attribMask;
+  private Texture[] _attribMask = new Texture[Settings.Map.Depth];
   private EditorSprite[] _spritesDrawable;
   private EditorSprite[] _itemsDrawable;
+  private EditorSprite[] _npcsDrawable;
   
   public MapEditorMap(Map map) {
     super(map.getWorld(), map.getX(), map.getY());
     
     _map = map;
     
-    // Deep-copy source Map into
-    // this MapEditorMap's structure
-    Buffer b = _map.serialize();
-    deserialize(b);
-    _mapCRC = b.crc();
-    
-    _attribMask = new Texture[Settings.Map.Depth];
-    
-    for(int z = 0; z < _attribMask.length; z++) {
-      _attribMask[z] = createAttribMaskTextureFromLayer(z);
-    }
-    
-    createSprites();
-    createItems();
-  }
-  
-  public boolean isChanged() {
-    return _mapCRC != serialize().crc();
-  }
-  
-  public void update() {
-    _map.deserialize(serialize());
+    request();
   }
   
   public void updateAttrib(int layer, int x, int y, ByteBuffer data) {
@@ -94,6 +75,24 @@ public class MapEditorMap extends Map {
     }
   }
   
+  public void createNPCs() {
+    int i = 0;
+    _npcsDrawable = new EditorSprite[_npc.size()];
+    for(NPC npc : _npc) {
+      game.data.NPC data = _game.getNPC(_npc.get(i)._file);
+      
+      if(data != null) {
+        _npcsDrawable[i] = new EditorSprite();
+        _npcsDrawable[i]._sprite = _game.getSprite(data.getSprite());
+        _npcsDrawable[i]._drawable.setXYWH(npc._x, npc._y, _npcsDrawable[i]._sprite.getW(), _npcsDrawable[i]._sprite.getH());
+        _npcsDrawable[i]._drawable.setColour(new float[] {0, 1, 0, 1});
+        _npcsDrawable[i]._drawable.createBorder();
+      }
+      
+      i++;
+    }
+  }
+  
   public Map getMap() {
     return _map;
   }
@@ -126,6 +125,193 @@ public class MapEditorMap extends Map {
         _matrix.pop();
       }
     }
+  }
+  
+  public void drawNPCs() {
+    for(EditorSprite d : _npcsDrawable) {
+      if(d != null) {
+        _matrix.push();
+        _matrix.translate(-d._sprite.getFrame(0)._fx, -d._sprite.getH() + d._sprite.getFrame(0)._fy);
+        d._drawable.draw();
+        _matrix.pop();
+      }
+    }
+  }
+  
+  public void request() {
+    EditorDataMap.Request p = new EditorDataMap.Request(this);
+    Game.getInstance().send(p, EditorDataMap.Response.class, new Game.PacketCallback<EditorDataMap.Response>() {
+      public boolean recieved(EditorDataMap.Response packet) {
+        if(packet.getX() == _x && packet.getY() == _y) {
+          remove();
+          
+          packet.process();
+          System.out.println("MapEditorMap " + getFile() + " synced from server");
+          
+          for(int z = 0; z < _attribMask.length; z++) {
+            _attribMask[z] = createAttribMaskTextureFromLayer(z);
+          }
+          
+          createSprites();
+          createItems();
+          createNPCs();
+          
+          return true;
+        }
+        
+        return false;
+      }
+    });
+  }
+  
+  protected void serializeInternal(Buffer b) {
+    b.put(_x);
+    b.put(_y);
+    
+    b.put(_layer.length);
+    b.put(_layer[0]._tile.length);
+    b.put(_layer[0]._tile[0].length);
+    b.put(_layer[0]._attrib.length);
+    b.put(_layer[0]._attrib[0].length);
+    
+    b.put(_sprite.size());
+    b.put(_item.size());
+    b.put(_npc.size());
+    
+    for(int z = 0; z < _layer.length; z++) {
+      for(int x = 0; x < _layer[z]._tile.length; x++) {
+        for(int y = 0; y < _layer[z]._tile[x].length; y++) {
+          b.put(_layer[z]._tile[x][y]._x);
+          b.put(_layer[z]._tile[x][y]._y);
+          b.put(_layer[z]._tile[x][y]._tileset);
+          b.put(_layer[z]._tile[x][y]._a);
+        }
+      }
+      
+      for(int x = 0; x < _layer[z]._attrib.length; x++) {
+        for(int y = 0; y < _layer[z]._attrib[x].length; y++) {
+          b.put(_layer[z]._attrib[x][y]._type);
+        }
+      }
+    }
+    
+    for(Sprite s : _sprite) {
+      b.put(s._file);
+      b.put(s._x);
+      b.put(s._y);
+      b.put(s._z);
+    }
+    
+    for(Item i : _item) {
+      b.put(i._file);
+      b.put(i._val);
+      b.put(i._x);
+      b.put(i._y);
+      b.put(i._z);
+    }
+    
+    for(NPC n : _npc) {
+      b.put(n._file);
+      b.put(n._x);
+      b.put(n._y);
+      b.put(n._z);
+    }
+  }
+  
+  protected void deserializeInternal(Buffer b) {
+    switch(getVersion()) {
+      case 1: deserialize01(b); break;
+    }
+  }
+  
+  private void deserialize01(Buffer b) {
+    _sprite.clear();
+    _item.clear();
+    _npc.clear();
+    
+    _x = b.getInt();
+    _y = b.getInt();
+    
+    int sizeZ = b.getInt();
+    int sizeX = b.getInt();
+    int sizeY = b.getInt();
+    int sizeXA = b.getInt();
+    int sizeYA = b.getInt();
+    
+    int spriteSize = b.getInt();
+    int itemSize = b.getInt();
+    int npcSize = b.getInt();
+    
+    _layer = new Layer[sizeZ];
+    
+    for(int z = 0; z < sizeZ; z++) {
+      _layer[z] = new Layer();
+      _layer[z]._tile = new Tile[sizeX][sizeY];
+      _layer[z]._attrib = new Attrib[sizeXA][sizeYA];
+      
+      for(int x = 0; x < sizeX; x++) {
+        for(int y = 0; y < sizeY; y++) {
+          _layer[z]._tile[x][y] = new Tile();
+          _layer[z]._tile[x][y]._x = b.getByte();
+          _layer[z]._tile[x][y]._y = b.getByte();
+          _layer[z]._tile[x][y]._tileset = b.getByte();
+          _layer[z]._tile[x][y]._a = b.getByte();
+        }
+      }
+      
+      for(int x = 0; x < sizeXA; x++) {
+        for(int y = 0; y < sizeYA; y++) {
+          _layer[z]._attrib[x][y] = new Attrib();
+          _layer[z]._attrib[x][y]._type = b.getByte();
+        }
+      }
+    }
+    
+    for(int i = 0; i < spriteSize; i++) {
+      Sprite s = new Sprite();
+      s._file = b.getString();
+      s._x = b.getInt();
+      s._y = b.getInt();
+      s._z = b.getByte();
+      _sprite.add(s);
+    }
+    
+    for(int i = 0; i < itemSize; i++) {
+      Item item = new Item();
+      item._file = b.getString();
+      item._val = b.getInt();
+      item._x = b.getInt();
+      item._y = b.getInt();
+      item._z = b.getByte();
+      _item.add(item);
+    }
+    
+    for(int i = 0; i < npcSize; i++) {
+      NPC n = new NPC();
+      n._file = b.getString();
+      n._x = b.getInt();
+      n._y = b.getInt();
+      n._z = b.getByte();
+    }
+  }
+  
+  public static class Sprite {
+    public String _file;
+    public int _x, _y;
+    public byte _z;
+  }
+  
+  public static class Item {
+    public String _file;
+    public int _val;
+    public int _x, _y;
+    public byte _z;
+  }
+  
+  public static class NPC {
+    public String _file;
+    public int _x, _y;
+    public byte _z;
   }
   
   private static class EditorSprite {
