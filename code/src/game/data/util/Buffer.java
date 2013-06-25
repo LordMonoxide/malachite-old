@@ -76,6 +76,7 @@ public class Buffer {
   }
   
   public void save(File f) throws IOException {
+    f.getParentFile().mkdirs();
     f.createNewFile();
     
     FileOutputStream fs = new FileOutputStream(f);
