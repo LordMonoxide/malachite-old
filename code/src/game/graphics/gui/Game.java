@@ -3,7 +3,7 @@ package game.graphics.gui;
 import org.lwjgl.input.Keyboard;
 
 import game.data.Item;
-import game.data.util.Data;
+import game.data.util.GameData;
 import game.graphics.gui.editors.DataSelection;
 import game.graphics.gui.editors.ItemEditor;
 import game.graphics.gui.editors.MapEditor;
@@ -33,7 +33,7 @@ import graphics.shared.gui.controls.Textbox;
 import graphics.shared.gui.controls.compound.Window;
 
 public class Game extends GUI {
-  private game.Game _game = (game.Game)Context.getGame();
+  private game.Game _game = game.Game.getInstance();
   private Font _font = Context.getFonts().getDefault();
   private float[] _debugColour = {1, 0, 1, 1};
   private Drawable _debugText;
@@ -116,7 +116,7 @@ public class Game extends GUI {
     for(int i = 0; i < _btnEdit.length; i++) {
       _btnEdit[i] = new Button(this);
       _btnEdit[i].setXYWH(8, 8 + i * 19, 90, 20);
-      _wndAdmin.Controls().add(_btnEdit[i]);
+      _wndAdmin.controls().add(_btnEdit[i]);
     }
     
     _btnEdit[0].setText("Edit Maps");
@@ -125,7 +125,6 @@ public class Game extends GUI {
       public void click() {
         if(_editMap == null) {
           _editMap = new MapEditor();
-          _editMap.load();
           _editMap.setRegion(_entity.getRegion());
           _editMap.push();
           _wndAdmin.setVisible(false);
@@ -137,9 +136,7 @@ public class Game extends GUI {
       public void clickDbl() { }
       public void click() {
         SpriteEditor editor = new SpriteEditor();
-        editor.load();
-        DataSelection dataSel = new DataSelection(editor, "sprites", _game.getSprites().toArray(new Data[0]));
-        dataSel.load();
+        DataSelection dataSel = new DataSelection(editor, "sprites", _game.getSprites().toArray(new GameData[0]));
         dataSel.push();
         _wndAdmin.setVisible(false);
       }
@@ -149,9 +146,7 @@ public class Game extends GUI {
       public void clickDbl() { }
       public void click() {
         ItemEditor editor = new ItemEditor();
-        editor.load();
-        DataSelection dataSel = new DataSelection(editor, "items", _game.getItems().toArray(new Data[0]));
-        dataSel.load();
+        DataSelection dataSel = new DataSelection(editor, "items", _game.getItems().toArray(new GameData[0]));
         dataSel.push();
         _wndAdmin.setVisible(false);
       }
@@ -178,7 +173,7 @@ public class Game extends GUI {
       _picVital[i].setBackColour(new float[] {0, 1, 0, 1});
       _picVital[i].setWH(_picVitalBack[i].getW(), _picVitalBack[i].getH() - 1);
       _picVital[i].setY(1);
-      _picVitalBack[i].Controls().add(_picVital[i]);
+      _picVitalBack[i].controls().add(_picVital[i]);
       
       _lblVital[i] = new Label(this);
       _lblVital[i].setText(Lang.VITAL_ABBV.text(i) + ":");
@@ -186,10 +181,10 @@ public class Game extends GUI {
       
       _lblVitalVal[i] = new Label(this);
       _lblVitalVal[i].setXY(1, -2);
-      _picVital[i].Controls().add(_lblVitalVal[i]);
+      _picVital[i].controls().add(_lblVitalVal[i]);
       
-      Controls().add(_picVitalBack[i]);
-      Controls().add(_lblVital[i]);
+      controls().add(_picVitalBack[i]);
+      controls().add(_lblVital[i]);
     }
     
     for(int i = 0; i < _lblStat.length; i++) {
@@ -200,8 +195,8 @@ public class Game extends GUI {
       _lblStatVal[i] = new Label(this);
       _lblStatVal[i].setY(_lblStat[i].getY());
       
-      Controls().add(_lblStat[i]);
-      Controls().add(_lblStatVal[i]);
+      controls().add(_lblStat[i]);
+      controls().add(_lblStatVal[i]);
     }
     
     _lblWeight = new Label(this);
@@ -211,8 +206,8 @@ public class Game extends GUI {
     _lblWeightVal = new Label(this);
     _lblWeightVal.setY(_lblWeight.getY());
     
-    Controls().add(_lblWeight);
-    Controls().add(_lblWeightVal);
+    controls().add(_lblWeight);
+    controls().add(_lblWeightVal);
     
     _wndInv = new Window(this);
     _sprInv = new game.graphics.gui.controls.Sprite[Settings.Player.Inventory.Size];
@@ -275,7 +270,7 @@ public class Game extends GUI {
           if(button == 0) {
             if(!_sprSelectedInv.getVisible()) {
               if(_entity.inv(n) != null) {
-                _sprSelectedInv.setSprite(new Sprite(_sprInv[n].getSprite().getSource()));
+                //_sprSelectedInv.setSprite(new Sprite(_sprInv[n].getSprite().getSource()));
                 _sprSelectedInv.setVisible(true);
                 _lblSelectedInvVal.setText(String.valueOf(_entity.inv(n).val()));
                 _lblSelectedInvVal.setVisible(_entity.inv(n).val() != 0);
@@ -319,7 +314,7 @@ public class Game extends GUI {
         }
       });
       
-      _wndInv.Controls().add(_sprInv[i]);
+      _wndInv.controls().add(_sprInv[i]);
     }
     
     _picItemDesc = new Picture(this);
@@ -327,7 +322,7 @@ public class Game extends GUI {
     _picItemDesc.setBackColour(new float[] {0.3f, 0.3f, 0.3f, 1});
     _picItemDesc.setWH(138, 38);
     _picItemDesc.setVisible(false);
-    _wndInv.Controls().add(_picItemDesc);
+    _wndInv.controls().add(_picItemDesc);
     
     _sprInvHover = new game.graphics.gui.controls.Sprite(this, false);
     _sprInvHover.setBackColour(new float[] {0, 0, 0, 1});
@@ -336,7 +331,7 @@ public class Game extends GUI {
     
     _lblInvVal = new Label(this);
     _lblInvVal.setXY(2, 2);
-    _sprInvHover.Controls().add(_lblInvVal);
+    _sprInvHover.controls().add(_lblInvVal);
     
     _lblInvName = new Label(this);
     _lblInvName.setXY(_sprInvHover.getX() + _sprInvHover.getW() + 4, _sprInvHover.getY());
@@ -344,9 +339,9 @@ public class Game extends GUI {
     _lblInvType = new Label(this);
     _lblInvType.setXY(_lblInvName.getX(), _lblInvName.getY() + _lblInvName.getH());
     
-    _picItemDesc.Controls().add(_sprInvHover);
-    _picItemDesc.Controls().add(_lblInvName);
-    _picItemDesc.Controls().add(_lblInvType);
+    _picItemDesc.controls().add(_sprInvHover);
+    _picItemDesc.controls().add(_lblInvName);
+    _picItemDesc.controls().add(_lblInvType);
     
     _lblSelectedInvVal = new Label(this);
     _lblSelectedInvVal.setXY(2, 2);
@@ -354,7 +349,7 @@ public class Game extends GUI {
     _sprSelectedInv = new game.graphics.gui.controls.Sprite(this);
     _sprSelectedInv.setWH(32, 32);
     _sprSelectedInv.setVisible(false);
-    _sprSelectedInv.Controls().add(_lblSelectedInvVal);
+    _sprSelectedInv.controls().add(_lblSelectedInvVal);
     
     float x = _sprInv[0].getX();
     float y = 5 * 34 + 8;
@@ -394,7 +389,7 @@ public class Game extends GUI {
         }
       }
     });
-    _wndInv.Controls().add(_sprHand1);
+    _wndInv.controls().add(_sprHand1);
     x += 34;
     
     _sprHand2 = new game.graphics.gui.controls.Sprite(this);
@@ -432,7 +427,7 @@ public class Game extends GUI {
         }
       }
     });
-    _wndInv.Controls().add(_sprHand2);
+    _wndInv.controls().add(_sprHand2);
     x += 68;
     
     _sprBling = new game.graphics.gui.controls.Sprite[Item.ITEM_TYPE_BLING_COUNT];
@@ -467,7 +462,7 @@ public class Game extends GUI {
           }
         }
       });
-      _wndInv.Controls().add(_sprBling[i]);
+      _wndInv.controls().add(_sprBling[i]);
       x += 34;
     }
     
@@ -505,7 +500,7 @@ public class Game extends GUI {
           }
         }
       });
-      _wndInv.Controls().add(_sprArmour[i]);
+      _wndInv.controls().add(_sprArmour[i]);
       x += 34;
     }
     
@@ -514,7 +509,7 @@ public class Game extends GUI {
     
     _lblCurrency = new Label(this);
     _lblCurrency.setXY(x, y);
-    _wndInv.Controls().add(_lblCurrency);
+    _wndInv.controls().add(_lblCurrency);
     
     _wndInv.setText("Inventory");
     _wndInv.setClientWH(8 * 34 + 8, y + _lblCurrency.getH() + 4);
@@ -538,31 +533,40 @@ public class Game extends GUI {
       }
     });
     
-    Controls().add(_txtChat);
-    Controls().add(_mnuItem);
-    Controls().add(_wndInv);
-    Controls().add(_wndAdmin);
-    
-    Canvas c = new Canvas("Debug text", 256, 256);
-    c.bind();
-    _font.draw(4,   4, "Graphics:", _debugColour);
-    _font.draw(4,  14, "Logic:", _debugColour);
-    _font.draw(4,  24, "Physics:", _debugColour);
-    _font.draw(4,  34, "Map:", _debugColour);
-    _font.draw(4,  44, "Loc:", _debugColour);
-    _font.draw(4,  54, "Layer:", _debugColour);
-    _font.draw(4,  64, "RLoc:", _debugColour);
-    _font.draw(4,  74, "XVel:", _debugColour);
-    _font.draw(4,  84, "YVel:", _debugColour);
-    _font.draw(4,  94, "Bearing:", _debugColour);
-    _font.draw(4, 104, "Sprites:", _debugColour);
-    _font.draw(4, 114, "Textures:", _debugColour);
-    _font.draw(4, 124, "Entity ID:", _debugColour);
-    c.unbind();
+    controls().add(_txtChat);
+    controls().add(_mnuItem);
+    controls().add(_wndInv);
+    controls().add(_wndAdmin);
     
     _debugText = Context.newDrawable();
-    _debugText.setTexture(c.getTexture());
-    _debugText.createQuad();
+    
+    _context.addLoadCallback(new Context.Loader.Callback() {
+      public void load() {
+        final Canvas c = new Canvas("Debug text", 256, 256);
+        c.events().addLoadHandler(new Canvas.Events.Load() {
+          public void load() {
+            c.bind();
+            _font.draw(4,   4, "Graphics:", _debugColour);
+            _font.draw(4,  14, "Logic:", _debugColour);
+            _font.draw(4,  24, "Physics:", _debugColour);
+            _font.draw(4,  34, "Map:", _debugColour);
+            _font.draw(4,  44, "Loc:", _debugColour);
+            _font.draw(4,  54, "Layer:", _debugColour);
+            _font.draw(4,  64, "RLoc:", _debugColour);
+            _font.draw(4,  74, "XVel:", _debugColour);
+            _font.draw(4,  84, "YVel:", _debugColour);
+            _font.draw(4,  94, "Bearing:", _debugColour);
+            _font.draw(4, 104, "Sprites:", _debugColour);
+            _font.draw(4, 114, "Textures:", _debugColour);
+            _font.draw(4, 124, "Entity ID:", _debugColour);
+            c.unbind();
+            
+            _debugText.setTexture(c.getTexture());
+            _debugText.createQuad();
+          }
+        });
+      }
+    }, true);
     
     resize();
     updateStats(_entity.stats());
@@ -619,7 +623,7 @@ public class Game extends GUI {
       }
       
       if(inv[i] != null) {
-        _sprInv[i].setSprite(new Sprite(_game.getSprite(inv[i].item().getSprite())));
+        //_sprInv[i].setSprite(new Sprite(_game.getSprite(inv[i].item().getSprite())));
       }
     }
   }
@@ -635,7 +639,7 @@ public class Game extends GUI {
     }
     
     if(newInv != null) {
-      _sprInv[index].setSprite(new Sprite(_game.getSprite(newInv.item().getSprite())));
+      //_sprInv[index].setSprite(new Sprite(_game.getSprite(newInv.item().getSprite())));
     }
   }
   
@@ -644,24 +648,24 @@ public class Game extends GUI {
     if(_sprHand2.getSprite() != null) _sprHand2.setSprite(null);
     
     if(equip.hand1() != null) {
-      _sprHand1.setSprite(new Sprite(_game.getSprite(equip.hand1().getSprite())));
+      //_sprHand1.setSprite(new Sprite(_game.getSprite(equip.hand1().getSprite())));
     }
     
     if(equip.hand2() != null) {
-      _sprHand2.setSprite(new Sprite(_game.getSprite(equip.hand2().getSprite())));
+      //_sprHand2.setSprite(new Sprite(_game.getSprite(equip.hand2().getSprite())));
     }
     
     for(int i = 0; i < Item.ITEM_TYPE_ARMOUR_COUNT; i++) {
       if(_sprArmour[i].getSprite() != null) _sprArmour[i].setSprite(null);
       if(equip.armour(i) != null) {
-        _sprArmour[i].setSprite(new Sprite(_game.getSprite(equip.armour(i).getSprite())));
+        //_sprArmour[i].setSprite(new Sprite(_game.getSprite(equip.armour(i).getSprite())));
       }
     }
     
     for(int i = 0; i < Item.ITEM_TYPE_BLING_COUNT; i++) {
       if(_sprBling[i].getSprite() != null) _sprBling[i].setSprite(null);
       if(equip.bling(i) != null) {
-        _sprBling[i].setSprite(new Sprite(_game.getSprite(equip.bling(i).getSprite())));
+        //_sprBling[i].setSprite(new Sprite(_game.getSprite(equip.bling(i).getSprite())));
       }
     }
   }
@@ -714,7 +718,7 @@ public class Game extends GUI {
     _font.draw(53,  84, String.valueOf(_entity.getVel() * _entity.getVelScaleY()), _debugColour);
     _font.draw(53,  94, String.valueOf(_entity.getBear()), _debugColour);
     _font.draw(53, 104, String.valueOf(Sprite.count()), _debugColour);
-    _font.draw(53, 114, _textures.loaded() + " (" + _textures.loading() + ")", _debugColour);
+    //_font.draw(53, 114, _textures.loaded() + " (" + _textures.loading() + ")", _debugColour);
     _font.draw(53, 124, String.valueOf(_entity.getID()), _debugColour);
     
     _matrix.pop();
