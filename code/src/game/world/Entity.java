@@ -16,7 +16,7 @@ public class Entity extends Movable {
   private int _id;
   
   private String _name;
-  private game.data.Sprite _spriteFile;
+  private String _spriteFile;
   private Type   _type;
   
   private World _world;
@@ -52,7 +52,7 @@ public class Entity extends Movable {
     return _sprite;
   }
   
-  public void setSprite(game.data.Sprite sprite) {
+  public void setSprite(String sprite) {
     _spriteFile = sprite;
   }
   
@@ -400,13 +400,14 @@ public class Entity extends Movable {
   }
   
   public enum Type {
-    Player, Sprite, Item;
+    Player, Sprite, Item, NPC;
     
     public static Type valueOf(int index) {
       switch(index) {
         case 0: return Player;
         case 1: return Sprite;
         case 2: return Item;
+        case 3: return NPC;
       }
       
       return null;
@@ -493,5 +494,4 @@ public class Entity extends Movable {
       public abstract void currency(Entity e);
     }
   }
-
 }
