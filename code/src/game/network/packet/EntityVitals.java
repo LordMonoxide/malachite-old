@@ -11,7 +11,7 @@ public class EntityVitals extends Packet {
   private int _mp, _mpMax;
   
   public int getIndex() {
-    return 22;
+    return 21;
   }
   
   public ByteBuf serialize() {

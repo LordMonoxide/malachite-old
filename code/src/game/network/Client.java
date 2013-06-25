@@ -3,6 +3,7 @@ package game.network;
 import network.packet.Packet;
 import network.packet.Packets;
 import game.network.packet.Chat;
+import game.network.packet.DataMap;
 import game.network.packet.Data;
 import game.network.packet.EntityCreate;
 import game.network.packet.EntityCurrency;
@@ -19,7 +20,8 @@ import game.network.packet.InvDrop;
 import game.network.packet.InvSwap;
 import game.network.packet.InvUnequip;
 import game.network.packet.InvUse;
-import game.network.packet.editors.Save;
+import game.network.packet.editors.EditorDataMap;
+import game.network.packet.editors.EditorSave;
 import game.network.packet.menu.CharDel;
 import game.network.packet.menu.CharNew;
 import game.network.packet.menu.CharUse;
@@ -65,14 +67,13 @@ public class Client {
     Packets.add(Data.Request.class);
     Packets.add(Data.Response.class);
     Packets.add(Chat.class);
-    Packets.add(Save.Map.class);
-    Packets.add(Data.MapRequest.class);
-    Packets.add(Data.Info.class);
-    Packets.add(Data.MapResponse.class);
-    Packets.add(Save.Sprite.class);
+    Packets.add(EditorSave.Map.class);
+    Packets.add(DataMap.Request.class);
+    Packets.add(DataMap.Response.class);
+    Packets.add(EditorSave.Sprite.class);
     Packets.add(EntityVitals.class);
     Packets.add(EntityStats.class);
-    Packets.add(Save.Item.class);
+    Packets.add(EditorSave.Item.class);
     Packets.add(EntityInv.class);
     Packets.add(EntityInvUpdate.class);
     Packets.add(EntityInteract.class);
@@ -82,6 +83,8 @@ public class Client {
     Packets.add(InvDrop.class);
     Packets.add(InvUnequip.class);
     Packets.add(EntityCurrency.class);
+    Packets.add(EditorDataMap.Request.class);
+    Packets.add(EditorDataMap.Response.class);
   }
   
   public void connect() {

@@ -15,7 +15,7 @@ public class InvSwap extends Packet {
   }
   
   public int getIndex() {
-    return 30;
+    return 29;
   }
   
   public ByteBuf serialize() {

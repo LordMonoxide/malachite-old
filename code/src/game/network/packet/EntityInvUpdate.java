@@ -12,7 +12,7 @@ public class EntityInvUpdate extends Packet {
   private int _val;
   
   public int getIndex() {
-    return 26;
+    return 25;
   }
   
   public ByteBuf serialize() {

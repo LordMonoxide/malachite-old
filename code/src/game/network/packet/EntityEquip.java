@@ -14,7 +14,7 @@ public class EntityEquip extends Packet {
   private String[] _bling  = new String[Item.ITEM_TYPE_BLING_COUNT];
   
   public int getIndex() {
-    return 29;
+    return 28;
   }
   
   public ByteBuf serialize() {

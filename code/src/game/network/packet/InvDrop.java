@@ -13,7 +13,7 @@ public class InvDrop extends Packet {
   }
   
   public int getIndex() {
-    return 31;
+    return 30;
   }
   
   public ByteBuf serialize() {

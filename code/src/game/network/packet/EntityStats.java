@@ -11,7 +11,7 @@ public class EntityStats extends Packet {
   private float _weight;
   
   public int getIndex() {
-    return 23;
+    return 22;
   }
   
   public ByteBuf serialize() {

@@ -17,7 +17,7 @@ public class InvUse extends Packet {
   }
   
   public int getIndex() {
-    return 28;
+    return 27;
   }
   
   public ByteBuf serialize() {

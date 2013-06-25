@@ -11,7 +11,7 @@ public class EntityInv extends Packet {
   private TempData[] _data;
   
   public int getIndex() {
-    return 25;
+    return 24;
   }
   
   public ByteBuf serialize() {

@@ -13,7 +13,7 @@ public class EntityInteract extends Packet {
   }
   
   public int getIndex() {
-    return 27;
+    return 26;
   }
   
   public ByteBuf serialize() {
