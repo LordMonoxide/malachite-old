@@ -1,13 +1,15 @@
 package game.world;
 
+import game.Game;
 import game.data.Sprite.Anim;
+import game.data.util.GameData;
 import graphics.gl00.Context;
 import graphics.gl00.Drawable;
 import graphics.gl00.Matrix;
 import graphics.util.Time;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
@@ -15,7 +17,7 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 public class Sprite {
-  private static ArrayList<Sprite> _sprite = new ArrayList<Sprite>();
+  private static ConcurrentLinkedDeque<Sprite> _sprite = new ConcurrentLinkedDeque<Sprite>();
   private static Matrix _matrix = Context.getMatrix();
   
   private static Context _context = Context.getContext();
@@ -26,18 +28,23 @@ public class Sprite {
     return _sprite.size();
   }
   
-  public static Sprite add(game.data.Sprite sprite) { return add(sprite, true); }
-  public static Sprite add(game.data.Sprite sprite, boolean visible) {
-    Sprite s = new Sprite(sprite);
-    s.setVisible(visible);
+  public static Sprite add(String file) { return add(file, true); }
+  public static Sprite add(String file, final boolean visible) {
+    final Sprite s = new Sprite();
     
-    synchronized(_sprite) {
-      _sprite.add(s);
-    }
-    
-    if(s._h > _tallestSprite) {
-      _tallestSprite = s._h;
-    }
+    final game.data.Sprite sprite = Game.getInstance().getSprite(file);
+    sprite.events().addLoadHandler(new GameData.Events.Load() {
+      public void load() {
+        s.load(sprite);
+        s.setVisible(visible);
+        
+        _sprite.add(s);
+        
+        if(s._h > _tallestSprite) {
+          _tallestSprite = s._h;
+        }
+      }
+    });
     
     return s;
   }
@@ -69,7 +76,7 @@ public class Sprite {
   private ScriptEngine _engine = _manager.getEngineByName("JavaScript");
   private Invocable _script;
   
-  private Events _events;
+  private Events _events = new Events();
   
   private game.data.Sprite _source;
   
@@ -86,10 +93,9 @@ public class Sprite {
   private int _frameNum;
   private double _timer;
   
-  public Sprite(game.data.Sprite sprite) {
-    if(sprite == null) return;
-    
-    _events = new Events();
+  private boolean _loaded;
+  
+  public void load(game.data.Sprite sprite) {
     _source = sprite;
     _visible = true;
     _w = sprite.getW();
@@ -109,6 +115,8 @@ public class Sprite {
       } catch(NoSuchMethodException e) {
       }
     }
+    
+    _loaded = true;
   }
   
   public Events events() {
@@ -216,6 +224,8 @@ public class Sprite {
   }
   
   public void draw() {
+    if(!_loaded) return;
+    
     _matrix.push();
     _matrix.translate(_x, _y);
     _frame[_frameNum].draw();
