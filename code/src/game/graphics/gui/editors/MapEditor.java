@@ -14,9 +14,9 @@ import game.Game;
 import game.data.Item;
 import game.data.Map;
 import game.data.Sprite;
-import game.data.util.Data;
+import game.data.util.GameData;
 import game.graphics.gui.Message;
-import game.network.packet.editors.Save;
+import game.network.packet.editors.EditorSave;
 import game.settings.Settings;
 import game.world.Region;
 import graphics.gl00.Context;
@@ -33,7 +33,7 @@ import graphics.shared.gui.controls.compound.ScrollPanel;
 import graphics.shared.gui.controls.compound.Window;
 
 public class MapEditor extends GUI {
-  private Game _game = (Game)Context.getGame();
+  private Game _game = Game.getInstance();
   
   private Picture   _picWindow;
   private Button[]  _btnTab;
@@ -91,15 +91,15 @@ public class MapEditor extends GUI {
   private int _attrib;
   
   private String     _file;
-  private Map.Sprite _sprite;
-  private Map.Item   _item;
+  private MapEditorMap.Sprite _sprite;
+  private MapEditorMap.Item   _item;
   
   private int _mx, _my;
   private MapEditorMap _map;
   private Region _region;
   private ArrayList<Region> _regions = new ArrayList<Region>();
   
-  public void load() {
+  protected void load() {
     ArrayList<String> files = new ArrayList<String>();
     for(int i = 0;; i++) {
       File f = new File("../gfx/textures/tiles/" + i + ".png");
@@ -134,7 +134,7 @@ public class MapEditor extends GUI {
       _btnTab[i].setBackColour(new float[] {0.2f, 0.2f, 0.2f, 1});
       _btnTab[i].setXYWH(8 + i * 49, 8, 50, 20);
       _btnTab[i].events().addClickHandler(btnTabClick);
-      _picWindow.Controls().add(_btnTab[i]);
+      _picWindow.controls().add(_btnTab[i]);
     }
 
     _btnTab[0].setText("Tiles");
@@ -146,10 +146,12 @@ public class MapEditor extends GUI {
     _picTab = new Picture[5];
     for(int i = 0; i < _picTab.length; i++) {
       _picTab[i] = new Picture(this);
+      System.out.println(_picTab[i]);
+      System.out.println(_picTab[i].getBackground());
       _picTab[i].setBackColour(new float[] {0.1f, 0.1f, 0.1f, 1});
       _picTab[i].setXYWH(8, _btnTab[i].getY() + _btnTab[i].getH(), 256, 256);
       _picTab[i].setVisible(false);
-      _picWindow.Controls().add(_picTab[i]);
+      _picWindow.controls().add(_picTab[i]);
     }
     
     _picTileset = new Picture(this, true);
@@ -163,8 +165,8 @@ public class MapEditor extends GUI {
     _picSelected.setWH(Settings.Map.Tile.Size, Settings.Map.Tile.Size);
     _picSelected.setBackColour(new float[] {0, 1, 0, 0.33f});
     
-    _picTab[0].Controls().add(_picTileset);
-    _picTileset.Controls().add(_picSelected);
+    _picTab[0].controls().add(_picTileset);
+    _picTileset.controls().add(_picSelected);
     
     _picLayers = new Picture(this);
     _picLayers.setBackColour(new float[] {0.1f, 0.1f, 0.1f, 1});
@@ -186,14 +188,16 @@ public class MapEditor extends GUI {
     
     for(int i = 0; i < Settings.Map.Depth; i++) {
       _btnLayer[i] = new Button(this);
+      System.out.println(_btnLayer[i]);
+      System.out.println(_btnLayer[i].getBackground());
       _btnLayer[i].setBackColour(new float[] {0.2f, 0.2f, 0.2f, 1});
       _btnLayer[i].setXYWH(2, 2 + i * 16, 96, 16);
       _btnLayer[i].setText("Layer " + i);
       _btnLayer[i].events().addClickHandler(btnLayerClick);
-      _picLayers.Controls().add(_btnLayer[i]);
+      _picLayers.controls().add(_btnLayer[i]);
     }
     
-    _picWindow.Controls().add(_picLayers);
+    _picWindow.controls().add(_picLayers);
     
     _picTilesetList = new Picture(this);
     _picTilesetList.setBackColour(new float[] {0.33f, 0.33f, 0.33f, 0.66f});
@@ -204,7 +208,7 @@ public class MapEditor extends GUI {
     _picTilesetBack = new Picture(this);
     _picTilesetBack.setBackColour(new float[] {0, 0, 0, 0});
     _picTilesetBack.setWH(files.size() * 136, _picTilesetList.getH());
-    _picTilesetList.Controls().add(_picTilesetBack);
+    _picTilesetList.controls().add(_picTilesetBack);
     
     int i = 0;
     _picTilesets = new Picture[files.size()];
@@ -212,7 +216,7 @@ public class MapEditor extends GUI {
       _picTilesets[i] = new Picture(this);
       _picTilesets[i].setTexture(_textures.getTexture(file));
       _picTilesets[i].setXYWH(i * 136 + 8, 8, 128, 128);
-      _picTilesetBack.Controls().add(_picTilesets[i]);
+      _picTilesetBack.controls().add(_picTilesets[i]);
       i++;
     }
     
@@ -236,7 +240,7 @@ public class MapEditor extends GUI {
       _btnAttrib[i].setText(attrib.toString());
       _btnAttrib[i].setXY(4, 4 + i * _btnAttrib[i].getH());
       _btnAttrib[i].events().addClickHandler(btnAttribClick);
-      _picTab[1].Controls().add(_btnAttrib[i]);
+      _picTab[1].controls().add(_btnAttrib[i]);
       i++;
     }
     
@@ -311,14 +315,14 @@ public class MapEditor extends GUI {
       }
     });
     
-    _splSprite.Controls().add(_lblSpriteFile);
-    _splSprite.Controls().add(_drpSpriteFile);
-    _splSprite.Controls().add(_lblSpriteLoc);
-    _splSprite.Controls().add(_txtSpriteX);
-    _splSprite.Controls().add(_txtSpriteY);
-    _splSprite.Controls().add(_txtSpriteZ);
+    _splSprite.controls().add(_lblSpriteFile);
+    _splSprite.controls().add(_drpSpriteFile);
+    _splSprite.controls().add(_lblSpriteLoc);
+    _splSprite.controls().add(_txtSpriteX);
+    _splSprite.controls().add(_txtSpriteY);
+    _splSprite.controls().add(_txtSpriteZ);
     
-    _picTab[2].Controls().add(_splSprite);
+    _picTab[2].controls().add(_splSprite);
     
     // Items tab
     _splItem = new ScrollPanel(this);
@@ -406,19 +410,19 @@ public class MapEditor extends GUI {
       }
     });
     
-    _splItem.Controls().add(_lblItemFile);
-    _splItem.Controls().add(_drpItemFile);
-    _splItem.Controls().add(_lblItemLoc);
-    _splItem.Controls().add(_txtItemX);
-    _splItem.Controls().add(_txtItemY);
-    _splItem.Controls().add(_txtItemZ);
-    _splItem.Controls().add(_lblItemVal);
-    _splItem.Controls().add(_txtItemVal);
+    _splItem.controls().add(_lblItemFile);
+    _splItem.controls().add(_drpItemFile);
+    _splItem.controls().add(_lblItemLoc);
+    _splItem.controls().add(_txtItemX);
+    _splItem.controls().add(_txtItemY);
+    _splItem.controls().add(_txtItemZ);
+    _splItem.controls().add(_lblItemVal);
+    _splItem.controls().add(_txtItemVal);
     
-    _picTab[3].Controls().add(_splItem);
+    _picTab[3].controls().add(_splItem);
     
-    Controls().add(_picWindow);
-    Controls().add(_picTilesetList);
+    controls().add(_picWindow);
+    controls().add(_picTilesetList);
     
     _selected = Context.newDrawable();
     _selected.setColour(new float[] {1, 1, 1, 0.5f});
@@ -442,11 +446,11 @@ public class MapEditor extends GUI {
     setAttrib(_attrib);
   }
   
-  public void destroy() {
+  protected void destroy() {
     
   }
   
-  public void resize() {
+  protected void resize() {
     _picWindow.setXY((_context.getW() - _picWindow.getW()) / 2, (_context.getH() - _picWindow.getH()) / 2);
     _picTilesetList.setY((_context.getH() - (_picWindow.getY() + _picWindow.getH()) - _picTilesetList.getH()) / 2 + _picWindow.getY() + _picWindow.getH());
     _picTilesetList.setW(_context.getW());
@@ -456,7 +460,7 @@ public class MapEditor extends GUI {
     _splItem  .setWH(_picTab[2].getW() - _splItem  .getX() * 2, _picTab[2].getH() - _splItem  .getY() * 2);
   }
   
-  public void draw() {
+  protected void draw() {
     switch(_tab) {
       case 0:
         _selected.draw();
@@ -464,7 +468,7 @@ public class MapEditor extends GUI {
     }
   }
   
-  public boolean logic() {
+  protected boolean logic() {
     return false;
   }
   
@@ -476,17 +480,14 @@ public class MapEditor extends GUI {
           return false;
           
         case JOptionPane.YES_OPTION:
-          Save.Map packet = new Save.Map();
+          EditorSave.Map packet = new EditorSave.Map();
           
           for(Region r : _regions) {
             MapEditorMap m = (MapEditorMap)r.getMap();
             
-            if(m.isChanged()) {
-              System.out.println("Updating map " + m.getFile());
-              m.update();
-              r.setMap(m.getMap());
-              packet.addData(r.getMap());
-            }
+            System.out.println("Sending map " + m.getFile());
+            r.setMap(m.getMap());
+            packet.addData(m);
           }
           
           if(packet.size() != 0) {
@@ -534,12 +535,12 @@ public class MapEditor extends GUI {
       _attribDrawable.setTexture(_map.getAttribMask(_layer));
       
       _splSprite.clear();
-      for(Map.Sprite s : _map._sprite) {
+      for(MapEditorMap.Sprite s : _map._sprite) {
         _splSprite.add(new ScrollPanelSprite(s));
       }
       
       _splItem.clear();
-      for(Map.Item d : _map._item) {
+      for(MapEditorMap.Item d : _map._item) {
         _splItem.add(new ScrollPanelItem(d));
       }
       
@@ -605,7 +606,7 @@ public class MapEditor extends GUI {
         _file = file;
         _pickLoc = true;
         _picWindow.setVisible(false);
-        _pickSprite = game.world.Sprite.add(_game.getSprite(file));
+        _pickSprite = game.world.Sprite.add(file);
         _pickSprite.setX(Mouse.getX() - _context.getCameraX());
         _pickSprite.setY(Mouse.getY() - _context.getCameraY());
         _pickSprite.setZ(_layer);
@@ -624,7 +625,7 @@ public class MapEditor extends GUI {
     }
   }
   
-  private void selSprite(Map.Sprite sprite) {
+  private void selSprite(MapEditorMap.Sprite sprite) {
     _sprite = sprite;
     
     if(_sprite._file != null) {
@@ -664,7 +665,7 @@ public class MapEditor extends GUI {
         _file = file;
         _pickLoc = true;
         _picWindow.setVisible(false);
-        _pickSprite = game.world.Sprite.add(_game.getSprite(_game.getItem(file).getSprite()));
+        _pickSprite = game.world.Sprite.add(_game.getItem(file).getSprite());
         _pickSprite.setX(Mouse.getX() - _context.getCameraX());
         _pickSprite.setY(Mouse.getY() - _context.getCameraY());
         _pickSprite.setZ(_layer);
@@ -683,7 +684,7 @@ public class MapEditor extends GUI {
     }
   }
   
-  private void selItem(Map.Item item) {
+  private void selItem(MapEditorMap.Item item) {
     _item = item;
     
     if(_item._file != null) {
@@ -834,7 +835,7 @@ public class MapEditor extends GUI {
       case 2:
         if(button == 0) {
           if(_pickLoc) {
-            Map.Sprite s = new Map.Sprite();
+            MapEditorMap.Sprite s = new MapEditorMap.Sprite();
             
             s._file = _file;
             s._x = x;
@@ -855,7 +856,7 @@ public class MapEditor extends GUI {
       case 3:
         if(button == 0) {
           if(_pickLoc) {
-            Map.Item s = new Map.Item();
+            MapEditorMap.Item s = new MapEditorMap.Item();
             
             s._file = _file;
             s._x = x;
@@ -1041,17 +1042,17 @@ public class MapEditor extends GUI {
   }
   
   private class ScrollPanelSprite extends ScrollPanel.Item {
-    Map.Sprite _sprite;
+    MapEditorMap.Sprite _sprite;
     
-    public ScrollPanelSprite(Map.Sprite sprite) {
+    public ScrollPanelSprite(MapEditorMap.Sprite sprite) {
       _sprite = sprite;
     }
   }
   
   private class ScrollPanelItem extends ScrollPanel.Item {
-    Map.Item _item;
+    MapEditorMap.Item _item;
     
-    public ScrollPanelItem(Map.Item item) {
+    public ScrollPanelItem(MapEditorMap.Item item) {
       _item = item;
     }
   }
@@ -1062,9 +1063,9 @@ public class MapEditor extends GUI {
     private Window _wndWindow;
     private List   _lstData;
     
-    private Data[] _data;
+    private GameData[] _data;
     
-    public Chooser(Data[] data) {
+    public Chooser(GameData[] data) {
       _data = data;
     }
     
@@ -1084,7 +1085,7 @@ public class MapEditor extends GUI {
         }
       };
       
-      for(Data s : _data) {
+      for(GameData s : _data) {
         ListItem l = (ListItem)_lstData.addItem(new ListItem(this, s));
         l.setText(s.getFile() + ": " + s.getName() + " - " + s.getNote());
         l.events().addClickHandler(accept);
@@ -1097,9 +1098,9 @@ public class MapEditor extends GUI {
           return true;
         }
       });
-      _wndWindow.Controls().add(_lstData);
+      _wndWindow.controls().add(_lstData);
       
-      Controls().add(_wndWindow);
+      controls().add(_wndWindow);
       resize();
     }
     
@@ -1124,9 +1125,9 @@ public class MapEditor extends GUI {
     }
     
     private class ListItem extends graphics.shared.gui.controls.List.ListItem {
-      private Data _data;
+      private GameData _data;
       
-      protected ListItem(GUI gui, Data data) {
+      protected ListItem(GUI gui, GameData data) {
         super(gui);
         _data = data;
       }

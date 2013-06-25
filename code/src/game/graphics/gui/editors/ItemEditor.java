@@ -5,10 +5,9 @@ import javax.swing.JOptionPane;
 import game.Game;
 import game.data.Item;
 import game.data.Sprite;
-import game.data.util.Data;
+import game.data.util.GameData;
 import game.language.Lang;
-import game.network.packet.editors.Save;
-import graphics.gl00.Context;
+import game.network.packet.editors.EditorSave;
 import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;
 import graphics.shared.gui.controls.Checkbox;
@@ -18,7 +17,7 @@ import graphics.shared.gui.controls.Textbox;
 import graphics.shared.gui.controls.compound.Window;
 
 public class ItemEditor extends GUI implements Editor {
-  private Game _game = (Game)Context.getGame();
+  private Game _game = Game.getInstance();
   
   private Window  _wndEditor;
   
@@ -67,7 +66,7 @@ public class ItemEditor extends GUI implements Editor {
   
   private ItemEditorItem _item;
   
-  public void load() {
+  protected void load() {
     _wndEditor = new Window(this);
     _wndEditor.setWH(300, 300);
     _wndEditor.setText("Item Editor");
@@ -273,61 +272,61 @@ public class ItemEditor extends GUI implements Editor {
       public void select(Dropdown.Item item) { update(); }
     });
     
-    _wndEditor.Controls(0).add(_lblType);
-    _wndEditor.Controls(0).add(_drpType);
-    _wndEditor.Controls(0).add(_lblSubtype);
-    _wndEditor.Controls(0).add(_drpSubtype);
-    _wndEditor.Controls(0).add(_lblDamage);
-    _wndEditor.Controls(0).add(_txtDamage);
-    _wndEditor.Controls(0).add(_lblWeight);
-    _wndEditor.Controls(0).add(_txtWeight);
-    _wndEditor.Controls(0).add(_lblHPHeal);
-    _wndEditor.Controls(0).add(_txtHPHeal);
-    _wndEditor.Controls(0).add(_lblMPHeal);
-    _wndEditor.Controls(0).add(_txtMPHeal);
-    _wndEditor.Controls(0).add(_chkPercent);
-    _wndEditor.Controls(1).add(_lblBuffHP);
-    _wndEditor.Controls(1).add(_txtBuffHP);
-    _wndEditor.Controls(1).add(_chkBuffHP);
-    _wndEditor.Controls(1).add(_lblBuffMP);
-    _wndEditor.Controls(1).add(_txtBuffMP);
-    _wndEditor.Controls(1).add(_chkBuffMP);
-    _wndEditor.Controls(1).add(_lblBuffSTR);
-    _wndEditor.Controls(1).add(_txtBuffSTR);
-    _wndEditor.Controls(1).add(_chkBuffSTR);
-    _wndEditor.Controls(1).add(_lblBuffDEX);
-    _wndEditor.Controls(1).add(_txtBuffDEX);
-    _wndEditor.Controls(1).add(_chkBuffDEX);
-    _wndEditor.Controls(1).add(_lblBuffINT);
-    _wndEditor.Controls(1).add(_txtBuffINT);
-    _wndEditor.Controls(1).add(_chkBuffINT);
-    _wndEditor.Controls(2).add(_lblName);
-    _wndEditor.Controls(2).add(_txtName);
-    _wndEditor.Controls(2).add(_lblNote);
-    _wndEditor.Controls(2).add(_txtNote);
-    _wndEditor.Controls(2).add(_lblSprite);
-    _wndEditor.Controls(2).add(_drpSprite);
+    _wndEditor.controls(0).add(_lblType);
+    _wndEditor.controls(0).add(_drpType);
+    _wndEditor.controls(0).add(_lblSubtype);
+    _wndEditor.controls(0).add(_drpSubtype);
+    _wndEditor.controls(0).add(_lblDamage);
+    _wndEditor.controls(0).add(_txtDamage);
+    _wndEditor.controls(0).add(_lblWeight);
+    _wndEditor.controls(0).add(_txtWeight);
+    _wndEditor.controls(0).add(_lblHPHeal);
+    _wndEditor.controls(0).add(_txtHPHeal);
+    _wndEditor.controls(0).add(_lblMPHeal);
+    _wndEditor.controls(0).add(_txtMPHeal);
+    _wndEditor.controls(0).add(_chkPercent);
+    _wndEditor.controls(1).add(_lblBuffHP);
+    _wndEditor.controls(1).add(_txtBuffHP);
+    _wndEditor.controls(1).add(_chkBuffHP);
+    _wndEditor.controls(1).add(_lblBuffMP);
+    _wndEditor.controls(1).add(_txtBuffMP);
+    _wndEditor.controls(1).add(_chkBuffMP);
+    _wndEditor.controls(1).add(_lblBuffSTR);
+    _wndEditor.controls(1).add(_txtBuffSTR);
+    _wndEditor.controls(1).add(_chkBuffSTR);
+    _wndEditor.controls(1).add(_lblBuffDEX);
+    _wndEditor.controls(1).add(_txtBuffDEX);
+    _wndEditor.controls(1).add(_chkBuffDEX);
+    _wndEditor.controls(1).add(_lblBuffINT);
+    _wndEditor.controls(1).add(_txtBuffINT);
+    _wndEditor.controls(1).add(_chkBuffINT);
+    _wndEditor.controls(2).add(_lblName);
+    _wndEditor.controls(2).add(_txtName);
+    _wndEditor.controls(2).add(_lblNote);
+    _wndEditor.controls(2).add(_txtNote);
+    _wndEditor.controls(2).add(_lblSprite);
+    _wndEditor.controls(2).add(_drpSprite);
     
     for(Sprite s : _game.getSprites()) {
       _drpSprite.add(new DropdownSprite(s));
     }
     
-    Controls().add(_wndEditor);
+    controls().add(_wndEditor);
   }
   
-  public void destroy() {
+  protected void destroy() {
     
   }
   
-  public void resize() {
+  protected void resize() {
     _wndEditor.setXY((_context.getW() - _wndEditor.getW()) / 2, (_context.getH() - _wndEditor.getH()) / 2);
   }
   
-  public void draw() {
+  protected void draw() {
     
   }
   
-  public boolean logic() {
+  protected boolean logic() {
     return false;
   }
   
@@ -350,16 +349,16 @@ public class ItemEditor extends GUI implements Editor {
     System.out.println("Updating item " + _item.getFile());
     _item.update();
     
-    Save.Item packet = new Save.Item();
+    EditorSave.Item packet = new EditorSave.Item();
     packet.addData(_item);
     Game.getInstance().send(packet);
   }
   
   public void newData(String file) {
-    editData(new Item(file, 0));
+    editData(new Item(file));
   }
   
-  public void editData(Data data) {
+  public void editData(GameData data) {
     push();
     
     _item = new ItemEditorItem((Item)data);

@@ -59,8 +59,8 @@ public class Message extends GUI {
     
     _window = new Window(this);
     _window.setText(title);
-    _window.Controls().add(_text);
-    _window.Controls().add(_okay);
+    _window.controls().add(_text);
+    _window.controls().add(_okay);
     _window.events().addCloseHandler(new Window.Events.Close() {
       public boolean close() {
         pop();
@@ -68,7 +68,7 @@ public class Message extends GUI {
       }
     });
     
-    Controls().add(_window);
+    controls().add(_window);
     
     setText(text);
   }

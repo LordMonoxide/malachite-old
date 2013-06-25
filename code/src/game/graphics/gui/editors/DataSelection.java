@@ -4,7 +4,7 @@ import java.io.File;
 
 import javax.swing.JOptionPane;
 
-import game.data.util.Data;
+import game.data.util.GameData;
 import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;
 import graphics.shared.gui.controls.Button;
@@ -18,15 +18,15 @@ public class DataSelection extends GUI {
   
   private Editor _editor;
   private String _dir;
-  private Data[] _edit;
+  private GameData[] _edit;
   
-  public DataSelection(Editor editor, String dir, Data[] data) {
+  public DataSelection(Editor editor, String dir, GameData[] data) {
     _editor = editor;
     _dir = dir;
     _edit = data;
   }
   
-  public void load() {
+  protected void load() {
     _window = new Window(this);
     _window.setText("Choose What to Edit");
     
@@ -36,11 +36,11 @@ public class DataSelection extends GUI {
     Control.Events.Click accept = new Control.Events.Click() {
       public void click() { }
       public void clickDbl() {
-        editData((Data)((ListItem)getControl()).getData());
+        editData((GameData)((ListItem)getControl()).getData());
       }
     };
     
-    for(Data s : _edit) {
+    for(GameData s : _edit) {
       ListItem l = (ListItem)_data.addItem(new ListItem(this, s));
       l.setText(s.getFile() + ": " + s.getName() + " - " + s.getNote());
       l.events().addClickHandler(accept);
@@ -63,26 +63,26 @@ public class DataSelection extends GUI {
         return true;
       }
     });
-    _window.Controls().add(_data);
-    _window.Controls().add(_new);
+    _window.controls().add(_data);
+    _window.controls().add(_new);
     
-    Controls().add(_window);
+    controls().add(_window);
     resize();
   }
   
-  public void destroy() {
+  protected void destroy() {
     
   }
   
-  public void resize() {
+  protected void resize() {
     _window.setXY((_context.getW() - _window.getW()) / 2, (_context.getH() - _window.getH()) / 2);
   }
   
-  public void draw() {
+  protected void draw() {
     
   }
   
-  public boolean logic() {
+  protected boolean logic() {
     return false;
   }
   
@@ -108,20 +108,20 @@ public class DataSelection extends GUI {
     pop();
   }
   
-  private void editData(Data data) {
+  private void editData(GameData data) {
     _editor.editData(data);
     pop();
   }
   
   public static class ListItem extends graphics.shared.gui.controls.List.ListItem {
-    private Data _data;
+    private GameData _data;
     
-    protected ListItem(GUI gui, Data data) {
+    protected ListItem(GUI gui, GameData data) {
       super(gui);
       _data = data;
     }
     
-    public Data getData() {
+    public GameData getData() {
       return _data;
     }
   }

@@ -16,8 +16,8 @@ import game.data.Sprite;
 import game.data.Sprite.Anim;
 import game.data.Sprite.Frame;
 import game.data.Sprite.List;
-import game.data.util.Data;
-import game.network.packet.editors.Save;
+import game.data.util.GameData;
+import game.network.packet.editors.EditorSave;
 import graphics.gl00.Context;
 import graphics.gl00.Drawable;
 import graphics.shared.gui.Control;
@@ -85,7 +85,7 @@ public class SpriteEditor extends GUI implements Editor {
   private int _anim;
   private int _list;
   
-  public void load() {
+  protected void load() {
     _wndEditor = new Window(this);
     _wndEditor.setWH(300, 300);
     _wndEditor.setText("Sprite Editor");
@@ -166,14 +166,14 @@ public class SpriteEditor extends GUI implements Editor {
     _splFrame = new ScrollPanel(this);
     _splFrame.setXYWH(4, 4, _txtFrameH.getX() + _txtFrameH.getW() + 8, 107);
     _splFrame.Buttons().add(_btnFrameClone);
-    _splFrame.Controls().add(_lblFrameLoc);
-    _splFrame.Controls().add(_lblFrameFoot);
-    _splFrame.Controls().add(_txtFrameX);
-    _splFrame.Controls().add(_txtFrameY);
-    _splFrame.Controls().add(_txtFrameW);
-    _splFrame.Controls().add(_txtFrameH);
-    _splFrame.Controls().add(_txtFrameFX);
-    _splFrame.Controls().add(_txtFrameFY);
+    _splFrame.controls().add(_lblFrameLoc);
+    _splFrame.controls().add(_lblFrameFoot);
+    _splFrame.controls().add(_txtFrameX);
+    _splFrame.controls().add(_txtFrameY);
+    _splFrame.controls().add(_txtFrameW);
+    _splFrame.controls().add(_txtFrameH);
+    _splFrame.controls().add(_txtFrameFX);
+    _splFrame.controls().add(_txtFrameFY);
     _splFrame.events().onButtonAdd(new ScrollPanel.Events.Button() {
       public void event() {
         addFrame();
@@ -210,11 +210,11 @@ public class SpriteEditor extends GUI implements Editor {
     _picFrameSpriteBack = new Picture(this);
     _picFrameSpriteBack.setBackColour(new float[] {0.33f, 0.33f, 0.33f, 0.66f});
     _picFrameSpriteBack.setXY(_drpSprite.getX(), _drpSprite.getY() + _drpSprite.getH());
-    _picFrameSpriteBack.Controls().add(_picFrameSprite);
+    _picFrameSpriteBack.controls().add(_picFrameSprite);
     
-    _wndEditor.Controls(0).add(_splFrame);
-    _wndEditor.Controls(0).add(_drpSprite);
-    _wndEditor.Controls(0).add(_picFrameSpriteBack);
+    _wndEditor.controls(0).add(_splFrame);
+    _wndEditor.controls(0).add(_drpSprite);
+    _wndEditor.controls(0).add(_picFrameSpriteBack);
     
     _lblAnimName = new Label(this);
     _lblAnimName.setText("Name");
@@ -288,10 +288,10 @@ public class SpriteEditor extends GUI implements Editor {
       public void scroll(int delta) { _scrList.handleMouseWheel(delta); }
     });
     
-    _picList.Controls().add(_lblListFrame);
-    _picList.Controls().add(_scrListFrame);
-    _picList.Controls().add(_lblListTime);
-    _picList.Controls().add(_scrListTime);
+    _picList.controls().add(_lblListFrame);
+    _picList.controls().add(_scrListFrame);
+    _picList.controls().add(_lblListTime);
+    _picList.controls().add(_scrListTime);
     
     _btnAnimAdd = new Button(this);
     _btnAnimAdd.setXY(20, 4);
@@ -334,20 +334,20 @@ public class SpriteEditor extends GUI implements Editor {
       public void scroll(int delta) { _scrAnim.handleMouseWheel(delta); }
     });
     
-    _picAnim.Controls().add(_lblAnimName);
-    _picAnim.Controls().add(_txtAnimName);
-    _picAnim.Controls().add(_btnListAdd);
-    _picAnim.Controls().add(_btnListDel);
-    _picAnim.Controls().add(_lblListNum);
-    _picAnim.Controls().add(_scrList);
-    _picAnim.Controls().add(_picList);
+    _picAnim.controls().add(_lblAnimName);
+    _picAnim.controls().add(_txtAnimName);
+    _picAnim.controls().add(_btnListAdd);
+    _picAnim.controls().add(_btnListDel);
+    _picAnim.controls().add(_lblListNum);
+    _picAnim.controls().add(_scrList);
+    _picAnim.controls().add(_picList);
     
-    _wndEditor.Controls(1).add(_btnAnimAdd);
-    _wndEditor.Controls(1).add(_btnAnimDel);
-    _wndEditor.Controls(1).add(_btnAnimClone);
-    _wndEditor.Controls(1).add(_lblAnimNum);
-    _wndEditor.Controls(1).add(_scrAnim);
-    _wndEditor.Controls(1).add(_picAnim);
+    _wndEditor.controls(1).add(_btnAnimAdd);
+    _wndEditor.controls(1).add(_btnAnimDel);
+    _wndEditor.controls(1).add(_btnAnimClone);
+    _wndEditor.controls(1).add(_lblAnimNum);
+    _wndEditor.controls(1).add(_scrAnim);
+    _wndEditor.controls(1).add(_picAnim);
     
     Textbox.Events.Change change = new Textbox.Events.Change() {
       public void change() { update(); }
@@ -389,14 +389,14 @@ public class SpriteEditor extends GUI implements Editor {
     _txtH.events().addChangeHandler(change);
     _txtH.setNumeric(true);
     
-    _wndEditor.Controls(2).add(_lblName);
-    _wndEditor.Controls(2).add(_txtName);
-    _wndEditor.Controls(2).add(_lblNote);
-    _wndEditor.Controls(2).add(_txtNote);
-    _wndEditor.Controls(2).add(_lblW);
-    _wndEditor.Controls(2).add(_txtW);
-    _wndEditor.Controls(2).add(_lblH);
-    _wndEditor.Controls(2).add(_txtH);
+    _wndEditor.controls(2).add(_lblName);
+    _wndEditor.controls(2).add(_txtName);
+    _wndEditor.controls(2).add(_lblNote);
+    _wndEditor.controls(2).add(_txtNote);
+    _wndEditor.controls(2).add(_lblW);
+    _wndEditor.controls(2).add(_txtW);
+    _wndEditor.controls(2).add(_lblH);
+    _wndEditor.controls(2).add(_txtH);
     
     _btnScriptCopy = new Button(this);
     _btnScriptCopy.setText("Copy");
@@ -430,10 +430,10 @@ public class SpriteEditor extends GUI implements Editor {
       }
     });
     
-    _wndEditor.Controls(3).add(_btnScriptCopy);
-    _wndEditor.Controls(3).add(_btnScriptPaste);
+    _wndEditor.controls(3).add(_btnScriptCopy);
+    _wndEditor.controls(3).add(_btnScriptPaste);
     
-    Controls().add(_wndEditor);
+    controls().add(_wndEditor);
     
     _frameLoc = Context.newDrawable();
     _frameLoc.setColour(new float[] {0, 1, 0, 1});
@@ -446,11 +446,11 @@ public class SpriteEditor extends GUI implements Editor {
     listSprites(new File("../gfx/textures/sprites/"), "../gfx/textures/sprites/");
   }
   
-  public void destroy() {
+  protected void destroy() {
     
   }
   
-  public void resize() {
+  protected void resize() {
     float w = _picFrameSprite.getW();
     float h = _picFrameSprite.getH();
     
@@ -467,11 +467,11 @@ public class SpriteEditor extends GUI implements Editor {
     _picList.setWH(_picAnim.getW() - _picList.getX() - 4, _picAnim.getH() - _picList.getY() - 4);
   }
   
-  public void draw() {
+  protected void draw() {
     
   }
   
-  public boolean logic() {
+  protected boolean logic() {
     return false;
   }
   
@@ -494,7 +494,7 @@ public class SpriteEditor extends GUI implements Editor {
     System.out.println("Updating sprite " + _sprite.getFile());
     _sprite.update();
     
-    Save.Sprite packet = new Save.Sprite();
+    EditorSave.Sprite packet = new EditorSave.Sprite();
     packet.addData(_sprite);
     Game.getInstance().send(packet);
   }
@@ -515,10 +515,11 @@ public class SpriteEditor extends GUI implements Editor {
   }
   
   public void newData(String file) {
-    editData(new Sprite(file, 0));
+    System.out.println(file);
+    //editData(new Sprite(file, 0));
   }
   
-  public void editData(Data data) {
+  public void editData(GameData data) {
     push();
     
     _sprite = new SpriteEditorSprite((Sprite)data);

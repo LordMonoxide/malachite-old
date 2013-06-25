@@ -8,7 +8,7 @@ public class ItemEditorItem extends Item {
   private int _itemCRC;
   
   public ItemEditorItem(Item item) {
-    super(item.getFile(), item.getCRC());
+    super(item.getFile());
     
     _item = item;
     

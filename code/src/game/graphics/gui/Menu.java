@@ -16,7 +16,6 @@ import game.network.packet.menu.CharNew;
 import game.network.packet.menu.CharUse;
 import game.network.packet.menu.Login;
 import game.network.packet.menu.CharUse.Response;
-import graphics.gl00.Context;
 import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;
 import graphics.shared.gui.controls.Button;
@@ -26,7 +25,7 @@ import graphics.shared.gui.controls.Textbox;
 import graphics.shared.gui.controls.compound.Window;
 
 public class Menu extends GUI {
-  private Game _game = (Game)Context.getGame();
+  private Game _game = Game.getInstance();
   
   private Listener _listener = new Listener(this);
   
@@ -135,10 +134,10 @@ public class Menu extends GUI {
     _lblUser.setText("Username and password:");
     _lblUser.setXY(_txtName.getX(), _txtName.getY() - _lblUser.getH() - 4);
     
-    _wndLogin.Controls().add(_txtName);
-    _wndLogin.Controls().add(_txtPass);
-    _wndLogin.Controls().add(_btnLogin);
-    _wndLogin.Controls().add(_lblUser);
+    _wndLogin.controls().add(_txtName);
+    _wndLogin.controls().add(_txtPass);
+    _wndLogin.controls().add(_btnLogin);
+    _wndLogin.controls().add(_lblUser);
     
     _wndChar = new Window(this);
     _wndChar.setWH(272, 178);
@@ -195,10 +194,10 @@ public class Menu extends GUI {
       }
     });
     
-    _wndChar.Controls().add(_lstChar);
-    _wndChar.Controls().add(_btnCharNew);
-    _wndChar.Controls().add(_btnCharDel);
-    _wndChar.Controls().add(_btnCharUse);
+    _wndChar.controls().add(_lstChar);
+    _wndChar.controls().add(_btnCharNew);
+    _wndChar.controls().add(_btnCharDel);
+    _wndChar.controls().add(_btnCharUse);
     
     _wndNewChar = new Window(this);
     _wndNewChar.setWH(272, 178);
@@ -233,13 +232,13 @@ public class Menu extends GUI {
       }
     });
     
-    _wndNewChar.Controls().add(_txtNewCharName);
-    _wndNewChar.Controls().add(_lblNewCharName);
-    _wndNewChar.Controls().add(_btnNewCharCreate);
+    _wndNewChar.controls().add(_txtNewCharName);
+    _wndNewChar.controls().add(_lblNewCharName);
+    _wndNewChar.controls().add(_btnNewCharCreate);
     
-    Controls().add(_wndLogin);
-    Controls().add(_wndChar);
-    Controls().add(_wndNewChar);
+    controls().add(_wndLogin);
+    controls().add(_wndChar);
+    controls().add(_wndNewChar);
     
     Properties login = new Properties();
     try {

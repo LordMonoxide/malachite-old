@@ -1,8 +1,8 @@
 package game.graphics.gui.editors;
 
-import game.data.util.Data;
+import game.data.util.GameData;
 
 public interface Editor {
   public void newData(String file);
-  public void editData(Data data);
+  public void editData(GameData data);
 }
