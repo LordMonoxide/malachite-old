@@ -24,7 +24,7 @@ public class EntityCreate extends Packet {
     _entity = new Entity();
     _entity.setID(data.readInt());
     _entity.setName(new String(data.readBytes(data.readShort()).array()));
-    _entity.setSprite(Game.getInstance().getSprite(new String(data.readBytes(data.readShort()).array())));
+    _entity.setSprite(new String(data.readBytes(data.readShort()).array()));
     _entity.setType(Entity.Type.valueOf(data.readInt()));
     _entity.setAcc(data.readFloat());
     _entity.setDec(data.readFloat());
