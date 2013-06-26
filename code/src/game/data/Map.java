@@ -116,33 +116,36 @@ public class Map extends GameData {
     }
   }
   
-  public Texture createAttribMaskTextureFromLayer(final int z) {
-    final Texture texture = Textures.getInstance().getTexture(_x + "x" + _y + "x" + z + " mask", Settings.Map.Size, Settings.Map.Size, null);
+  public void createAttribMaskTextureFromLayer(final int z, final Texture texture) {
     texture.events().addLoadHandler(new Texture.Events.Load() {
       public void load() {
-        ByteBuffer b = ByteBuffer.allocateDirect(Settings.Map.Attrib.Size * Settings.Map.Attrib.Size * 4);
+        byte[] b = new byte[Settings.Map.Size * Settings.Map.Size * 4];
+        int n = 0;
         
-        for(int x = 0; x < _layer[z]._attrib.length; x++) {
-          for(int y = 0; y < _layer[z]._attrib[x].length; y++) {
-            b.clear();
-            
+        for(int y = 0; y < Settings.Map.Attrib.Count; y++) {
+          for(int x = 0; x < Settings.Map.Attrib.Count; x++) {
             if(_layer[z]._attrib[x][y]._type != 0) {
-              Attrib.Type t = Attrib.Type.fromVal(_layer[z]._attrib[x][y]._type);
-              for(int i = 0; i < b.capacity() / 4; i++) {
-                b.put(t._col);
+              byte[] c = Attrib.Type.fromVal(_layer[z]._attrib[x][y]._type)._col;
+              
+              for(int x1 = 0; x1 < Settings.Map.Attrib.Size; x1++) {
+                b[n++] = c[0];
+                b[n++] = c[1];
+                b[n++] = c[2];
+                b[n++] = c[3];
               }
             } else {
-              b.put(new byte[b.capacity()]);
+              n += Settings.Map.Attrib.Size * 4;
             }
-            
-            b.flip();
-            texture.update(x * Settings.Map.Attrib.Size, y * Settings.Map.Attrib.Size, Settings.Map.Attrib.Size, Settings.Map.Attrib.Size, b);
           }
         }
+        
+        ByteBuffer buff = ByteBuffer.allocateDirect(b.length);
+        buff.put(b);
+        buff.flip();
+        
+        texture.update(0, 0, Settings.Map.Attrib.Size, Settings.Map.Attrib.Size, buff);
       }
     });
-    
-    return texture;
   }
   
   protected void serializeInternal(Buffer b) {
