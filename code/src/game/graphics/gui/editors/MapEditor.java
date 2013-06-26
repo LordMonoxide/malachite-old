@@ -146,8 +146,6 @@ public class MapEditor extends GUI {
     _picTab = new Picture[5];
     for(int i = 0; i < _picTab.length; i++) {
       _picTab[i] = new Picture(this);
-      System.out.println(_picTab[i]);
-      System.out.println(_picTab[i].getBackground());
       _picTab[i].setBackColour(new float[] {0.1f, 0.1f, 0.1f, 1});
       _picTab[i].setXYWH(8, _btnTab[i].getY() + _btnTab[i].getH(), 256, 256);
       _picTab[i].setVisible(false);
@@ -188,8 +186,6 @@ public class MapEditor extends GUI {
     
     for(int i = 0; i < Settings.Map.Depth; i++) {
       _btnLayer[i] = new Button(this);
-      System.out.println(_btnLayer[i]);
-      System.out.println(_btnLayer[i].getBackground());
       _btnLayer[i].setBackColour(new float[] {0.2f, 0.2f, 0.2f, 1});
       _btnLayer[i].setXYWH(2, 2 + i * 16, 96, 16);
       _btnLayer[i].setText("Layer " + i);
@@ -444,6 +440,8 @@ public class MapEditor extends GUI {
     setLayer(_layer);
     setTileset(_tileset);
     setAttrib(_attrib);
+    
+    setRegion(_game.getEntity().getRegion());
   }
   
   protected void destroy() {
@@ -514,7 +512,7 @@ public class MapEditor extends GUI {
     return true;
   }
   
-  public void setRegion(Region region) {
+  private void setRegion(Region region) {
     if(region != _region) {
       if(_attribDrawCallback != -1) {
         _region.events().removeDraw(_attribDrawCallback);
@@ -531,8 +529,6 @@ public class MapEditor extends GUI {
         System.out.println("Adding region " + region.getMap().getX() + ", " + region.getMap().getY());
         _regions.add(_region);
       }
-      
-      _attribDrawable.setTexture(_map.getAttribMask(_layer));
       
       _splSprite.clear();
       for(MapEditorMap.Sprite s : _map._sprite) {
@@ -878,7 +874,7 @@ public class MapEditor extends GUI {
     return false;
   }
   
-  public boolean handleKeyDown(int key) {
+  protected boolean handleKeyDown(int key) {
     switch(key) {
       case Keyboard.KEY_LSHIFT:
       case Keyboard.KEY_RSHIFT:
@@ -898,7 +894,7 @@ public class MapEditor extends GUI {
     return false;
   }
   
-  public boolean handleKeyUp(int key) {
+  protected boolean handleKeyUp(int key) {
     switch(key) {
       case Keyboard.KEY_LSHIFT:
       case Keyboard.KEY_RSHIFT:
@@ -916,16 +912,16 @@ public class MapEditor extends GUI {
     return false;
   }
   
-  public boolean handleMouseDown(int x, int y, int button) {
+  protected boolean handleMouseDown(int x, int y, int button) {
     if(_picWindow.getVisible()) return true;
     return mapEditorClick(x, y, button);
   }
   
-  public boolean handleMouseUp(int x, int y, int button) {
+  protected boolean handleMouseUp(int x, int y, int button) {
     return _picWindow.getVisible();
   }
   
-  public boolean handleMouseMove(int x, int y, int button) {
+  protected boolean handleMouseMove(int x, int y, int button) {
     if(!_picWindow.getVisible()) {
       switch(_tab) {
         case 0:
@@ -963,7 +959,7 @@ public class MapEditor extends GUI {
     return false;
   }
   
-  public boolean handleMouseWheel(int delta) {
+  protected boolean handleMouseWheel(int delta) {
     if(_picTilesetList.getVisible()) {
       _mouseDelta += delta;
       
