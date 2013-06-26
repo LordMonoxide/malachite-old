@@ -101,15 +101,19 @@ public class Map extends GameData {
   }
   
   public Texture createTextureFromLayer(int z) {
-    Drawable[] tiles = createDrawablesFromLayer(z);
+    final Drawable[] tiles = createDrawablesFromLayer(z);
     
     if(tiles != null) {
-      Canvas c = new Canvas(_x + "x" + _y + "x" + z, Settings.Map.Size, Settings.Map.Size);
-      c.bind();
-      for(Drawable d : tiles) {
-        d.draw();
-      }
-      c.unbind();
+      final Canvas c = new Canvas(_x + "x" + _y + "x" + z, Settings.Map.Size, Settings.Map.Size);
+      c.events().addLoadHandler(new Canvas.Events.Load() {
+        public void load() {
+          c.bind();
+          for(Drawable d : tiles) {
+            d.draw();
+          }
+          c.unbind();
+        }
+      });
       return c.getTexture();
     } else {
       return null;
