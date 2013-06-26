@@ -72,21 +72,15 @@ public class Map extends GameData {
     
     Textures t = Context.getTextures();
     
-    for(int x1 = 0; x1 < _layer[z]._tile.length; x1++) {
-      for(int y1 = 0; y1 < _layer[z]._tile[x1].length; y1++) {
-        if(_layer[z]._tile[x1][y1]._a != 0) {
-          final Drawable tile = Context.newDrawable();
-          final int x = x1;
-          final int y = y1;
-          d[tiles++] = tile;
+    for(int x = 0; x < _layer[z]._tile.length; x++) {
+      for(int y = 0; y < _layer[z]._tile[x].length; y++) {
+        if(_layer[z]._tile[x][y]._a != 0) {
+          Drawable tile = Context.newDrawable();
           tile.setTexture(t.getTexture("tiles/" + _layer[z]._tile[x][y]._tileset + ".png"));
-          tile.getTexture().events().addLoadHandler(new Texture.Events.Load() {
-            public void load() {
-              tile.setXYWH(x * Settings.Map.Tile.Size, y * Settings.Map.Tile.Size, Settings.Map.Tile.Size, Settings.Map.Tile.Size);
-              tile.setTXYWH(_layer[z]._tile[x][y]._x * Settings.Map.Tile.Size, _layer[z]._tile[x][y]._y * Settings.Map.Tile.Size, Settings.Map.Tile.Size, Settings.Map.Tile.Size);
-              tile.createQuad();
-            }
-          });
+          tile.setXYWH(x * Settings.Map.Tile.Size, y * Settings.Map.Tile.Size, Settings.Map.Tile.Size, Settings.Map.Tile.Size);
+          tile.setTXYWH(_layer[z]._tile[x][y]._x * Settings.Map.Tile.Size, _layer[z]._tile[x][y]._y * Settings.Map.Tile.Size, Settings.Map.Tile.Size, Settings.Map.Tile.Size);
+          tile.createQuad();
+          d[tiles++] = tile;
         }
       }
     }
