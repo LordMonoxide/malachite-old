@@ -14,8 +14,8 @@ public abstract class GameData {
   private int _rev;
   protected String _name;
   protected String _note;
-  private boolean _loaded;
-  private Events _events = new Events(this);
+  protected boolean _loaded;
+  protected Events _events = new Events(this);
   
   protected GameData(int version, File file) {
     _version = version;
