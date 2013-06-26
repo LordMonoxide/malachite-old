@@ -78,4 +78,10 @@ public abstract class EditorSave extends Packet {
       return 23;
     }
   }
+  
+  public static class NPC extends EditorSave {
+    public int getIndex() {
+      return 35;
+    }
+  }
 }
