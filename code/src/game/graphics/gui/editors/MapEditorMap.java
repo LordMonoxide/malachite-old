@@ -156,6 +156,9 @@ public class MapEditorMap extends Map {
           createItems();
           createNPCs();
           
+          _loaded = true;
+          _events.raiseLoad();
+          
           return true;
         }
         
