@@ -86,35 +86,51 @@ public class Message extends GUI {
     _okay.setY(_window.getClientH() - _okay.getH());
   }
   
-  public void load() {
+  protected void load() {
     
   }
   
-  public void destroy() {
+  protected void destroy() {
     
   }
   
-  public void resize() {
+  protected void resize() {
     
   }
   
-  public void draw() {
+  protected void draw() {
     
   }
   
-  public boolean logic() {
+  protected boolean logic() {
     return false;
   }
   
-  public boolean handleMouseDown(int x, int y, int button) {
+  protected boolean handleMouseDown(int x, int y, int button) {
     return true;
   }
   
-  public boolean handleMouseUp(int x, int y, int button) {
+  protected boolean handleMouseUp(int x, int y, int button) {
     return true;
   }
   
-  public boolean handleMouseMove(int x, int y, int button) {
+  protected boolean handleMouseMove(int x, int y, int button) {
+    return true;
+  }
+  
+  protected boolean handleMouseWheel(int delta) {
+    return true;
+  }
+  
+  protected boolean handleKeyDown(int key) {
+    return true;
+  }
+  
+  protected boolean handleKeyUp(int key) {
+    return true;
+  }
+  
+  protected boolean handleCharDown(char c) {
     return true;
   }
 }
