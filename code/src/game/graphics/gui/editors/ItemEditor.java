@@ -330,7 +330,7 @@ public class ItemEditor extends GUI implements Editor {
     return false;
   }
   
-  public void unload() {
+  private void unload() {
     if(_item.isChanged()) {
       switch(JOptionPane.showConfirmDialog(null, "Would you like to save your changes?")) {
         case JOptionPane.CANCEL_OPTION:
@@ -520,9 +520,9 @@ public class ItemEditor extends GUI implements Editor {
     _item.setSprite(sprite != null ? sprite._sprite.getFile() : null);
   }
   
-  public boolean handleKeyDown ( int key) { return true; }
-  public boolean handleKeyUp   ( int key) { return true; }
-  public boolean handleCharDown(char key) { return true; }
+  protected boolean handleKeyDown ( int key) { return true; }
+  protected boolean handleKeyUp   ( int key) { return true; }
+  protected boolean handleCharDown(char key) { return true; }
   
   private class DropdownSprite extends Dropdown.Item {
     private Sprite _sprite;

@@ -687,9 +687,9 @@ public class SpriteEditor extends GUI implements Editor {
     _lblListTime.setText("Time: " + l._time + " ms");
   }
   
-  public boolean handleKeyDown ( int key) { return true; }
-  public boolean handleKeyUp   ( int key) { return true; }
-  public boolean handleCharDown(char key) { return true; }
+  protected boolean handleKeyDown ( int key) { return true; }
+  protected boolean handleKeyUp   ( int key) { return true; }
+  protected boolean handleCharDown(char key) { return true; }
   
   public static class ScrollPanelFrame extends ScrollPanel.Item {
     Sprite.Frame _frame;

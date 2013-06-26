@@ -125,7 +125,6 @@ public class Game extends GUI {
       public void click() {
         if(_editMap == null) {
           _editMap = new MapEditor();
-          _editMap.setRegion(_entity.getRegion());
           _editMap.push();
           _wndAdmin.setVisible(false);
         }
@@ -678,7 +677,7 @@ public class Game extends GUI {
     _game.send(new InvUse(inv));
   }
   
-  public void draw() {
+  protected void draw() {
     if(!_loaded) load();
     
     double w = Math.floor(_context.getW() / Settings.Map.Size) + 1;
@@ -730,7 +729,7 @@ public class Game extends GUI {
     }
   }
   
-  public boolean logic() {
+  protected boolean logic() {
     return false;
   }
   
@@ -775,7 +774,7 @@ public class Game extends GUI {
     }
   }
   
-  public boolean handleMouseUp(int x, int y, int button) {
+  protected boolean handleMouseUp(int x, int y, int button) {
     if(_selectedInv == null) {
       _selectedEntity = _game.interact(x, y);
       
@@ -796,7 +795,7 @@ public class Game extends GUI {
     return false;
   }
   
-  public boolean handleKeyDown(int key) {
+  protected boolean handleKeyDown(int key) {
     if(!_txtChat.getVisible()) {
       switch(key) {
         case Keyboard.KEY_W:
@@ -857,7 +856,7 @@ public class Game extends GUI {
     return false;
   }
   
-  public boolean handleKeyUp(int key) {
+  protected boolean handleKeyUp(int key) {
     if(!_txtChat.getVisible()) {
       switch(key) {
         case Keyboard.KEY_W:
