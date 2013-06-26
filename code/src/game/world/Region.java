@@ -62,7 +62,7 @@ public class Region {
   }
   
   public void calc() {
-    for(int z = 0; z < _layer.length; z++) {
+    for(int z = 0; z < Settings.Map.Depth; z++) {
       Texture texture = _map.createTextureFromLayer(z);
       Drawable layer = null;
       
