@@ -3,10 +3,12 @@ package game.world;
 import java.util.LinkedList;
 
 import game.data.Map;
+import game.data.util.GameData;
 import game.settings.Settings;
 import graphics.gl00.Context;
 import graphics.gl00.Drawable;
 import graphics.gl00.Matrix;
+import graphics.shared.textures.Texture;
 
 public class Region {
   private Matrix _matrix = Context.getMatrix();
@@ -14,12 +16,9 @@ public class Region {
   private Events _events;
   
   private World _world;
-  private Drawable[] _layer;
+  private Drawable[] _layer = new Drawable[Settings.Map.Depth];
   private Map _map;
   private int _x, _y;
-  //private Entity[] _entity;
-  
-  private boolean _loaded;
   
   public Region(World world) {
     _events = new Events();
@@ -50,46 +49,34 @@ public class Region {
     _map = map;
     _x = _map.getX() * Settings.Map.Size;
     _y = _map.getY() * Settings.Map.Size;
+    
+    _map.events().addLoadHandler(new GameData.Events.Load() {
+      public void load() {
+        Context.getContext().addLoadCallback(new Context.Loader.Callback() {
+          public void load() {
+            calc();
+          }
+        }, true, "region calculate");
+      }
+    });
   }
   
   public void calc() {
-    if(!_map.loaded()) return;
-    
-    _layer = new Drawable[Settings.Map.Depth];
     for(int z = 0; z < _layer.length; z++) {
-      _layer[z] = Context.newDrawable();
-      _layer[z].setTexture(_map.createTextureFromLayer(z));
+      Texture texture = _map.createTextureFromLayer(z);
+      Drawable layer = null;
       
-      if(_layer[z].getTexture() == null) {
-        _layer[z].setColour(new float[] {0, 0, 0, 0});
+      if(texture != null) {
+        layer = Context.newDrawable();
+        layer.setTexture(texture);
+        layer.createQuad();
       }
       
-      _layer[z].createQuad();
+      _layer[z] = layer;
     }
-    
-    _loaded = true;
   }
-  
-  /*public void spawn() {
-    despawn();
-    _entity = _map.spawn();
-  }
-  
-  public void despawn() {
-    if(_entity != null) {
-      for(Entity e : _entity) {
-        e.getSprite().remove();
-      }
-      
-      _entity = null;
-    }
-  }*/
   
   public void draw(int z) {
-    if(!_loaded) calc();
-    
-    if(_layer == null) return;
-    
     _matrix.push();
     _matrix.translate(_x, _y);
     
