@@ -20,6 +20,7 @@ import game.network.packet.InvDrop;
 import game.network.packet.InvSwap;
 import game.network.packet.InvUnequip;
 import game.network.packet.InvUse;
+import game.network.packet.editors.EditorData;
 import game.network.packet.editors.EditorDataMap;
 import game.network.packet.editors.EditorSave;
 import game.network.packet.menu.CharDel;
@@ -85,6 +86,9 @@ public class Client {
     Packets.add(EntityCurrency.class);
     Packets.add(EditorDataMap.Request.class);
     Packets.add(EditorDataMap.Response.class);
+    Packets.add(EditorSave.NPC.class);
+    Packets.add(EditorData.Request.class);
+    Packets.add(EditorData.Response.class);
   }
   
   public void connect() {
