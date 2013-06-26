@@ -519,36 +519,43 @@ public class MapEditor extends GUI {
       }
       
       _region = region;
-      _region.setMap(new MapEditorMap(_region.getMap()));
-      _map = (MapEditorMap)_region.getMap();
-      _mx = _map.getX();
-      _my = _map.getY();
-      System.out.println(_mx + "\t" + _my + "\t" + "Changing");
       
       if(!_regions.contains(_region)) {
         System.out.println("Adding region " + region.getMap().getX() + ", " + region.getMap().getY());
         _regions.add(_region);
+        _region.setMap(new MapEditorMap(_region.getMap()));
       }
       
-      _splSprite.clear();
-      for(MapEditorMap.Sprite s : _map._sprite) {
-        _splSprite.add(new ScrollPanelSprite(s));
-      }
-      
-      _splItem.clear();
-      for(MapEditorMap.Item d : _map._item) {
-        _splItem.add(new ScrollPanelItem(d));
-      }
-      
-      _attribDrawCallback = _region.events().onDraw(new Region.Events.Draw() {
-        public void event(int z) {
-          if(z == Settings.Map.Depth - 1) {
-            switch(_tab) {
-              case 1: _attribDrawable.draw(); break;
-              case 2: _map.drawSprites(); break;
-              case 3: _map.drawItems(); break;                                            
-            }
+      _map = (MapEditorMap)_region.getMap();
+      _map.events().addLoadHandler(new GameData.Events.Load() {
+        public void load() {
+          remove();
+          
+          _mx = _map.getX();
+          _my = _map.getY();
+          System.out.println(_mx + "\t" + _my + "\t" + "Changing");
+          
+          _splSprite.clear();
+          for(MapEditorMap.Sprite s : _map._sprite) {
+            _splSprite.add(new ScrollPanelSprite(s));
           }
+          
+          _splItem.clear();
+          for(MapEditorMap.Item d : _map._item) {
+            _splItem.add(new ScrollPanelItem(d));
+          }
+          
+          _attribDrawCallback = _region.events().onDraw(new Region.Events.Draw() {
+            public void event(int z) {
+              if(z == Settings.Map.Depth - 1) {
+                switch(_tab) {
+                  case 1: _attribDrawable.draw(); break;
+                  case 2: _map.drawSprites(); break;
+                  case 3: _map.drawItems(); break;                                            
+                }
+              }
+            }
+          });
         }
       });
     }
