@@ -12,6 +12,7 @@ import graphics.gl00.Context;
 import graphics.gl00.Drawable;
 import graphics.gl00.Matrix;
 import graphics.shared.textures.Texture;
+import graphics.shared.textures.Textures;
 
 public class MapEditorMap extends Map {
   private Game _game = Game.getInstance();
@@ -22,7 +23,7 @@ public class MapEditorMap extends Map {
   protected LinkedList<Item>   _item   = new LinkedList<Item>();
   protected LinkedList<NPC>    _npc    = new LinkedList<NPC>();
   
-  private Texture[] _attribMask = new Texture[Settings.Map.Depth];
+  private Texture[] _attribMask;
   private EditorSprite[] _spritesDrawable;
   private EditorSprite[] _itemsDrawable;
   private EditorSprite[] _npcsDrawable;
@@ -31,6 +32,11 @@ public class MapEditorMap extends Map {
     super(map.getWorld(), map.getX(), map.getY());
     
     _map = map;
+    
+    _attribMask = new Texture[Settings.Map.Depth];
+    for(int z = 0; z < Settings.Map.Depth; z++) {
+      _attribMask[z] = Textures.getInstance().getTexture(_x + "x" + _y + "x" + z + " mask", Settings.Map.Size, Settings.Map.Size, null);
+    }
     
     request();
   }
@@ -149,7 +155,7 @@ public class MapEditorMap extends Map {
           System.out.println("MapEditorMap " + getFile() + " synced from server");
           
           for(int z = 0; z < _attribMask.length; z++) {
-            _attribMask[z] = createAttribMaskTextureFromLayer(z);
+            createAttribMaskTextureFromLayer(z, _attribMask[z]);
           }
           
           createSprites();

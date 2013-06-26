@@ -81,6 +81,9 @@ public class MapEditor extends GUI {
   private boolean _lock;
   private int _mouseDelta;
   
+  private int _lastTileX;
+  private int _lastTileY;
+  
   private int _tileset;
   private int _layer;
   private int _x, _y;
@@ -436,12 +439,12 @@ public class MapEditor extends GUI {
     _attribDrawable.setColour(new float[] {1, 1, 1, 0.5f});
     _attribDrawable.createQuad();
     
+    setRegion(_game.getEntity().getRegion());
+    
     setTab(_tab);
     setLayer(_layer);
     setTileset(_tileset);
     setAttrib(_attrib);
-    
-    setRegion(_game.getEntity().getRegion());
   }
   
   protected void destroy() {
@@ -535,6 +538,8 @@ public class MapEditor extends GUI {
           _my = _map.getY();
           System.out.println(_mx + "\t" + _my + "\t" + "Changing");
           
+          _attribDrawable.setTexture(_map.getAttribMask(_layer));
+          
           _splSprite.clear();
           for(MapEditorMap.Sprite s : _map._sprite) {
             _splSprite.add(new ScrollPanelSprite(s));
@@ -576,9 +581,7 @@ public class MapEditor extends GUI {
     _btnLayer[index].setBackColour(new float[] {0, 0, 0.8f, 1});
     _layer = index;
     
-    if(_map != null) {
-      _attribDrawable.setTexture(_map.getAttribMask(_layer));
-    }
+    _attribDrawable.setTexture(_map.getAttribMask(_layer));
   }
   
   private void setTileset(int index) {
@@ -723,15 +726,13 @@ public class MapEditor extends GUI {
     x -= _context.getCameraX();
     y -= _context.getCameraY();
     
-    if(button != -1) {
-      int mx = x / Settings.Map.Size;
-      int my = y / Settings.Map.Size;
-      if(x < 0) mx -= 1;
-      if(y < 0) my -= 1;
-      
-      if((_mx != mx || _my != my) || _region == null) {
-        setRegion(_game.getWorld().getRegion(mx, my));
-      }
+    int mx = x / Settings.Map.Size;
+    int my = y / Settings.Map.Size;
+    if(x < 0) mx -= 1;
+    if(y < 0) my -= 1;
+    
+    if((_mx != mx || _my != my) || _region == null) {
+      setRegion(_game.getWorld().getRegion(mx, my));
     }
     
     x %= Settings.Map.Size;
@@ -744,6 +745,10 @@ public class MapEditor extends GUI {
       case 0:
         x1 = (int)x / Settings.Map.Tile.Size;
         y1 = (int)y / Settings.Map.Tile.Size;
+        
+        if(x1 == _lastTileX && y1 == _lastTileY) return true;
+        _lastTileX = x1;
+        _lastTileY = y1;
         
         Map.Tile t;
         
@@ -805,6 +810,10 @@ public class MapEditor extends GUI {
       case 1:
         x1 = (int)x / Settings.Map.Attrib.Size;
         y1 = (int)y / Settings.Map.Attrib.Size;
+        
+        if(x1 == _lastTileX && y1 == _lastTileY) return true;
+        _lastTileX = x1;
+        _lastTileY = y1;
         
         Map.Attrib a = _map.getLayer(_layer).getAttrib(x1, y1);
         
@@ -925,6 +934,8 @@ public class MapEditor extends GUI {
   }
   
   protected boolean handleMouseUp(int x, int y, int button) {
+    _lastTileX = -1;
+    _lastTileY = -1;
     return _picWindow.getVisible();
   }
   
