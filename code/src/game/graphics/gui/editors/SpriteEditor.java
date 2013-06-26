@@ -515,8 +515,7 @@ public class SpriteEditor extends GUI implements Editor {
   }
   
   public void newData(String file) {
-    System.out.println(file);
-    //editData(new Sprite(file, 0));
+    editData(new Sprite(file));
   }
   
   public void editData(GameData data) {
