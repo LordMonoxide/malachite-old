@@ -20,7 +20,6 @@ public class Map extends GameData {
   protected int _x, _y;
   protected int _version;
   protected Layer[] _layer  = new Layer[Settings.Map.Depth];
-  private boolean _loaded;
   
   public Map(World world, int x, int y) {
     super(1, new File("../data/worlds/" + world.getName() + "/" + x + "x" + y));
@@ -32,8 +31,6 @@ public class Map extends GameData {
       _layer[z] = new Layer();
     }
   }
-  
-  public boolean loaded() { return _loaded; }
   
   public World getWorld() {
     return _world;
@@ -57,6 +54,9 @@ public class Map extends GameData {
             System.out.println("Map " + _x + "x" + _y + " loaded");
             load();
           }
+          
+          _loaded = true;
+          _events.raiseLoad();
           
           return true;
         }
