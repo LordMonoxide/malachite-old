@@ -147,23 +147,27 @@ public class MapEditorMap extends Map {
   public void request() {
     EditorDataMap.Request p = new EditorDataMap.Request(this);
     Game.getInstance().send(p, EditorDataMap.Response.class, new Game.PacketCallback<EditorDataMap.Response>() {
-      public boolean recieved(EditorDataMap.Response packet) {
+      public boolean recieved(final EditorDataMap.Response packet) {
         if(packet.getX() == _x && packet.getY() == _y) {
           remove();
           
-          packet.process();
-          System.out.println("MapEditorMap " + getFile() + " synced from server");
-          
-          for(int z = 0; z < _attribMask.length; z++) {
-            createAttribMaskTextureFromLayer(z, _attribMask[z]);
-          }
-          
-          createSprites();
-          createItems();
-          createNPCs();
-          
-          _loaded = true;
-          _events.raiseLoad();
+          Context.getContext().addLoadCallback(new Context.Loader.Callback() {
+            public void load() {
+              packet.process();
+              System.out.println("MapEditorMap " + getFile() + " synced from server");
+              
+              for(int z = 0; z < _attribMask.length; z++) {
+                createAttribMaskTextureFromLayer(z, _attribMask[z]);
+              }
+              
+              createSprites();
+              createItems();
+              createNPCs();
+              
+              _loaded = true;
+              _events.raiseLoad();
+            }
+          }, false, "mapeditormap");
           
           return true;
         }
