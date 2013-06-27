@@ -3,7 +3,6 @@ package game.graphics.gui.editors;
 import game.Game;
 import game.data.Item;
 import game.data.util.Buffer;
-import game.network.packet.Data;
 import game.network.packet.editors.EditorData;
 import graphics.gl00.Context;
 
@@ -36,7 +35,7 @@ public class ItemEditorItem extends Item {
   public void setMPHeal(int mpHeal)    { _mpHeal = mpHeal; }
   
   public void request() {
-    Data.Request p = new Data.Request(this);
+    EditorData.Request p = new EditorData.Request(this);
     Game.getInstance().send(p, EditorData.Response.class, new Game.PacketCallback<EditorData.Response>() {
       public boolean recieved(final EditorData.Response packet) {
         if(packet.getType() == EditorData.DATA_TYPE_ITEM && packet.getFile().equals(getFile())) {
