@@ -552,8 +552,6 @@ public class MapEditor extends GUI {
       _map = (MapEditorMap)_region.getMap();
       _map.events().addLoadHandler(new GameData.Events.Load() {
         public void load() {
-          remove();
-          
           _mx = _map.getX();
           _my = _map.getY();
           System.out.println(_mx + "\t" + _my + "\t" + "Changing");
