@@ -35,23 +35,25 @@ public class DataSelection extends GUI {
     final Control.Events.Click accept = new Control.Events.Click() {
       public void click() { }
       public void clickDbl() {
-        switch(_type) {
-          case EditorData.DATA_TYPE_SPRITE: editData(((ListItem)getControl()).file()); break;
-        }
+        editData(((ListItem)getControl()).file());
       }
     };
     
     Game.getInstance().send(new EditorData.List(_type), EditorData.List.class, new Game.PacketCallback<EditorData.List>() {
       public boolean recieved(game.network.packet.editors.EditorData.List packet) {
-        remove();
-        
-        for(EditorData.List.ListData data : packet.data()) {
-          ListItem l = (ListItem)_data.addItem(new ListItem(_this, data.file()));
-          l.setText(data.file() + ": " + data.name() + " - " + data.note());
-          l.events().addClickHandler(accept);
+        if(packet.type() == _type) {
+          remove();
+          
+          for(EditorData.List.ListData data : packet.data()) {
+            ListItem l = (ListItem)_data.addItem(new ListItem(_this, data.file()));
+            l.setText(data.file() + ": " + data.name() + " - " + data.note());
+            l.events().addClickHandler(accept);
+          }
+          
+          return true;
         }
         
-        return true;
+        return false;
       }
     });
     
