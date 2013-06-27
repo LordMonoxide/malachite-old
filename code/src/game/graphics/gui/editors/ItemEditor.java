@@ -4,9 +4,9 @@ import javax.swing.JOptionPane;
 
 import game.Game;
 import game.data.Item;
-import game.data.Sprite;
 import game.data.util.GameData;
 import game.language.Lang;
+import game.network.packet.editors.EditorData;
 import game.network.packet.editors.EditorSave;
 import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;
@@ -307,9 +307,19 @@ public class ItemEditor extends GUI implements Editor {
     _wndEditor.controls(2).add(_lblSprite);
     _wndEditor.controls(2).add(_drpSprite);
     
-    for(Sprite s : _game.getSprites()) {
-      _drpSprite.add(new DropdownSprite(s));
-    }
+    _game.send(new EditorData.List(EditorData.DATA_TYPE_SPRITE), EditorData.List.class, new Game.PacketCallback<EditorData.List>() {
+      public boolean recieved(EditorData.List packet) {
+        if(packet.type() == EditorData.DATA_TYPE_SPRITE) {
+          for(EditorData.List.ListData data : packet.data()) {
+            _drpSprite.add(new DropdownSprite(data.file(), data.name(), data.note()));
+          }
+          
+          return true;
+        }
+        
+        return true;
+      }
+    });
     
     controls().add(_wndEditor);
   }
@@ -384,7 +394,7 @@ public class ItemEditor extends GUI implements Editor {
         int i = 0;
         for(Dropdown.Item item : _drpSprite) {
           DropdownSprite s = (DropdownSprite)item;
-          if(s._sprite.getFile().equals(_item.getSprite())) {
+          if(s._file.equals(_item.getSprite())) {
             _drpSprite.setSeletected(i);
             break;
           }
@@ -392,10 +402,9 @@ public class ItemEditor extends GUI implements Editor {
         }
         
         updateSubtypes();
+        resize();
       }
     });
-    
-    resize();
   }
   
   private void updateSubtypes() {
@@ -514,7 +523,7 @@ public class ItemEditor extends GUI implements Editor {
     
     _item.setName(_txtName.getText());
     _item.setNote(_txtNote.getText());
-    _item.setSprite(sprite != null ? sprite._sprite.getFile() : null);
+    _item.setSprite(sprite != null ? sprite._file : null);
   }
   
   protected boolean handleKeyDown ( int key) { return true; }
@@ -522,11 +531,11 @@ public class ItemEditor extends GUI implements Editor {
   protected boolean handleCharDown(char key) { return true; }
   
   private class DropdownSprite extends Dropdown.Item {
-    private Sprite _sprite;
+    private String _file;
     
-    public DropdownSprite(Sprite sprite) {
-      super(sprite.getName() + " - " + sprite.getNote());
-      _sprite = sprite;
+    public DropdownSprite(String file, String name, String note) {
+      super(file + ": " + name + " - " + note);
+      _file = file;
     }
   }
 }
