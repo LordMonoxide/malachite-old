@@ -1,10 +1,9 @@
 package game.graphics.gui.editors;
 
-import java.io.File;
-
 import javax.swing.JOptionPane;
 
-import game.data.util.GameData;
+import game.Game;
+import game.network.packet.editors.EditorData;
 import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;
 import graphics.shared.gui.controls.Button;
@@ -12,18 +11,18 @@ import graphics.shared.gui.controls.List;
 import graphics.shared.gui.controls.compound.Window;
 
 public class DataSelection extends GUI {
+  private DataSelection _this = this;
+  
   private Window _window;
   private List   _data;
   private Button _new;
   
   private Editor _editor;
-  private String _dir;
-  private GameData[] _edit;
+  private int _type;
   
-  public DataSelection(Editor editor, String dir, GameData[] data) {
+  public DataSelection(Editor editor, int type) {
     _editor = editor;
-    _dir = dir;
-    _edit = data;
+    _type = type;
   }
   
   protected void load() {
@@ -33,18 +32,28 @@ public class DataSelection extends GUI {
     _data = new List(this);
     _data.setXYWH(8, 8, 400, 200);
     
-    Control.Events.Click accept = new Control.Events.Click() {
+    final Control.Events.Click accept = new Control.Events.Click() {
       public void click() { }
       public void clickDbl() {
-        editData((GameData)((ListItem)getControl()).getData());
+        switch(_type) {
+          case EditorData.DATA_TYPE_SPRITE: editData(((ListItem)getControl()).file()); break;
+        }
       }
     };
     
-    for(GameData s : _edit) {
-      ListItem l = (ListItem)_data.addItem(new ListItem(this, s));
-      l.setText(s.getFile() + ": " + s.getName() + " - " + s.getNote());
-      l.events().addClickHandler(accept);
-    }
+    Game.getInstance().send(new EditorData.List(_type), EditorData.List.class, new Game.PacketCallback<EditorData.List>() {
+      public boolean recieved(game.network.packet.editors.EditorData.List packet) {
+        remove();
+        
+        for(EditorData.List.ListData data : packet.data()) {
+          ListItem l = (ListItem)_data.addItem(new ListItem(_this, data.file()));
+          l.setText(data.file() + ": " + data.name() + " - " + data.note());
+          l.events().addClickHandler(accept);
+        }
+        
+        return true;
+      }
+    });
     
     _new = new Button(this);
     _new.setText("New");
@@ -93,36 +102,38 @@ public class DataSelection extends GUI {
       s = JOptionPane.showInputDialog("Please enter the file name:");
       if(s == null || s.length() == 0) return;
       
-      File f = new File("../data/" + _dir + "/" + s);
-      if(f.exists()) {
-        switch(JOptionPane.showConfirmDialog(null, s + " already exists.  Would you like to overwrite it?", null, JOptionPane.YES_NO_CANCEL_OPTION)) {
-          case JOptionPane.CANCEL_OPTION: return;
-          case JOptionPane.NO_OPTION:     continue;
+      for(List.ListItem l : _data.items()) {
+        if(((ListItem)l).file().equals(s)) {
+          switch(JOptionPane.showConfirmDialog(null, s + " already exists.  Would you like to overwrite it?", null, JOptionPane.YES_NO_CANCEL_OPTION)) {
+            case JOptionPane.CANCEL_OPTION: return;
+            case JOptionPane.NO_OPTION:     continue;
+            default: break;
+          }
         }
       }
       
       break;
     }
     
-    _editor.newData(s);
+    _editor.editData(s, true);
     pop();
   }
   
-  private void editData(GameData data) {
-    _editor.editData(data);
+  private void editData(String file) {
+    _editor.editData(file, false);
     pop();
   }
   
   public static class ListItem extends graphics.shared.gui.controls.List.ListItem {
-    private GameData _data;
+    private String _file;
     
-    protected ListItem(GUI gui, GameData data) {
+    protected ListItem(GUI gui, String file) {
       super(gui);
-      _data = data;
+      _file = file;
     }
     
-    public GameData getData() {
-      return _data;
+    public String file() {
+      return _file;
     }
   }
 }
