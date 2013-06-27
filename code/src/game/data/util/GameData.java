@@ -17,7 +17,8 @@ public abstract class GameData {
   protected boolean _loaded;
   protected Events _events = new Events(this);
   
-  protected GameData(int version, File file) {
+  public void init(String file) { }
+  protected void initInternal(int version, File file) {
     _version = version;
     _file = file;
   }

@@ -21,8 +21,13 @@ public class Item extends GameData {
   private Entity.Stats.Buffs.Buff _buffDEX = new Entity.Stats.Buffs.Buff();
   private Entity.Stats.Buffs.Buff _buffINT = new Entity.Stats.Buffs.Buff();
   
+  public Item() { }
   public Item(String file) {
-    super(1, new File("../data/item/" + file));
+    init(file);
+  }
+  
+  public void init(String file) {
+    super.initInternal(1, new File("../data/item/" + file));
   }
   
   public String getSprite() { return _sprite; }

@@ -8,8 +8,13 @@ import game.data.util.GameData;
 public class NPC extends GameData {
   protected String _sprite;
   
+  public NPC() { }
   public NPC(String file) {
-    super(1, new File("../data/NPCs/" + file));
+    init(file);
+  }
+  
+  public void init(String file) {
+    super.initInternal(1, new File("../data/NPCs/" + file));
   }
   
   public String getSprite() { return _sprite; }

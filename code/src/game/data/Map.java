@@ -22,7 +22,7 @@ public class Map extends GameData {
   protected Layer[] _layer  = new Layer[Settings.Map.Depth];
   
   public Map(World world, int x, int y) {
-    super(1, new File("../data/worlds/" + world.getName() + "/" + x + "x" + y));
+    initInternal(1, new File("../data/worlds/" + world.getName() + "/" + x + "x" + y));
     _world = world;
     _x = x;
     _y = y;

@@ -17,8 +17,13 @@ public class Sprite extends GameData {
   protected ArrayList<Anim> _anim = new ArrayList<Anim>();
   protected String _script;
   
+  public Sprite() { }
   public Sprite(String file) {
-    super(1, new File("../data/sprites/" + file));
+    init(file);
+  }
+  
+  public void init(String file) {
+    super.initInternal(1, new File("../data/sprites/" + file));
   }
   
   public    int getW()       { return _w; }
