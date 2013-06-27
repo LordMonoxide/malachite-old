@@ -491,9 +491,6 @@ public class SpriteEditor extends GUI implements Editor {
   }
   
   private void save() {
-    System.out.println("Updating sprite " + _sprite.getFile());
-    _sprite.update();
-    
     EditorSave.Sprite packet = new EditorSave.Sprite();
     packet.addData(_sprite);
     Game.getInstance().send(packet);
@@ -514,43 +511,42 @@ public class SpriteEditor extends GUI implements Editor {
     }
   }
   
-  public void newData(String file) {
-    editData(new Sprite(file));
-  }
-  
-  public void editData(GameData data) {
+  public void editData(String file, boolean newData) {
     push();
     
-    _sprite = new SpriteEditorSprite((Sprite)data);
-    
-    int i = 0;
-    for(Dropdown.Item item : _drpSprite) {
-      if(item.getText().equals(_sprite.getTexture())) {
-        _drpSprite.setSeletected(i);
-        break;
+    _sprite = new SpriteEditorSprite(file, newData);
+    _sprite.events().addLoadHandler(new GameData.Events.Load() {
+      public void load() {
+        int i = 0;
+        for(Dropdown.Item item : _drpSprite) {
+          if(item.getText().equals(_sprite.getTexture())) {
+            _drpSprite.setSeletected(i);
+            break;
+          }
+          i++;
+        }
+        
+        for(Sprite.Frame f : _sprite._frame) {
+          _splFrame.add(new ScrollPanelFrame(f));
+        }
+        
+        if(_sprite._frame.size() == 0) addFrame();
+        if(_sprite._anim .size() == 0) addAnim();
+        
+        _scrAnim .setMax(_sprite._anim .size() - 1);
+        _scrListFrame.setMax(_splFrame.size());
+        _picFrameSprite.setTexture(_textures.getTexture("sprites/" + _sprite.getTexture()));
+        
+        _txtName.setText(_sprite.getName());
+        _txtNote.setText(_sprite.getNote());
+        _txtW.setText(String.valueOf(_sprite.getW()));
+        _txtH.setText(String.valueOf(_sprite.getH()));
+        
+        setAnim(0);
+        
+        resize();
       }
-      i++;
-    }
-    
-    for(Sprite.Frame f : _sprite._frame) {
-      _splFrame.add(new ScrollPanelFrame(f));
-    }
-    
-    if(_sprite._frame.size() == 0) addFrame();
-    if(_sprite._anim .size() == 0) addAnim();
-    
-    _scrAnim .setMax(_sprite._anim .size() - 1);
-    _scrListFrame.setMax(_splFrame.size());
-    _picFrameSprite.setTexture(_textures.getTexture("sprites/" + _sprite.getTexture()));
-    
-    _txtName.setText(_sprite.getName());
-    _txtNote.setText(_sprite.getNote());
-    _txtW.setText(String.valueOf(_sprite.getW()));
-    _txtH.setText(String.valueOf(_sprite.getH()));
-    
-    setAnim(0);
-    
-    resize();
+    });
   }
   
   private void setSprite(String sprite) {
