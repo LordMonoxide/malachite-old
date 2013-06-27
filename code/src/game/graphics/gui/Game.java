@@ -3,7 +3,6 @@ package game.graphics.gui;
 import org.lwjgl.input.Keyboard;
 
 import game.data.Item;
-import game.data.util.GameData;
 import game.graphics.gui.editors.DataSelection;
 import game.graphics.gui.editors.ItemEditor;
 import game.graphics.gui.editors.MapEditor;
@@ -15,6 +14,7 @@ import game.network.packet.InvDrop;
 import game.network.packet.InvUnequip;
 import game.network.packet.InvUse;
 import game.network.packet.InvSwap;
+import game.network.packet.editors.EditorData;
 import game.settings.Settings;
 import game.world.Entity;
 import game.world.Region;
@@ -135,7 +135,7 @@ public class Game extends GUI {
       public void clickDbl() { }
       public void click() {
         SpriteEditor editor = new SpriteEditor();
-        DataSelection dataSel = new DataSelection(editor, "sprites", _game.getSprites().toArray(new GameData[0]));
+        DataSelection dataSel = new DataSelection(editor, EditorData.DATA_TYPE_SPRITE);
         dataSel.push();
         _wndAdmin.setVisible(false);
       }
@@ -145,7 +145,7 @@ public class Game extends GUI {
       public void clickDbl() { }
       public void click() {
         ItemEditor editor = new ItemEditor();
-        DataSelection dataSel = new DataSelection(editor, "items", _game.getItems().toArray(new GameData[0]));
+        DataSelection dataSel = new DataSelection(editor, EditorData.DATA_TYPE_ITEM);
         dataSel.push();
         _wndAdmin.setVisible(false);
       }
