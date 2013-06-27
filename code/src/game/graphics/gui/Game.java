@@ -3,6 +3,7 @@ package game.graphics.gui;
 import org.lwjgl.input.Keyboard;
 
 import game.data.Item;
+import game.data.util.GameData;
 import game.graphics.gui.editors.DataSelection;
 import game.graphics.gui.editors.ItemEditor;
 import game.graphics.gui.editors.MapEditor;
@@ -269,7 +270,7 @@ public class Game extends GUI {
           if(button == 0) {
             if(!_sprSelectedInv.getVisible()) {
               if(_entity.inv(n) != null) {
-                //_sprSelectedInv.setSprite(new Sprite(_sprInv[n].getSprite().getSource()));
+                _sprSelectedInv.setSprite(new Sprite(_sprInv[n].getSprite().getSource().getFile()));
                 _sprSelectedInv.setVisible(true);
                 _lblSelectedInvVal.setText(String.valueOf(_entity.inv(n).val()));
                 _lblSelectedInvVal.setVisible(_entity.inv(n).val() != 0);
@@ -614,7 +615,7 @@ public class Game extends GUI {
     _lblWeightVal.setText(String.valueOf(stats.weight()));
   }
   
-  private void updateInv(Entity.Inv[] inv) {
+  private void updateInv(final Entity.Inv[] inv) {
     for(int i = 0; i < Settings.Player.Inventory.Size; i++) {
       if(_sprInv[i].getSprite() != null) {
         _sprInv[i].getSprite().remove();
@@ -622,49 +623,77 @@ public class Game extends GUI {
       }
       
       if(inv[i] != null) {
-        //_sprInv[i].setSprite(new Sprite(_game.getSprite(inv[i].item().getSprite())));
+        final int n = i;
+        inv[i].item().events().addLoadHandler(new GameData.Events.Load() {
+          public void load() {
+            _sprInv[n].setSprite(new Sprite(inv[n].item().getSprite()));
+          }
+        });
       }
     }
   }
   
-  private void updateInv(Entity.Inv oldInv, Entity.Inv newInv) {
+  private void updateInv(final Entity.Inv oldInv, final Entity.Inv newInv) {
     int index = -1;
     if(oldInv != null) index = oldInv.index();
     if(newInv != null) index = newInv.index();
     if(index == -1) return;
     
-    if(_sprInv[index].getSprite() != null) {
-      _sprInv[index].setSprite(null);
-    }
+    _sprInv[index].setSprite(null);
     
     if(newInv != null) {
-      //_sprInv[index].setSprite(new Sprite(_game.getSprite(newInv.item().getSprite())));
+      final int n = index;
+      newInv.item().events().addLoadHandler(new GameData.Events.Load() {
+        public void load() {
+          _sprInv[n].setSprite(new Sprite(newInv.item().getSprite()));
+        }
+      });
     }
   }
   
-  private void updateEquip(Entity.Equip equip) {
-    if(_sprHand1.getSprite() != null) _sprHand1.setSprite(null);
-    if(_sprHand2.getSprite() != null) _sprHand2.setSprite(null);
+  private void updateEquip(final Entity.Equip equip) {
+    _sprHand1.setSprite(null);
+    _sprHand2.setSprite(null);
     
     if(equip.hand1() != null) {
-      //_sprHand1.setSprite(new Sprite(_game.getSprite(equip.hand1().getSprite())));
+      equip.hand1().events().addLoadHandler(new GameData.Events.Load() {
+        public void load() {
+          _sprHand1.setSprite(new Sprite(equip.hand1().getSprite()));
+        }
+      });
     }
     
     if(equip.hand2() != null) {
-      //_sprHand2.setSprite(new Sprite(_game.getSprite(equip.hand2().getSprite())));
+      equip.hand2().events().addLoadHandler(new GameData.Events.Load() {
+        public void load() {
+          _sprHand2.setSprite(new Sprite(equip.hand2().getSprite()));
+        }
+      });
     }
     
     for(int i = 0; i < Item.ITEM_TYPE_ARMOUR_COUNT; i++) {
-      if(_sprArmour[i].getSprite() != null) _sprArmour[i].setSprite(null);
+      _sprArmour[i].setSprite(null);
+      
       if(equip.armour(i) != null) {
-        //_sprArmour[i].setSprite(new Sprite(_game.getSprite(equip.armour(i).getSprite())));
+        final int n = i;
+        equip.armour(i).events().addLoadHandler(new GameData.Events.Load() {
+          public void load() {
+            _sprArmour[n].setSprite(new Sprite(equip.armour(n).getSprite()));
+          }
+        });
       }
     }
     
     for(int i = 0; i < Item.ITEM_TYPE_BLING_COUNT; i++) {
-      if(_sprBling[i].getSprite() != null) _sprBling[i].setSprite(null);
+      _sprBling[i].setSprite(null);
+      
       if(equip.bling(i) != null) {
-        //_sprBling[i].setSprite(new Sprite(_game.getSprite(equip.bling(i).getSprite())));
+        final int n = i;
+        equip.bling(i).events().addLoadHandler(new GameData.Events.Load() {
+          public void load() {
+            _sprBling[n].setSprite(new Sprite(equip.bling(n).getSprite()));
+          }
+        });
       }
     }
   }
