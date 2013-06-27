@@ -346,58 +346,55 @@ public class ItemEditor extends GUI implements Editor {
   }
   
   private void save() {
-    System.out.println("Updating item " + _item.getFile());
-    _item.update();
-    
     EditorSave.Item packet = new EditorSave.Item();
     packet.addData(_item);
     Game.getInstance().send(packet);
   }
   
-  public void newData(String file) {
-    editData(new Item(file));
-  }
-  
-  public void editData(GameData data) {
+  public void editData(String file, boolean newData) {
     push();
     
-    _item = new ItemEditorItem((Item)data);
-    
-    _drpType.setSeletected((_item.getType() & Item.ITEM_TYPE_BITMASK) >> Item.ITEM_TYPE_BITSHIFT);
-    
-    _txtDamage.setText(String.valueOf(_item.getDamage()));
-    _txtWeight.setText(String.valueOf(_item.getWeight()));
-    
-    _txtHPHeal.setText(String.valueOf(_item.getHPHeal()));
-    _txtMPHeal.setText(String.valueOf(_item.getMPHeal()));
-    _chkPercent.setChecked((_item.getType() & Item.ITEM_TYPE_POTION_HEAL_PERCENT) != 0);
-    
-    _txtBuffHP.setText(String.valueOf(_item.buffHP().val()));
-    _txtBuffMP.setText(String.valueOf(_item.buffMP().val()));
-    _txtBuffSTR.setText(String.valueOf(_item.buffSTR().val()));
-    _txtBuffDEX.setText(String.valueOf(_item.buffDEX().val()));
-    _txtBuffINT.setText(String.valueOf(_item.buffINT().val()));
-    
-    _chkBuffHP.setChecked(_item.buffHP().percent());
-    _chkBuffMP.setChecked(_item.buffMP().percent());
-    _chkBuffSTR.setChecked(_item.buffSTR().percent());
-    _chkBuffDEX.setChecked(_item.buffDEX().percent());
-    _chkBuffINT.setChecked(_item.buffINT().percent());
-    
-    _txtName.setText(_item.getName());
-    _txtNote.setText(_item.getNote());
-    
-    int i = 0;
-    for(Dropdown.Item item : _drpSprite) {
-      DropdownSprite s = (DropdownSprite)item;
-      if(s._sprite.getFile().equals(_item.getSprite())) {
-        _drpSprite.setSeletected(i);
-        break;
+    _item = new ItemEditorItem(file, newData);
+    _item.events().addLoadHandler(new GameData.Events.Load() {
+      public void load() {
+        _drpType.setSeletected((_item.getType() & Item.ITEM_TYPE_BITMASK) >> Item.ITEM_TYPE_BITSHIFT);
+        
+        _txtDamage.setText(String.valueOf(_item.getDamage()));
+        _txtWeight.setText(String.valueOf(_item.getWeight()));
+        
+        _txtHPHeal.setText(String.valueOf(_item.getHPHeal()));
+        _txtMPHeal.setText(String.valueOf(_item.getMPHeal()));
+        _chkPercent.setChecked((_item.getType() & Item.ITEM_TYPE_POTION_HEAL_PERCENT) != 0);
+        
+        _txtBuffHP.setText(String.valueOf(_item.buffHP().val()));
+        _txtBuffMP.setText(String.valueOf(_item.buffMP().val()));
+        _txtBuffSTR.setText(String.valueOf(_item.buffSTR().val()));
+        _txtBuffDEX.setText(String.valueOf(_item.buffDEX().val()));
+        _txtBuffINT.setText(String.valueOf(_item.buffINT().val()));
+        
+        _chkBuffHP.setChecked(_item.buffHP().percent());
+        _chkBuffMP.setChecked(_item.buffMP().percent());
+        _chkBuffSTR.setChecked(_item.buffSTR().percent());
+        _chkBuffDEX.setChecked(_item.buffDEX().percent());
+        _chkBuffINT.setChecked(_item.buffINT().percent());
+        
+        _txtName.setText(_item.getName());
+        _txtNote.setText(_item.getNote());
+        
+        int i = 0;
+        for(Dropdown.Item item : _drpSprite) {
+          DropdownSprite s = (DropdownSprite)item;
+          if(s._sprite.getFile().equals(_item.getSprite())) {
+            _drpSprite.setSeletected(i);
+            break;
+          }
+          i++;
+        }
+        
+        updateSubtypes();
       }
-      i++;
-    }
+    });
     
-    updateSubtypes();
     resize();
   }
   
