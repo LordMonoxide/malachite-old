@@ -89,6 +89,7 @@ public class Client {
     Packets.add(EditorSave.NPC.class);
     Packets.add(EditorData.Request.class);
     Packets.add(EditorData.Response.class);
+    Packets.add(EditorData.List.class);
   }
   
   public void connect() {
