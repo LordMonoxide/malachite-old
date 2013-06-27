@@ -34,7 +34,7 @@ public class Data {
     public ByteBuf serialize() {
       ByteBuf b = Unpooled.buffer();
       b.writeByte(_type);
-      b.writeShort(_file.length());
+      b.writeByte(_file.length());
       b.writeBytes(_file.getBytes());
       return b;
     }
@@ -59,6 +59,18 @@ public class Data {
     
     public String getFile() {
       return _file;
+    }
+    
+    public boolean matches(GameData data) {
+      if(_file.equals(data.getFile())) {
+        switch(_type) {
+          case DATA_TYPE_SPRITE: if(data instanceof Sprite) return true; break;
+          case DATA_TYPE_ITEM:   if(data instanceof Item)   return true; break;
+          case DATA_TYPE_NPC:    if(data instanceof NPC)    return true; break;
+        }
+      }
+      
+      return false;
     }
     
     public ByteBuf serialize() {
