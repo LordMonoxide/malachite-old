@@ -26,6 +26,10 @@ public class EditorData {
       return 38;
     }
     
+    public int type() {
+      return _type;
+    }
+    
     public ListData[] data() {
       return _data;
     }
@@ -39,6 +43,7 @@ public class EditorData {
     public void deserialize(ByteBuf data) throws NotEnoughDataException {
       byte[] arr;
       
+      _type = data.readByte();
       _data = new ListData[data.readInt()];
       for(int i = 0; i < _data.length; i++) {
         _data[i] = new ListData();
