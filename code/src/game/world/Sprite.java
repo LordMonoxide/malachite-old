@@ -30,22 +30,9 @@ public class Sprite {
   
   public static Sprite add(String file) { return add(file, true); }
   public static Sprite add(String file, final boolean visible) {
-    final Sprite s = new Sprite();
-    
-    final game.data.Sprite sprite = Game.getInstance().getSprite(file);
-    sprite.events().addLoadHandler(new GameData.Events.Load() {
-      public void load() {
-        s.load(sprite);
-        s.setVisible(visible);
-        
-        _sprite.add(s);
-        
-        if(s._h > _tallestSprite) {
-          _tallestSprite = s._h;
-        }
-      }
-    });
-    
+    final Sprite s = new Sprite(file);
+    s.setVisible(visible);
+    _sprite.add(s);
     return s;
   }
   
@@ -95,9 +82,23 @@ public class Sprite {
   
   private boolean _loaded;
   
-  public void load(game.data.Sprite sprite) {
+  public Sprite(String file) {
+    final Sprite _this = this;
+    
+    final game.data.Sprite sprite = Game.getInstance().getSprite(file);
+    sprite.events().addLoadHandler(new GameData.Events.Load() {
+      public void load() {
+        _this.load(sprite);
+        
+        if(_h > _tallestSprite) {
+          _tallestSprite = _h;
+        }
+      }
+    });
+  }
+  
+  private void load(game.data.Sprite sprite) {
     _source = sprite;
-    _visible = true;
     _w = sprite.getW();
     _h = sprite.getH();
     _frame = sprite.createDrawables();
