@@ -58,10 +58,6 @@ public class Game {
   public World       getWorld()       { return _world;       }
   public Entity      getEntity()      { return _entity;      }
   
-  public Collection<Sprite> getSprites() { return _sprite.values(); }
-  public Collection<Item>   getItems()   { return _item.values(); }
-  public Collection<NPC>    getNPCs()    { return _npc.values(); }
-  
   public Sprite getSprite(String file) {
     Sprite data = _sprite.get(file);
     if(data == null) {
