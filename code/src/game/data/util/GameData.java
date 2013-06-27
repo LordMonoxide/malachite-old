@@ -74,10 +74,11 @@ public abstract class GameData {
   }
   
   public void request() {
+    final GameData _this = this;
     Data.Request p = new Data.Request(this);
     Game.getInstance().send(p, Data.Response.class, new Game.PacketCallback<Data.Response>() {
       public boolean recieved(Data.Response packet) {
-        if(packet.getFile().equals(getFile())) {
+        if(packet.matches(_this)) {
           remove();
           
           packet.process();
@@ -106,7 +107,6 @@ public abstract class GameData {
     }
     
     public void addLoadHandler(Load e) {
-      e._events = this;
       _load.add(e);
       
       if(_this._loaded) {
@@ -117,16 +117,12 @@ public abstract class GameData {
     public void raiseLoad() {
       for(Load e : _load) {
         e.load();
+        _load.remove(e);
       }
     }
     
     public static abstract class Load {
-      private Events _events;
-      
       public abstract void load();
-      public void remove() {
-        _events._load.remove(this);
-      }
     }
   }
 }
