@@ -1,10 +1,8 @@
 package game.network.packet.editors;
 
-import game.Game;
 import game.data.Item;
 import game.data.NPC;
 import game.data.Sprite;
-import game.data.util.Buffer;
 import game.data.util.GameData;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -14,6 +12,60 @@ public class EditorData {
   public static final byte DATA_TYPE_SPRITE = 1;
   public static final byte DATA_TYPE_ITEM = 2;
   public static final byte DATA_TYPE_NPC = 3;
+  
+  public static class List extends Packet {
+    private int _type;
+    private ListData[] _data;
+    
+    public List() { }
+    public List(int type) {
+      _type = type;
+    }
+    
+    public int getIndex() {
+      return 38;
+    }
+    
+    public ListData[] data() {
+      return _data;
+    }
+    
+    public ByteBuf serialize() {
+      ByteBuf b = Unpooled.buffer();
+      b.writeByte(_type);
+      return b;
+    }
+    
+    public void deserialize(ByteBuf data) throws NotEnoughDataException {
+      byte[] arr;
+      
+      _data = new ListData[data.readInt()];
+      for(int i = 0; i < _data.length; i++) {
+        _data[i] = new ListData();
+        arr = new byte[data.readByte()];
+        data.readBytes(arr);
+        _data[i]._file = new String(arr);
+        arr = new byte[data.readByte()];
+        data.readBytes(arr);
+        _data[i]._name = new String(arr);
+        arr = new byte[data.readShort()];
+        data.readBytes(arr);
+        _data[i]._note = new String(arr);
+      }
+    }
+    
+    public void process() {
+      
+    }
+    
+    public static class ListData {
+      private String _file, _name, _note;
+      
+      public String file() { return _file; }
+      public String name() { return _name; }
+      public String note() { return _note; }
+    }
+  }
   
   public static class Request extends Packet {
     private byte _type;
@@ -57,9 +109,9 @@ public class EditorData {
       return 37;
     }
     
-    public String getFile() {
-      return _file;
-    }
+    public byte   getType() { return _type; }
+    public String getFile() { return _file; }
+    public byte[] getData() { return _data; }
     
     public ByteBuf serialize() {
       return null;
@@ -75,16 +127,7 @@ public class EditorData {
     }
     
     public void process() {
-      GameData data = null;
       
-      switch(_type) {
-        case DATA_TYPE_SPRITE: data = Game.getInstance().getSprite(_file); break;
-        case DATA_TYPE_ITEM:   data = Game.getInstance().getItem(_file);   break;
-        case DATA_TYPE_NPC:    data = Game.getInstance().getNPC(_file);    break;
-      }
-      
-      data.deserialize(new Buffer(_data));
-      data.save();
     }
   }
 }
