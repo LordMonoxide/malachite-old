@@ -58,6 +58,7 @@ public class Game {
   public Entity      getEntity()      { return _entity;      }
   
   public Sprite getSprite(String file) {
+    if(file == null) throw new NullPointerException();
     Sprite data = _sprite.get(file);
     if(data == null) {
       data = new Sprite(file);
@@ -69,6 +70,7 @@ public class Game {
   }
   
   public Item getItem(String file) {
+    if(file == null) throw new NullPointerException();
     Item data = _item.get(file);
     if(data == null) {
       data = new Item(file);
@@ -80,6 +82,7 @@ public class Game {
   }
   
   public NPC getNPC(String file) {
+    if(file == null) throw new NullPointerException();
     NPC data = _npc.get(file);
     if(data == null) {
       data = new NPC(file);
