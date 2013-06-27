@@ -11,11 +11,10 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import game.Game;
-import game.data.Item;
 import game.data.Map;
-import game.data.Sprite;
 import game.data.util.GameData;
 import game.graphics.gui.Message;
+import game.network.packet.editors.EditorData;
 import game.network.packet.editors.EditorSave;
 import game.settings.Settings;
 import game.world.Region;
@@ -426,13 +425,34 @@ public class MapEditor extends GUI {
     _selected = Context.newDrawable();
     _selected.setColour(new float[] {1, 1, 1, 0.5f});
     
-    for(Sprite s : _game.getSprites()) {
-      _drpSpriteFile.add(new DropdownSprite(s));
-    }
+    _game.send(new EditorData.List(EditorData.DATA_TYPE_SPRITE), EditorData.List.class, new Game.PacketCallback<EditorData.List>() {
+      public boolean recieved(EditorData.List packet) {
+        if(packet.type() == EditorData.DATA_TYPE_SPRITE) {
+          
+          for(EditorData.List.ListData data : packet.data()) {
+            _drpSpriteFile.add(new DropdownData(data.file(), data.name(), data.note()));
+          }
+          
+          return true;
+        }
+        
+        return false;
+      }
+    });
     
-    for(Item item : _game.getItems()) {
-      _drpItemFile.add(new DropdownItem(item));
-    }
+    _game.send(new EditorData.List(EditorData.DATA_TYPE_ITEM), EditorData.List.class, new Game.PacketCallback<EditorData.List>() {
+      public boolean recieved(EditorData.List packet) {
+        if(packet.type() == EditorData.DATA_TYPE_ITEM) {
+          for(EditorData.List.ListData data : packet.data()) {
+            _drpItemFile.add(new DropdownData(data.file(), data.name(), data.note()));
+          }
+          
+          return true;
+        }
+        
+        return false;
+      }
+    });
     
     _attribDrawable = Context.newDrawable();
     _attribDrawable.setWH(Settings.Map.Size, Settings.Map.Size);
@@ -603,23 +623,28 @@ public class MapEditor extends GUI {
   }
   
   private void addSprite() {
-    final Chooser s = new Chooser(_game.getSprites().toArray(new Sprite[0]));
-    s.load();
-    s.events().addSelectHandler(new Chooser.Events.Select() {
-      public void select(String file) {
-        s.pop();
+    _game.send(new EditorData.List(EditorData.DATA_TYPE_SPRITE), EditorData.List.class, new Game.PacketCallback<EditorData.List>() {
+      public boolean recieved(EditorData.List packet) {
+        final Chooser s = new Chooser(packet.data());
+        s.events().addSelectHandler(new Chooser.Events.Select() {
+          public void select(String file) {
+            s.pop();
+            
+            _file = file;
+            _pickLoc = true;
+            _picWindow.setVisible(false);
+            _pickSprite = game.world.Sprite.add(file);
+            _pickSprite.setX(Mouse.getX() - _context.getCameraX());
+            _pickSprite.setY(Mouse.getY() - _context.getCameraY());
+            _pickSprite.setZ(_layer);
+          }
+        });
         
-        _file = file;
-        _pickLoc = true;
-        _picWindow.setVisible(false);
-        _pickSprite = game.world.Sprite.add(file);
-        _pickSprite.setX(Mouse.getX() - _context.getCameraX());
-        _pickSprite.setY(Mouse.getY() - _context.getCameraY());
-        _pickSprite.setZ(_layer);
+        s.push();
+        
+        return true;
       }
     });
-    
-    s.push();
   }
   
   private void delSprite() {
@@ -636,9 +661,8 @@ public class MapEditor extends GUI {
     
     if(_sprite._file != null) {
       int i = 0;
-      for(Dropdown.Item item : _drpSpriteFile) {
-        DropdownSprite s = (DropdownSprite)item;
-        if(s._sprite.getFile().equals(_sprite._file)) {
+      for(Dropdown.Item file : _drpSpriteFile) {
+        if(((DropdownData)file)._file.equals(_sprite._file)) {
           _drpSpriteFile.setSeletected(i);
         }
         i++;
@@ -653,8 +677,8 @@ public class MapEditor extends GUI {
   }
   
   private void updateSprite() {
-    DropdownSprite sprite = (DropdownSprite)_drpSpriteFile.get();
-    _sprite._file = sprite != null ? sprite._sprite.getFile() : null;
+    DropdownData sprite = (DropdownData)_drpSpriteFile.get();
+    _sprite._file = sprite != null ? sprite._file : null;
     _sprite._x = Integer.parseInt(_txtSpriteX.getText());
     _sprite._y = Integer.parseInt(_txtSpriteY.getText());
     _sprite._z = Byte.parseByte(_txtSpriteZ.getText());
@@ -662,23 +686,28 @@ public class MapEditor extends GUI {
   }
   
   private void addItem() {
-    final Chooser s = new Chooser(_game.getItems().toArray(new Item[0]));
-    s.load();
-    s.events().addSelectHandler(new Chooser.Events.Select() {
-      public void select(String file) {
-        s.pop();
-
-        _file = file;
-        _pickLoc = true;
-        _picWindow.setVisible(false);
-        _pickSprite = game.world.Sprite.add(_game.getItem(file).getSprite());
-        _pickSprite.setX(Mouse.getX() - _context.getCameraX());
-        _pickSprite.setY(Mouse.getY() - _context.getCameraY());
-        _pickSprite.setZ(_layer);
+    _game.send(new EditorData.List(EditorData.DATA_TYPE_ITEM), EditorData.List.class, new Game.PacketCallback<EditorData.List>() {
+      public boolean recieved(EditorData.List packet) {
+        final Chooser s = new Chooser(packet.data());
+        s.events().addSelectHandler(new Chooser.Events.Select() {
+          public void select(String file) {
+            s.pop();
+            
+            _file = file;
+            _pickLoc = true;
+            _picWindow.setVisible(false);
+            _pickSprite = game.world.Sprite.add(_game.getItem(file).getSprite());
+            _pickSprite.setX(Mouse.getX() - _context.getCameraX());
+            _pickSprite.setY(Mouse.getY() - _context.getCameraY());
+            _pickSprite.setZ(_layer);
+          }
+        });
+        
+        s.push();
+        
+        return true;
       }
     });
-    
-    s.push();
   }
   
   private void delItem() {
@@ -696,8 +725,7 @@ public class MapEditor extends GUI {
     if(_item._file != null) {
       int i = 0;
       for(Dropdown.Item file : _drpItemFile) {
-        DropdownItem s = (DropdownItem)file;
-        if(s._item.getFile().equals(_item._file)) {
+         if(((DropdownData)file)._file.equals(_item._file)) {
           _drpItemFile.setSeletected(i);
         }
         i++;
@@ -713,8 +741,8 @@ public class MapEditor extends GUI {
   }
   
   private void updateItem() {
-    DropdownItem item = (DropdownItem)_drpItemFile.get();
-    _item._file = item != null ? item._item.getFile() : null;
+    DropdownData item = (DropdownData)_drpItemFile.get();
+    _item._file = item != null ? item._file : null;
     _item._x = Integer.parseInt(_txtItemX.getText());
     _item._y = Integer.parseInt(_txtItemY.getText());
     _item._z = Byte.parseByte(_txtItemZ.getText());
@@ -1037,21 +1065,12 @@ public class MapEditor extends GUI {
     }
   }
   
-  private class DropdownSprite extends Dropdown.Item {
-    private Sprite _sprite;
+  private class DropdownData extends Dropdown.Item {
+    private String _file;
     
-    public DropdownSprite(Sprite sprite) {
-      super(sprite.getName() + " - " + sprite.getNote());
-      _sprite = sprite;
-    }
-  }
-  
-  private class DropdownItem extends Dropdown.Item {
-    private Item _item;
-    
-    public DropdownItem(Item item) {
-      super(item.getName() + " - " + item.getNote());
-      _item = item;
+    public DropdownData(String file, String name, String note) {
+      super(file + ": " + name + " - " + note);
+      _file = file;
     }
   }
   
@@ -1072,20 +1091,18 @@ public class MapEditor extends GUI {
   }
   
   public static class Chooser extends GUI {
-    private Events _events;
+    private Events _events = new Events();
     
     private Window _wndWindow;
     private List   _lstData;
     
-    private GameData[] _data;
+    private EditorData.List.ListData[] _data;
     
-    public Chooser(GameData[] data) {
+    public Chooser(EditorData.List.ListData[] data) {
       _data = data;
     }
     
     public void load() {
-      _events = new Events();
-      
       _wndWindow = new Window(this);
       _wndWindow.setText("Choose Sprite");
       
@@ -1095,13 +1112,13 @@ public class MapEditor extends GUI {
       Control.Events.Click accept = new Control.Events.Click() {
         public void click() { }
         public void clickDbl() {
-          _events.raiseSelect(((ListItem)_lstData.getSelected())._data.getFile());
+          _events.raiseSelect(((ListItem)_lstData.getSelected())._file);
         }
       };
       
-      for(GameData s : _data) {
-        ListItem l = (ListItem)_lstData.addItem(new ListItem(this, s));
-        l.setText(s.getFile() + ": " + s.getName() + " - " + s.getNote());
+      for(EditorData.List.ListData s : _data) {
+        ListItem l = (ListItem)_lstData.addItem(new ListItem(this, s.file()));
+        l.setText(s.file() + ": " + s.name() + " - " + s.note());
         l.events().addClickHandler(accept);
       }
       
@@ -1139,11 +1156,11 @@ public class MapEditor extends GUI {
     }
     
     private class ListItem extends graphics.shared.gui.controls.List.ListItem {
-      private GameData _data;
+      private String _file;
       
-      protected ListItem(GUI gui, GameData data) {
+      protected ListItem(GUI gui, String file) {
         super(gui);
-        _data = data;
+        _file = file;
       }
     }
     
