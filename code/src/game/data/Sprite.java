@@ -10,6 +10,10 @@ import graphics.gl00.Drawable;
 import graphics.shared.textures.Texture;
 
 public class Sprite extends GameData {
+  public String toString() {
+    return "Sprite '" + getFile() + "' (" + super.toString() + ")";
+  }
+  
   protected String _texture;
   protected int _w, _h;
   protected int _default;

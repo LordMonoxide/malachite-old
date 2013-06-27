@@ -7,6 +7,10 @@ import game.data.util.GameData;
 import game.world.Entity;
 
 public class Item extends GameData {
+  public String toString() {
+    return "Item '" + getFile() + "' (" + super.toString() + ")";
+  }
+  
   protected String _sprite;
   protected int    _type;
   
@@ -24,6 +28,7 @@ public class Item extends GameData {
   public Item() { }
   public Item(String file) {
     init(file);
+    System.out.println(this);
   }
   
   public void init(String file) {

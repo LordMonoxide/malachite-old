@@ -6,6 +6,10 @@ import game.data.util.Buffer;
 import game.data.util.GameData;
 
 public class NPC extends GameData {
+  public String toString() {
+    return "NPC '" + getFile() + "' (" + super.toString() + ")";
+  }
+  
   protected String _sprite;
   
   public NPC() { }
