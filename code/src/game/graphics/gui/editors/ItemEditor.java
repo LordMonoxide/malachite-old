@@ -341,15 +341,13 @@ public class ItemEditor extends GUI implements Editor {
   }
   
   private void unload() {
-    if(_item.isChanged()) {
-      switch(JOptionPane.showConfirmDialog(null, "Would you like to save your changes?")) {
-        case JOptionPane.CANCEL_OPTION:
-        case JOptionPane.CLOSED_OPTION:
-          return;
-          
-        case JOptionPane.YES_OPTION:
-          save();
-      }
+    switch(JOptionPane.showConfirmDialog(null, "Would you like to save your changes?")) {
+      case JOptionPane.CANCEL_OPTION:
+      case JOptionPane.CLOSED_OPTION:
+        return;
+        
+      case JOptionPane.YES_OPTION:
+        save();
     }
     
     pop();

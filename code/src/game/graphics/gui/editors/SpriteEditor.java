@@ -476,15 +476,13 @@ public class SpriteEditor extends GUI implements Editor {
   }
   
   public void unload() {
-    if(_sprite.isChanged()) {
-      switch(JOptionPane.showConfirmDialog(null, "Would you like to save your changes?")) {
-        case JOptionPane.CANCEL_OPTION:
-        case JOptionPane.CLOSED_OPTION:
-          return;
-          
-        case JOptionPane.YES_OPTION:
-          save();
-      }
+    switch(JOptionPane.showConfirmDialog(null, "Would you like to save your changes?")) {
+      case JOptionPane.CANCEL_OPTION:
+      case JOptionPane.CLOSED_OPTION:
+        return;
+        
+      case JOptionPane.YES_OPTION:
+        save();
     }
     
     pop();
