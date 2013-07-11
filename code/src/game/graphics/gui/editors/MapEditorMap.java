@@ -28,7 +28,7 @@ public class MapEditorMap extends Map {
   private EditorSprite[] _itemsDrawable;
   private EditorSprite[] _npcsDrawable;
   
-  public MapEditorMap(Map map) {
+  protected MapEditorMap(Map map) {
     super(map.getWorld(), map.getX(), map.getY());
     
     _map = map;
@@ -41,11 +41,11 @@ public class MapEditorMap extends Map {
     request();
   }
   
-  public void updateAttrib(int layer, int x, int y, ByteBuffer data) {
+  protected void updateAttrib(int layer, int x, int y, ByteBuffer data) {
     _attribMask[layer].update(x * Settings.Map.Attrib.Size, y * Settings.Map.Attrib.Size, Settings.Map.Attrib.Size, Settings.Map.Attrib.Size, data);
   }
   
-  public void createSprites() {
+  protected void createSprites() {
     int i = 0;
     _spritesDrawable = new EditorSprite[_sprite.size()];
     for(Sprite sprite : _sprite) {
@@ -63,7 +63,7 @@ public class MapEditorMap extends Map {
     }
   }
   
-  public void createItems() {
+  protected void createItems() {
     int i = 0;
     _itemsDrawable = new EditorSprite[_item.size()];
     for(Item item : _item) {
@@ -81,7 +81,7 @@ public class MapEditorMap extends Map {
     }
   }
   
-  public void createNPCs() {
+  protected void createNPCs() {
     int i = 0;
     _npcsDrawable = new EditorSprite[_npc.size()];
     for(NPC npc : _npc) {
@@ -99,19 +99,19 @@ public class MapEditorMap extends Map {
     }
   }
   
-  public Map getMap() {
+  protected Map getMap() {
     return _map;
   }
   
-  public Layer getLayer(int z) {
+  protected Layer getLayer(int z) {
     return _layer[z];
   }
   
-  public Texture getAttribMask(int layer) {
+  protected Texture getAttribMask(int layer) {
     return _attribMask[layer];
   }
   
-  public void drawSprites() {
+  protected void drawSprites() {
     for(EditorSprite d : _spritesDrawable) {
       if(d != null) {
         _matrix.push();
@@ -122,7 +122,7 @@ public class MapEditorMap extends Map {
     }
   }
   
-  public void drawItems() {
+  protected void drawItems() {
     for(EditorSprite d : _itemsDrawable) {
       if(d != null) {
         _matrix.push();
@@ -133,7 +133,7 @@ public class MapEditorMap extends Map {
     }
   }
   
-  public void drawNPCs() {
+  protected void drawNPCs() {
     for(EditorSprite d : _npcsDrawable) {
       if(d != null) {
         _matrix.push();
@@ -308,23 +308,22 @@ public class MapEditorMap extends Map {
     }
   }
   
-  public static class Sprite {
+  public static class Data {
     public String _file;
     public int _x, _y;
     public byte _z;
   }
   
-  public static class Item {
-    public String _file;
+  public static class Sprite extends Data {
+    
+  }
+  
+  public static class Item extends Data {
     public int _val;
-    public int _x, _y;
-    public byte _z;
   }
   
-  public static class NPC {
-    public String _file;
-    public int _x, _y;
-    public byte _z;
+  public static class NPC extends Data {
+    
   }
   
   private static class EditorSprite {
