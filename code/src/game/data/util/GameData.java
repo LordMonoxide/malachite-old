@@ -107,18 +107,18 @@ public abstract class GameData {
     }
     
     public void addLoadHandler(Load e) {
-      _load.add(e);
-      
-      if(_this._loaded) {
-        raiseLoad();
+      if(!_this._loaded) {
+        _load.add(e);
+      } else {
+        e.load();
       }
     }
     
     public void raiseLoad() {
       for(Load e : _load) {
         e.load();
-        _load.remove(e);
       }
+      _load.clear();
     }
     
     public static abstract class Load {
