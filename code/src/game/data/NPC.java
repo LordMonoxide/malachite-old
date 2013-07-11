@@ -24,7 +24,7 @@ public class NPC extends GameData {
   public String getSprite() { return _sprite; }
   
   protected void serializeInternal(Buffer b) {
-    
+    b.put(_sprite);
   }
   
   protected void deserializeInternal(Buffer b) {
@@ -34,6 +34,6 @@ public class NPC extends GameData {
   }
   
   private void deserialize01(Buffer b) {
-    
+    _sprite = b.getString();
   }
 }
