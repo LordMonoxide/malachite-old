@@ -11,7 +11,9 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import game.Game;
+import game.data.Item;
 import game.data.Map;
+import game.data.NPC;
 import game.data.util.GameData;
 import game.graphics.gui.Message;
 import game.network.packet.editors.EditorData;
@@ -72,6 +74,14 @@ public class MapEditor extends GUI {
   private Textbox   _txtItemY;
   private Textbox   _txtItemZ;
   
+  private ScrollPanel _splNPC;
+  private Label     _lblNPCFile;
+  private Dropdown  _drpNPCFile;
+  private Label     _lblNPCLoc;
+  private Textbox   _txtNPCX;
+  private Textbox   _txtNPCY;
+  private Textbox   _txtNPCZ;
+  
   private game.world.Sprite _pickSprite;
   private boolean   _pickLoc;
   
@@ -95,6 +105,7 @@ public class MapEditor extends GUI {
   private String     _file;
   private MapEditorMap.Sprite _sprite;
   private MapEditorMap.Item   _item;
+  private MapEditorMap.NPC    _npc;
   
   private int _mx, _my;
   private MapEditorMap _map;
@@ -258,7 +269,7 @@ public class MapEditor extends GUI {
     _splSprite.events().onSelect(new ScrollPanel.Events.Select() {
       public void event(ScrollPanel.Item item) {
         if(item != null) {
-          selSprite(((ScrollPanelSprite)item)._sprite);
+          selSprite((MapEditorMap.Sprite)((ScrollPanelData)item)._data);
         }
       }
     });
@@ -338,7 +349,7 @@ public class MapEditor extends GUI {
     _splItem.events().onSelect(new ScrollPanel.Events.Select() {
       public void event(ScrollPanel.Item item) {
         if(item != null) {
-          selItem(((ScrollPanelItem)item)._item);
+          selItem((MapEditorMap.Item)((ScrollPanelData)item)._data);
         }
       }
     });
@@ -419,6 +430,86 @@ public class MapEditor extends GUI {
     
     _picTab[3].controls().add(_splItem);
     
+    // NPCs tab
+    _splNPC = new ScrollPanel(this);
+    _splNPC.setXY(4, 4);
+    _splNPC.events().onButtonAdd(new ScrollPanel.Events.Button() {
+      public void event() {
+        addNPC();
+      }
+    });
+    _splNPC.events().onButtonDel(new ScrollPanel.Events.Button() {
+      public void event() {
+        delNPC();
+      }
+    });
+    _splNPC.events().onSelect(new ScrollPanel.Events.Select() {
+      public void event(ScrollPanel.Item item) {
+        if(item != null) {
+          selNPC((MapEditorMap.NPC)((ScrollPanelData)item)._data);
+        }
+      }
+    });
+    
+    _lblNPCFile = new Label(this);
+    _lblNPCFile.setXY(4, 4);
+    _lblNPCFile.setText("File");
+    
+    _drpNPCFile = new Dropdown(this);
+    _drpNPCFile.setXY(_lblNPCFile.getX(), _lblNPCFile.getY() + _lblNPCFile.getH());
+    _drpNPCFile.events().addSelectHandler(new Dropdown.Events.Select() {
+      public void select(Dropdown.Item item) {
+        updateNPC();
+        _map.createNPCs();
+      }
+    });
+    
+    _lblNPCLoc = new Label(this);
+    _lblNPCLoc.setXY(_drpNPCFile.getX(), _drpNPCFile.getY() + _drpNPCFile.getH() + 8);
+    _lblNPCLoc.setText("Location");
+    
+    _txtNPCX = new Textbox(this);
+    _txtNPCX.setXY(_lblNPCLoc.getX(), _lblNPCLoc.getY() + _lblNPCLoc.getH());
+    _txtNPCX.setW(40);
+    _txtNPCX.setNumeric(true);
+    _txtNPCX.events().addChangeHandler(new Textbox.Events.Change() {
+      public void change() {
+        _npc._x = Integer.parseInt(_txtNPCX.getText());
+        _map.createNPCs();
+      }
+    });
+    
+    _txtNPCY = new Textbox(this);
+    _txtNPCY.setXY(_txtNPCX.getX() + _txtNPCX.getW() + 4, _txtNPCX.getY());
+    _txtNPCY.setW(40);
+    _txtNPCY.setNumeric(true);
+    _txtNPCY.events().addChangeHandler(new Textbox.Events.Change() {
+      public void change() {
+        _npc._y = Integer.parseInt(_txtNPCY.getText());
+        _map.createNPCs();
+      }
+    });
+    
+    _txtNPCZ = new Textbox(this);
+    _txtNPCZ.setXY(_txtNPCY.getX() + _txtNPCY.getW() + 4, _txtNPCY.getY());
+    _txtNPCZ.setW(40);
+    _txtNPCZ.setNumeric(true);
+    _txtNPCZ.events().addChangeHandler(new Textbox.Events.Change() {
+      public void change() {
+        _npc._z = Byte.parseByte(_txtNPCZ.getText());
+        _map.createNPCs();
+      }
+    });
+    
+    _splNPC.controls().add(_lblNPCFile);
+    _splNPC.controls().add(_drpNPCFile);
+    _splNPC.controls().add(_lblNPCLoc);
+    _splNPC.controls().add(_txtNPCX);
+    _splNPC.controls().add(_txtNPCY);
+    _splNPC.controls().add(_txtNPCZ);
+    
+    _picTab[4].controls().add(_splNPC);
+    
     controls().add(_picWindow);
     controls().add(_picTilesetList);
     
@@ -454,6 +545,20 @@ public class MapEditor extends GUI {
       }
     });
     
+    _game.send(new EditorData.List(EditorData.DATA_TYPE_NPC), EditorData.List.class, new Game.PacketCallback<EditorData.List>() {
+      public boolean recieved(EditorData.List packet) {
+        if(packet.type() == EditorData.DATA_TYPE_NPC) {
+          for(EditorData.List.ListData data : packet.data()) {
+            _drpNPCFile.add(new DropdownData(data.file(), data.name(), data.note()));
+          }
+          
+          return true;
+        }
+        
+        return false;
+      }
+    });
+    
     _attribDrawable = Context.newDrawable();
     _attribDrawable.setWH(Settings.Map.Size, Settings.Map.Size);
     _attribDrawable.setColour(new float[] {1, 1, 1, 0.5f});
@@ -479,6 +584,7 @@ public class MapEditor extends GUI {
     
     _splSprite.setWH(_picTab[2].getW() - _splSprite.getX() * 2, _picTab[2].getH() - _splSprite.getY() * 2);
     _splItem  .setWH(_picTab[2].getW() - _splItem  .getX() * 2, _picTab[2].getH() - _splItem  .getY() * 2);
+    _splNPC   .setWH(_picTab[2].getW() - _splNPC   .getX() * 2, _picTab[2].getH() - _splNPC   .getY() * 2);
   }
   
   protected void draw() {
@@ -560,12 +666,17 @@ public class MapEditor extends GUI {
           
           _splSprite.clear();
           for(MapEditorMap.Sprite s : _map._sprite) {
-            _splSprite.add(new ScrollPanelSprite(s));
+            _splSprite.add(new ScrollPanelData(s));
           }
           
           _splItem.clear();
           for(MapEditorMap.Item d : _map._item) {
-            _splItem.add(new ScrollPanelItem(d));
+            _splItem.add(new ScrollPanelData(d));
+          }
+          
+          _splNPC.clear();
+          for(MapEditorMap.NPC d : _map._npc) {
+            _splNPC.add(new ScrollPanelData(d));
           }
           
           _attribDrawCallback = _region.events().onDraw(new Region.Events.Draw() {
@@ -574,7 +685,8 @@ public class MapEditor extends GUI {
                 switch(_tab) {
                   case 1: _attribDrawable.draw(); break;
                   case 2: _map.drawSprites(); break;
-                  case 3: _map.drawItems(); break;                                            
+                  case 3: _map.drawItems(); break;    
+                  case 4: _map.drawNPCs(); break;
                 }
               }
             }
@@ -694,10 +806,16 @@ public class MapEditor extends GUI {
             _file = file;
             _pickLoc = true;
             _picWindow.setVisible(false);
-            _pickSprite = game.world.Sprite.add(_game.getItem(file).getSprite());
-            _pickSprite.setX(Mouse.getX() - _context.getCameraX());
-            _pickSprite.setY(Mouse.getY() - _context.getCameraY());
-            _pickSprite.setZ(_layer);
+            
+            final Item d = _game.getItem(file);
+            d.events().addLoadHandler(new GameData.Events.Load() {
+              public void load() {
+                _pickSprite = game.world.Sprite.add(d.getSprite());
+                _pickSprite.setX(Mouse.getX() - _context.getCameraX());
+                _pickSprite.setY(Mouse.getY() - _context.getCameraY());
+                _pickSprite.setZ(_layer);
+              }
+            });
           }
         });
         
@@ -746,6 +864,75 @@ public class MapEditor extends GUI {
     _item._z = Byte.parseByte(_txtItemZ.getText());
     _item._val = Integer.parseInt(_txtItemVal.getText());
     selItem(_item);
+  }
+  
+  private void addNPC() {
+    _game.send(new EditorData.List(EditorData.DATA_TYPE_NPC), EditorData.List.class, new Game.PacketCallback<EditorData.List>() {
+      public boolean recieved(EditorData.List packet) {
+        final Chooser s = new Chooser(packet.data());
+        s.events().addSelectHandler(new Chooser.Events.Select() {
+          public void select(String file) {
+            s.pop();
+            
+            _file = file;
+            _pickLoc = true;
+            _picWindow.setVisible(false);
+            
+            final NPC d = _game.getNPC(file);
+            d.events().addLoadHandler(new GameData.Events.Load() {
+              public void load() {
+                _pickSprite = game.world.Sprite.add(d.getSprite());
+                _pickSprite.setX(Mouse.getX() - _context.getCameraX());
+                _pickSprite.setY(Mouse.getY() - _context.getCameraY());
+                _pickSprite.setZ(_layer);
+              }
+            });
+          }
+        });
+        
+        s.push();
+        
+        return true;
+      }
+    });
+  }
+  
+  private void delNPC() {
+    if(_map._npc.remove(_item)) {
+      _splNPC.remove();
+      _map.createNPCs();
+    } else {
+      Message.show("Error", "Couldn't delete NPCs");
+    }
+  }
+  
+  private void selNPC(MapEditorMap.NPC npc) {
+    _npc = npc;
+    
+    if(_npc._file != null) {
+      int i = 0;
+      for(Dropdown.Item file : _drpItemFile) {
+         if(((DropdownData)file)._file.equals(_npc._file)) {
+          _drpNPCFile.setSeletected(i);
+        }
+        i++;
+      }
+    } else {
+      _drpNPCFile.setSeletected(-1);
+    }
+    
+    _txtNPCX.setText(String.valueOf(_npc._x));
+    _txtNPCY.setText(String.valueOf(_npc._y));
+    _txtNPCZ.setText(String.valueOf(_npc._z));
+  }
+  
+  private void updateNPC() {
+    DropdownData npc = (DropdownData)_drpNPCFile.get();
+    _npc._file = npc != null ? npc._file : null;
+    _npc._x = Integer.parseInt(_txtNPCX.getText());
+    _npc._y = Integer.parseInt(_txtNPCY.getText());
+    _npc._z = Byte.parseByte(_txtNPCZ.getText());
+    selNPC(_npc);
   }
   
   private boolean mapEditorClick(int x, int y, int button) {
@@ -881,7 +1068,7 @@ public class MapEditor extends GUI {
             s._z = (byte)_layer;
             
             _map._sprite.add(s);
-            _splSprite.add(new ScrollPanelSprite(s));
+            _splSprite.add(new ScrollPanelData(s));
             _map.createSprites();
             
             _pickSprite.remove();
@@ -902,8 +1089,29 @@ public class MapEditor extends GUI {
             s._z = (byte)_layer;
             
             _map._item.add(s);
-            _splItem.add(new ScrollPanelItem(s));
+            _splItem.add(new ScrollPanelData(s));
             _map.createItems();
+            
+            _pickSprite.remove();
+            _pickLoc = false;
+          }
+        }
+        
+        break;
+        
+      case 4:
+        if(button == 0) {
+          if(_pickLoc) {
+            MapEditorMap.NPC s = new MapEditorMap.NPC();
+            
+            s._file = _file;
+            s._x = x;
+            s._y = y;
+            s._z = (byte)_layer;
+            
+            _map._npc.add(s);
+            _splNPC.add(new ScrollPanelData(s));
+            _map.createNPCs();
             
             _pickSprite.remove();
             _pickLoc = false;
@@ -991,6 +1199,7 @@ public class MapEditor extends GUI {
           
         case 2:
         case 3:
+        case 4:
           if(_pickLoc) {
             _pickSprite.setX(x - _context.getCameraX());
             _pickSprite.setY(y - _context.getCameraY());
@@ -1072,19 +1281,11 @@ public class MapEditor extends GUI {
     }
   }
   
-  private class ScrollPanelSprite extends ScrollPanel.Item {
-    MapEditorMap.Sprite _sprite;
+  private class ScrollPanelData extends ScrollPanel.Item {
+    MapEditorMap.Data _data;
     
-    public ScrollPanelSprite(MapEditorMap.Sprite sprite) {
-      _sprite = sprite;
-    }
-  }
-  
-  private class ScrollPanelItem extends ScrollPanel.Item {
-    MapEditorMap.Item _item;
-    
-    public ScrollPanelItem(MapEditorMap.Item item) {
-      _item = item;
+    public ScrollPanelData(MapEditorMap.Data data) {
+      _data = data;
     }
   }
   
