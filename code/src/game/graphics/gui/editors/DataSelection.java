@@ -122,6 +122,7 @@ public class DataSelection extends GUI {
   }
   
   private void editData(String file) {
+    System.out.println("Editing " + file);
     _editor.editData(file, false);
     pop();
   }
