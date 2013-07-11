@@ -120,6 +120,10 @@ public class Sprite {
     _loaded = true;
   }
   
+  public boolean loaded() {
+    return _loaded;
+  }
+  
   public Events events() {
     return _events;
   }
