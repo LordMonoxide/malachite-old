@@ -7,6 +7,7 @@ import game.data.util.GameData;
 import game.graphics.gui.editors.DataSelection;
 import game.graphics.gui.editors.ItemEditor;
 import game.graphics.gui.editors.MapEditor;
+import game.graphics.gui.editors.NPCEditor;
 import game.graphics.gui.editors.SpriteEditor;
 import game.language.Lang;
 import game.network.packet.Chat;
@@ -152,6 +153,15 @@ public class Game extends GUI {
       }
     });
     _btnEdit[3].setText("Edit NPCs");
+    _btnEdit[3].events().addClickHandler(new Control.Events.Click() {
+      public void clickDbl() { }
+      public void click() {
+        NPCEditor editor = new NPCEditor();
+        DataSelection dataSel = new DataSelection(editor, EditorData.DATA_TYPE_NPC);
+        dataSel.push();
+        _wndAdmin.setVisible(false);
+      }
+    });
     _btnEdit[4].setText("Edit Spells");
     _btnEdit[5].setText("Edit Effects");
     
@@ -617,10 +627,7 @@ public class Game extends GUI {
   
   private void updateInv(final Entity.Inv[] inv) {
     for(int i = 0; i < Settings.Player.Inventory.Size; i++) {
-      if(_sprInv[i].getSprite() != null) {
-        _sprInv[i].getSprite().remove();
-        _sprInv[i].setSprite(null);
-      }
+      _sprInv[i].setSprite(null);
       
       if(inv[i] != null) {
         final int n = i;
