@@ -42,20 +42,30 @@ public class EditorData {
     
     public void deserialize(ByteBuf data) throws NotEnoughDataException {
       byte[] arr;
+      int length;
       
       _type = data.readByte();
       _data = new ListData[data.readInt()];
       for(int i = 0; i < _data.length; i++) {
         _data[i] = new ListData();
-        arr = new byte[data.readByte()];
-        data.readBytes(arr);
-        _data[i]._file = new String(arr);
-        arr = new byte[data.readByte()];
-        data.readBytes(arr);
-        _data[i]._name = new String(arr);
-        arr = new byte[data.readShort()];
-        data.readBytes(arr);
-        _data[i]._note = new String(arr);
+        
+        if((length = data.readByte()) != 0) {
+          arr = new byte[length];
+          data.readBytes(arr);
+          _data[i]._file = new String(arr);
+        }
+        
+        if((length = data.readByte()) != 0) {
+          arr = new byte[length];
+          data.readBytes(arr);
+          _data[i]._name = new String(arr);
+        }
+        
+        if((length = data.readShort()) != 0) {
+          arr = new byte[length];
+          data.readBytes(arr);
+          _data[i]._note = new String(arr);
+        }
       }
     }
     
@@ -89,6 +99,8 @@ public class EditorData {
     }
     
     public ByteBuf serialize() {
+      System.out.println("Requesting EditorData " + _file + " of type " + _type);
+      
       ByteBuf b = Unpooled.buffer();
       b.writeByte(_type);
       b.writeShort(_file.length());
