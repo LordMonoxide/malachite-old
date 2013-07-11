@@ -24,7 +24,7 @@ public class Sprite extends Picture {
   
   public void draw() {
     if(drawBegin()) {
-      if(_sprite != null) {
+      if(_sprite != null  && _sprite.loaded()) {
         float scale;
         if(_sprite.getFrameW() > _sprite.getFrameH()) {
           scale = _loc[2] / _sprite.getFrameW();
