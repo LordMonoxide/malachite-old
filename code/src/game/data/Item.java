@@ -28,7 +28,6 @@ public class Item extends GameData {
   public Item() { }
   public Item(String file) {
     init(file);
-    System.out.println(this);
   }
   
   public void init(String file) {
