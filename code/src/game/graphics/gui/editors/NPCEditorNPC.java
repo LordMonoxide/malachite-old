@@ -82,11 +82,11 @@ public class NPCEditorNPC extends NPC {
       b.put(inv.val);
     }
     
-    b.put(_equip.hand1);
-    b.put(_equip.hand2);
+    b.put(_equip.hand1.file);
+    b.put(_equip.hand2.file);
     
-    for(String armour : _equip.armour) b.put(armour);
-    for(String bling  : _equip.bling ) b.put(bling );
+    for(Inv armour : _equip.armour) b.put(armour.file);
+    for(Inv bling  : _equip.bling ) b.put(bling .file);
     
     b.put(_curr);
   }
@@ -103,11 +103,11 @@ public class NPCEditorNPC extends NPC {
       inv.val = b.getInt();
     }
     
-    _equip.hand1 = b.getString();
-    _equip.hand2 = b.getString();
+    _equip.hand1.file = b.getString();
+    _equip.hand2.file = b.getString();
     
-    for(int i = 0; i < _equip.armour.length; i++) _equip.armour[i] = b.getString();
-    for(int i = 0; i < _equip.bling .length; i++) _equip.bling [i] = b.getString();
+    for(int i = 0; i < _equip.armour.length; i++) _equip.armour[i].file = b.getString();
+    for(int i = 0; i < _equip.bling .length; i++) _equip.bling [i].file = b.getString();
     
     _curr = b.getLong();
   }
@@ -122,9 +122,17 @@ public class NPCEditorNPC extends NPC {
   }
   
   public class Equip {
-    public String   hand1;
-    public String   hand2;
-    public String[] armour = new String[Item.ITEM_TYPE_ARMOUR_COUNT];
-    public String[] bling  = new String[Item.ITEM_TYPE_BLING_COUNT];
+    public Inv   hand1;
+    public Inv   hand2;
+    public Inv[] armour = new Inv[Item.ITEM_TYPE_ARMOUR_COUNT];
+    public Inv[] bling  = new Inv[Item.ITEM_TYPE_BLING_COUNT];
+    
+    public Equip() {
+      hand1 = new Inv();
+      hand2 = new Inv();
+      
+      for(int i = 0; i < armour.length; i++) armour[i] = new Inv();
+      for(int i = 0; i < bling .length; i++) bling [i] = new Inv();
+    }
   }
 }
