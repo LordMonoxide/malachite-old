@@ -911,7 +911,7 @@ public class MapEditor extends GUI {
     
     if(_npc._file != null) {
       int i = 0;
-      for(Dropdown.Item file : _drpItemFile) {
+      for(Dropdown.Item file : _drpNPCFile) {
          if(((DropdownData)file)._file.equals(_npc._file)) {
           _drpNPCFile.setSeletected(i);
         }
