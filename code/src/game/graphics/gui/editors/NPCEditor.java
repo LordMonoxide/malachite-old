@@ -125,7 +125,12 @@ public class NPCEditor extends GUI implements Editor {
     _drpInvFile.events().addSelectHandler(new Dropdown.Events.Select() {
       public void select(Dropdown.Item item) {
         _selectedInv.file = ((DropdownData)item)._file;
-        _selectedInvSprite.setSprite(new game.world.Sprite(_selectedInv.file));
+        final Item data = Game.getInstance().getItem(_selectedInv.file);
+        data.events().addLoadHandler(new GameData.Events.Load() {
+          public void load() {
+            _selectedInvSprite.setSprite(new game.world.Sprite(data.getSprite()));
+          }
+        });
       }
     });
     
