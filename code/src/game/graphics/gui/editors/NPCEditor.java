@@ -39,12 +39,6 @@ public class NPCEditor extends GUI implements Editor {
   private Sprite[] _sprArmour;
   private Sprite[] _sprBling;
   
-  private Label    _lblEquipFile;
-  private Dropdown _drpEquipFile;
-  private Label    _lblEquipVal;
-  private Textbox  _txtEquipVal;
-  private Button   _btnEquipClear;
-  
   private Label    _lblName;
   private Textbox  _txtName;
   private Label    _lblNote;
@@ -172,6 +166,12 @@ public class NPCEditor extends GUI implements Editor {
     _sprHand1.setBackColour(new float[] {0, 0, 0, 1});
     _sprHand1.setBorderColour(new float[] {1, 1, 1, 1});
     _sprHand1.setXYWH(x, y, 32, 32);
+    _sprHand1.events().addClickHandler(new Control.Events.Click() {
+      public void clickDbl() { }
+      public void click() {
+        selectInv(_npc.equip().hand1, _sprHand1);
+      }
+    });
     
     x += 34;
     
@@ -179,15 +179,28 @@ public class NPCEditor extends GUI implements Editor {
     _sprHand2.setBackColour(new float[] {0, 0, 0, 1});
     _sprHand2.setBorderColour(new float[] {1, 1, 1, 1});
     _sprHand2.setXYWH(x, y, 32, 32);
+    _sprHand2.events().addClickHandler(new Control.Events.Click() {
+      public void clickDbl() { }
+      public void click() {
+        selectInv(_npc.equip().hand2, _sprHand2);
+      }
+    });
     
     x += 68;
     
     _sprBling = new Sprite[Item.ITEM_TYPE_BLING_COUNT];
     for(int i = 0; i < Item.ITEM_TYPE_BLING_COUNT; i++) {
+      final int n = i;
       _sprBling[i] = new Sprite(this);
       _sprBling[i].setBackColour(new float[] {0, 0, 0, 1});
       _sprBling[i].setBorderColour(new float[] {1, 1, 1, 1});
       _sprBling[i].setXYWH(x, y, 32, 32);
+      _sprBling[i].events().addClickHandler(new Control.Events.Click() {
+        public void clickDbl() { }
+        public void click() {
+          selectInv(_npc.equip().bling[n], _sprBling[n]);
+        }
+      });
       _wndEditor.controls(1).add(_sprBling[i]);
       x += 34;
     }
@@ -197,10 +210,17 @@ public class NPCEditor extends GUI implements Editor {
     
     _sprArmour = new Sprite[Item.ITEM_TYPE_ARMOUR_COUNT];
     for(int i = 0; i < Item.ITEM_TYPE_ARMOUR_COUNT; i++) {
+      final int n = i;
       _sprArmour[i] = new Sprite(this);
       _sprArmour[i].setBackColour(new float[] {0, 0, 0, 1});
       _sprArmour[i].setBorderColour(new float[] {1, 1, 1, 1});
       _sprArmour[i].setXYWH(x, y, 32, 32);
+      _sprArmour[i].events().addClickHandler(new Control.Events.Click() {
+        public void clickDbl() { }
+        public void click() {
+          selectInv(_npc.equip().armour[n], _sprArmour[n]);
+        }
+      });
       _wndEditor.controls(1).add(_sprArmour[i]);
       x += 34;
     }
