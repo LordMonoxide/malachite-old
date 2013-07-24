@@ -52,7 +52,8 @@ public class NPCEditor extends GUI implements Editor {
   private Label    _lblSprite;
   private Dropdown _drpSprite;
   
-  private int _selectedInv = -1;
+  private NPCEditorNPC.Inv _selectedInv;
+  private Sprite           _selectedInvSprite;
   
   private NPCEditorNPC _npc;
   
@@ -107,7 +108,7 @@ public class NPCEditor extends GUI implements Editor {
       _sprInv[i].events().addClickHandler(new Control.Events.Click() {
         public void clickDbl() { }
         public void click() {
-          selectInv(n);
+          selectInv(_npc.inv(n), _sprInv[n]);
         }
       });
       
@@ -123,8 +124,8 @@ public class NPCEditor extends GUI implements Editor {
     _drpInvFile.setXY(_lblInvFile.getX(), _lblInvFile.getY() + _lblInvFile.getH() + 4);
     _drpInvFile.events().addSelectHandler(new Dropdown.Events.Select() {
       public void select(Dropdown.Item item) {
-        _npc.inv(_selectedInv).file = ((DropdownData)item)._file;
-        _sprInv[_selectedInv].setSprite(new game.world.Sprite(_npc.inv(_selectedInv).file));
+        _selectedInv.file = ((DropdownData)item)._file;
+        _selectedInvSprite.setSprite(new game.world.Sprite(_selectedInv.file));
       }
     });
     
@@ -140,7 +141,7 @@ public class NPCEditor extends GUI implements Editor {
       public void change() {
         int n = Integer.parseInt(_txtInvVal.getText());
         if(n < 1) _txtInvVal.setText("1");
-        _npc.inv(_selectedInv).val = Integer.parseInt(_txtInvVal.getText());
+        _selectedInv.val = Integer.parseInt(_txtInvVal.getText());
       }
     });
     
@@ -151,10 +152,9 @@ public class NPCEditor extends GUI implements Editor {
     _btnInvClear.events().addClickHandler(new Control.Events.Click() {
       public void clickDbl() { }
       public void click() {
-        _npc.inv(_selectedInv).file = null;
-        _npc.inv(_selectedInv).val = 0;
-        
-        _sprInv[_selectedInv].setSprite(null);
+        _selectedInv.file = null;
+        _selectedInv.val = 0;
+        _selectedInvSprite.setSprite(null);
         _drpInvFile.setSeletected(-1);
         _txtInvVal.setText("1");
       }
@@ -347,32 +347,33 @@ public class NPCEditor extends GUI implements Editor {
     _npc.setSprite(sprite != null ? sprite._file : null);
   }
   
-  private void selectInv(int index) {
+  private void selectInv(NPCEditorNPC.Inv inv, Sprite sprite) {
     _drpInvFile.setEnabled(true);
     _txtInvVal.setEnabled(true);
     _btnInvClear.setEnabled(true);
     
-    if(_selectedInv != -1) {
-      _sprInv[_selectedInv].setBorderColour(new float[] {1, 1, 1, 1});
+    if(_selectedInv != null) {
+      _selectedInvSprite.setBorderColour(new float[] {1, 1, 1, 1});
     }
     
-    _selectedInv = index;
-    _sprInv[_selectedInv].setBorderColour(new float[] {0, 1, 0, 1});
+    _selectedInv = inv;
+    _selectedInvSprite = sprite;
+    _selectedInvSprite.setBorderColour(new float[] {0, 1, 0, 1});
     
-    if(_npc.inv(index).val < 1) _npc.inv(index).val = 1;
+    if(_selectedInv.val < 1) _selectedInv.val = 1;
     _drpInvFile.setSeletected(-1);
     
     int i = 0;
     for(Dropdown.Item item : _drpInvFile) {
       DropdownData s = (DropdownData)item;
-      if(s._file.equals(_npc.inv(index).file)) {
+      if(s._file.equals(_selectedInv.file)) {
         _drpInvFile.setSeletected(i);
         break;
       }
       i++;
     }
     
-    _txtInvVal.setText(String.valueOf(_npc.inv(index).val));
+    _txtInvVal.setText(String.valueOf(_selectedInv.val));
   }
   
   protected boolean handleKeyDown ( int key) { return true; }
