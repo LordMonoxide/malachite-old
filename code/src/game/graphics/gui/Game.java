@@ -8,6 +8,7 @@ import game.graphics.gui.editors.DataSelection;
 import game.graphics.gui.editors.ItemEditor;
 import game.graphics.gui.editors.MapEditor;
 import game.graphics.gui.editors.NPCEditor;
+import game.graphics.gui.editors.ProjectileEditor;
 import game.graphics.gui.editors.SpriteEditor;
 import game.language.Lang;
 import game.network.packet.Chat;
@@ -114,7 +115,7 @@ public class Game extends GUI {
     _wndAdmin.setText("Administration");
     _wndAdmin.setVisible(false);
     
-    _btnEdit = new Button[6];
+    _btnEdit = new Button[7];
     for(int i = 0; i < _btnEdit.length; i++) {
       _btnEdit[i] = new Button(this);
       _btnEdit[i].setXYWH(8, 8 + i * 19, 90, 20);
@@ -162,8 +163,18 @@ public class Game extends GUI {
         _wndAdmin.setVisible(false);
       }
     });
-    _btnEdit[4].setText("Edit Spells");
-    _btnEdit[5].setText("Edit Effects");
+    _btnEdit[4].setText("Edit Projectiles");
+    _btnEdit[4].events().addClickHandler(new Control.Events.Click() {
+      public void clickDbl() { }
+      public void click() {
+        ProjectileEditor editor = new ProjectileEditor();
+        DataSelection dataSel = new DataSelection(editor, EditorData.DATA_TYPE_PROJECTILE);
+        dataSel.push();
+        _wndAdmin.setVisible(false);
+      }
+    });
+    _btnEdit[5].setText("Edit Spells");
+    _btnEdit[6].setText("Edit Effects");
     
     _picVitalBack = new Picture[2];
     _picVital     = new Picture[2];
