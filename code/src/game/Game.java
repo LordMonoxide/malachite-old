@@ -6,6 +6,7 @@ import network.packet.Packet;
 
 import game.data.Item;
 import game.data.NPC;
+import game.data.Projectile;
 import game.data.Sprite;
 import game.data.account.Permissions;
 import game.graphics.gui.Menu;
@@ -43,9 +44,10 @@ public class Game {
   private MenuStateListener _menuListener;
   private GameStateListener _gameListener;
   
-  private HashMap<String, Sprite> _sprite = new HashMap<String, Sprite>();
-  private HashMap<String, Item>   _item   = new HashMap<String, Item>();
-  private HashMap<String, NPC>    _npc    = new HashMap<String, NPC>();
+  private HashMap<String, Sprite>     _sprite     = new HashMap<String, Sprite>();
+  private HashMap<String, Item>       _item       = new HashMap<String, Item>();
+  private HashMap<String, NPC>        _npc        = new HashMap<String, NPC>();
+  private HashMap<String, Projectile> _projectile = new HashMap<String, Projectile>();
   
   private Entity.Events.Draw _entityDraw = new Entity.Events.Draw() {
     public void draw(Entity e) {
@@ -87,6 +89,18 @@ public class Game {
     if(data == null) {
       data = new NPC(file);
       _npc.put(file, data);
+      data.request();
+    }
+    
+    return data;
+  }
+  
+  public Projectile getProjectile(String file) {
+    if(file == null) throw new NullPointerException();
+    Projectile data = _projectile.get(file);
+    if(data == null) {
+      data = new Projectile(file);
+      _projectile.put(file, data);
       data.request();
     }
     
