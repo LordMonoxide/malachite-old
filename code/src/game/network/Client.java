@@ -90,6 +90,7 @@ public class Client {
     Packets.add(EditorData.Request.class);
     Packets.add(EditorData.Response.class);
     Packets.add(EditorData.List.class);
+    Packets.add(EditorSave.Projectile.class);
   }
   
   public void connect() {
