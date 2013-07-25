@@ -24,6 +24,8 @@ public class ItemEditorItem extends Item {
   protected void setSprite(String sprite) { _sprite = sprite; }
   protected void setType  (int type)      { _type = type; }
   protected void setDamage(int damage)    { _damage = damage; }
+  protected void setProjectile(String projectile) { _projectile = projectile; }
+  protected void setSpeed (int speed)     { _speed = speed; }
   protected void setWeight(float weight)  { _weight = weight; }
   protected void setHPHeal(int hpHeal)    { _hpHeal = hpHeal; }
   protected void setMPHeal(int mpHeal)    { _mpHeal = mpHeal; }
