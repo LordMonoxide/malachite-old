@@ -188,20 +188,19 @@ public class Game extends GUI {
       _picVitalBack[i].setBackColour(new float[] {0, 0, 0, 1});
       _picVitalBack[i].setBorderColour(new float[] {1, 1, 1, 1});
       _picVitalBack[i].setWH(100, 10);
-      _picVitalBack[i].setY((_picVitalBack[i].getH() + 2) * i + 2);
+      _picVitalBack[i].setY((_picVitalBack[i].getH() + 3) * i + 2);
       
       _picVital[i] = new Picture(this);
       _picVital[i].setBackColour(new float[] {0, 1, 0, 1});
-      _picVital[i].setWH(_picVitalBack[i].getW(), _picVitalBack[i].getH() - 1);
-      _picVital[i].setY(1);
+      _picVital[i].setWH(_picVitalBack[i].getW(), _picVitalBack[i].getH());
       _picVitalBack[i].controls().add(_picVital[i]);
       
       _lblVital[i] = new Label(this);
       _lblVital[i].setText(Lang.VITAL_ABBV.text(i) + ":");
-      _lblVital[i].setY(_picVitalBack[i].getY());
+      _lblVital[i].setY(_picVitalBack[i].getY() - 1);
       
       _lblVitalVal[i] = new Label(this);
-      _lblVitalVal[i].setXY(1, -2);
+      _lblVitalVal[i].setXY(1, -1);
       _picVital[i].controls().add(_lblVitalVal[i]);
       
       controls().add(_picVitalBack[i]);
