@@ -29,6 +29,7 @@ public class Permissions {
   private boolean _editMaps;
   private boolean _editSprites;
   private boolean _editItems;
+  private boolean _editProjectiles;
   private boolean _editSpells;
   private boolean _editNPCs;
   private boolean _editEffects;
@@ -234,6 +235,14 @@ public class Permissions {
   
   public void setEditItems(boolean editItems) {
     _editItems = editItems;
+  }
+  
+  public boolean canEditProjectiles() {
+    return _editProjectiles;
+  }
+  
+  public void setEditProjectiles(boolean editProjectiles) {
+    _editProjectiles = editProjectiles;
   }
   
   public boolean canEditSpells() {
