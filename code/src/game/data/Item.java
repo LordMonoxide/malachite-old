@@ -41,6 +41,8 @@ public class Item extends GameData {
   public int    getType()   { return _type; }
   public int    getDamage() { return _damage; }
   public float  getWeight() { return _weight; }
+  public String getProjectile() { return _projectile; }
+  public int    getSpeed()  { return _speed; }
   public int    getHPHeal() { return _hpHeal; }
   public int    getMPHeal() { return _mpHeal; }
   public Entity.Stats.Buffs.Buff buffHP() { return _buffHP; }
