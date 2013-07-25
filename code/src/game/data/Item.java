@@ -13,8 +13,11 @@ public class Item extends GameData {
   
   protected String _sprite;
   protected int    _type;
-  
   protected int    _damage;
+  protected int    _speed;
+  
+  protected String _arrow;
+  
   protected float  _weight;
   
   protected int    _hpHeal, _mpHeal;
@@ -31,7 +34,7 @@ public class Item extends GameData {
   }
   
   public void init(String file) {
-    super.initInternal(1, new File("../data/item/" + file));
+    super.initInternal(2, new File("../data/item/" + file));
   }
   
   public String getSprite() { return _sprite; }
@@ -50,6 +53,8 @@ public class Item extends GameData {
     b.put(_sprite);
     b.put(_type);
     b.put(_damage);
+    b.put(_arrow);
+    b.put(_speed);
     b.put(_weight);
     b.put(_hpHeal);
     b.put(_mpHeal);
@@ -75,6 +80,8 @@ public class Item extends GameData {
     _sprite = b.getString();
     _type   = b.getInt();
     _damage = b.getInt();
+    _arrow  = b.getString();
+    _speed  = b.getInt();
     _weight = b.getFloat();
     _hpHeal = b.getInt();
     _mpHeal = b.getInt();
@@ -89,9 +96,9 @@ public class Item extends GameData {
     _buffINT.val(b.getFloat());
     _buffINT.percent(b.getBool());
   }
-  
-  /*  0000 0000 0000 0000 0000 0000 0000 0000
-   *  ^     ATTRIBS     ^ ^  SUB  ^ ^ TYPES ^
+
+  /*  AAAA AAAA AAAA AAAA AAAA AAAA SSSS TTTT
+   *  A = attribute, S = sub-type, T = type
    */
   public static final int ITEM_TYPE_BITMASK             = 0x0000000F;
   public static final int ITEM_TYPE_BITSHIFT            = 0;
