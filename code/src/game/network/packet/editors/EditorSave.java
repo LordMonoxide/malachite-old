@@ -84,4 +84,10 @@ public abstract class EditorSave extends Packet {
       return 35;
     }
   }
+  
+  public static class Projectile extends EditorSave {
+    public int getIndex() {
+      return 39;
+    }
+  }
 }
