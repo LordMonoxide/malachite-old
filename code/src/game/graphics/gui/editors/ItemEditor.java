@@ -28,6 +28,10 @@ public class ItemEditor extends GUI implements Editor {
   
   private Label    _lblDamage;
   private Textbox  _txtDamage;
+  private Label    _lblProjectile;
+  private Dropdown _drpProjectile;
+  private Label    _lblSpeed;
+  private Textbox  _txtSpeed;
   private Label    _lblWeight;
   private Textbox  _txtWeight;
   
@@ -114,6 +118,7 @@ public class ItemEditor extends GUI implements Editor {
     _drpSubtype.setXY(_lblSubtype.getX(), _lblSubtype.getY() + _lblSubtype.getH());
     _drpSubtype.events().addSelectHandler(new Dropdown.Events.Select() {
       public void select(graphics.shared.gui.controls.Dropdown.Item item) {
+        updateSubTypeInterface();
         update();
       }
     });
@@ -127,9 +132,30 @@ public class ItemEditor extends GUI implements Editor {
     _txtDamage.setNumeric(true);
     _txtDamage.events().addChangeHandler(change);
     
+    _lblProjectile = new Label(this);
+    _lblProjectile.setText("Projectile");
+    _lblProjectile.setXY(_txtDamage.getX(), _txtDamage.getY() + _txtDamage.getH() + 8);
+    
+    _drpProjectile = new Dropdown(this);
+    _drpProjectile.setXY(_lblProjectile.getX(), _lblProjectile.getY() + _lblProjectile.getH());
+    _drpProjectile.events().addSelectHandler(new Dropdown.Events.Select() {
+      public void select(graphics.shared.gui.controls.Dropdown.Item item) {
+        update();
+      }
+    });
+    
+    _lblSpeed = new Label(this);
+    _lblSpeed.setText("Attack Speed");
+    _lblSpeed.setXY(_drpProjectile.getX(), _drpProjectile.getY() + _drpProjectile.getH() + 8);
+    
+    _txtSpeed = new Textbox(this);
+    _txtSpeed.setNumeric(true);
+    _txtSpeed.setXY(_lblSpeed.getX(), _lblSpeed.getY() + _lblSpeed.getH());
+    _txtSpeed.events().addChangeHandler(change);
+    
     _lblWeight = new Label(this);
     _lblWeight.setText("Weight");
-    _lblWeight.setXY(_txtDamage.getX(), _txtDamage.getY() + _txtDamage.getH() + 8);
+    _lblWeight.setXY(_txtSpeed.getX(), _txtSpeed.getY() + _txtSpeed.getH() + 8);
     
     _txtWeight = new Textbox(this);
     _txtWeight.setXY(_lblWeight.getX(), _lblWeight.getY() + _lblWeight.getH());
@@ -280,6 +306,10 @@ public class ItemEditor extends GUI implements Editor {
     _wndEditor.controls(0).add(_txtDamage);
     _wndEditor.controls(0).add(_lblWeight);
     _wndEditor.controls(0).add(_txtWeight);
+    _wndEditor.controls(0).add(_lblProjectile);
+    _wndEditor.controls(0).add(_drpProjectile);
+    _wndEditor.controls(0).add(_lblSpeed);
+    _wndEditor.controls(0).add(_txtSpeed);
     _wndEditor.controls(0).add(_lblHPHeal);
     _wndEditor.controls(0).add(_txtHPHeal);
     _wndEditor.controls(0).add(_lblMPHeal);
@@ -310,14 +340,30 @@ public class ItemEditor extends GUI implements Editor {
     _game.send(new EditorData.List(EditorData.DATA_TYPE_SPRITE), EditorData.List.class, new Game.PacketCallback<EditorData.List>() {
       public boolean recieved(EditorData.List packet) {
         if(packet.type() == EditorData.DATA_TYPE_SPRITE) {
+          remove();
           for(EditorData.List.ListData data : packet.data()) {
-            _drpSprite.add(new DropdownSprite(data.file(), data.name(), data.note()));
+            _drpSprite.add(new DropdownData(data.file(), data.name(), data.note()));
           }
           
           return true;
         }
         
-        return true;
+        return false;
+      }
+    });
+    
+    _game.send(new EditorData.List(EditorData.DATA_TYPE_PROJECTILE), EditorData.List.class, new Game.PacketCallback<EditorData.List>() {
+      public boolean recieved(EditorData.List packet) {
+        if(packet.type() == EditorData.DATA_TYPE_PROJECTILE) {
+          remove();
+          for(EditorData.List.ListData data : packet.data()) {
+            _drpProjectile.add(new DropdownData(data.file(), data.name(), data.note()));
+          }
+          
+          return true;
+        }
+        
+        return false;
       }
     });
     
@@ -369,6 +415,7 @@ public class ItemEditor extends GUI implements Editor {
         
         _txtDamage.setText(String.valueOf(_item.getDamage()));
         _txtWeight.setText(String.valueOf(_item.getWeight()));
+        _txtSpeed.setText(String.valueOf(_item.getSpeed()));
         
         _txtHPHeal.setText(String.valueOf(_item.getHPHeal()));
         _txtMPHeal.setText(String.valueOf(_item.getMPHeal()));
@@ -391,9 +438,20 @@ public class ItemEditor extends GUI implements Editor {
         
         int i = 0;
         for(Dropdown.Item item : _drpSprite) {
-          DropdownSprite s = (DropdownSprite)item;
+          DropdownData s = (DropdownData)item;
           if(s._file.equals(_item.getSprite())) {
             _drpSprite.setSeletected(i);
+            break;
+          }
+          i++;
+        }
+        
+        i = 0;
+        for(Dropdown.Item item : _drpProjectile) {
+          DropdownData s = (DropdownData)item;
+          System.out.println(s._file + "\t" + _item.getProjectile());
+          if(s._file.equals(_item.getProjectile())) {
+            _drpProjectile.setSeletected(i);
             break;
           }
           i++;
@@ -410,6 +468,10 @@ public class ItemEditor extends GUI implements Editor {
     _txtDamage.setVisible(false);
     _lblWeight.setVisible(false);
     _txtWeight.setVisible(false);
+    _lblProjectile.setVisible(false);
+    _drpProjectile.setVisible(false);
+    _lblSpeed.setVisible(false);
+    _txtSpeed.setVisible(false);
     
     _lblHPHeal.setVisible(false);
     _txtHPHeal.setVisible(false);
@@ -429,10 +491,10 @@ public class ItemEditor extends GUI implements Editor {
         }
         
         _lblDamage.setText("Damage");
-        _lblDamage.setVisible(true);
-        _txtDamage.setVisible(true);
         _lblWeight.setVisible(true);
         _txtWeight.setVisible(true);
+        _lblSpeed.setVisible(true);
+        _txtSpeed.setVisible(true);
         break;
         
       case Item.ITEM_TYPE_SHIELD:
@@ -487,10 +549,36 @@ public class ItemEditor extends GUI implements Editor {
     } else {
       _drpSubtype.setSeletected(0);
     }
+    
+    updateSubTypeInterface();
+  }
+  
+  private void updateSubTypeInterface() {
+    switch(_drpType.getSelected() << Item.ITEM_TYPE_BITSHIFT) {
+      case Item.ITEM_TYPE_WEAPON:
+        _lblDamage.setVisible(false);
+        _txtDamage.setVisible(false);
+        _lblProjectile.setVisible(false);
+        _drpProjectile.setVisible(false);
+        
+        switch(_drpSubtype.getSelected() << Item.ITEM_SUBTYPE_BITSHIFT) {
+          case Item.ITEM_TYPE_WEAPON_MELEE:
+            _lblDamage.setVisible(true);
+            _txtDamage.setVisible(true);
+            break;
+          
+          case Item.ITEM_TYPE_WEAPON_BOW:
+            _lblProjectile.setVisible(true);
+            _drpProjectile.setVisible(true);
+            break;
+        }
+        
+        break;
+    }
   }
   
   private void update() {
-    DropdownSprite sprite = (DropdownSprite)_drpSprite.get();
+    DropdownData sprite = (DropdownData)_drpSprite.get();
     
     int attribs = 0;
     switch(_drpSubtype.getSelected() << Item.ITEM_SUBTYPE_BITSHIFT) {
@@ -503,6 +591,12 @@ public class ItemEditor extends GUI implements Editor {
     
     _item.setDamage(Integer.parseInt(_txtDamage.getText()));
     _item.setWeight(Float.parseFloat(_txtWeight.getText()));
+    
+    if(_drpProjectile.get() != null) {
+      _item.setProjectile(((DropdownData)_drpProjectile.get())._file);
+    }
+    
+    _item.setSpeed(Integer.parseInt(_txtSpeed.getText()));
     
     _item.setHPHeal(Integer.parseInt(_txtHPHeal.getText()));
     _item.setMPHeal(Integer.parseInt(_txtMPHeal.getText()));
@@ -528,10 +622,10 @@ public class ItemEditor extends GUI implements Editor {
   protected boolean handleKeyUp   ( int key) { return true; }
   protected boolean handleCharDown(char key) { return true; }
   
-  private class DropdownSprite extends Dropdown.Item {
+  private class DropdownData extends Dropdown.Item {
     private String _file;
     
-    public DropdownSprite(String file, String name, String note) {
+    public DropdownData(String file, String name, String note) {
       super(file + ": " + name + " - " + note);
       _file = file;
     }
