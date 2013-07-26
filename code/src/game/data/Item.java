@@ -34,7 +34,7 @@ public class Item extends GameData {
   }
   
   public void init(String file) {
-    super.initInternal(2, new File("../data/item/" + file));
+    super.initInternal(2, new File("../data/items/" + file));
   }
   
   public String getSprite() { return _sprite; }
@@ -75,10 +75,30 @@ public class Item extends GameData {
   protected void deserializeInternal(Buffer b) {
     switch(getVersion()) {
       case 1: deserialize01(b); break;
+      case 2: deserialize02(b); break;
     }
   }
   
   private void deserialize01(Buffer b) {
+    _sprite = b.getString();
+    _type   = b.getInt();
+    _damage = b.getInt();
+    _weight = b.getFloat();
+    _hpHeal = b.getInt();
+    _mpHeal = b.getInt();
+    _buffHP.val(b.getFloat());
+    _buffHP.percent(b.getBool());
+    _buffMP.val(b.getFloat());
+    _buffMP.percent(b.getBool());
+    _buffSTR.val(b.getFloat());
+    _buffSTR.percent(b.getBool());
+    _buffDEX.val(b.getFloat());
+    _buffDEX.percent(b.getBool());
+    _buffINT.val(b.getFloat());
+    _buffINT.percent(b.getBool());
+  }
+  
+  private void deserialize02(Buffer b) {
     _sprite = b.getString();
     _type   = b.getInt();
     _damage = b.getInt();
@@ -98,7 +118,7 @@ public class Item extends GameData {
     _buffINT.val(b.getFloat());
     _buffINT.percent(b.getBool());
   }
-
+  
   /*  AAAA AAAA AAAA AAAA AAAA AAAA SSSS TTTT
    *  A = attribute, S = sub-type, T = type
    */
