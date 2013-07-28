@@ -75,14 +75,18 @@ public class Game extends GUI {
   private Label _lblSelectedInvVal;
   private Entity.Inv _selectedInv;
   
-  private game.graphics.gui.controls.Sprite   _sprHand1;
-  private game.graphics.gui.controls.Sprite   _sprHand2;
-  private game.graphics.gui.controls.Sprite[] _sprArmour;
-  private game.graphics.gui.controls.Sprite[] _sprBling;
+  private game.graphics.gui.controls.Sprite   _sprInvHand1;
+  private game.graphics.gui.controls.Sprite   _sprInvHand2;
+  private game.graphics.gui.controls.Sprite[] _sprInvArmour;
+  private game.graphics.gui.controls.Sprite[] _sprInvBling;
   
   private Label _lblCurrency;
   
+  // Overlay interface
   private Menu _mnuItem;
+  
+  private game.graphics.gui.controls.Sprite[] _sprOverlayHand;
+  private double _warpupTime, _cooldownTime;
   
   private Entity _selectedEntity;
   
@@ -374,17 +378,17 @@ public class Game extends GUI {
     float x = _sprInv[0].getX();
     float y = 5 * 34 + 8;
     
-    _sprHand1 = new game.graphics.gui.controls.Sprite(this);
-    _sprHand1.setBackColour(new float[] {0, 0, 0, 1});
-    _sprHand1.setBorderColour(new float[] {1, 1, 1, 1});
-    _sprHand1.setXYWH(x, y, 32, 32);
-    _sprHand1.events().addClickHandler(new Control.Events.Click() {
+    _sprInvHand1 = new game.graphics.gui.controls.Sprite(this);
+    _sprInvHand1.setBackColour(new float[] {0, 0, 0, 1});
+    _sprInvHand1.setBorderColour(new float[] {1, 1, 1, 1});
+    _sprInvHand1.setXYWH(x, y, 32, 32);
+    _sprInvHand1.events().addClickHandler(new Control.Events.Click() {
       public void click() { }
       public void clickDbl() {
         if(_entity.equip().hand1() != null) _game.send(new InvUnequip(InvUnequip.HAND, 0));
       }
     });
-    _sprHand1.events().addMouseHandler(new Control.Events.Mouse() {
+    _sprInvHand1.events().addMouseHandler(new Control.Events.Mouse() {
       public void move(int x, int y, int button) { }
       public void down(int x, int y, int button) { }
       public void up(int x, int y, int button) {
@@ -402,27 +406,27 @@ public class Game extends GUI {
             if(_entity.equip().hand1() != null) return;
             
             _game.send(new InvUse(_selectedInv, 0));
-            _context.setCursor(null, (int)(_sprHand1.getAllX() + _sprHand1.getW() / 2), (int)(_sprHand1.getAllY() + _sprHand1.getH() / 2));
+            _context.setCursor(null, (int)(_sprInvHand1.getAllX() + _sprInvHand1.getW() / 2), (int)(_sprInvHand1.getAllY() + _sprInvHand1.getH() / 2));
             _sprSelectedInv.setVisible(false);
             _selectedInv = null;
           }
         }
       }
     });
-    _wndInv.controls().add(_sprHand1);
+    _wndInv.controls().add(_sprInvHand1);
     x += 34;
     
-    _sprHand2 = new game.graphics.gui.controls.Sprite(this);
-    _sprHand2.setBackColour(new float[] {0, 0, 0, 1});
-    _sprHand2.setBorderColour(new float[] {1, 1, 1, 1});
-    _sprHand2.setXYWH(x, y, 32, 32);
-    _sprHand2.events().addClickHandler(new Control.Events.Click() {
+    _sprInvHand2 = new game.graphics.gui.controls.Sprite(this);
+    _sprInvHand2.setBackColour(new float[] {0, 0, 0, 1});
+    _sprInvHand2.setBorderColour(new float[] {1, 1, 1, 1});
+    _sprInvHand2.setXYWH(x, y, 32, 32);
+    _sprInvHand2.events().addClickHandler(new Control.Events.Click() {
       public void click() { }
       public void clickDbl() {
         if(_entity.equip().hand2() != null) _game.send(new InvUnequip(InvUnequip.HAND, 1));
       }
     });
-    _sprHand2.events().addMouseHandler(new Control.Events.Mouse() {
+    _sprInvHand2.events().addMouseHandler(new Control.Events.Mouse() {
       public void move(int x, int y, int button) { }
       public void down(int x, int y, int button) { }
       public void up(int x, int y, int button) {
@@ -440,30 +444,30 @@ public class Game extends GUI {
             if(_entity.equip().hand2() != null) return;
             
             _game.send(new InvUse(_selectedInv, 1));
-            _context.setCursor(null, (int)(_sprHand2.getAllX() + _sprHand2.getW() / 2), (int)(_sprHand2.getAllY() + _sprHand2.getH() / 2));
+            _context.setCursor(null, (int)(_sprInvHand2.getAllX() + _sprInvHand2.getW() / 2), (int)(_sprInvHand2.getAllY() + _sprInvHand2.getH() / 2));
             _sprSelectedInv.setVisible(false);
             _selectedInv = null;
           }
         }
       }
     });
-    _wndInv.controls().add(_sprHand2);
+    _wndInv.controls().add(_sprInvHand2);
     x += 68;
     
-    _sprBling = new game.graphics.gui.controls.Sprite[Item.ITEM_TYPE_BLING_COUNT];
+    _sprInvBling = new game.graphics.gui.controls.Sprite[Item.ITEM_TYPE_BLING_COUNT];
     for(int i = 0; i < Item.ITEM_TYPE_BLING_COUNT; i++) {
       final int n = i;
-      _sprBling[i] = new game.graphics.gui.controls.Sprite(this);
-      _sprBling[i].setBackColour(new float[] {0, 0, 0, 1});
-      _sprBling[i].setBorderColour(new float[] {1, 1, 1, 1});
-      _sprBling[i].setXYWH(x, y, 32, 32);
-      _sprBling[i].events().addClickHandler(new Control.Events.Click() {
+      _sprInvBling[i] = new game.graphics.gui.controls.Sprite(this);
+      _sprInvBling[i].setBackColour(new float[] {0, 0, 0, 1});
+      _sprInvBling[i].setBorderColour(new float[] {1, 1, 1, 1});
+      _sprInvBling[i].setXYWH(x, y, 32, 32);
+      _sprInvBling[i].events().addClickHandler(new Control.Events.Click() {
         public void click() { }
         public void clickDbl() {
           if(_entity.equip().bling(n) != null) _game.send(new InvUnequip(InvUnequip.BLING, n));
         }
       });
-      _sprBling[i].events().addMouseHandler(new Control.Events.Mouse() {
+      _sprInvBling[i].events().addMouseHandler(new Control.Events.Mouse() {
         public void move(int x, int y, int button) { }
         public void down(int x, int y, int button) { }
         public void up(int x, int y, int button) {
@@ -475,34 +479,34 @@ public class Game extends GUI {
               if(_entity.equip().bling(n) != null) return;
               
               _game.send(new InvUse(_selectedInv));
-              _context.setCursor(null, (int)(_sprBling[n].getAllX() + _sprBling[n].getW() / 2), (int)(_sprBling[n].getAllY() + _sprBling[n].getH() / 2));
+              _context.setCursor(null, (int)(_sprInvBling[n].getAllX() + _sprInvBling[n].getW() / 2), (int)(_sprInvBling[n].getAllY() + _sprInvBling[n].getH() / 2));
               _sprSelectedInv.setVisible(false);
               _selectedInv = null;
             }
           }
         }
       });
-      _wndInv.controls().add(_sprBling[i]);
+      _wndInv.controls().add(_sprInvBling[i]);
       x += 34;
     }
     
     x = _sprInv[0].getX();
     y += 34;
     
-    _sprArmour = new game.graphics.gui.controls.Sprite[Item.ITEM_TYPE_ARMOUR_COUNT];
+    _sprInvArmour = new game.graphics.gui.controls.Sprite[Item.ITEM_TYPE_ARMOUR_COUNT];
     for(int i = 0; i < Item.ITEM_TYPE_ARMOUR_COUNT; i++) {
       final int n = i;
-      _sprArmour[i] = new game.graphics.gui.controls.Sprite(this);
-      _sprArmour[i].setBackColour(new float[] {0, 0, 0, 1});
-      _sprArmour[i].setBorderColour(new float[] {1, 1, 1, 1});
-      _sprArmour[i].setXYWH(x, y, 32, 32);
-      _sprArmour[i].events().addClickHandler(new Control.Events.Click() {
+      _sprInvArmour[i] = new game.graphics.gui.controls.Sprite(this);
+      _sprInvArmour[i].setBackColour(new float[] {0, 0, 0, 1});
+      _sprInvArmour[i].setBorderColour(new float[] {1, 1, 1, 1});
+      _sprInvArmour[i].setXYWH(x, y, 32, 32);
+      _sprInvArmour[i].events().addClickHandler(new Control.Events.Click() {
         public void click() { }
         public void clickDbl() {
           if(_entity.equip().armour(n) != null) _game.send(new InvUnequip(InvUnequip.ARMOUR, n));
         }
       });
-      _sprArmour[i].events().addMouseHandler(new Control.Events.Mouse() {
+      _sprInvArmour[i].events().addMouseHandler(new Control.Events.Mouse() {
         public void move(int x, int y, int button) { }
         public void down(int x, int y, int button) { }
         public void up(int x, int y, int button) {
@@ -513,14 +517,14 @@ public class Game extends GUI {
               if(_entity.equip().armour(n) != null) return;
               
               _game.send(new InvUse(_selectedInv, 0));
-              _context.setCursor(null, (int)(_sprArmour[n].getAllX() + _sprArmour[n].getW() / 2), (int)(_sprArmour[n].getAllY() + _sprArmour[n].getH() / 2));
+              _context.setCursor(null, (int)(_sprInvArmour[n].getAllX() + _sprInvArmour[n].getW() / 2), (int)(_sprInvArmour[n].getAllY() + _sprInvArmour[n].getH() / 2));
               _sprSelectedInv.setVisible(false);
               _selectedInv = null;
             }
           }
         }
       });
-      _wndInv.controls().add(_sprArmour[i]);
+      _wndInv.controls().add(_sprInvArmour[i]);
       x += 34;
     }
     
@@ -552,6 +556,15 @@ public class Game extends GUI {
         }
       }
     });
+    
+    _sprOverlayHand = new game.graphics.gui.controls.Sprite[2];
+    for(int i = 0; i < _sprOverlayHand.length; i++) {
+      _sprOverlayHand[i] = new game.graphics.gui.controls.Sprite(this);
+      _sprOverlayHand[i].setBackColour(new float[] {0, 0, 0, 1});
+      _sprOverlayHand[i].setBorderColour(new float[] {1, 1, 1, 1});
+      _sprOverlayHand[i].setWH(32, 32);
+      controls().add(_sprOverlayHand[i]);
+    }
     
     controls().add(_txtChat);
     controls().add(_mnuItem);
@@ -621,6 +634,10 @@ public class Game extends GUI {
     _lblWeight.setX(_picVitalBack[0].getX() - _lblWeight.getW() - 4);
     _lblWeightVal.setX(_picVitalBack[0].getX());
     
+    for(int i = 0; i < _sprOverlayHand.length; i++) {
+      _sprOverlayHand[i].setXY(_context.getW() - (_sprOverlayHand.length + 1) * (_sprOverlayHand[i].getW() + 3) + (_sprOverlayHand[i].getW() + 3) * (i + 1) + 1, _context.getH() - (_sprOverlayHand[i].getH() + 2));
+    }
+    
     _game.updateCamera();
   }
   
@@ -669,13 +686,14 @@ public class Game extends GUI {
   }
   
   private void updateEquip(final Entity.Equip equip) {
-    _sprHand1.setSprite(null);
-    _sprHand2.setSprite(null);
+    _sprInvHand1.setSprite(null);
+    _sprInvHand2.setSprite(null);
     
     if(equip.hand1() != null) {
       equip.hand1().events().addLoadHandler(new GameData.Events.Load() {
         public void load() {
-          _sprHand1.setSprite(new Sprite(equip.hand1().getSprite()));
+          _sprInvHand1.setSprite(new Sprite(equip.hand1().getSprite()));
+          _sprOverlayHand[0].setSprite(_sprInvHand1.getSprite());
         }
       });
     }
@@ -683,32 +701,33 @@ public class Game extends GUI {
     if(equip.hand2() != null) {
       equip.hand2().events().addLoadHandler(new GameData.Events.Load() {
         public void load() {
-          _sprHand2.setSprite(new Sprite(equip.hand2().getSprite()));
+          _sprInvHand2.setSprite(new Sprite(equip.hand2().getSprite()));
+          _sprOverlayHand[1].setSprite(_sprInvHand2.getSprite());
         }
       });
     }
     
     for(int i = 0; i < Item.ITEM_TYPE_ARMOUR_COUNT; i++) {
-      _sprArmour[i].setSprite(null);
+      _sprInvArmour[i].setSprite(null);
       
       if(equip.armour(i) != null) {
         final int n = i;
         equip.armour(i).events().addLoadHandler(new GameData.Events.Load() {
           public void load() {
-            _sprArmour[n].setSprite(new Sprite(equip.armour(n).getSprite()));
+            _sprInvArmour[n].setSprite(new Sprite(equip.armour(n).getSprite()));
           }
         });
       }
     }
     
     for(int i = 0; i < Item.ITEM_TYPE_BLING_COUNT; i++) {
-      _sprBling[i].setSprite(null);
+      _sprInvBling[i].setSprite(null);
       
       if(equip.bling(i) != null) {
         final int n = i;
         equip.bling(i).events().addLoadHandler(new GameData.Events.Load() {
           public void load() {
-            _sprBling[n].setSprite(new Sprite(equip.bling(n).getSprite()));
+            _sprInvBling[n].setSprite(new Sprite(equip.bling(n).getSprite()));
           }
         });
       }
@@ -818,6 +837,12 @@ public class Game extends GUI {
         _game.stopMoving();
       }
     }
+  }
+  
+  protected boolean handleMouseDown(int x, int y, int button) {
+    
+    
+    return false;
   }
   
   protected boolean handleMouseUp(int x, int y, int button) {
