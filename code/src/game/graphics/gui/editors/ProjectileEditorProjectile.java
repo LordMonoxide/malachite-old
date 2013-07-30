@@ -54,7 +54,7 @@ public class ProjectileEditorProjectile extends Projectile {
               _loaded = true;
               _events.raiseLoad();
             }
-          }, false, "projectileeditorprojectile");
+          }, false);
           
           return true;
         }

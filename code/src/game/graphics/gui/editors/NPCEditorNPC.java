@@ -60,7 +60,7 @@ public class NPCEditorNPC extends NPC {
               _loaded = true;
               _events.raiseLoad();
             }
-          }, false, "npceditornpc");
+          }, false);
           
           return true;
         }

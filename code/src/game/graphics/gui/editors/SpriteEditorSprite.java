@@ -48,7 +48,7 @@ public class SpriteEditorSprite extends Sprite {
               _loaded = true;
               _events.raiseLoad();
             }
-          }, false, "spriteeditorsprite");
+          }, false);
           
           return true;
         }

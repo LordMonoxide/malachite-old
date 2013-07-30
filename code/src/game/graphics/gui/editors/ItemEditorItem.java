@@ -45,7 +45,7 @@ public class ItemEditorItem extends Item {
               _loaded = true;
               _events.raiseLoad();
             }
-          }, false, "itemeditoritem");
+          }, false);
           
           return true;
         }

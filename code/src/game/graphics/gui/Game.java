@@ -599,7 +599,7 @@ public class Game extends GUI {
           }
         });
       }
-    }, true, "debug text");
+    }, true);
     
     resize();
     updateStats(_entity.stats());

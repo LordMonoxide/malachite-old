@@ -56,7 +56,7 @@ public class Region {
           public void load() {
             calc();
           }
-        }, true, "region calculate");
+        }, true);
       }
     });
   }

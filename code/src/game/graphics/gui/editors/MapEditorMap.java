@@ -167,7 +167,7 @@ public class MapEditorMap extends Map {
               _loaded = true;
               _events.raiseLoad();
             }
-          }, false, "mapeditormap");
+          }, false);
           
           return true;
         }
