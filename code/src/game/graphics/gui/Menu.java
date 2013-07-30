@@ -27,7 +27,7 @@ import graphics.shared.gui.controls.compound.Window;
 public class Menu extends GUI {
   private Game _game = Game.getInstance();
   
-  private Listener _listener = new Listener(this);
+  private Listener _listener;
   
   //private Picture[] _background = new Picture[15];
 
@@ -53,6 +53,7 @@ public class Menu extends GUI {
   private Message _wait;
   
   public void load() {
+    _listener = new Listener(this);
     _game.setMenuStateListener(_listener);
     
     //_context.setBackColour(new float[] {1, 1, 1, 1});
