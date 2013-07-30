@@ -34,6 +34,7 @@ import graphics.shared.gui.controls.Menu;
 import graphics.shared.gui.controls.Picture;
 import graphics.shared.gui.controls.Textbox;
 import graphics.shared.gui.controls.compound.Window;
+import graphics.util.Time;
 
 public class Game extends GUI {
   private game.Game _game = game.Game.getInstance();
@@ -86,7 +87,9 @@ public class Game extends GUI {
   private Menu _mnuItem;
   
   private game.graphics.gui.controls.Sprite[] _sprOverlayHand;
-  private double _warpupTime, _cooldownTime;
+  private double _warmupTime, _cooldownTime;
+  private Drawable _handOverlay;
+  private boolean _mouseDown;
   
   private Entity _selectedEntity;
   
@@ -557,6 +560,10 @@ public class Game extends GUI {
       }
     });
     
+    _handOverlay = Context.newDrawable();
+    _handOverlay.setColour(new float[] {0.5f, 0.5f, 0.5f, 0.5f});
+    _handOverlay.setW(32);
+    
     _sprOverlayHand = new game.graphics.gui.controls.Sprite[2];
     for(int i = 0; i < _sprOverlayHand.length; i++) {
       _sprOverlayHand[i] = new game.graphics.gui.controls.Sprite(this);
@@ -565,6 +572,16 @@ public class Game extends GUI {
       _sprOverlayHand[i].setWH(32, 32);
       controls().add(_sprOverlayHand[i]);
     }
+    
+    _sprOverlayHand[0].events().addDrawHandler(new Control.Events.Draw() {
+      public void draw() {
+        if(_mouseDown) {
+          _handOverlay.setH((float)(Time.getTime() / _warmupTime) * _sprOverlayHand[0].getH());
+          _handOverlay.createQuad();
+          _handOverlay.draw();
+        }
+      }
+    });
     
     controls().add(_txtChat);
     controls().add(_mnuItem);
@@ -840,12 +857,16 @@ public class Game extends GUI {
   }
   
   protected boolean handleMouseDown(int x, int y, int button) {
-    
+    _mouseDown = true;
+    _warmupTime = Time.getTime() + 800;
     
     return false;
   }
   
   protected boolean handleMouseUp(int x, int y, int button) {
+    _mouseDown = false;
+    _cooldownTime = Time.getTime() + 3000;
+    
     if(_selectedInv == null) {
       _selectedEntity = _game.interact(x, y);
       
