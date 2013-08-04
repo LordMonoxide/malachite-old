@@ -2,7 +2,6 @@ package game.network.packet.editors;
 
 import game.data.Item;
 import game.data.NPC;
-import game.data.Projectile;
 import game.data.Sprite;
 import game.data.util.GameData;
 import io.netty.buffer.ByteBuf;
@@ -13,7 +12,6 @@ public class EditorData {
   public static final byte DATA_TYPE_SPRITE = 1;
   public static final byte DATA_TYPE_ITEM = 2;
   public static final byte DATA_TYPE_NPC = 3;
-  public static final byte DATA_TYPE_PROJECTILE = 4;
   
   public static class List extends Packet {
     private int _type;
@@ -92,7 +90,6 @@ public class EditorData {
       if(data instanceof Sprite)     _type = DATA_TYPE_SPRITE;
       if(data instanceof Item)       _type = DATA_TYPE_ITEM;
       if(data instanceof NPC)        _type = DATA_TYPE_NPC;
-      if(data instanceof Projectile) _type = DATA_TYPE_PROJECTILE;
       
       _file = data.getFile();
     }

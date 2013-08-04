@@ -8,7 +8,6 @@ import game.graphics.gui.editors.DataSelection;
 import game.graphics.gui.editors.ItemEditor;
 import game.graphics.gui.editors.MapEditor;
 import game.graphics.gui.editors.NPCEditor;
-import game.graphics.gui.editors.ProjectileEditor;
 import game.graphics.gui.editors.SpriteEditor;
 import game.language.Lang;
 import game.network.packet.Chat;
@@ -170,18 +169,8 @@ public class Game extends GUI {
         _wndAdmin.setVisible(false);
       }
     });
-    _btnEdit[4].setText("Edit Projectiles");
-    _btnEdit[4].events().addClickHandler(new Control.Events.Click() {
-      public void clickDbl() { }
-      public void click() {
-        ProjectileEditor editor = new ProjectileEditor();
-        DataSelection dataSel = new DataSelection(editor, EditorData.DATA_TYPE_PROJECTILE);
-        dataSel.push();
-        _wndAdmin.setVisible(false);
-      }
-    });
-    _btnEdit[5].setText("Edit Spells");
-    _btnEdit[6].setText("Edit Effects");
+    _btnEdit[4].setText("Edit Spells");
+    _btnEdit[5].setText("Edit Effects");
     
     _picVitalBack = new Picture[2];
     _picVital     = new Picture[2];
@@ -576,7 +565,9 @@ public class Game extends GUI {
     _sprOverlayHand[0].events().addDrawHandler(new Control.Events.Draw() {
       public void draw() {
         if(_mouseDown) {
-          _handOverlay.setH((float)(Time.getTime() / _warmupTime) * _sprOverlayHand[0].getH());
+          float h = _warmupTime > Time.getTime() ? (float)(1 - (_warmupTime - Time.getTime()) / 800) * _sprOverlayHand[0].getH() : _sprOverlayHand[0].getH();
+          _handOverlay.setH(h);
+          _handOverlay.setY(_sprOverlayHand[0].getH() - h);
           _handOverlay.createQuad();
           _handOverlay.draw();
         }
@@ -802,6 +793,8 @@ public class Game extends GUI {
     //_font.draw(53, 114, _textures.loaded() + " (" + _textures.loading() + ")", _debugColour);
     _font.draw(53, 124, String.valueOf(_entity.getID()), _debugColour);
     
+    _font.draw(53, 134, String.valueOf(1 - (_warmupTime - Time.getTime()) / 800), _debugColour);
+    
     _matrix.pop();
   }
   
@@ -857,15 +850,22 @@ public class Game extends GUI {
   }
   
   protected boolean handleMouseDown(int x, int y, int button) {
-    _mouseDown = true;
-    _warmupTime = Time.getTime() + 800;
+    if(_cooldownTime < Time.getTime()) {
+      _mouseDown = true;
+      _warmupTime = Time.getTime() + 800;
+    }
     
     return false;
   }
   
   protected boolean handleMouseUp(int x, int y, int button) {
+    if(_warmupTime < Time.getTime()) {
+      _cooldownTime = Time.getTime() + 3000;
+    } else {
+      _warmupTime = 0;
+    }
+    
     _mouseDown = false;
-    _cooldownTime = Time.getTime() + 3000;
     
     if(_selectedInv == null) {
       _selectedEntity = _game.interact(x, y);

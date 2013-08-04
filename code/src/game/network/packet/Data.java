@@ -3,7 +3,6 @@ package game.network.packet;
 import game.Game;
 import game.data.Item;
 import game.data.NPC;
-import game.data.Projectile;
 import game.data.Sprite;
 import game.data.util.Buffer;
 import game.data.util.GameData;
@@ -15,7 +14,6 @@ public class Data {
   public static final byte DATA_TYPE_SPRITE = 1;
   public static final byte DATA_TYPE_ITEM = 2;
   public static final byte DATA_TYPE_NPC = 3;
-  public static final byte DATA_TYPE_PROJECTILE = 4;
   
   public static class Request extends Packet {
     private byte _type;
@@ -25,7 +23,6 @@ public class Data {
       if(data instanceof Sprite)     _type = DATA_TYPE_SPRITE;
       if(data instanceof Item)       _type = DATA_TYPE_ITEM;
       if(data instanceof NPC)        _type = DATA_TYPE_NPC;
-      if(data instanceof Projectile) _type = DATA_TYPE_PROJECTILE;
       
       _file = data.getFile();
     }
@@ -70,7 +67,6 @@ public class Data {
           case DATA_TYPE_SPRITE:     if(data instanceof Sprite)     return true; break;
           case DATA_TYPE_ITEM:       if(data instanceof Item)       return true; break;
           case DATA_TYPE_NPC:        if(data instanceof NPC)        return true; break;
-          case DATA_TYPE_PROJECTILE: if(data instanceof Projectile) return true; break;
         }
       }
       
@@ -97,7 +93,6 @@ public class Data {
         case DATA_TYPE_SPRITE:     data = Game.getInstance().getSprite(_file);     break;
         case DATA_TYPE_ITEM:       data = Game.getInstance().getItem(_file);       break;
         case DATA_TYPE_NPC:        data = Game.getInstance().getNPC(_file);        break;
-        case DATA_TYPE_PROJECTILE: data = Game.getInstance().getProjectile(_file); break;
       }
       
       data.deserialize(new Buffer(_data));

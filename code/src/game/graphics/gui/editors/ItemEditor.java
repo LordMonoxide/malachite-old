@@ -352,7 +352,7 @@ public class ItemEditor extends GUI implements Editor {
       }
     });
     
-    _game.send(new EditorData.List(EditorData.DATA_TYPE_PROJECTILE), EditorData.List.class, new Game.PacketCallback<EditorData.List>() {
+    /*_game.send(new EditorData.List(EditorData.DATA_TYPE_PROJECTILE), EditorData.List.class, new Game.PacketCallback<EditorData.List>() {
       public boolean recieved(EditorData.List packet) {
         if(packet.type() == EditorData.DATA_TYPE_PROJECTILE) {
           remove();
@@ -365,7 +365,7 @@ public class ItemEditor extends GUI implements Editor {
         
         return false;
       }
-    });
+    });*/
     
     controls().add(_wndEditor);
   }
@@ -486,9 +486,7 @@ public class ItemEditor extends GUI implements Editor {
         break;
         
       case Item.ITEM_TYPE_WEAPON:
-        for(String type : Lang.ITEM_WEAPON.get()) {
-          _drpSubtype.add(new Dropdown.Item(type));
-        }
+        _drpSubtype.add(new Dropdown.Item("None"));
         
         _lblDamage.setText("Damage");
         _lblWeight.setVisible(true);
@@ -556,23 +554,10 @@ public class ItemEditor extends GUI implements Editor {
   private void updateSubTypeInterface() {
     switch(_drpType.getSelected() << Item.ITEM_TYPE_BITSHIFT) {
       case Item.ITEM_TYPE_WEAPON:
-        _lblDamage.setVisible(false);
-        _txtDamage.setVisible(false);
-        _lblProjectile.setVisible(false);
-        _drpProjectile.setVisible(false);
-        
-        switch(_drpSubtype.getSelected() << Item.ITEM_SUBTYPE_BITSHIFT) {
-          case Item.ITEM_TYPE_WEAPON_MELEE:
-            _lblDamage.setVisible(true);
-            _txtDamage.setVisible(true);
-            break;
-          
-          case Item.ITEM_TYPE_WEAPON_BOW:
-            _lblProjectile.setVisible(true);
-            _drpProjectile.setVisible(true);
-            break;
-        }
-        
+        _lblDamage.setVisible(true);
+        _txtDamage.setVisible(true);
+        _lblProjectile.setVisible(true);
+        _drpProjectile.setVisible(true);
         break;
     }
   }
