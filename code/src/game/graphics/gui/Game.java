@@ -11,6 +11,7 @@ import game.graphics.gui.editors.NPCEditor;
 import game.graphics.gui.editors.SpriteEditor;
 import game.language.Lang;
 import game.network.packet.Chat;
+import game.network.packet.EntityAttack;
 import game.network.packet.EntityInteract;
 import game.network.packet.InvDrop;
 import game.network.packet.InvUnequip;
@@ -86,14 +87,16 @@ public class Game extends GUI {
   private Menu _mnuItem;
   
   private game.graphics.gui.controls.Sprite[] _sprOverlayHand;
-  private double _warmupTime, _cooldownTime;
-  private Drawable _handOverlay;
-  private boolean _mouseDown;
   
   private Entity _selectedEntity;
   
   private String[] _chat = new String[256];
   private float[]  _chatColour = new float[] {1, 1, 1, 1};
+  
+  private Drawable _vitalBack;
+  private Drawable _vital;
+  
+  private double _lastAttack;
   
   private boolean _loaded;
   
@@ -549,10 +552,6 @@ public class Game extends GUI {
       }
     });
     
-    _handOverlay = Context.newDrawable();
-    _handOverlay.setColour(new float[] {0.5f, 0.5f, 0.5f, 0.5f});
-    _handOverlay.setW(32);
-    
     _sprOverlayHand = new game.graphics.gui.controls.Sprite[2];
     for(int i = 0; i < _sprOverlayHand.length; i++) {
       _sprOverlayHand[i] = new game.graphics.gui.controls.Sprite(this);
@@ -562,17 +561,14 @@ public class Game extends GUI {
       controls().add(_sprOverlayHand[i]);
     }
     
-    _sprOverlayHand[0].events().addDrawHandler(new Control.Events.Draw() {
-      public void draw() {
-        if(_mouseDown) {
-          float h = _warmupTime > Time.getTime() ? (float)(1 - (_warmupTime - Time.getTime()) / 800) * _sprOverlayHand[0].getH() : _sprOverlayHand[0].getH();
-          _handOverlay.setH(h);
-          _handOverlay.setY(_sprOverlayHand[0].getH() - h);
-          _handOverlay.createQuad();
-          _handOverlay.draw();
-        }
-      }
-    });
+    _vitalBack = Context.newDrawable();
+    _vitalBack.setWH(32, 5);
+    _vitalBack.setColour(new float[] {0, 0, 0, 1});
+    _vitalBack.createQuad();
+    
+    _vital = Context.newDrawable();
+    _vital.setH(_vitalBack.getH() - 2);
+    _vital.setColour(new float[] {0, 1, 0, 1});
     
     controls().add(_txtChat);
     controls().add(_mnuItem);
@@ -793,14 +789,24 @@ public class Game extends GUI {
     //_font.draw(53, 114, _textures.loaded() + " (" + _textures.loading() + ")", _debugColour);
     _font.draw(53, 124, String.valueOf(_entity.getID()), _debugColour);
     
-    _font.draw(53, 134, String.valueOf(1 - (_warmupTime - Time.getTime()) / 800), _debugColour);
-    
     _matrix.pop();
   }
   
   public void entityDraw(Entity e) {
     if(e.getName() != null) {
       _font.draw(-_font.getW(e.getName()) / 2, (int)(-e.getSprite().getFrameH() + e.getSprite().getFrameFY()) - _font.getH(), e.getName(), _chatColour);
+    }
+    
+    if(e.drawVitals()) {
+      _vitalBack.setXY(-_vitalBack.getW() / 2, 8);
+      _vitalBack.draw();
+      
+      if(e.stats().vitalHP().val() > 0) {
+        _vital.setXY(_vitalBack.getX() + 1, _vitalBack.getY() + 1);
+        _vital.setW((float)e.stats().vitalHP().val() / e.stats().vitalHP().max() * (_vitalBack.getW() - 2));
+        _vital.createQuad();
+        _vital.draw();
+      }
     }
   }
   
@@ -850,23 +856,37 @@ public class Game extends GUI {
   }
   
   protected boolean handleMouseDown(int x, int y, int button) {
-    if(_cooldownTime < Time.getTime()) {
-      _mouseDown = true;
-      _warmupTime = Time.getTime() + 800;
+    if(_lastAttack < Time.getTime()) {
+      _lastAttack = 0;
+      
+      if(_entity.equip().hand1() != null) {
+        if((_entity.equip().hand1().getType() & Item.ITEM_TYPE_BITMASK) == Item.ITEM_TYPE_WEAPON << Item.ITEM_TYPE_BITSHIFT) {
+          _lastAttack = _entity.equip().hand1().getSpeed();
+        }
+      }
+      
+      if(_entity.equip().hand2() != null) {
+        if((_entity.equip().hand2().getType() & Item.ITEM_TYPE_BITMASK) == Item.ITEM_TYPE_WEAPON << Item.ITEM_TYPE_BITSHIFT) {
+          if(_lastAttack < _entity.equip().hand2().getSpeed()) {
+            _lastAttack = _entity.equip().hand2().getSpeed();
+          }
+        }
+      }
+      
+      if(_lastAttack != 0) {
+        double dx = _entity.getX() + _context.getCameraX() - x;
+        double dy = _entity.getY() + _context.getCameraY() - y;
+        double angle = Math.atan2(dy, dx);
+        
+        _game.send(new EntityAttack(angle));
+        _lastAttack += Time.getTime();
+      }
     }
     
     return false;
   }
   
   protected boolean handleMouseUp(int x, int y, int button) {
-    if(_warmupTime < Time.getTime()) {
-      _cooldownTime = Time.getTime() + 3000;
-    } else {
-      _warmupTime = 0;
-    }
-    
-    _mouseDown = false;
-    
     if(_selectedInv == null) {
       _selectedEntity = _game.interact(x, y);
       
