@@ -3,6 +3,7 @@ package game.network.packet.editors;
 import java.util.ArrayList;
 
 import game.data.util.GameData;
+import game.graphics.gui.editors.MapEditorMap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import network.packet.Packet;
@@ -55,7 +56,7 @@ public abstract class EditorSave extends Packet {
       
       byte[] arr;
       for(GameData data : _data) {
-        game.data.Map m = (game.data.Map)data;
+        MapEditorMap m = (MapEditorMap)data;
         arr = m.serialize().serialize();
         b.writeInt(m.getX());
         b.writeInt(m.getY());
