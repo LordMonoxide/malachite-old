@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import game.data.Item;
 import game.settings.Settings;
+import graphics.util.Time;
 import physics.Movable;
 
 public class Entity extends Movable {
@@ -32,6 +33,8 @@ public class Entity extends Movable {
   private long _curr;
   
   private Sprite _sprite;
+  
+  private double _lastVitals;
   
   public Entity() {
     setAcc(0.148f);
@@ -208,6 +211,10 @@ public class Entity extends Movable {
     _region = r;
   }
   
+  public boolean drawVitals() {
+    return _lastVitals > Time.getTime();
+  }
+  
   public Stats stats() {
     return _stats;
   }
@@ -284,12 +291,13 @@ public class Entity extends Movable {
       public int val() { return _val; }
       
       public void max(int max) { set(max, _val); }
-      public void val(int val) { set(_max, val); }
+      public void val(int val) { set(_max, val); _entity._lastVitals = Time.getTime() + 5000; }
       
       public void set(int max, int val) {
         _max = max;
         _val = val;
         
+        _entity._lastVitals = Time.getTime() + 5000;
         _entity.events().raiseVitals();
       }
     }
