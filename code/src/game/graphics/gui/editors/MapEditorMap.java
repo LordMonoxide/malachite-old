@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import game.Game;
 import game.data.Map;
 import game.data.util.Buffer;
+import game.data.util.GameData;
 import game.network.packet.editors.EditorDataMap;
 import game.settings.Settings;
 import graphics.gl00.Context;
@@ -48,15 +49,20 @@ public class MapEditorMap extends Map {
   protected void createSprites() {
     int i = 0;
     _spritesDrawable = new EditorSprite[_sprite.size()];
-    for(Sprite sprite : _sprite) {
-      game.data.Sprite data = _game.getSprite(_sprite.get(i)._file);
+    for(final Sprite sprite : _sprite) {
+      final game.data.Sprite data = _game.getSprite(_sprite.get(i)._file);
       
       if(data != null) {
-        _spritesDrawable[i] = new EditorSprite();
-        _spritesDrawable[i]._sprite = data;
-        _spritesDrawable[i]._drawable.setXYWH(sprite._x, sprite._y, _spritesDrawable[i]._sprite.getW(), _spritesDrawable[i]._sprite.getH());
-        _spritesDrawable[i]._drawable.setColour(new float[] {1, 0, 1, 1});
-        _spritesDrawable[i]._drawable.createBorder();
+        final int n = i;
+        data.events().addLoadHandler(new GameData.Events.Load() {
+          public void load() {
+            _spritesDrawable[n] = new EditorSprite();
+            _spritesDrawable[n]._sprite = data;
+            _spritesDrawable[n]._drawable.setXYWH(sprite._x, sprite._y, _spritesDrawable[n]._sprite.getW(), _spritesDrawable[n]._sprite.getH());
+            _spritesDrawable[n]._drawable.setColour(new float[] {1, 0, 1, 1});
+            _spritesDrawable[n]._drawable.createBorder();
+          }
+        });
       }
       
       i++;
@@ -66,15 +72,20 @@ public class MapEditorMap extends Map {
   protected void createItems() {
     int i = 0;
     _itemsDrawable = new EditorSprite[_item.size()];
-    for(Item item : _item) {
-      game.data.Item data = _game.getItem(_item.get(i)._file);
+    for(final Item item : _item) {
+      final game.data.Item data = _game.getItem(_item.get(i)._file);
       
       if(data != null) {
-        _itemsDrawable[i] = new EditorSprite();
-        _itemsDrawable[i]._sprite = _game.getSprite(data.getSprite());
-        _itemsDrawable[i]._drawable.setXYWH(item._x, item._y, _itemsDrawable[i]._sprite.getW(), _itemsDrawable[i]._sprite.getH());
-        _itemsDrawable[i]._drawable.setColour(new float[] {0, 1, 0, 1});
-        _itemsDrawable[i]._drawable.createBorder();
+        final int n = i;
+        data.events().addLoadHandler(new GameData.Events.Load() {
+          public void load() {
+            _itemsDrawable[n] = new EditorSprite();
+            _itemsDrawable[n]._sprite = _game.getSprite(data.getSprite());
+            _itemsDrawable[n]._drawable.setXYWH(item._x, item._y, _itemsDrawable[n]._sprite.getW(), _itemsDrawable[n]._sprite.getH());
+            _itemsDrawable[n]._drawable.setColour(new float[] {0, 1, 0, 1});
+            _itemsDrawable[n]._drawable.createBorder();
+          }
+        });
       }
       
       i++;
@@ -84,15 +95,20 @@ public class MapEditorMap extends Map {
   protected void createNPCs() {
     int i = 0;
     _npcsDrawable = new EditorSprite[_npc.size()];
-    for(NPC npc : _npc) {
-      game.data.NPC data = _game.getNPC(_npc.get(i)._file);
+    for(final NPC npc : _npc) {
+      final game.data.NPC data = _game.getNPC(_npc.get(i)._file);
       
       if(data != null) {
-        _npcsDrawable[i] = new EditorSprite();
-        _npcsDrawable[i]._sprite = _game.getSprite(data.getSprite());
-        _npcsDrawable[i]._drawable.setXYWH(npc._x, npc._y, _npcsDrawable[i]._sprite.getW(), _npcsDrawable[i]._sprite.getH());
-        _npcsDrawable[i]._drawable.setColour(new float[] {0, 1, 0, 1});
-        _npcsDrawable[i]._drawable.createBorder();
+        final int n = i;
+        data.events().addLoadHandler(new GameData.Events.Load() {
+          public void load() {
+            _npcsDrawable[n] = new EditorSprite();
+            _npcsDrawable[n]._sprite = _game.getSprite(data.getSprite());
+            _npcsDrawable[n]._drawable.setXYWH(npc._x, npc._y, _npcsDrawable[n]._sprite.getW(), _npcsDrawable[n]._sprite.getH());
+            _npcsDrawable[n]._drawable.setColour(new float[] {0, 1, 0, 1});
+            _npcsDrawable[n]._drawable.createBorder();
+          }
+        });
       }
       
       i++;
@@ -153,7 +169,7 @@ public class MapEditorMap extends Map {
           
           Context.getContext().addLoadCallback(new Context.Loader.Callback() {
             public void load() {
-              packet.process();
+              deserialize(new Buffer(packet.getData()));
               System.out.println("MapEditorMap " + getFile() + " synced from server");
               
               for(int z = 0; z < _attribMask.length; z++) {
@@ -305,6 +321,7 @@ public class MapEditorMap extends Map {
       n._x = b.getInt();
       n._y = b.getInt();
       n._z = b.getByte();
+      _npc.add(n);
     }
   }
   

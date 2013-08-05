@@ -613,8 +613,8 @@ public class MapEditor extends GUI {
             MapEditorMap m = (MapEditorMap)r.getMap();
             
             System.out.println("Sending map " + m.getFile());
-            r.setMap(m.getMap());
             packet.addData(m);
+            r.setMap(m.getMap());
           }
           
           if(packet.size() != 0) {
