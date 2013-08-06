@@ -202,12 +202,9 @@ public class Map extends GameData {
     
     for(int z = 0; z < maxZ; z++) {
       _layer[z] = new Layer();
-      _layer[z]._tile = new Tile[Settings.Map.Tile.Count][Settings.Map.Tile.Count];
-      _layer[z]._attrib = new Attrib[Settings.Map.Attrib.Count][Settings.Map.Attrib.Count];
       
       for(int x = 0; x < maxX; x++) {
         for(int y = 0; y < maxY; y++) {
-          _layer[z]._tile[x][y] = new Tile();
           _layer[z]._tile[x][y]._x = b.getByte();
           _layer[z]._tile[x][y]._y = b.getByte();
           _layer[z]._tile[x][y]._tileset = b.getByte();
@@ -217,7 +214,6 @@ public class Map extends GameData {
       
       for(int x = 0; x < maxXA; x++) {
         for(int y = 0; y < maxYA; y++) {
-          _layer[z]._attrib[x][y] = new Attrib();
           _layer[z]._attrib[x][y]._type = b.getByte();
         }
       }
