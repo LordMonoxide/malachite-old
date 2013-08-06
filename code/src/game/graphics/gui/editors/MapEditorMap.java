@@ -275,12 +275,9 @@ public class MapEditorMap extends Map {
     
     for(int z = 0; z < sizeZ; z++) {
       _layer[z] = new Layer();
-      _layer[z]._tile = new Tile[sizeX][sizeY];
-      _layer[z]._attrib = new Attrib[sizeXA][sizeYA];
       
       for(int x = 0; x < sizeX; x++) {
         for(int y = 0; y < sizeY; y++) {
-          _layer[z]._tile[x][y] = new Tile();
           _layer[z]._tile[x][y]._x = b.getByte();
           _layer[z]._tile[x][y]._y = b.getByte();
           _layer[z]._tile[x][y]._tileset = b.getByte();
@@ -290,7 +287,6 @@ public class MapEditorMap extends Map {
       
       for(int x = 0; x < sizeXA; x++) {
         for(int y = 0; y < sizeYA; y++) {
-          _layer[z]._attrib[x][y] = new Attrib();
           _layer[z]._attrib[x][y]._type = b.getByte();
         }
       }
