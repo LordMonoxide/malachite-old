@@ -11,6 +11,7 @@ import game.data.account.Permissions;
 import game.graphics.gui.Menu;
 import game.network.Client;
 import game.network.packet.Chat;
+import game.network.packet.EntityAttack;
 import game.network.packet.EntityCreate;
 import game.network.packet.EntityMoveStart;
 import game.network.packet.EntityMoveStop;
@@ -244,6 +245,18 @@ public class Game {
         return false;
       }
     }, true);
+    
+    _net.events().onPacket(new network.Client.Events.Packet() {
+      public boolean event(Packet p) {
+        if(p instanceof EntityAttack) {
+          EntityAttack attack = (EntityAttack)p;
+          _gameListener.entityAttack(attack.attacker(), attack.defender(), attack.damage());
+          return true;
+        }
+        
+        return false;
+      }
+    }, true);
   }
   
   public void updateCamera() {
@@ -290,6 +303,7 @@ public class Game {
   public static interface GameStateListener {
     public void gotChat(String name, String text);
     public void entityDraw(Entity e);
+    public void entityAttack(Entity attacker, Entity defender, int damage);
     public void updateVitals(Entity.Stats stats);
     public void updateStats(Entity.Stats stats);
     public void updateInv(Entity.Inv[] inv);
