@@ -810,6 +810,10 @@ public class Game extends GUI {
     }
   }
   
+  public void entityAttack(Entity attacker, Entity defender, int damage) {
+    System.out.println(attacker + " attacking " + defender + ", " + damage + " damage");
+  }
+  
   protected boolean logic() {
     return false;
   }
@@ -873,14 +877,16 @@ public class Game extends GUI {
         }
       }
       
-      if(_lastAttack != 0) {
-        double dx = _entity.getX() + _context.getCameraX() - x;
-        double dy = _entity.getY() + _context.getCameraY() - y;
-        double angle = Math.atan2(dy, dx);
-        
-        _game.send(new EntityAttack(angle));
-        _lastAttack += Time.getTime();
+      if(_lastAttack == 0) {
+        _lastAttack = 1000;
       }
+      
+      double dx = _entity.getX() + _context.getCameraX() - x;
+      double dy = _entity.getY() + _context.getCameraY() - y;
+      double angle = Math.atan2(dy, dx);
+      
+      _game.send(new EntityAttack(angle));
+      _lastAttack += Time.getTime();
     }
     
     return false;
@@ -1037,6 +1043,10 @@ public class Game extends GUI {
     
     public void entityDraw(Entity e) {
       _game.entityDraw(e);
+    }
+    
+    public void entityAttack(Entity attacker, Entity defender, int damage) {
+      _game.entityAttack(attacker, defender, damage);
     }
     
     public void updateVitals(Entity.Stats stats) {
