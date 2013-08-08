@@ -36,14 +36,18 @@ public class MapEditorMap extends Map {
     
     _attribMask = new Texture[Settings.Map.Depth];
     for(int z = 0; z < Settings.Map.Depth; z++) {
-      _attribMask[z] = Textures.getInstance().getTexture(_x + "x" + _y + "x" + z + " mask", Settings.Map.Size, Settings.Map.Size, null);
+      _attribMask[z] = Textures.getInstance().getTexture(_x + "x" + _y + "x" + z + " mask", Settings.Map.Attrib.Count, Settings.Map.Attrib.Count, null);
     }
     
     request();
   }
   
-  protected void updateAttrib(int layer, int x, int y, ByteBuffer data) {
-    _attribMask[layer].update(x * Settings.Map.Attrib.Size, y * Settings.Map.Attrib.Size, Settings.Map.Attrib.Size, Settings.Map.Attrib.Size, data);
+  protected void updateAttrib(int layer, int x, int y, byte[] col) {
+    ByteBuffer b;
+    b = ByteBuffer.allocateDirect(4);
+    b.put(col);
+    b.flip();
+    _attribMask[layer].update(x, y, 1, 1, b);
   }
   
   protected void createSprites() {

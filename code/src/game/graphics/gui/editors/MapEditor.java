@@ -1,7 +1,6 @@
 package game.graphics.gui.editors;
 
 import java.io.File;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -1030,28 +1029,15 @@ public class MapEditor extends GUI {
         
         Map.Attrib a = _map.getLayer(_layer).getAttrib(x1, y1);
         
-        ByteBuffer b;
         switch(button) {
           case 0:
             a._type = (byte)Map.Attrib.Type.values()[_attrib].val();
-            
-            b = ByteBuffer.allocateDirect(Settings.Map.Attrib.Size * Settings.Map.Attrib.Size * 4);
-            for(int i = 0; i < b.capacity() / 4; i++) {
-              b.put(Map.Attrib.Type.values()[_attrib].col());
-            }
-            b.flip();
-            
-            _map.updateAttrib(_layer, x1, y1, b);
+            _map.updateAttrib(_layer, x1, y1, Map.Attrib.Type.values()[_attrib].col());
             return true;
             
           case 1:
             a._type = (byte)0;
-            
-            b = ByteBuffer.allocateDirect(Settings.Map.Attrib.Size * Settings.Map.Attrib.Size * 4);
-            b.put(new byte[b.capacity()]);
-            b.flip();
-            
-            _map.updateAttrib(_layer, x1, y1, b);
+            _map.updateAttrib(_layer, x1, y1, new byte[] {0, 0, 0, 0});
             return true;
         }
         

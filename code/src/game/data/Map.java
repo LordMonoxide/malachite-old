@@ -117,22 +117,19 @@ public class Map extends GameData {
   public void createAttribMaskTextureFromLayer(final int z, final Texture texture) {
     texture.events().addLoadHandler(new Texture.Events.Load() {
       public void load() {
-        byte[] b = new byte[Settings.Map.Size * Settings.Map.Size * 4];
+        byte[] b = new byte[Settings.Map.Attrib.Count * Settings.Map.Attrib.Count * 4];
         int n = 0;
         
         for(int y = 0; y < Settings.Map.Attrib.Count; y++) {
           for(int x = 0; x < Settings.Map.Attrib.Count; x++) {
             if(_layer[z]._attrib[x][y]._type != 0) {
               byte[] c = Attrib.Type.fromVal(_layer[z]._attrib[x][y]._type)._col;
-              
-              for(int x1 = 0; x1 < Settings.Map.Attrib.Size; x1++) {
-                b[n++] = c[0];
-                b[n++] = c[1];
-                b[n++] = c[2];
-                b[n++] = c[3];
-              }
+              b[n++] = c[0];
+              b[n++] = c[1];
+              b[n++] = c[2];
+              b[n++] = c[3];
             } else {
-              n += Settings.Map.Attrib.Size * 4;
+              n += 4;
             }
           }
         }
@@ -141,7 +138,7 @@ public class Map extends GameData {
         buff.put(b);
         buff.flip();
         
-        texture.update(0, 0, Settings.Map.Attrib.Size, Settings.Map.Attrib.Size, buff);
+        texture.update(0, 0, Settings.Map.Attrib.Count, Settings.Map.Attrib.Count, buff);
       }
     });
   }
