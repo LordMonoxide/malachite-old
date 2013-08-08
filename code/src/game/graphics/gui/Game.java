@@ -100,6 +100,8 @@ public class Game extends GUI {
   
   private boolean _loaded;
   
+  private DamageDisplay[] _damageDisplay = new DamageDisplay[20];
+  
   public void load() {
     _context.setBackColour(new float[] {0, 0, 0, 0});
     
@@ -765,6 +767,14 @@ public class Game extends GUI {
       Sprite.draw(z);
     }
     
+    for(DamageDisplay damage : _damageDisplay) {
+      if(damage != null) {
+        if(damage._time > Time.getTime()) {
+          _font.draw((int)damage._entity.getX(), (int)damage._entity.getY(), String.valueOf(damage._damage), _chatColour);
+        }
+      }
+    }
+    
     _matrix.push();
     _matrix.reset();
     
@@ -811,7 +821,15 @@ public class Game extends GUI {
   }
   
   public void entityAttack(Entity attacker, Entity defender, int damage) {
-    System.out.println(attacker + " attacking " + defender + ", " + damage + " damage");
+    //System.out.println(attacker + " attacking " + defender + ", " + damage + " damage");
+    
+    if(defender != null) {
+      for(int i = 0; i < _damageDisplay.length - 1; i++) {
+        _damageDisplay[i] = _damageDisplay[i + 1];
+      }
+      
+      _damageDisplay[_damageDisplay.length - 1] = new DamageDisplay(defender, damage, Time.getTime() + 1000);
+    }
   }
   
   protected boolean logic() {
@@ -1071,6 +1089,18 @@ public class Game extends GUI {
     
     public void updateCurrency(long currency) {
       _game.updateCurrency(currency);
+    }
+  }
+  
+  private class DamageDisplay {
+    private Entity _entity;
+    private int _damage;
+    private double _time;
+    
+    private DamageDisplay(Entity entity, int damage, double time) {
+      _entity = entity;
+      _damage = damage;
+      _time = time;
     }
   }
 }
