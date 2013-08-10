@@ -26,9 +26,14 @@ public class Chat extends Packet {
   }
   
   public void deserialize(ByteBuf data) throws NotEnoughDataException {
-    byte[] arr = new byte[data.readShort()];
-    data.readBytes(arr);
-    _name = new String(arr);
+    byte[] arr;
+    
+    int length = data.readShort();
+    if(length != 0) {
+      arr = new byte[length];
+      data.readBytes(arr);
+      _name = new String(arr);
+    }
     
     arr = new byte[data.readShort()];
     data.readBytes(arr);
@@ -36,6 +41,8 @@ public class Chat extends Packet {
   }
   
   public void process() {
+    //TODO: Localise
+    if(_name == null) _name = "Server";
     Game.getInstance().gotChat(_name, _text);
   }
 }
