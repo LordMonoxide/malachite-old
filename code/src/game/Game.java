@@ -277,7 +277,7 @@ public class Game {
   }
   
   public void gotChat(String name, String text) {
-    _gameListener.gotChat(name, text);
+    if(_gameListener != null) _gameListener.gotChat(name, text);
   }
   
   public Entity interact(int x, int y) {
