@@ -15,7 +15,6 @@ import game.network.packet.menu.CharDel;
 import game.network.packet.menu.CharNew;
 import game.network.packet.menu.CharUse;
 import game.network.packet.menu.Login;
-import game.network.packet.menu.CharUse.Response;
 import graphics.shared.gui.Control;
 import graphics.shared.gui.GUI;
 import graphics.shared.gui.controls.Button;
@@ -28,6 +27,8 @@ public class Menu extends GUI {
   private Game _game = Game.getInstance();
   
   private Listener _listener;
+  
+  private Message _guiConnecting;
   
   //private Picture[] _background = new Picture[15];
 
@@ -53,6 +54,10 @@ public class Menu extends GUI {
   private Message _wait;
   
   public void load() {
+    if(!_game.isConnected()) {
+      _guiConnecting = Message.showWait("Connecting...");
+    }
+    
     _listener = new Listener(this);
     _game.setMenuStateListener(_listener);
     
@@ -284,6 +289,11 @@ public class Menu extends GUI {
     return false;
   }
   
+  private void connected() {
+    _guiConnecting.pop();
+    _guiConnecting = null;
+  }
+  
   private void login() {
     String name = _txtName.getText();
     String pass = _savedPass;
@@ -469,6 +479,10 @@ public class Menu extends GUI {
       _menu = menu;
     }
     
+    public void connected() {
+      _menu.connected();
+    }
+    
     public void loggedIn(Login.Response packet) {
       _menu.loggedIn(packet);
     }
@@ -481,7 +495,7 @@ public class Menu extends GUI {
       _menu.charCreated(packet);
     }
     
-    public void charUsed(Response packet) {
+    public void charUsed(CharUse.Response packet) {
       _menu.charUsed(packet);
     }
     

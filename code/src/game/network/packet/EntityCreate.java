@@ -25,12 +25,9 @@ public class EntityCreate extends Packet {
     _entity.setID(data.readInt());
     _entity.setName(new String(data.readBytes(data.readShort()).array()));
     _entity.setSprite(new String(data.readBytes(data.readShort()).array()));
-    _entity.setType(Entity.Type.valueOf(data.readInt()));
-    _entity.setAcc(data.readFloat());
-    _entity.setDec(data.readFloat());
-    _entity.setVelTerm(data.readFloat());
     _entity.setInitialXY(data.readFloat(), data.readFloat());
     _entity.setZ(data.readByte());
+    //_entity.setType(Entity.Type.valueOf(data.readInt()));
   }
   
   public void process() {

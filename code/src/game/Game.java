@@ -18,6 +18,7 @@ import game.network.packet.EntityMoveStop;
 import game.network.packet.menu.CharDel;
 import game.network.packet.menu.CharNew;
 import game.network.packet.menu.CharUse;
+import game.network.packet.menu.Connect;
 import game.network.packet.menu.Login;
 import game.settings.Settings;
 import game.world.Entity;
@@ -31,6 +32,7 @@ public class Game {
   public static Game getInstance() { return _instance; }
   
   private Client _net;
+  private boolean _connected;
   
   private int _id;
   private Context _context;
@@ -107,7 +109,18 @@ public class Game {
     
     _net = new Client();
     _net.initPackets();
-    _net.connect();
+    _net.connect(new network.Client.Event() {
+      public void event(boolean success) {
+        if(success) {
+          System.out.println("Connected.");
+          _connected = true;
+          _net.send(new Connect());
+          if(_menuListener != null) _menuListener.connected();
+        } else {
+          System.out.println("Connection failed.");
+        }
+      }
+    });
     
     _context = Context.create();
     _context.events().addDestroyHandler(new Context.Events.Destroy() {
@@ -122,6 +135,10 @@ public class Game {
     
     _menu = new Menu();
     _menu.push();
+  }
+  
+  public boolean isConnected() {
+    return _connected;
   }
   
   public void send(Packet p) {
@@ -293,6 +310,7 @@ public class Game {
   }
   
   public static interface MenuStateListener {
+    public void connected();
     public void loggedIn(Login.Response packet);
     public void charDeleted(CharDel.Response packet);
     public void charCreated(CharNew.Response packet);

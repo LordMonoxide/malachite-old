@@ -15,6 +15,7 @@ import game.network.packet.EntityInv;
 import game.network.packet.EntityInvUpdate;
 import game.network.packet.EntityMoveStart;
 import game.network.packet.EntityMoveStop;
+import game.network.packet.EntityPhysics;
 import game.network.packet.EntityStats;
 import game.network.packet.EntityVitals;
 import game.network.packet.InvDrop;
@@ -92,20 +93,12 @@ public class Client {
     Packets.add(EditorData.Response.class);
     Packets.add(EditorData.List.class);
     Packets.add(EntityAttack.class);
+    Packets.add(EntityPhysics.class);
   }
   
-  public void connect() {
+  public void connect(network.Client.Event event) {
     System.out.println("Connecting to " + Settings.Net.IP + ":" + Settings.Net.Port + "...");
-    _client.connect(new network.Client.Event() {
-      public void event(boolean success) {
-        if(success) {
-          System.out.println("Connected.");
-          _client.send(new Connect());
-        } else {
-          System.out.println("Connection failed.");
-        }
-      }
-    });
+    _client.connect(event);
   }
   
   public void close() {
