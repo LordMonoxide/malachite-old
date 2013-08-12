@@ -8,6 +8,7 @@ import game.network.packet.Data;
 import game.network.packet.EntityAttack;
 import game.network.packet.EntityCreate;
 import game.network.packet.EntityCurrency;
+import game.network.packet.EntityDespawn;
 import game.network.packet.EntityDestroy;
 import game.network.packet.EntityEquip;
 import game.network.packet.EntityInteract;
@@ -16,6 +17,7 @@ import game.network.packet.EntityInvUpdate;
 import game.network.packet.EntityMoveStart;
 import game.network.packet.EntityMoveStop;
 import game.network.packet.EntityPhysics;
+import game.network.packet.EntitySpawn;
 import game.network.packet.EntityStats;
 import game.network.packet.EntityVitals;
 import game.network.packet.InvDrop;
@@ -94,6 +96,8 @@ public class Client {
     Packets.add(EditorData.List.class);
     Packets.add(EntityAttack.class);
     Packets.add(EntityPhysics.class);
+    Packets.add(EntitySpawn.class);
+    Packets.add(EntityDespawn.class);
   }
   
   public void connect(network.Client.Event event) {
