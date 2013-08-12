@@ -129,6 +129,41 @@ public class Entity extends Movable {
     }
   }
   
+  public void xyz(float x, float y, int z) {
+    xy(x, y);
+    setZ(z);
+  }
+  
+  public void xy(float x, float y) {
+    _x = x;
+    _y = y;
+    _rx = (_x % Settings.Map.Size);
+    _ry = (_y % Settings.Map.Size);
+    if(_rx < 0) _rx += Settings.Map.Size;
+    if(_ry < 0) _ry += Settings.Map.Size;
+    
+    int mx = (int)_x / Settings.Map.Size;
+    int my = (int)_y / Settings.Map.Size;
+    if(_x < 0) mx -= 1;
+    if(_y < 0) my -= 1;
+    
+    if(_mx != mx || _my != my) {
+      _mx = mx;
+      _my = my;
+      
+      if(_world != null) {
+        setRegion(_world.getRegion(_mx, _my));
+      }
+    }
+    
+    if(_sprite != null) {
+      _sprite.setX(_x);
+      _sprite.setY(_y);
+    }
+    
+    _events.raiseMove();
+  }
+  
   public void setX(float x) {
     _x = x;
     _rx = (_x % Settings.Map.Size);
