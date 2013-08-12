@@ -44,6 +44,7 @@ public class Client {
     _client.setAddress(Settings.Net.IP, Settings.Net.Port);
     _client.events().onPacket(new network.Client.Events.Packet() {
       public boolean event(Packet p) {
+        System.out.println(p);
         p.process();
         return false;
       }
