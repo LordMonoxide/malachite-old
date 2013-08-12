@@ -24,6 +24,6 @@ public class EntityDespawn extends Packet {
   
   public void process() {
     Entity e = Game.getInstance().getWorld().getEntity(_id);
-    e.spawn();
+    e.despawn();
   }
 }
