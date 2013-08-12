@@ -32,6 +32,8 @@ public class Entity extends Movable {
   private Equip _equip;
   private long _curr;
   
+  private boolean _spawned;
+  
   private Sprite _sprite;
   
   private double _lastVitals;
@@ -96,7 +98,7 @@ public class Entity extends Movable {
     }
     
     if(_world != null) {
-      _sprite = Sprite.add(_spriteFile);
+      _sprite = Sprite.add(_spriteFile, _spawned);
       _sprite.setX(_x);
       _sprite.setY(_y);
       _sprite.setZ(_z);
@@ -249,6 +251,22 @@ public class Entity extends Movable {
   public void currency(long curr) {
     _curr = curr;
     _events.raiseInvCurrency();
+  }
+  
+  public boolean spawned() {
+    return _spawned;
+  }
+  
+  public void spawn() {
+    _spawned = true;
+    
+    if(_sprite != null) _sprite.setVisible(true);
+  }
+  
+  public void despawn() {
+    _spawned = false;
+    
+    if(_sprite != null) _sprite.setVisible(false);
   }
   
   public static class Stats {

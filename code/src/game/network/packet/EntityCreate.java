@@ -27,6 +27,7 @@ public class EntityCreate extends Packet {
     _entity.setSprite(new String(data.readBytes(data.readShort()).array()));
     _entity.setInitialXY(data.readFloat(), data.readFloat());
     _entity.setZ(data.readByte());
+    if(data.readBoolean()) _entity.spawn();
     //_entity.setType(Entity.Type.valueOf(data.readInt()));
   }
   

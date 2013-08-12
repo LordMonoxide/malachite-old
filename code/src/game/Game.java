@@ -13,8 +13,10 @@ import game.network.Client;
 import game.network.packet.Chat;
 import game.network.packet.EntityAttack;
 import game.network.packet.EntityCreate;
+import game.network.packet.EntityDespawn;
 import game.network.packet.EntityMoveStart;
 import game.network.packet.EntityMoveStop;
+import game.network.packet.EntitySpawn;
 import game.network.packet.menu.CharDel;
 import game.network.packet.menu.CharNew;
 import game.network.packet.menu.CharUse;
@@ -268,7 +270,21 @@ public class Game {
         if(p instanceof EntityAttack) {
           EntityAttack attack = (EntityAttack)p;
           _gameListener.entityAttack(attack.attacker(), attack.defender(), attack.damage());
-          return true;
+          return false;
+        }
+        
+        if(p instanceof EntitySpawn) {
+          EntitySpawn spawn = (EntitySpawn)p;
+          if(spawn.id() == _id) {
+            _gameListener.spawn();
+          }
+        }
+        
+        if(p instanceof EntityDespawn) {
+          EntityDespawn spawn = (EntityDespawn)p;
+          if(spawn.id() == _id) {
+            _gameListener.despawn();
+          }
         }
         
         return false;
@@ -320,6 +336,8 @@ public class Game {
   
   public static interface GameStateListener {
     public void gotChat(String name, String text);
+    public void spawn();
+    public void despawn();
     public void entityDraw(Entity e);
     public void entityAttack(Entity attacker, Entity defender, int damage);
     public void updateVitals(Entity.Stats stats);

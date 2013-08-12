@@ -49,6 +49,8 @@ public class Game extends GUI {
   
   private Entity _entity = _game.getEntity();
   
+  private Message _spawn;
+  
   private MapEditor _editMap;
   
   private Textbox  _txtChat;
@@ -104,6 +106,8 @@ public class Game extends GUI {
   
   public void load() {
     _context.setBackColour(new float[] {0, 0, 0, 0});
+    
+    despawn();
     
     _txtChat = new Textbox(this);
     _txtChat.setX(4);
@@ -647,6 +651,15 @@ public class Game extends GUI {
     _game.updateCamera();
   }
   
+  private void spawn() {
+    _spawn.pop();
+    _spawn = null;
+  }
+  
+  private void despawn() {
+    _spawn = Message.showWait("Respawning...");
+  }
+  
   private void updateStats(Entity.Stats stats) {
     _picVital[0].setW((float)stats.vitalHP().val() / stats.vitalHP().max() * _picVitalBack[0].getW());
     _picVital[1].setW((float)stats.vitalMP().val() / stats.vitalMP().max() * _picVitalBack[1].getW());
@@ -1057,6 +1070,14 @@ public class Game extends GUI {
       }
       
       _game._chat[0] = name + ": " + text;
+    }
+    
+    public void spawn() {
+      _game.spawn();
+    }
+    
+    public void despawn() {
+      _game.despawn();
     }
     
     public void entityDraw(Entity e) {
