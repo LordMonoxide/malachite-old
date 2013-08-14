@@ -897,7 +897,7 @@ public class MapEditor extends GUI {
   }
   
   private void delNPC() {
-    if(_map._npc.remove(_item)) {
+    if(_map._npc.remove(_npc)) {
       _splNPC.remove();
       _map.createNPCs();
     } else {
