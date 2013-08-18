@@ -54,7 +54,7 @@ public class MapEditorMap extends Map {
     int i = 0;
     _spritesDrawable = new EditorSprite[_sprite.size()];
     for(final Sprite sprite : _sprite) {
-      final game.data.Sprite data = _game.getSprite(_sprite.get(i)._file);
+      final game.data.Sprite data = _game.getSprite(_sprite.get(i).file);
       
       if(data != null) {
         final int n = i;
@@ -62,7 +62,7 @@ public class MapEditorMap extends Map {
           public void load() {
             _spritesDrawable[n] = new EditorSprite();
             _spritesDrawable[n]._sprite = data;
-            _spritesDrawable[n]._drawable.setXYWH(sprite._x, sprite._y, _spritesDrawable[n]._sprite.getW(), _spritesDrawable[n]._sprite.getH());
+            _spritesDrawable[n]._drawable.setXYWH(sprite.x, sprite.y, _spritesDrawable[n]._sprite.getW(), _spritesDrawable[n]._sprite.getH());
             _spritesDrawable[n]._drawable.setColour(new float[] {1, 0, 1, 1});
             _spritesDrawable[n]._drawable.createBorder();
           }
@@ -77,7 +77,7 @@ public class MapEditorMap extends Map {
     int i = 0;
     _itemsDrawable = new EditorSprite[_item.size()];
     for(final Item item : _item) {
-      final game.data.Item data = _game.getItem(_item.get(i)._file);
+      final game.data.Item data = _game.getItem(_item.get(i).file);
       
       if(data != null) {
         final int n = i;
@@ -85,7 +85,7 @@ public class MapEditorMap extends Map {
           public void load() {
             _itemsDrawable[n] = new EditorSprite();
             _itemsDrawable[n]._sprite = _game.getSprite(data.getSprite());
-            _itemsDrawable[n]._drawable.setXYWH(item._x, item._y, _itemsDrawable[n]._sprite.getW(), _itemsDrawable[n]._sprite.getH());
+            _itemsDrawable[n]._drawable.setXYWH(item.x, item.y, _itemsDrawable[n]._sprite.getW(), _itemsDrawable[n]._sprite.getH());
             _itemsDrawable[n]._drawable.setColour(new float[] {0, 1, 0, 1});
             _itemsDrawable[n]._drawable.createBorder();
           }
@@ -100,7 +100,7 @@ public class MapEditorMap extends Map {
     int i = 0;
     _npcsDrawable = new EditorSprite[_npc.size()];
     for(final NPC npc : _npc) {
-      final game.data.NPC data = _game.getNPC(_npc.get(i)._file);
+      final game.data.NPC data = _game.getNPC(_npc.get(i).file);
       
       if(data != null) {
         final int n = i;
@@ -108,7 +108,7 @@ public class MapEditorMap extends Map {
           public void load() {
             _npcsDrawable[n] = new EditorSprite();
             _npcsDrawable[n]._sprite = _game.getSprite(data.getSprite());
-            _npcsDrawable[n]._drawable.setXYWH(npc._x, npc._y, _npcsDrawable[n]._sprite.getW(), _npcsDrawable[n]._sprite.getH());
+            _npcsDrawable[n]._drawable.setXYWH(npc.x, npc.y, _npcsDrawable[n]._sprite.getW(), _npcsDrawable[n]._sprite.getH());
             _npcsDrawable[n]._drawable.setColour(new float[] {0, 1, 0, 1});
             _npcsDrawable[n]._drawable.createBorder();
           }
@@ -135,7 +135,7 @@ public class MapEditorMap extends Map {
     for(EditorSprite d : _spritesDrawable) {
       if(d != null) {
         _matrix.push();
-        _matrix.translate(-d._sprite.getFrame(0)._fx, -d._sprite.getH() + d._sprite.getFrame(0)._fy);
+        _matrix.translate(-d._sprite.frame.get(0)._fx, -d._sprite.getH() + d._sprite.frame.get(0)._fy);
         d._drawable.draw();
         _matrix.pop();
       }
@@ -146,7 +146,7 @@ public class MapEditorMap extends Map {
     for(EditorSprite d : _itemsDrawable) {
       if(d != null) {
         _matrix.push();
-        _matrix.translate(-d._sprite.getFrame(0)._fx, -d._sprite.getH() + d._sprite.getFrame(0)._fy);
+        _matrix.translate(-d._sprite.frame.get(0)._fx, -d._sprite.getH() + d._sprite.frame.get(0)._fy);
         d._drawable.draw();
         _matrix.pop();
       }
@@ -157,7 +157,7 @@ public class MapEditorMap extends Map {
     for(EditorSprite d : _npcsDrawable) {
       if(d != null) {
         _matrix.push();
-        _matrix.translate(-d._sprite.getFrame(0)._fx, -d._sprite.getH() + d._sprite.getFrame(0)._fy);
+        _matrix.translate(-d._sprite.frame.get(0)._fx, -d._sprite.getH() + d._sprite.frame.get(0)._fy);
         d._drawable.draw();
         _matrix.pop();
       }
@@ -229,35 +229,30 @@ public class MapEditorMap extends Map {
     }
     
     for(Sprite s : _sprite) {
-      b.put(s._file);
-      b.put(s._x);
-      b.put(s._y);
-      b.put(s._z);
+      b.put(s.file);
+      b.put(s.anim);
+      b.put(s.x);
+      b.put(s.y);
+      b.put(s.z);
     }
     
     for(Item i : _item) {
-      b.put(i._file);
-      b.put(i._val);
-      b.put(i._x);
-      b.put(i._y);
-      b.put(i._z);
+      b.put(i.file);
+      b.put(i.val);
+      b.put(i.x);
+      b.put(i.y);
+      b.put(i.z);
     }
     
     for(NPC n : _npc) {
-      b.put(n._file);
-      b.put(n._x);
-      b.put(n._y);
-      b.put(n._z);
+      b.put(n.file);
+      b.put(n.x);
+      b.put(n.y);
+      b.put(n.z);
     }
   }
   
   protected void deserializeInternal(Buffer b) {
-    switch(getVersion()) {
-      case 1: deserialize01(b); break;
-    }
-  }
-  
-  private void deserialize01(Buffer b) {
     _sprite.clear();
     _item.clear();
     _npc.clear();
@@ -298,45 +293,46 @@ public class MapEditorMap extends Map {
     
     for(int i = 0; i < spriteSize; i++) {
       Sprite s = new Sprite();
-      s._file = b.getString();
-      s._x = b.getInt();
-      s._y = b.getInt();
-      s._z = b.getByte();
+      s.file = b.getString();
+      s.anim = b.getString();
+      s.x = b.getInt();
+      s.y = b.getInt();
+      s.z = b.getByte();
       _sprite.add(s);
     }
     
     for(int i = 0; i < itemSize; i++) {
       Item item = new Item();
-      item._file = b.getString();
-      item._val = b.getInt();
-      item._x = b.getInt();
-      item._y = b.getInt();
-      item._z = b.getByte();
+      item.file = b.getString();
+      item.val = b.getInt();
+      item.x = b.getInt();
+      item.y = b.getInt();
+      item.z = b.getByte();
       _item.add(item);
     }
     
     for(int i = 0; i < npcSize; i++) {
       NPC n = new NPC();
-      n._file = b.getString();
-      n._x = b.getInt();
-      n._y = b.getInt();
-      n._z = b.getByte();
+      n.file = b.getString();
+      n.x = b.getInt();
+      n.y = b.getInt();
+      n.z = b.getByte();
       _npc.add(n);
     }
   }
   
   public static class Data {
-    public String _file;
-    public int _x, _y;
-    public byte _z;
+    public String file;
+    public int x, y;
+    public byte z;
   }
   
   public static class Sprite extends Data {
-    
+    public String anim;
   }
   
   public static class Item extends Data {
-    public int _val;
+    public int val;
   }
   
   public static class NPC extends Data {

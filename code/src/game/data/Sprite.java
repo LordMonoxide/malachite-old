@@ -17,8 +17,8 @@ public class Sprite extends GameData {
   protected String _texture;
   protected int _w, _h;
   protected int _default;
-  protected ArrayList<Frame> _frame = new ArrayList<Frame>();
-  protected ArrayList<Anim> _anim = new ArrayList<Anim>();
+  public final ArrayList<Frame> frame = new ArrayList<Frame>();
+  public final ArrayList<Anim> anim = new ArrayList<Anim>();
   protected String _script;
   
   public Sprite() { }
@@ -34,16 +34,14 @@ public class Sprite extends GameData {
   public    int getH()       { return _h; }
   public    int getDefault() { return _default; }
   public String getScript()  { return _script; }
-  public Frame  getFrame(int index) { return _frame.get(index); }
-  public Anim   getAnim (int index) { return _anim .get(index); }
   
   public Drawable[] createDrawables() {
-    Drawable[] d = new Drawable[_frame.size()];
+    Drawable[] d = new Drawable[frame.size()];
     
     Texture t = Context.getTextures().getTexture("sprites/" + _texture);
     
     int i = 0;
-    for(Frame f : _frame) {
+    for(Frame f : frame) {
       d[i] = Context.newDrawable();
       d[i].setTexture(t);
       d[i].setXYWH(-f._fx, f._fy - f._h, f._w, f._h);
@@ -56,10 +54,10 @@ public class Sprite extends GameData {
   }
   
   public Anim[] createAnimList() {
-    Anim[] a = new Anim[_anim.size()];
+    Anim[] a = new Anim[anim.size()];
     
     int i = 0;
-    for(Anim anim : _anim) {
+    for(Anim anim : this.anim) {
       a[i] = new Anim(anim);
       i++;
     }
@@ -73,10 +71,10 @@ public class Sprite extends GameData {
     b.put(_h);
     b.put(_default);
     
-    b.put(_frame.size());
-    b.put(_anim.size());
+    b.put(frame.size());
+    b.put(anim.size());
     
-    for(Frame f : _frame) {
+    for(Frame f : frame) {
       b.put(f._fx);
       b.put(f._fy);
       b.put(f._x);
@@ -85,7 +83,7 @@ public class Sprite extends GameData {
       b.put(f._h);
     }
     
-    for(Anim a : _anim) {
+    for(Anim a : anim) {
       b.put(a._name);
       b.put(a._default);
       b.put(a._list.size());
@@ -106,8 +104,8 @@ public class Sprite extends GameData {
   }
   
   private void deserialize01(Buffer b) {
-    _frame.clear();
-    _anim.clear();
+    frame.clear();
+    anim.clear();
     
     _texture = b.getString();
     _w = b.getInt();
@@ -117,8 +115,8 @@ public class Sprite extends GameData {
     int frames = b.getInt();
     int anims = b.getInt();
     
-    _frame.ensureCapacity(frames);
-    _anim.ensureCapacity(anims);
+    frame.ensureCapacity(frames);
+    anim.ensureCapacity(anims);
     
     for(int i = 0; i < frames; i++) {
       Frame f = new Frame();
@@ -128,7 +126,7 @@ public class Sprite extends GameData {
       f._y = b.getInt();
       f._w = b.getInt();
       f._h = b.getInt();
-      _frame.add(f);
+      frame.add(f);
     }
     
     for(int i = 0; i < anims; i++) {
@@ -147,7 +145,7 @@ public class Sprite extends GameData {
         a._list.add(l);
       }
       
-      _anim.add(a);
+      anim.add(a);
     }
     
     _script = b.getString();

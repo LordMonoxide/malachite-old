@@ -13,6 +13,7 @@ import game.Game;
 import game.data.Item;
 import game.data.Map;
 import game.data.NPC;
+import game.data.Sprite;
 import game.data.util.GameData;
 import game.graphics.gui.Message;
 import game.network.packet.editors.EditorData;
@@ -58,6 +59,8 @@ public class MapEditor extends GUI {
   private ScrollPanel _splSprite;
   private Label     _lblSpriteFile;
   private Dropdown  _drpSpriteFile;
+  private Label     _lblSpriteAnim;
+  private Dropdown  _drpSpriteAnim;
   private Label     _lblSpriteLoc;
   private Textbox   _txtSpriteX;
   private Textbox   _txtSpriteY;
@@ -286,8 +289,21 @@ public class MapEditor extends GUI {
       }
     });
     
+    _lblSpriteAnim = new Label(this);
+    _lblSpriteAnim.setXY(_drpSpriteFile.getX(), _drpSpriteFile.getY() + _drpSpriteFile.getH() + 8);
+    _lblSpriteAnim.setText("Animation");
+    
+    _drpSpriteAnim = new Dropdown(this);
+    _drpSpriteAnim.setXY(_lblSpriteAnim.getX(), _lblSpriteAnim.getY() + _lblSpriteAnim.getH());
+    _drpSpriteAnim.events().addSelectHandler(new Dropdown.Events.Select() {
+      public void select(Dropdown.Item item) {
+        updateSprite();
+        _map.createSprites();
+      }
+    });
+    
     _lblSpriteLoc = new Label(this);
-    _lblSpriteLoc.setXY(_drpSpriteFile.getX(), _drpSpriteFile.getY() + _drpSpriteFile.getH() + 8);
+    _lblSpriteLoc.setXY(_drpSpriteAnim.getX(), _drpSpriteAnim.getY() + _drpSpriteAnim.getH() + 8);
     _lblSpriteLoc.setText("Location");
     
     _txtSpriteX = new Textbox(this);
@@ -296,7 +312,7 @@ public class MapEditor extends GUI {
     _txtSpriteX.setNumeric(true);
     _txtSpriteX.events().addChangeHandler(new Textbox.Events.Change() {
       public void change() {
-        _sprite._x = Integer.parseInt(_txtSpriteX.getText());
+        _sprite.x = Integer.parseInt(_txtSpriteX.getText());
         _map.createSprites();
       }
     });
@@ -307,7 +323,7 @@ public class MapEditor extends GUI {
     _txtSpriteY.setNumeric(true);
     _txtSpriteY.events().addChangeHandler(new Textbox.Events.Change() {
       public void change() {
-        _sprite._y = Integer.parseInt(_txtSpriteY.getText());
+        _sprite.y = Integer.parseInt(_txtSpriteY.getText());
         _map.createSprites();
       }
     });
@@ -318,13 +334,15 @@ public class MapEditor extends GUI {
     _txtSpriteZ.setNumeric(true);
     _txtSpriteZ.events().addChangeHandler(new Textbox.Events.Change() {
       public void change() {
-        _sprite._z = Byte.parseByte(_txtSpriteZ.getText());
+        _sprite.z = Byte.parseByte(_txtSpriteZ.getText());
         _map.createSprites();
       }
     });
-    
+
     _splSprite.controls().add(_lblSpriteFile);
     _splSprite.controls().add(_drpSpriteFile);
+    _splSprite.controls().add(_lblSpriteAnim);
+    _splSprite.controls().add(_drpSpriteAnim);
     _splSprite.controls().add(_lblSpriteLoc);
     _splSprite.controls().add(_txtSpriteX);
     _splSprite.controls().add(_txtSpriteY);
@@ -376,7 +394,7 @@ public class MapEditor extends GUI {
     _txtItemX.setNumeric(true);
     _txtItemX.events().addChangeHandler(new Textbox.Events.Change() {
       public void change() {
-        _item._x = Integer.parseInt(_txtItemX.getText());
+        _item.x = Integer.parseInt(_txtItemX.getText());
         _map.createItems();
       }
     });
@@ -387,7 +405,7 @@ public class MapEditor extends GUI {
     _txtItemY.setNumeric(true);
     _txtItemY.events().addChangeHandler(new Textbox.Events.Change() {
       public void change() {
-        _item._y = Integer.parseInt(_txtItemY.getText());
+        _item.y = Integer.parseInt(_txtItemY.getText());
         _map.createItems();
       }
     });
@@ -398,7 +416,7 @@ public class MapEditor extends GUI {
     _txtItemZ.setNumeric(true);
     _txtItemZ.events().addChangeHandler(new Textbox.Events.Change() {
       public void change() {
-        _item._z = Byte.parseByte(_txtItemZ.getText());
+        _item.z = Byte.parseByte(_txtItemZ.getText());
         _map.createItems();
       }
     });
@@ -413,7 +431,7 @@ public class MapEditor extends GUI {
     _txtItemVal.setNumeric(true);
     _txtItemVal.events().addChangeHandler(new Textbox.Events.Change() {
       public void change() {
-        _item._val = Integer.parseInt(_txtItemVal.getText());
+        _item.val = Integer.parseInt(_txtItemVal.getText());
         _map.createItems();
       }
     });
@@ -473,7 +491,7 @@ public class MapEditor extends GUI {
     _txtNPCX.setNumeric(true);
     _txtNPCX.events().addChangeHandler(new Textbox.Events.Change() {
       public void change() {
-        _npc._x = Integer.parseInt(_txtNPCX.getText());
+        _npc.x = Integer.parseInt(_txtNPCX.getText());
         _map.createNPCs();
       }
     });
@@ -484,7 +502,7 @@ public class MapEditor extends GUI {
     _txtNPCY.setNumeric(true);
     _txtNPCY.events().addChangeHandler(new Textbox.Events.Change() {
       public void change() {
-        _npc._y = Integer.parseInt(_txtNPCY.getText());
+        _npc.y = Integer.parseInt(_txtNPCY.getText());
         _map.createNPCs();
       }
     });
@@ -495,7 +513,7 @@ public class MapEditor extends GUI {
     _txtNPCZ.setNumeric(true);
     _txtNPCZ.events().addChangeHandler(new Textbox.Events.Change() {
       public void change() {
-        _npc._z = Byte.parseByte(_txtNPCZ.getText());
+        _npc.z = Byte.parseByte(_txtNPCZ.getText());
         _map.createNPCs();
       }
     });
@@ -766,31 +784,56 @@ public class MapEditor extends GUI {
   }
   
   private void selSprite(MapEditorMap.Sprite sprite) {
+    _drpSpriteAnim.clear();
+    
     _sprite = sprite;
     
-    if(_sprite._file != null) {
+    if(_sprite.file != null) {
       int i = 0;
       for(Dropdown.Item file : _drpSpriteFile) {
-        if(((DropdownData)file)._file.equals(_sprite._file)) {
+        if(((DropdownData)file)._file.equals(_sprite.file)) {
           _drpSpriteFile.setSeletected(i);
         }
         i++;
       }
+      
+      final Sprite s = _game.getSprite(_sprite.file);
+      s.events().addLoadHandler(new GameData.Events.Load() {
+        public void load() {
+          for(Sprite.Anim anim : s.anim) {
+            _drpSpriteAnim.add(new Dropdown.Item(anim._name));
+          }
+        }
+      });
     } else {
       _drpSpriteFile.setSeletected(-1);
     }
     
-    _txtSpriteX.setText(String.valueOf(_sprite._x));
-    _txtSpriteY.setText(String.valueOf(_sprite._y));
-    _txtSpriteZ.setText(String.valueOf(_sprite._z));
+    if(_sprite.anim != null) {
+      int i = 0;
+      for(Dropdown.Item file : _drpSpriteAnim) {
+        if(file.getText().equals(_sprite.anim)) {
+          _drpSpriteAnim.setSeletected(i);
+        }
+        i++;
+      }
+    } else {
+      _drpSpriteAnim.setSeletected(-1);
+    }
+    
+    _txtSpriteX.setText(String.valueOf(_sprite.x));
+    _txtSpriteY.setText(String.valueOf(_sprite.y));
+    _txtSpriteZ.setText(String.valueOf(_sprite.z));
   }
   
   private void updateSprite() {
     DropdownData sprite = (DropdownData)_drpSpriteFile.get();
-    _sprite._file = sprite != null ? sprite._file : null;
-    _sprite._x = Integer.parseInt(_txtSpriteX.getText());
-    _sprite._y = Integer.parseInt(_txtSpriteY.getText());
-    _sprite._z = Byte.parseByte(_txtSpriteZ.getText());
+    Dropdown.Item anim = _drpSpriteAnim.get();
+    _sprite.file = sprite != null ? sprite._file : null;
+    _sprite.anim = anim != null ? anim.getText() : null;
+    _sprite.x = Integer.parseInt(_txtSpriteX.getText());
+    _sprite.y = Integer.parseInt(_txtSpriteY.getText());
+    _sprite.z = Byte.parseByte(_txtSpriteZ.getText());
     selSprite(_sprite);
   }
   
@@ -837,10 +880,10 @@ public class MapEditor extends GUI {
   private void selItem(MapEditorMap.Item item) {
     _item = item;
     
-    if(_item._file != null) {
+    if(_item.file != null) {
       int i = 0;
       for(Dropdown.Item file : _drpItemFile) {
-         if(((DropdownData)file)._file.equals(_item._file)) {
+         if(((DropdownData)file)._file.equals(_item.file)) {
           _drpItemFile.setSeletected(i);
         }
         i++;
@@ -849,19 +892,19 @@ public class MapEditor extends GUI {
       _drpItemFile.setSeletected(-1);
     }
     
-    _txtItemX.setText(String.valueOf(_item._x));
-    _txtItemY.setText(String.valueOf(_item._y));
-    _txtItemZ.setText(String.valueOf(_item._z));
-    _txtItemVal.setText(String.valueOf(_item._val));
+    _txtItemX.setText(String.valueOf(_item.x));
+    _txtItemY.setText(String.valueOf(_item.y));
+    _txtItemZ.setText(String.valueOf(_item.z));
+    _txtItemVal.setText(String.valueOf(_item.val));
   }
   
   private void updateItem() {
     DropdownData item = (DropdownData)_drpItemFile.get();
-    _item._file = item != null ? item._file : null;
-    _item._x = Integer.parseInt(_txtItemX.getText());
-    _item._y = Integer.parseInt(_txtItemY.getText());
-    _item._z = Byte.parseByte(_txtItemZ.getText());
-    _item._val = Integer.parseInt(_txtItemVal.getText());
+    _item.file = item != null ? item._file : null;
+    _item.x = Integer.parseInt(_txtItemX.getText());
+    _item.y = Integer.parseInt(_txtItemY.getText());
+    _item.z = Byte.parseByte(_txtItemZ.getText());
+    _item.val = Integer.parseInt(_txtItemVal.getText());
     selItem(_item);
   }
   
@@ -908,10 +951,10 @@ public class MapEditor extends GUI {
   private void selNPC(MapEditorMap.NPC npc) {
     _npc = npc;
     
-    if(_npc._file != null) {
+    if(_npc.file != null) {
       int i = 0;
       for(Dropdown.Item file : _drpNPCFile) {
-         if(((DropdownData)file)._file.equals(_npc._file)) {
+         if(((DropdownData)file)._file.equals(_npc.file)) {
           _drpNPCFile.setSeletected(i);
         }
         i++;
@@ -920,17 +963,17 @@ public class MapEditor extends GUI {
       _drpNPCFile.setSeletected(-1);
     }
     
-    _txtNPCX.setText(String.valueOf(_npc._x));
-    _txtNPCY.setText(String.valueOf(_npc._y));
-    _txtNPCZ.setText(String.valueOf(_npc._z));
+    _txtNPCX.setText(String.valueOf(_npc.x));
+    _txtNPCY.setText(String.valueOf(_npc.y));
+    _txtNPCZ.setText(String.valueOf(_npc.z));
   }
   
   private void updateNPC() {
     DropdownData npc = (DropdownData)_drpNPCFile.get();
-    _npc._file = npc != null ? npc._file : null;
-    _npc._x = Integer.parseInt(_txtNPCX.getText());
-    _npc._y = Integer.parseInt(_txtNPCY.getText());
-    _npc._z = Byte.parseByte(_txtNPCZ.getText());
+    _npc.file = npc != null ? npc._file : null;
+    _npc.x = Integer.parseInt(_txtNPCX.getText());
+    _npc.y = Integer.parseInt(_txtNPCY.getText());
+    _npc.z = Byte.parseByte(_txtNPCZ.getText());
     selNPC(_npc);
   }
   
@@ -1046,12 +1089,19 @@ public class MapEditor extends GUI {
       case 2:
         if(button == 0) {
           if(_pickLoc) {
-            MapEditorMap.Sprite s = new MapEditorMap.Sprite();
+            final MapEditorMap.Sprite s = new MapEditorMap.Sprite();
             
-            s._file = _file;
-            s._x = x;
-            s._y = y;
-            s._z = (byte)_layer;
+            final Sprite sprite = _game.getSprite(_file);
+            sprite.events().addLoadHandler(new GameData.Events.Load() {
+              public void load() {
+                s.anim = sprite.anim.get(0)._name;
+              }
+            });
+            
+            s.file = _file;
+            s.x = x;
+            s.y = y;
+            s.z = (byte)_layer;
             
             _map._sprite.add(s);
             _splSprite.add(new ScrollPanelData(s));
@@ -1069,10 +1119,10 @@ public class MapEditor extends GUI {
           if(_pickLoc) {
             MapEditorMap.Item s = new MapEditorMap.Item();
             
-            s._file = _file;
-            s._x = x;
-            s._y = y;
-            s._z = (byte)_layer;
+            s.file = _file;
+            s.x = x;
+            s.y = y;
+            s.z = (byte)_layer;
             
             _map._item.add(s);
             _splItem.add(new ScrollPanelData(s));
@@ -1090,10 +1140,10 @@ public class MapEditor extends GUI {
           if(_pickLoc) {
             MapEditorMap.NPC s = new MapEditorMap.NPC();
             
-            s._file = _file;
-            s._x = x;
-            s._y = y;
-            s._z = (byte)_layer;
+            s.file = _file;
+            s.x = x;
+            s.y = y;
+            s.z = (byte)_layer;
             
             _map._npc.add(s);
             _splNPC.add(new ScrollPanelData(s));

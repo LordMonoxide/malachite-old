@@ -524,14 +524,14 @@ public class SpriteEditor extends GUI implements Editor {
           i++;
         }
         
-        for(Sprite.Frame f : _sprite._frame) {
+        for(Sprite.Frame f : _sprite.frame) {
           _splFrame.add(new ScrollPanelFrame(f));
         }
         
-        if(_sprite._frame.size() == 0) addFrame();
-        if(_sprite._anim .size() == 0) addAnim();
+        if(_sprite.frame.size() == 0) addFrame();
+        if(_sprite.anim .size() == 0) addAnim();
         
-        _scrAnim .setMax(_sprite._anim .size() - 1);
+        _scrAnim .setMax(_sprite.anim .size() - 1);
         _scrListFrame.setMax(_splFrame.size());
         _picFrameSprite.setTexture(_textures.getTexture("sprites/" + _sprite.getTexture()));
         
@@ -560,12 +560,12 @@ public class SpriteEditor extends GUI implements Editor {
   private void addFrame() { addFrame(null); }
   private void addFrame(Frame f) {
     f = f == null ? new Frame() : new Frame(f);
-    _sprite._frame.add(f);
+    _sprite.frame.add(f);
     _splFrame.add(new ScrollPanelFrame(f));
   }
   
   private void delFrame() {
-    _sprite._frame.remove(((ScrollPanelFrame)_splFrame.getItem())._frame);
+    _sprite.frame.remove(((ScrollPanelFrame)_splFrame.getItem())._frame);
     _splFrame.remove();
   }
   
@@ -585,20 +585,20 @@ public class SpriteEditor extends GUI implements Editor {
   }
   
   private void cloneAnim() {
-    addAnim(_sprite._anim.get(_anim));
+    addAnim(_sprite.anim.get(_anim));
   }
   
   private void addAnim() { addAnim(null); }
   private void addAnim(Anim a) {
     a = a == null ? new Anim() : new Anim(a);
-    _sprite._anim.add(a);
-    _scrAnim.setMax(_sprite._anim.size() - 1);
+    _sprite.anim.add(a);
+    _scrAnim.setMax(_sprite.anim.size() - 1);
     setAnim(_scrAnim.getMax());
   }
   
   private void delAnim() {
-    _sprite._anim.remove(_anim);
-    _scrAnim.setMax(_sprite._anim.size() - 1);
+    _sprite.anim.remove(_anim);
+    _scrAnim.setMax(_sprite.anim.size() - 1);
     setAnim(_anim > 0 ? _anim - 1 : _anim);
   }
   
@@ -606,7 +606,7 @@ public class SpriteEditor extends GUI implements Editor {
     _scrAnim.setVal(anim);
     _anim = anim;
     
-    Anim a = _sprite._anim.get(_anim);
+    Anim a = _sprite.anim.get(_anim);
     
     _lblAnimNum.setText(String.valueOf(_anim));
     _txtAnimName.setText(a._name);
@@ -617,14 +617,14 @@ public class SpriteEditor extends GUI implements Editor {
   }
   
   private void addList() {
-    _sprite._anim.get(_anim)._list.add(new List());
-    _scrList.setMax(_sprite._anim.get(_anim)._list.size() - 1);
+    _sprite.anim.get(_anim)._list.add(new List());
+    _scrList.setMax(_sprite.anim.get(_anim)._list.size() - 1);
     setList(_scrList.getMax());
   }
   
   private void delList() {
-    _sprite._anim.get(_anim)._list.remove(_list);
-    _scrList.setMax(_sprite._anim.get(_anim)._list.size() - 1);
+    _sprite.anim.get(_anim)._list.remove(_list);
+    _scrList.setMax(_sprite.anim.get(_anim)._list.size() - 1);
     setList(_list > 0 ? _list - 1 : _list);
   }
   
@@ -632,7 +632,7 @@ public class SpriteEditor extends GUI implements Editor {
     _scrList.setVal(list);
     _list = list;
     
-    List l = _sprite._anim.get(_anim)._list.get(_list);
+    List l = _sprite.anim.get(_anim)._list.get(_list);
     
     _lblListNum.setText(String.valueOf(_list));
     
@@ -665,14 +665,14 @@ public class SpriteEditor extends GUI implements Editor {
   }
   
   private void updateAnim() {
-    Anim a = _sprite._anim.get(_anim);
+    Anim a = _sprite.anim.get(_anim);
     a._name = _txtAnimName.getText();
   }
   
   private void updateList() {
     if(_suspendUpdateList) return;
     
-    List l = _sprite._anim.get(_anim)._list.get(_list);
+    List l = _sprite.anim.get(_anim)._list.get(_list);
     l._frame = _scrListFrame.getVal();
     l._time  = _scrListTime.getVal() * 10;
     

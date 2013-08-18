@@ -219,10 +219,10 @@ public class Sprite {
   
   public float getFrameX() { return _frame[_frameNum].getX(); }
   public float getFrameY() { return _frame[_frameNum].getY(); }
-  public float getFrameFX() { return _source.getFrame(_frameNum)._fx; }
-  public float getFrameFY() { return _source.getFrame(_frameNum)._fy; }
-  public float getFrameW() { return _source.getFrame(_frameNum)._w; }
-  public float getFrameH() { return _source.getFrame(_frameNum)._h; }
+  public float getFrameFX() { return _source.frame.get(_frameNum)._fx; }
+  public float getFrameFY() { return _source.frame.get(_frameNum)._fy; }
+  public float getFrameW() { return _source.frame.get(_frameNum)._w; }
+  public float getFrameH() { return _source.frame.get(_frameNum)._h; }
   
   private void setFrame(int frame) {
     _frameNum = frame;

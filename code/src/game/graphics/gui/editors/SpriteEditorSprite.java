@@ -1,7 +1,5 @@
 package game.graphics.gui.editors;
 
-import java.util.ArrayList;
-
 import game.Game;
 import game.data.Sprite;
 import game.data.util.Buffer;
@@ -9,9 +7,6 @@ import game.network.packet.editors.EditorData;
 import graphics.gl00.Context;
 
 public class SpriteEditorSprite extends Sprite {
-  protected ArrayList<Frame> _frame = super._frame;
-  protected ArrayList<Anim>  _anim  = super._anim;
-  
   protected SpriteEditorSprite(String file) { this(file, false); }
   protected SpriteEditorSprite(String file, boolean newData) {
     super(file);
